@@ -6,6 +6,7 @@ export interface ICertification extends Document {
   date: string;
   link?: string;
   image?: string;
+  details: string[];
   order: number;
   createdAt: Date;
   updatedAt: Date;
@@ -18,10 +19,16 @@ const CertificationSchema = new Schema<ICertification>(
     date: { type: String, required: true },
     link: { type: String },
     image: { type: String },
+    details: { type: [String], default: [] },
     order: { type: Number, default: 0 },
   },
   { timestamps: true },
 );
+
+// Force delete the model from mongoose.models in development to pick up schema changes
+if (process.env.NODE_ENV === "development") {
+  delete mongoose.models.Certification;
+}
 
 const Certification: Model<ICertification> =
   mongoose.models.Certification || mongoose.model<ICertification>("Certification", CertificationSchema);

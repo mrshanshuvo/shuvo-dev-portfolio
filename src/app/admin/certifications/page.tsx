@@ -9,18 +9,17 @@ import {
   FaCalendarAlt,
   FaBuilding,
   FaLink,
+  FaArrowUp,
+  FaArrowDown,
+  FaTrash,
+  FaInfoCircle,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import ImageUpload from "../components/ImageUpload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 interface Certification {
@@ -29,10 +28,14 @@ interface Certification {
   date: string;
   link?: string;
   image?: string;
+  details: string[];
 }
 
 export default function AdminCertificationsPage() {
   const [data, setData] = useState<Certification[]>([]);
+  const [newDetailInputs, setNewDetailInputs] = useState<{ [key: number]: string }>(
+    {}
+  );
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{
@@ -62,18 +65,25 @@ export default function AdminCertificationsPage() {
       body: JSON.stringify(data),
     });
     setSaving(false);
-    if (res.ok) showToast("Certifications saved!");
-    else showToast("Failed to save.", "error");
+    if (res.ok) showToast("Certifications synchronized!");
+    else showToast("Failed to save records.", "error");
   }
 
   function addCert() {
     setData((prev) => [
       ...prev,
-      { title: "New Certification", issuer: "AWS", date: "2024", link: "" },
+      {
+        title: "New Certification",
+        issuer: "Issuing Organization",
+        date: "June 2024",
+        link: "",
+        details: [],
+        image: "",
+      },
     ]);
   }
 
-  function updateCert(i: number, field: keyof Certification, val: string) {
+  function updateCert(i: number, field: keyof Certification, val: any) {
     setData((prev) => {
       const next = [...prev];
       next[i] = { ...next[i], [field]: val };
@@ -81,197 +91,322 @@ export default function AdminCertificationsPage() {
     });
   }
 
+  function move(i: number, dir: "up" | "down") {
+    setData((prev) => {
+      const next = [...prev];
+      const j = dir === "up" ? i - 1 : i + 1;
+      if (j < 0 || j >= next.length) return prev;
+      [next[i], next[j]] = [next[j], next[i]];
+      return next;
+    });
+  }
+
+  function addDetail(i: number) {
+    const val = newDetailInputs[i]?.trim();
+    if (!val) return;
+    setData((prev) => {
+      const next = [...prev];
+      next[i] = {
+        ...next[i],
+        details: [...(next[i].details || []), val],
+      };
+      return next;
+    });
+    setNewDetailInputs((prev) => ({ ...prev, [i]: "" }));
+  }
+
+  function removeDetail(i: number, dIdx: number) {
+    setData((prev) => {
+      const next = [...prev];
+      next[i] = {
+        ...next[i],
+        details: next[i].details.filter((_, idx) => idx !== dIdx),
+      };
+      return next;
+    });
+  }
+
 
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8">
+    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-10 space-y-10">
       <AnimatePresence>
         {toast && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
             className={`fixed top-6 right-6 z-50 px-6 py-4 rounded-2xl shadow-2xl backdrop-blur-xl border flex items-center gap-3 ${
               toast.type === "success"
                 ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
                 : "bg-red-500/20 border-red-500/50 text-red-400"
             }`}
           >
-            {toast.type === "success" ? <FaCheck /> : <FaTimes />}
+            <div className={`p-2 rounded-full ${toast.type === "success" ? "bg-emerald-500/20" : "bg-red-500/20"}`}>
+              {toast.type === "success" ? <FaCheck /> : <FaTimes />}
+            </div>
             <span className="font-semibold">{toast.msg}</span>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="max-w-4xl mx-auto">
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-          <div>
-            <h1 className="text-4xl font-bold text-white tracking-tight mb-2">
-              Certifications
-            </h1>
-            <p className="text-slate-400">
-              Manage your academic and professional achievements.
-            </p>
+      <div className="w-full space-y-8">
+        {/* Unified Header Section */}
+        <header className="sticky top-6 z-40 flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-slate-900/60 backdrop-blur-xl p-6 md:p-8 rounded-[2rem] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+          <div className="flex items-center gap-6">
+            <div className="relative">
+              <div className="absolute -left-4 top-1/2 -translate-y-1/2 w-1 h-8 bg-amber-500 rounded-full blur-sm" />
+              <h1 className="text-3xl font-black text-white tracking-tight">
+                Professional <span className="text-amber-400">Credentials</span>
+              </h1>
+            </div>
+            <Badge
+              variant="outline"
+              className="hidden md:flex bg-amber-500/10 text-amber-400 border-amber-500/20 px-4 py-1 rounded-full font-bold uppercase tracking-widest text-[10px]"
+            >
+              {data.length} Certificates
+            </Badge>
           </div>
-          <Button
-            onClick={handleSave}
-            disabled={saving}
-            className="bg-amber-600 hover:bg-amber-500 text-white rounded-xl font-bold px-8 shadow-lg shadow-amber-600/20"
-          >
-            <FaSave className={cn("mr-2", saving && "animate-spin")} />
-            {saving ? "Saving..." : "Save Changes"}
-          </Button>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <Button
+              variant="outline"
+              onClick={addCert}
+              className="bg-slate-800 hover:bg-slate-700 text-white border-white/10 rounded-xl h-11 px-5 active:scale-95 transition-all text-xs font-bold"
+            >
+              <FaPlus size={12} className="mr-2 text-amber-400" /> Add Certification
+            </Button>
+            <div className="w-px h-6 bg-white/10 mx-1 hidden sm:block" />
+            <Button
+              onClick={handleSave}
+              disabled={saving}
+              className="bg-amber-600 hover:bg-amber-500 text-white rounded-xl font-bold px-6 h-11 shadow-lg shadow-amber-600/20 active:scale-95 transition-all group text-xs"
+            >
+              <FaSave
+                className={cn(
+                  "mr-2 transition-transform duration-500",
+                  saving ? "animate-spin" : "group-hover:rotate-12",
+                )}
+              />
+              {saving ? "Syncing..." : "Save Changes"}
+            </Button>
+          </div>
         </header>
 
-        <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
-          <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-xl font-bold text-white">
-                Credentials List
-              </CardTitle>
-              <Button
-                variant="outline"
-                onClick={addCert}
-                className="bg-slate-800 hover:bg-slate-700 text-slate-200 border-white/5 rounded-xl"
-              >
-                <FaPlus size={12} className="mr-2" /> Add Certification
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-6">
+        <Card className="bg-slate-900/20 backdrop-blur-xl overflow-hidden shadow-2xl border border-white/5 rounded-[2.5rem]">
+          <CardContent className="p-0">
             <AnimatePresence mode="popLayout">
               {loading ? (
-                /* Skeleton Loader List */
-                Array.from({ length: 3 }).map((_, i) => (
-                  <motion.div
-                    key={`skeleton-${i}`}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.1 }}
-                  >
-                    <div className="p-5 bg-slate-950/20 rounded-2xl border border-white/5 space-y-6 animate-pulse mb-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-4">
-                          <div className="w-full h-32 bg-slate-800/30 rounded-2xl" />
-                          <div className="h-10 w-full bg-slate-800/40 rounded-xl" />
-                        </div>
-                        <div className="space-y-6 pt-4">
-                          <div className="h-10 w-full bg-slate-800/40 rounded-xl" />
-                          <div className="h-10 w-full bg-slate-800/40 rounded-xl" />
-                        </div>
+                Array.from({ length: 2 }).map((_, i) => (
+                  <div key={i} className="p-8 bg-slate-950/20 space-y-6 animate-pulse border-b border-white/5">
+                    <div className="flex gap-8">
+                      <div className="w-32 h-32 bg-slate-800/40 rounded-3xl" />
+                      <div className="flex-1 space-y-4">
+                        <div className="h-10 w-full bg-slate-800/30 rounded-xl" />
+                        <div className="h-10 w-1/2 bg-slate-800/30 rounded-xl" />
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 ))
+              ) : data.length === 0 ? (
+                <div className="p-24 text-center">
+                  <div className="w-24 h-24 bg-slate-900 rounded-3xl flex items-center justify-center mx-auto mb-6 text-slate-700">
+                    <FaAward size={48} />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-2">Showcase Your Skills</h3>
+                  <p className="text-slate-500 mb-10 max-w-sm mx-auto">
+                    Add your professional certifications to validate your expertise.
+                  </p>
+                  <Button
+                    onClick={addCert}
+                    className="bg-amber-600/10 text-amber-400 hover:bg-amber-600/20 border border-amber-500/20 rounded-2xl px-10 h-14 font-bold text-lg"
+                  >
+                    Add Your First Certificate
+                  </Button>
+                </div>
               ) : (
                 data.map((item, i) => (
                   <motion.div
-                    initial={{ opacity: 0, y: 10 }}
+                    key={i}
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    key={i}
-                    className="p-5 bg-slate-950/40 rounded-2xl border border-white/5 relative group mb-4"
+                    className="group relative p-6 md:p-8 bg-slate-950/20 transition-all border-b border-white/5 last:border-0"
                   >
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() =>
-                        setData((prev) => prev.filter((_, idx) => idx !== i))
-                      }
-                      className="absolute top-4 right-4 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <FaTimes size={14} />
-                    </Button>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-4">
+                    <div className="flex flex-col lg:flex-row gap-8">
+                      {/* Image Section */}
+                      <div className="w-full lg:w-40 shrink-0 space-y-3">
                         <ImageUpload
-                          label="Certification Image / Logo"
+                          label="Cert. Badge"
                           value={item.image || ""}
                           onChange={(url) => updateCert(i, "image", url)}
                         />
-                        <div className="space-y-2">
-                          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
+                        <div className="flex items-center justify-center gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => move(i, "up")}
+                            disabled={i === 0}
+                            className="h-8 w-8 rounded-lg bg-slate-900 border border-white/5 text-slate-500 hover:text-white disabled:opacity-20"
+                          >
+                            <FaArrowUp size={10} />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => move(i, "down")}
+                            disabled={i === data.length - 1}
+                            className="h-8 w-8 rounded-lg bg-slate-900 border border-white/5 text-slate-500 hover:text-white disabled:opacity-20"
+                          >
+                            <FaArrowDown size={10} />
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Info Grid */}
+                      <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4 relative z-10">
+                        {/* Title */}
+                        <div className="space-y-1.5 md:col-span-2">
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
                             Certification Title
                           </label>
-                          <div className="relative">
-                            <FaAward className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                          <div className="relative group/input">
+                            <FaAward className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-amber-400 transition-colors" />
                             <Input
-                              className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-10"
+                              className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-amber-500/50 focus-visible:bg-slate-900 transition-all font-bold text-sm"
                               value={item.title}
-                              onChange={(e) =>
-                                updateCert(i, "title", e.target.value)
-                              }
-                              placeholder="AWS Certified Developer"
+                              onChange={(e) => updateCert(i, "title", e.target.value)}
+                              placeholder="e.g. AWS Certified Solutions Architect"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Issuer */}
+                        <div className="space-y-1.5 md:col-span-2 lg:col-span-2">
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
+                            Issuing Organization
+                          </label>
+                          <div className="relative group/input">
+                            <FaBuilding className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-amber-400 transition-colors" />
+                            <Input
+                              className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-amber-500/50 focus-visible:bg-slate-900 transition-all font-bold text-sm"
+                              value={item.issuer}
+                              onChange={(e) => updateCert(i, "issuer", e.target.value)}
+                              placeholder="e.g. Amazon Web Services"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Date */}
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
+                            Date Obtained
+                          </label>
+                          <div className="relative group/input">
+                            <FaCalendarAlt className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-amber-400 transition-colors" />
+                            <Input
+                              className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-amber-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
+                              value={item.date}
+                              onChange={(e) => updateCert(i, "date", e.target.value)}
+                              placeholder="e.g. June 2024"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Details Manager */}
+                        <div className="space-y-4 md:col-span-2 lg:col-span-3 xl:col-span-4">
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
+                            Skills & Key Achievements
+                          </label>
+                          <div className="flex gap-2">
+                             <div className="relative group/input flex-1">
+                                <FaInfoCircle className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-amber-400 transition-colors" />
+                                <Input
+                                  className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-amber-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
+                                  value={newDetailInputs[i] || ""}
+                                  onChange={(e) => setNewDetailInputs(prev => ({...prev, [i]: e.target.value}))}
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      addDetail(i);
+                                    }
+                                  }}
+                                  placeholder="Add a skill or achievement..."
+                                />
+                             </div>
+                             <Button
+                              type="button"
+                              onClick={() => addDetail(i)}
+                              className="bg-slate-800 hover:bg-slate-700 text-white rounded-xl h-11 w-11 p-0 shrink-0 border border-white/5"
+                             >
+                              <FaPlus size={14} />
+                             </Button>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                            <AnimatePresence mode="popLayout">
+                              {item.details?.map((d, dIdx) => (
+                                <motion.div
+                                  key={dIdx}
+                                  initial={{ opacity: 0, x: -10 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  exit={{ opacity: 0, scale: 0.95 }}
+                                  className="flex items-center gap-3 bg-slate-950/40 border border-white/5 rounded-xl p-3 group/detail"
+                                >
+                                  <div className="w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
+                                  <span className="text-xs text-slate-300 flex-1 leading-relaxed font-medium">
+                                    {d}
+                                  </span>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => removeDetail(i, dIdx)}
+                                    className="h-7 w-7 text-slate-600 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all"
+                                  >
+                                    <FaTimes size={12} />
+                                  </Button>
+                                </motion.div>
+                              ))}
+                            </AnimatePresence>
+                          </div>
+                        </div>
+
+                        {/* Link */}
+                        <div className="space-y-1.5 md:col-span-2 lg:col-span-3 xl:col-span-4">
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
+                            Credential / Verification Link
+                          </label>
+                          <div className="relative group/input">
+                            <FaLink className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-amber-400 transition-colors" />
+                            <Input
+                              className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-amber-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
+                              value={item.link || ""}
+                              onChange={(e) => updateCert(i, "link", e.target.value)}
+                              placeholder="https://verify.cert..."
                             />
                           </div>
                         </div>
                       </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
-                          Issuing Organization
-                        </label>
-                        <div className="relative">
-                          <FaBuilding className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-                          <Input
-                            className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-10"
-                            value={item.issuer}
-                            onChange={(e) =>
-                              updateCert(i, "issuer", e.target.value)
-                            }
-                            placeholder="Amazon Web Services"
-                          />
-                        </div>
+                    </div>
+
+                    {/* Actions Area */}
+                    <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-slate-600 text-[10px] font-bold uppercase tracking-widest">
+                        <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" /> Certificate #{i + 1}
                       </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
-                          Date Obtained
-                        </label>
-                        <div className="relative">
-                          <FaCalendarAlt className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-                          <Input
-                            className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-10"
-                            value={item.date}
-                            onChange={(e) =>
-                              updateCert(i, "date", e.target.value)
-                            }
-                            placeholder="June 2024"
-                          />
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
-                          Credential URL (Optional)
-                        </label>
-                        <div className="relative">
-                          <FaLink className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-                          <Input
-                            className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-10"
-                            value={item.link}
-                            onChange={(e) =>
-                              updateCert(i, "link", e.target.value)
-                            }
-                            placeholder="https://verify.cert..."
-                          />
-                        </div>
-                      </div>
+                      <Button
+                        variant="ghost"
+                        onClick={() => setData((prev) => prev.filter((_, idx) => idx !== i))}
+                        className="text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl px-5 h-10 font-bold transition-all flex items-center gap-2 group text-xs"
+                      >
+                        <FaTrash size={12} className="group-hover:animate-bounce" /> Remove
+                      </Button>
                     </div>
                   </motion.div>
                 ))
               )}
             </AnimatePresence>
-            {data.length === 0 && (
-              <div className="text-center py-12 border-2 border-dashed border-white/5 rounded-3xl">
-                <FaAward className="mx-auto text-slate-800 mb-4" size={32} />
-                <p className="text-slate-500">No certifications added yet.</p>
-                <Button
-                  variant="link"
-                  onClick={addCert}
-                  className="text-amber-400 mt-2"
-                >
-                  Add your first one
-                </Button>
-              </div>
-            )}
           </CardContent>
         </Card>
       </div>
