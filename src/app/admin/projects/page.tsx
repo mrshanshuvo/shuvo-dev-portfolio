@@ -1,39 +1,30 @@
 "use client";
-
-import { useState, useEffect, useRef } from "react";
-import type { Project } from "@/types";
+import { useState, useEffect } from "react";
 import {
   FaPlus,
-  FaEdit,
-  FaTrash,
-  FaStar,
-  FaRegStar,
   FaTimes,
   FaCheck,
+  FaSave,
   FaSearch,
   FaFilter,
   FaGithub,
   FaExternalLinkAlt,
-  FaImage,
-  FaListUl,
-  FaSave,
-  FaArrowLeft,
+  FaStar,
+  FaRegStar,
+  FaArrowUp,
+  FaArrowDown,
+  FaTrash,
+  FaCode,
+  FaLayerGroup,
+  FaInfoCircle,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
 import ImageUpload from "../components/ImageUpload";
-
-// Shadcn UI Imports
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -41,28 +32,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-
-const TECH_OPTIONS = [
-  "React",
-  "Next.js",
-  "Node.js",
-  "MongoDB",
-  "Tailwind CSS",
-  "Express.js",
-  "Firebase",
-  "Leaflet",
-  "TensorFlow",
-  "Django",
-  "Docker",
-  "Python",
-  "TypeScript",
-  "PostgreSQL",
-  "Redis",
-  "GraphQL",
-  "Prisma",
-];
+import type { Project } from "@/types";
 
 const CATEGORY_OPTIONS = [
   "Full Stack",
@@ -73,192 +44,120 @@ const CATEGORY_OPTIONS = [
   "Other",
 ];
 
-const EMPTY_PROJECT: Omit<Project, "_id"> = {
-  title: "",
-  slug: "",
-  description: "",
-  image: "",
-  techNames: [],
-  github: "",
-  live: "",
-  featured: false,
-  category: "Full Stack",
-  improvements: [],
-  order: 0,
-};
-
-function slugify(title: string) {
-  return title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
-
 export default function AdminProjectsPage() {
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [data, setData] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
-  const [editing, setEditing] = useState<Project | null>(null);
-  const [form, setForm] = useState<Omit<Project, "_id">>(EMPTY_PROJECT);
+  const [saving, setSaving] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterCategory, setFilterCategory] = useState("All");
+  const [newImprovementInputs, setNewImprovementInputs] = useState<{ [key: number]: string }>({});
+  const [newTechInputs, setNewTechInputs] = useState<{ [key: number]: string }>({});
   const [toast, setToast] = useState<{
     msg: string;
     type: "success" | "error";
   } | null>(null);
-  const [improvementInput, setImprovementInput] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterCategory, setFilterCategory] = useState("All");
-  const [uploading, setUploading] = useState(false);
-  const [saving, setSaving] = useState(false);
-
-  const imageInputRef = useRef<HTMLInputElement>(null);
 
   function showToast(msg: string, type: "success" | "error" = "success") {
     setToast({ msg, type });
     setTimeout(() => setToast(null), 3000);
   }
 
-  async function loadProjects() {
-    try {
-      const res = await fetch("/api/admin/projects");
-      const data = await res.json();
-      setProjects(data);
-    } catch (error) {
-      showToast("Failed to load projects", "error");
-    } finally {
-      setLoading(false);
-    }
-  }
-
   useEffect(() => {
-    loadProjects();
+    fetch("/api/admin/projects")
+      .then((r) => r.json())
+      .then((d) => {
+        setData(Array.isArray(d) ? d : []);
+        setLoading(false);
+      });
   }, []);
 
-  function openAdd() {
-    setEditing(null);
-    setForm(EMPTY_PROJECT);
-    setImprovementInput("");
-    setShowForm(true);
-  }
-
-  function openEdit(p: Project) {
-    setEditing(p);
-    setForm({ ...p });
-    setImprovementInput("");
-    setShowForm(true);
-  }
-
-  function closeForm() {
-    setShowForm(false);
-    setEditing(null);
-    setForm(EMPTY_PROJECT);
-  }
-
   async function handleSave() {
-    if (!form.title) return showToast("Title is required", "error");
-
     setSaving(true);
-    const url = editing
-      ? `/api/admin/projects/${editing._id}`
-      : "/api/admin/projects";
-    const method = editing ? "PUT" : "POST";
-    const res = await fetch(url, {
-      method,
+    const res = await fetch("/api/admin/projects", {
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify(data),
     });
     setSaving(false);
-
-    if (res.ok) {
-      showToast(
-        editing
-          ? "Project updated successfully!"
-          : "Project created successfully!",
-      );
-      closeForm();
-      loadProjects();
-    } else {
-      showToast("Failed to save project.", "error");
-    }
+    if (res.ok) showToast("Portfolio synchronized!");
+    else showToast("Failed to save records.", "error");
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this project?")) return;
-    await fetch(`/api/admin/projects/${id}`, { method: "DELETE" });
-    showToast("Project deleted.");
-    loadProjects();
+  function addProject() {
+    setData((prev) => [
+      ...prev,
+      {
+        title: "New Project",
+        slug: "new-project-" + Date.now(),
+        description: "Showcase your work here...",
+        image: "",
+        techNames: ["React", "Next.js"],
+        github: "",
+        live: "",
+        featured: false,
+        category: "Full Stack",
+        improvements: [],
+      },
+    ]);
   }
 
-  async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setUploading(true);
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const res = await fetch("/api/admin/upload", {
-        method: "POST",
-        body: formData,
-      });
-      const d = await res.json();
-      if (d.url) {
-        setForm((prev) => ({ ...prev, image: d.url }));
-        showToast("Image uploaded successfully!");
-      } else {
-        showToast(d.error || "Upload failed", "error");
-      }
-    } catch (err) {
-      showToast("Upload failed", "error");
-    } finally {
-      setUploading(false);
-    }
+  function updateProject(i: number, field: keyof Project, val: any) {
+    setData((prev) => {
+      const next = [...prev];
+      next[i] = { ...next[i], [field]: val };
+      return next;
+    });
   }
 
-  function toggleTech(tech: string) {
-    setForm((f) => ({
-      ...f,
-      techNames: f.techNames.includes(tech)
-        ? f.techNames.filter((t) => t !== tech)
-        : [...f.techNames, tech],
-    }));
+  function move(i: number, dir: "up" | "down") {
+    setData((prev) => {
+      const next = [...prev];
+      const j = dir === "up" ? i - 1 : i + 1;
+      if (j < 0 || j >= next.length) return prev;
+      [next[i], next[j]] = [next[j], next[i]];
+      return next;
+    });
   }
 
-  function addImprovement() {
-    if (!improvementInput.trim()) return;
-    setForm((f) => ({
-      ...f,
-      improvements: [...f.improvements, improvementInput.trim()],
-    }));
-    setImprovementInput("");
+  function addImprovement(i: number) {
+    const val = newImprovementInputs[i]?.trim();
+    if (!val) return;
+    const current = data[i].improvements || [];
+    updateProject(i, "improvements", [...current, val]);
+    setNewImprovementInputs(prev => ({ ...prev, [i]: "" }));
   }
 
-  function removeImprovement(i: number) {
-    setForm((f) => ({
-      ...f,
-      improvements: f.improvements.filter((_, idx) => idx !== i),
-    }));
+  function removeImprovement(i: number, impIdx: number) {
+    updateProject(i, "improvements", data[i].improvements.filter((_, idx) => idx !== impIdx));
   }
 
-  const filteredProjects = projects
-    .filter((p) => {
-      const matchesSearch =
-        p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.description.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory =
-        filterCategory === "All" || p.category === filterCategory;
-      return matchesSearch && matchesCategory;
-    })
-    .sort((a, b) => (a.order || 0) - (b.order || 0));
+  function addTech(i: number) {
+    const val = newTechInputs[i]?.trim();
+    if (!val) return;
+    const current = data[i].techNames || [];
+    if (current.includes(val)) return;
+    updateProject(i, "techNames", [...current, val]);
+    setNewTechInputs(prev => ({ ...prev, [i]: "" }));
+  }
+
+  function removeTech(i: number, tIdx: number) {
+    updateProject(i, "techNames", data[i].techNames.filter((_, idx) => idx !== tIdx));
+  }
+
+  const filtered = data.filter((p) => {
+    const mSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                   p.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const mCat = filterCategory === "All" || p.category === filterCategory;
+    return mSearch && mCat;
+  });
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8">
-      {/* Toast */}
+    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-10 space-y-10">
       <AnimatePresence>
         {toast && (
           <motion.div
-            initial={{ opacity: 0, y: -20, x: 20 }}
-            animate={{ opacity: 1, y: 0, x: 0 }}
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             className={`fixed top-6 right-6 z-50 px-6 py-4 rounded-2xl shadow-2xl backdrop-blur-xl border flex items-center gap-3 ${
               toast.type === "success"
@@ -266,9 +165,7 @@ export default function AdminProjectsPage() {
                 : "bg-red-500/20 border-red-500/50 text-red-400"
             }`}
           >
-            <div
-              className={`p-2 rounded-full ${toast.type === "success" ? "bg-emerald-500/20" : "bg-red-500/20"}`}
-            >
+            <div className={`p-2 rounded-full ${toast.type === "success" ? "bg-emerald-500/20" : "bg-red-500/20"}`}>
               {toast.type === "success" ? <FaCheck /> : <FaTimes />}
             </div>
             <span className="font-semibold">{toast.msg}</span>
@@ -276,552 +173,320 @@ export default function AdminProjectsPage() {
         )}
       </AnimatePresence>
 
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-          <div>
-            <h1 className="text-4xl font-bold text-white tracking-tight mb-2">
-              Projects
-            </h1>
-            <p className="text-slate-400">
-              Manage your portfolio projects and case studies.
-            </p>
-          </div>
-          <Button
-            onClick={openAdd}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold px-6 shadow-lg shadow-emerald-600/20 active:scale-95 transition-all"
-          >
-            <FaPlus className="mr-2" /> Add Project
-          </Button>
-        </header>
-
-        {/* Search & Filters */}
-        <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl mb-8 overflow-hidden">
-          <CardContent className="p-4 flex flex-col md:flex-row gap-4">
-            <div className="relative flex-1">
-              <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
-              <Input
-                placeholder="Search projects by title or description..."
-                className="pl-11 bg-slate-950/50 border-white/10 text-white rounded-2xl h-12 focus-visible:ring-emerald-500/50"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+      <div className="w-full space-y-8">
+        {/* Unified Header Section */}
+        <header className="sticky top-6 z-40 flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-slate-900/60 backdrop-blur-xl p-6 md:p-8 rounded-[2rem] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+          <div className="flex items-center gap-6">
+            <div className="relative">
+              <div className="absolute -left-4 top-1/2 -translate-y-1/2 w-1 h-8 bg-emerald-500 rounded-full blur-sm" />
+              <h1 className="text-3xl font-black text-white tracking-tight">
+                Project <span className="text-emerald-400">Portfolio</span>
+              </h1>
             </div>
-            <div className="flex gap-4">
-              <div className="w-48 shrink-0">
-                <Select
-                  value={filterCategory}
-                  onValueChange={(val) => val && setFilterCategory(val)}
-                >
-                  <SelectTrigger className="bg-slate-950/50 border-white/10 text-slate-200 rounded-2xl h-12">
-                    <div className="flex items-center gap-2">
-                      <FaFilter size={14} className="text-emerald-400" />
-                      <SelectValue placeholder="Category" />
-                    </div>
+            <div className="hidden xl:flex items-center gap-4 ml-4">
+               <div className="relative">
+                  <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+                  <Input 
+                    placeholder="Search..." 
+                    className="bg-slate-950/50 border-white/10 rounded-xl pl-12 w-64 h-11 focus-visible:ring-emerald-500/50"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+               </div>
+               <Select value={filterCategory} onValueChange={setFilterCategory}>
+                  <SelectTrigger className="bg-slate-950/50 border-white/10 rounded-xl w-44 h-11 text-slate-300">
+                     <SelectValue placeholder="All Categories" />
                   </SelectTrigger>
-                  <SelectContent className="bg-slate-900 border-white/10 text-slate-200">
-                    <SelectItem value="All">All Categories</SelectItem>
-                    {CATEGORY_OPTIONS.map((c) => (
-                      <SelectItem key={c} value={c}>
-                        {c}
-                      </SelectItem>
-                    ))}
+                  <SelectContent className="bg-slate-900 border-white/10 text-white">
+                     <SelectItem value="All">All Categories</SelectItem>
+                     {CATEGORY_OPTIONS.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                   </SelectContent>
-                </Select>
-              </div>
+               </Select>
             </div>
-          </CardContent>
-        </Card>
+          </div>
 
-        {/* Project List */}
-        {filteredProjects.length === 0 ? (
-          <div className="text-center py-20 bg-slate-900/20 rounded-3xl border border-dashed border-white/5">
-            <div className="w-16 h-16 bg-slate-800/50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-600">
-              <FaListUl size={24} />
-            </div>
-            <p className="text-slate-400 font-medium">
-              No projects found matching your criteria.
-            </p>
+          <div className="flex flex-wrap items-center gap-3">
             <Button
-              variant="link"
-              onClick={() => {
-                setSearchQuery("");
-                setFilterCategory("All");
-              }}
-              className="mt-2 text-emerald-400"
+              variant="outline"
+              onClick={addProject}
+              className="bg-slate-800 hover:bg-slate-700 text-white border-white/10 rounded-xl h-11 px-5 active:scale-95 transition-all text-xs font-bold"
             >
-              Clear filters
+              <FaPlus size={12} className="mr-2 text-emerald-400" /> New Project
+            </Button>
+            <div className="w-px h-6 bg-white/10 mx-1 hidden sm:block" />
+            <Button
+              onClick={handleSave}
+              disabled={saving}
+              className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold px-6 h-11 shadow-lg shadow-emerald-600/20 active:scale-95 transition-all group text-xs"
+            >
+              <FaSave
+                className={cn(
+                  "mr-2 transition-transform duration-500",
+                  saving ? "animate-spin" : "group-hover:rotate-12",
+                )}
+              />
+              {saving ? "Syncing..." : "Save Portfolio"}
             </Button>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-4">
+        </header>
+
+        <Card className="bg-slate-900/20 backdrop-blur-xl overflow-hidden shadow-2xl border border-white/5 rounded-[2.5rem]">
+          <CardContent className="p-0">
             <AnimatePresence mode="popLayout">
-              {loading
-                ? /* Skeleton Loader List */
-                  Array.from({ length: 3 }).map((_, i) => (
-                    <motion.div
-                      key={`skeleton-${i}`}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.1 }}
-                    >
-                      <Card className="rounded-3xl border border-white/5 bg-slate-900/20 backdrop-blur-sm overflow-hidden">
-                        <CardContent className="p-4 md:p-6 flex flex-col md:flex-row items-center gap-6">
-                          <div className="w-full md:w-32 h-32 rounded-2xl bg-slate-800/30 animate-pulse shrink-0" />
-                          <div className="flex-1 space-y-3">
-                            <div className="flex items-center gap-3">
-                              <div className="h-6 w-1/3 bg-slate-800/40 rounded-lg animate-pulse" />
-                              <div className="h-5 w-16 bg-slate-800/20 rounded-full animate-pulse" />
-                            </div>
-                            <div className="h-4 w-full bg-slate-800/10 rounded animate-pulse" />
-                            <div className="flex gap-2 pt-2">
-                              <div className="h-5 w-12 bg-slate-800/20 rounded-lg animate-pulse" />
-                              <div className="h-5 w-12 bg-slate-800/20 rounded-lg animate-pulse" />
-                              <div className="h-5 w-12 bg-slate-800/20 rounded-lg animate-pulse" />
-                            </div>
-                          </div>
-                          <div className="flex gap-2 shrink-0 md:pl-6 md:border-l md:border-white/5">
-                            <div className="w-10 h-10 bg-slate-800/30 rounded-xl animate-pulse" />
-                            <div className="w-10 h-10 bg-slate-800/30 rounded-xl animate-pulse" />
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  ))
-                : filteredProjects.map((p, idx) => (
-                    <motion.div
-                      key={p._id || idx}
-                      layout
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ delay: idx * 0.05 }}
-                    >
-                      <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl hover:border-emerald-500/30 transition-all group overflow-hidden">
-                        <CardContent className="p-4 md:p-6 flex flex-col md:flex-row items-center gap-6">
-                          {/* Image Preview */}
-                          <div className="w-full md:w-32 h-32 rounded-2xl bg-slate-950/50 overflow-hidden shrink-0 border border-white/5 relative group/img">
-                            <Image
-                              src={p.image || "/images/placeholder.png"}
-                              alt={p.title}
-                              fill
-                              className="object-cover transition-transform group-hover/img:scale-110"
-                              onError={(e) => {
-                                (e.target as any).src =
-                                  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Crect width='128' height='128' fill='%231e293b'/%3E%3C/svg%3E";
-                              }}
-                              unoptimized
-                            />
-                            {p.featured && (
-                              <div className="absolute top-2 left-2 p-1.5 bg-amber-500 text-white rounded-lg shadow-lg">
-                                <FaStar size={10} />
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Content */}
-                          <div className="flex-1 min-w-0 text-center md:text-left">
-                            <div className="flex flex-col md:flex-row md:items-center gap-2 mb-2">
-                              <h3 className="text-xl font-bold text-white truncate">
-                                {p.title}
-                              </h3>
-                              <div className="flex justify-center md:justify-start gap-2">
-                                <Badge
-                                  variant="outline"
-                                  className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                                >
-                                  {p.category}
-                                </Badge>
-                                {p.order !== undefined && (
-                                  <Badge
-                                    variant="outline"
-                                    className="bg-blue-500/10 text-blue-400 border-blue-500/20"
-                                  >
-                                    Order: {p.order}
-                                  </Badge>
-                                )}
-                              </div>
-                            </div>
-                            <p className="text-slate-400 text-sm line-clamp-2 mb-4">
-                              {p.description}
-                            </p>
-                            <div className="flex flex-wrap justify-center md:justify-start gap-2">
-                              {p.techNames.map((t) => (
-                                <span
-                                  key={t}
-                                  className="px-2 py-1 bg-slate-950/50 text-slate-500 border border-white/5 rounded-lg text-[10px] font-bold uppercase tracking-wider"
-                                >
-                                  {t}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Actions */}
-                          <div className="flex items-center gap-2 md:pl-6 md:border-l md:border-white/10 shrink-0">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => openEdit(p)}
-                              className="w-10 h-10 rounded-xl bg-slate-950/30 text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
-                            >
-                              <FaEdit size={16} />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleDelete(p._id!)}
-                              className="w-10 h-10 rounded-xl bg-slate-950/30 text-slate-400 hover:text-red-400 hover:bg-red-400/10 transition-all"
-                            >
-                              <FaTrash size={16} />
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  ))}
-            </AnimatePresence>
-          </div>
-        )}
-      </div>
-
-      {/* Form Modal */}
-      <AnimatePresence>
-        {showForm && (
-          <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={closeForm}
-              className="absolute inset-0 bg-slate-950/80 backdrop-blur-md"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-3xl max-h-[90vh] overflow-hidden"
-            >
-              <Card className="rounded-[2.5rem] border border-white/10 bg-slate-900 shadow-2xl flex flex-col h-full overflow-hidden">
-                <CardHeader className="p-8 border-b border-white/5 shrink-0">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="p-3 bg-emerald-500/20 text-emerald-400 rounded-2xl">
-                        <FaEdit size={24} />
-                      </div>
-                      <div>
-                        <CardTitle className="text-2xl font-bold text-white">
-                          {editing ? "Edit Project" : "New Project"}
-                        </CardTitle>
-                        <CardDescription>
-                          Fill in the details for your project showcase.
-                        </CardDescription>
+              {loading ? (
+                Array.from({ length: 2 }).map((_, i) => (
+                  <div key={i} className="p-8 bg-slate-950/20 space-y-6 animate-pulse border-b border-white/5">
+                    <div className="flex gap-8">
+                      <div className="w-48 h-48 bg-slate-800/40 rounded-3xl" />
+                      <div className="flex-1 space-y-4">
+                        <div className="h-10 w-full bg-slate-800/30 rounded-xl" />
+                        <div className="h-10 w-1/2 bg-slate-800/30 rounded-xl" />
                       </div>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={closeForm}
-                      className="rounded-full text-slate-500"
-                    >
-                      <FaTimes size={20} />
-                    </Button>
                   </div>
-                </CardHeader>
-
-                <div className="p-8 overflow-y-auto space-y-8 custom-scrollbar">
-                  {/* Basic Info */}
-                  <section className="space-y-4">
-                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />{" "}
-                      Basics
-                    </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-400 ml-1">
-                          Title
-                        </label>
-                        <Input
-                          className="bg-slate-950/50 border-white/10 text-white rounded-xl focus-visible:ring-emerald-500/50"
-                          value={form.title}
-                          onChange={(e) =>
-                            setForm((f) => ({
-                              ...f,
-                              title: e.target.value,
-                              slug: slugify(e.target.value),
-                            }))
-                          }
-                          placeholder="Modern Portfolio Website"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-400 ml-1">
-                          Slug
-                        </label>
-                        <Input
-                          className="bg-slate-950/50 border-white/10 text-white rounded-xl focus-visible:ring-emerald-500/50"
-                          value={form.slug}
-                          onChange={(e) =>
-                            setForm((f) => ({ ...f, slug: e.target.value }))
-                          }
-                          placeholder="modern-portfolio"
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-slate-400 ml-1">
-                        Description
-                      </label>
-                      <Textarea
-                        className="bg-slate-950/50 border-white/10 text-white rounded-xl min-h-[100px] resize-none focus-visible:ring-emerald-500/50"
-                        value={form.description}
-                        onChange={(e) =>
-                          setForm((f) => ({
-                            ...f,
-                            description: e.target.value,
-                          }))
-                        }
-                        placeholder="A detailed description of the project, goals, and results..."
-                      />
-                    </div>
-                  </section>
-
-                  {/* Media & Links */}
-                  <section className="space-y-4">
-                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />{" "}
-                      Media & Links
-                    </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-                      <div className="space-y-4">
+                ))
+              ) : filtered.length === 0 ? (
+                <div className="p-24 text-center">
+                   <div className="w-24 h-24 bg-slate-900 rounded-3xl flex items-center justify-center mx-auto mb-6 text-slate-700">
+                    <FaCode size={48} />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-2">Your Digital Legacy</h3>
+                  <p className="text-slate-500 mb-10 max-w-sm mx-auto">
+                    Manage your full-stack projects, AI experiments, and mobile applications.
+                  </p>
+                  <Button
+                    onClick={addProject}
+                    className="bg-emerald-600/10 text-emerald-400 hover:bg-emerald-600/20 border border-emerald-500/20 rounded-2xl px-10 h-14 font-bold text-lg"
+                  >
+                    Add First Project
+                  </Button>
+                </div>
+              ) : (
+                filtered.map((proj, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className="group relative p-6 md:p-8 bg-slate-950/20 transition-all border-b border-white/5 last:border-0"
+                  >
+                    <div className="flex flex-col xl:flex-row gap-8">
+                      {/* Image Section */}
+                      <div className="w-full xl:w-64 shrink-0 space-y-3">
                         <ImageUpload
-                          label="Project Image"
-                          value={form.image}
-                          onChange={(url) =>
-                            setForm((f) => ({ ...f, image: url }))
-                          }
+                          label="Project Showcase"
+                          value={proj.image || ""}
+                          onChange={(url) => updateProject(i, "image", url)}
                         />
+                        <div className="flex items-center justify-between gap-2">
+                           <div className="flex gap-2">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => move(i, "up")}
+                                disabled={i === 0}
+                                className="h-8 w-8 rounded-lg bg-slate-900 border border-white/5 text-slate-500 hover:text-white disabled:opacity-20"
+                              >
+                                <FaArrowUp size={10} />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => move(i, "down")}
+                                disabled={i === data.length - 1}
+                                className="h-8 w-8 rounded-lg bg-slate-900 border border-white/5 text-slate-500 hover:text-white disabled:opacity-20"
+                              >
+                                <FaArrowDown size={10} />
+                              </Button>
+                           </div>
+                           <Button
+                              onClick={() => updateProject(i, "featured", !proj.featured)}
+                              className={cn(
+                                "h-8 px-3 rounded-lg text-[10px] font-black uppercase transition-all border",
+                                proj.featured 
+                                  ? "bg-amber-500 border-amber-500 text-white shadow-lg shadow-amber-500/20" 
+                                  : "bg-slate-900 border-white/5 text-slate-500 hover:text-slate-300"
+                              )}
+                           >
+                              {proj.featured ? <FaStar className="inline mr-1" /> : <FaRegStar className="inline mr-1" />}
+                              Featured
+                           </Button>
+                        </div>
                       </div>
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium text-slate-400 ml-1">
-                            GitHub URL
+
+                      {/* Info Grid */}
+                      <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4 relative z-10">
+                        {/* Title & Slug */}
+                        <div className="space-y-4 md:col-span-2">
+                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="space-y-1.5">
+                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
+                                  Project Title
+                                </label>
+                                <div className="relative group/input">
+                                  <FaCode className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-emerald-400 transition-colors" />
+                                  <Input
+                                    className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-emerald-500/50 focus-visible:bg-slate-900 transition-all font-bold text-sm"
+                                    value={proj.title}
+                                    onChange={(e) => updateProject(i, "title", e.target.value)}
+                                    placeholder="e.g. Nexus Dashboard"
+                                  />
+                                </div>
+                              </div>
+                              <div className="space-y-1.5">
+                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
+                                  URL Slug
+                                </label>
+                                <Input
+                                  className="bg-slate-900/50 border-white/10 text-white rounded-xl h-11 focus-visible:ring-emerald-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
+                                  value={proj.slug}
+                                  onChange={(e) => updateProject(i, "slug", e.target.value)}
+                                  placeholder="nexus-dashboard"
+                                />
+                              </div>
+                           </div>
+                        </div>
+
+                        {/* Category */}
+                        <div className="space-y-1.5 lg:col-span-1">
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
+                            Primary Category
                           </label>
-                          <div className="relative">
-                            <FaGithub className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
+                          <div className="relative group/input">
+                            <FaLayerGroup className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-emerald-400 transition-colors z-10 pointer-events-none" />
+                            <Select value={proj.category} onValueChange={(v) => updateProject(i, "category", v)}>
+                               <SelectTrigger className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-emerald-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm">
+                                  <SelectValue placeholder="Category" />
+                               </SelectTrigger>
+                               <SelectContent className="bg-slate-900 border-white/10 text-white rounded-xl">
+                                  {CATEGORY_OPTIONS.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                               </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+
+                        {/* Links */}
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
+                            GitHub Repository
+                          </label>
+                          <div className="relative group/input">
+                            <FaGithub className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-emerald-400 transition-colors" />
                             <Input
-                              className="pl-10 bg-slate-950/50 border-white/10 text-white rounded-xl focus-visible:ring-emerald-500/50"
-                              value={form.github}
-                              onChange={(e) =>
-                                setForm((f) => ({
-                                  ...f,
-                                  github: e.target.value,
-                                }))
-                              }
+                              className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-emerald-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
+                              value={proj.github || ""}
+                              onChange={(e) => updateProject(i, "github", e.target.value)}
                               placeholder="https://github.com/..."
                             />
                           </div>
                         </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium text-slate-400 ml-1">
-                            Live Demo URL
+                        <div className="space-y-1.5 md:col-span-1">
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
+                            Live Demo / Site
                           </label>
-                          <div className="relative">
-                            <FaExternalLinkAlt className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs" />
+                          <div className="relative group/input">
+                            <FaExternalLinkAlt className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-emerald-400 transition-colors text-xs" />
                             <Input
-                              className="pl-10 bg-slate-950/50 border-white/10 text-white rounded-xl focus-visible:ring-emerald-500/50"
-                              value={form.live}
-                              onChange={(e) =>
-                                setForm((f) => ({ ...f, live: e.target.value }))
-                              }
-                              placeholder="https://project-demo.com"
+                              className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-emerald-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
+                              value={proj.live || ""}
+                              onChange={(e) => updateProject(i, "live", e.target.value)}
+                              placeholder="https://project.com"
                             />
                           </div>
                         </div>
+
+                        {/* Tech Stack Manager */}
+                        <div className="space-y-4 md:col-span-2 lg:col-span-1">
+                           <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
+                            Tech Stack
+                          </label>
+                          <div className="flex gap-2">
+                             <div className="relative group/input flex-1">
+                                <FaCode className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-emerald-400 transition-colors" />
+                                <Input
+                                  className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-emerald-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
+                                  value={newTechInputs[i] || ""}
+                                  onChange={(e) => setNewTechInputs(prev => ({...prev, [i]: e.target.value}))}
+                                  onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addTech(i))}
+                                  placeholder="Add tech..."
+                                />
+                             </div>
+                             <Button onClick={() => addTech(i)} className="bg-slate-800 hover:bg-slate-700 rounded-xl h-11 w-11 p-0 border border-white/5"><FaPlus size={12} /></Button>
+                          </div>
+                          <div className="flex flex-wrap gap-1">
+                             {proj.techNames?.map((t, tIdx) => (
+                               <Badge key={tIdx} className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[9px] uppercase font-black px-2 py-0.5 rounded-md gap-1">
+                                 {t}
+                                 <button onClick={() => removeTech(i, tIdx)} className="hover:text-red-400"><FaTimes size={8} /></button>
+                               </Badge>
+                             ))}
+                          </div>
+                        </div>
+
+                        {/* Improvements Manager */}
+                        <div className="space-y-4 md:col-span-2 lg:col-span-3">
+                           <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
+                            Key Features & Technical Improvements
+                          </label>
+                          <div className="flex gap-2">
+                             <div className="relative group/input flex-1">
+                                <FaInfoCircle className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-emerald-400 transition-colors" />
+                                <Input
+                                  className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-emerald-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
+                                  value={newImprovementInputs[i] || ""}
+                                  onChange={(e) => setNewImprovementInputs(prev => ({...prev, [i]: e.target.value}))}
+                                  onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addImprovement(i))}
+                                  placeholder="Optimized bundle size by 40%..."
+                                />
+                             </div>
+                             <Button onClick={() => addImprovement(i)} className="bg-slate-800 hover:bg-slate-700 rounded-xl h-11 w-11 p-0 border border-white/5"><FaPlus size={12} /></Button>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                             {proj.improvements?.map((imp, impIdx) => (
+                               <div key={impIdx} className="flex items-center gap-3 bg-slate-950/40 border border-white/5 rounded-xl p-3 group/detail">
+                                  <div className="w-1 h-1 rounded-full bg-emerald-500" />
+                                  <span className="text-xs text-slate-300 flex-1 line-clamp-1">{imp}</span>
+                                  <Button variant="ghost" size="icon" onClick={() => removeImprovement(i, impIdx)} className="h-6 w-6 text-slate-600 hover:text-red-400 hover:bg-red-400/10 rounded-lg"><FaTimes size={10} /></Button>
+                               </div>
+                             ))}
+                          </div>
+                        </div>
+
+                        {/* Description */}
+                        <div className="space-y-1.5 md:col-span-3">
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
+                            Project Narrative / Overview
+                          </label>
+                          <Textarea
+                            className="bg-slate-900/50 border-white/10 text-white rounded-xl min-h-[100px] focus-visible:ring-emerald-500/50 focus-visible:bg-slate-900 transition-all font-medium leading-relaxed"
+                            value={proj.description}
+                            onChange={(e) => updateProject(i, "description", e.target.value)}
+                            placeholder="Tell the story of this project..."
+                          />
+                        </div>
                       </div>
                     </div>
-                  </section>
 
-                  {/* Attributes */}
-                  <section className="space-y-4">
-                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />{" "}
-                      Attributes
-                    </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-400 ml-1">
-                          Category
-                        </label>
-                        <Select
-                          value={form.category}
-                          onValueChange={(val) =>
-                            val && setForm((f) => ({ ...f, category: val }))
-                          }
-                        >
-                          <SelectTrigger className="bg-slate-950/50 border-white/10 text-slate-200 rounded-xl">
-                            <SelectValue placeholder="Select Category" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-slate-900 border-white/10 text-slate-200">
-                            {CATEGORY_OPTIONS.map((c) => (
-                              <SelectItem key={c} value={c}>
-                                {c}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                    {/* Actions Area */}
+                    <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-slate-600 text-[10px] font-bold uppercase tracking-widest">
+                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" /> Project #{i + 1}
                       </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-400 ml-1">
-                          Display Order
-                        </label>
-                        <Input
-                          type="number"
-                          className="bg-slate-950/50 border-white/10 text-white rounded-xl focus-visible:ring-emerald-500/50"
-                          value={form.order ?? 0}
-                          onChange={(e) =>
-                            setForm((f) => ({ ...f, order: +e.target.value }))
-                          }
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-400 ml-1">
-                          Feature Project
-                        </label>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() =>
-                            setForm((f) => ({ ...f, featured: !f.featured }))
-                          }
-                          className={cn(
-                            "w-full rounded-xl border transition-all h-10",
-                            form.featured
-                              ? "bg-amber-500/20 border-amber-500/50 text-amber-400 hover:bg-amber-500/30"
-                              : "bg-slate-950/50 border-white/10 text-slate-500 hover:bg-slate-900",
-                          )}
-                        >
-                          {form.featured ? (
-                            <FaStar className="mr-2" />
-                          ) : (
-                            <FaRegStar className="mr-2" />
-                          )}
-                          {form.featured ? "Featured" : "Regular"}
-                        </Button>
-                      </div>
+                      <Button
+                        variant="ghost"
+                        onClick={() => setData((prev) => prev.filter((_, idx) => idx !== i))}
+                        className="text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl px-5 h-10 font-bold transition-all flex items-center gap-2 group text-xs"
+                      >
+                        <FaTrash size={12} className="group-hover:animate-bounce" /> Remove
+                      </Button>
                     </div>
-                  </section>
-
-                  {/* Tech Stack */}
-                  <section className="space-y-4">
-                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-purple-500" />{" "}
-                      Technologies
-                    </h4>
-                    <div className="flex flex-wrap gap-2 p-4 bg-slate-950/30 rounded-2xl border border-white/5">
-                      {TECH_OPTIONS.map((t) => (
-                        <button
-                          key={t}
-                          type="button"
-                          onClick={() => toggleTech(t)}
-                          className={cn(
-                            "px-3 py-1.5 rounded-xl text-xs font-bold transition-all border",
-                            form.techNames.includes(t)
-                              ? "bg-emerald-500 text-white border-emerald-500 shadow-lg shadow-emerald-500/20"
-                              : "bg-slate-950/50 border-white/5 text-slate-500 hover:border-white/20",
-                          )}
-                        >
-                          {t}
-                        </button>
-                      ))}
-                    </div>
-                  </section>
-
-                  {/* Improvements */}
-                  <section className="space-y-4">
-                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-pink-500" />{" "}
-                      Key Points & Features
-                    </h4>
-                    <div className="space-y-3">
-                      <div className="flex gap-2">
-                        <Input
-                          className="bg-slate-950/50 border-white/10 text-white rounded-xl focus-visible:ring-pink-500/50"
-                          value={improvementInput}
-                          onChange={(e) => setImprovementInput(e.target.value)}
-                          onKeyDown={(e) =>
-                            e.key === "Enter" &&
-                            (e.preventDefault(), addImprovement())
-                          }
-                          placeholder="Implemented dark mode with system preference..."
-                        />
-                        <Button
-                          onClick={addImprovement}
-                          className="bg-slate-800 hover:bg-slate-700 text-white rounded-xl h-10 w-10 p-0"
-                        >
-                          <FaPlus />
-                        </Button>
-                      </div>
-                      <div className="grid grid-cols-1 gap-2">
-                        <AnimatePresence>
-                          {form.improvements.map((imp, i) => (
-                            <motion.div
-                              key={i}
-                              initial={{ opacity: 0, x: -10 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              exit={{ opacity: 0, scale: 0.95 }}
-                              className="flex items-center gap-3 bg-slate-950/40 border border-white/5 rounded-xl p-3 group"
-                            >
-                              <div className="w-1.5 h-1.5 rounded-full bg-slate-700 group-hover:bg-pink-500 transition-colors" />
-                              <span className="text-sm text-slate-300 flex-1">
-                                {imp}
-                              </span>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => removeImprovement(i)}
-                                className="h-7 w-7 text-slate-600 hover:text-red-400"
-                              >
-                                <FaTimes size={12} />
-                              </Button>
-                            </motion.div>
-                          ))}
-                        </AnimatePresence>
-                      </div>
-                    </div>
-                  </section>
-                </div>
-
-                <CardHeader className="p-8 border-t border-white/5 shrink-0 bg-slate-900/50">
-                  <div className="flex justify-end gap-4">
-                    <Button
-                      variant="ghost"
-                      onClick={closeForm}
-                      className="text-slate-400 hover:text-white rounded-xl px-6 h-12"
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      onClick={handleSave}
-                      disabled={saving}
-                      className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold px-10 h-12 shadow-lg shadow-emerald-600/20 transition-all active:scale-95"
-                    >
-                      <FaSave
-                        className={cn("mr-2", saving && "animate-spin")}
-                      />
-                      {saving
-                        ? "Saving..."
-                        : editing
-                          ? "Update Project"
-                          : "Create Project"}
-                    </Button>
-                  </div>
-                </CardHeader>
-              </Card>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+                  </motion.div>
+                ))
+              )}
+            </AnimatePresence>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

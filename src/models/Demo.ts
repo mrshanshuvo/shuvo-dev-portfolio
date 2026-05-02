@@ -19,6 +19,11 @@ const DemoSchema = new Schema<IDemo>(
   { timestamps: true },
 );
 
+// Force delete the model from mongoose.models in development to pick up schema changes
+if (process.env.NODE_ENV === "development") {
+  delete mongoose.models.Demo;
+}
+
 const Demo: Model<IDemo> =
   mongoose.models.Demo || mongoose.model<IDemo>("Demo", DemoSchema);
 
