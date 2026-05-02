@@ -76,7 +76,62 @@ export default function AdminEducationPage() {
       return next;
     });
   }
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8">
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className={`fixed top-6 right-6 z-50 px-6 py-4 rounded-2xl shadow-2xl backdrop-blur-xl border flex items-center gap-3 ${
+              toast.type === "success"
+                ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
+                : "bg-red-500/20 border-red-500/50 text-red-400"
+            }`}
+          >
+            {toast.type === "success" ? <FaCheck /> : <FaTimes />}
+            <span className="font-semibold">{toast.msg}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
+      <div className="max-w-4xl mx-auto">
+        <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+          <div>
+            <h1 className="text-4xl font-bold text-white tracking-tight mb-2">
+              Education
+            </h1>
+            <p className="text-slate-400">
+              Manage your academic qualifications and degrees.
+            </p>
+          </div>
+          <Button
+            onClick={handleSave}
+            disabled={saving}
+            className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold px-8 shadow-lg shadow-emerald-600/20"
+          >
+            <FaSave className={cn("mr-2", saving && "animate-spin")} />
+            {saving ? "Saving..." : "Save Education"}
+          </Button>
+        </header>
+
+        <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-xl font-bold text-white">
+                Academic Background
+              </CardTitle>
+              <Button
+                variant="outline"
+                onClick={addEdu}
+                className="bg-slate-800 hover:bg-slate-700 text-slate-200 border-white/5 rounded-xl"
+              >
+                <FaPlus size={12} className="mr-2" /> Add Entry
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-6">
             <AnimatePresence mode="popLayout">
               {loading ? (
                 /* Skeleton Loader List */
