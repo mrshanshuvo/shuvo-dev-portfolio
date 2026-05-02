@@ -22,8 +22,10 @@ export interface Experience {
   _id?: string;
   title: string;
   org: string;
+  location?: string;
   duration: string;
   details: string[];
+  logo?: string;
   color: "emerald" | "blue" | "amber";
   type: "work" | "education" | "certification";
   order?: number;
@@ -140,6 +142,7 @@ export interface Certification {
   date: string;
   link?: string;
   image?: string;
+  details: string[];
   order: number;
 }
 
