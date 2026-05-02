@@ -6,8 +6,8 @@ export interface IProject extends Document {
   description: string;
   image: string;
   techNames: string[];
-  github: string;
-  live: string;
+  live: { label?: string; url: string }[];
+  github: { label?: string; url: string }[];
   featured: boolean;
   category: string;
   improvements: string[];
@@ -29,8 +29,18 @@ const ProjectSchema = new Schema<IProject>(
     description: { type: String, required: true },
   image: { type: String }, // Optional for backward compatibility
     techNames: [{ type: String }],
-    github: { type: String, default: "" },
-    live: { type: String, default: "" },
+    github: [
+      {
+        label: { type: String, default: "Repository" },
+        url: { type: String, required: true },
+      },
+    ],
+    live: [
+      {
+        label: { type: String, default: "Live Demo" },
+        url: { type: String, required: true },
+      },
+    ],
     featured: { type: Boolean, default: false },
     category: { type: String, default: "Full Stack" },
     improvements: [{ type: String }],

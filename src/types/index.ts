@@ -9,6 +9,11 @@ export interface MediaItem {
   thumbnail?: string;
 }
 
+export interface LinkItem {
+  label?: string;
+  url: string;
+}
+
 export interface Project {
   _id?: string;
   title: string;
@@ -17,8 +22,8 @@ export interface Project {
   image: string;
   technologies?: IconType[]; // frontend-only, built from techNames
   techNames: string[];
-  github: string;
-  live: string;
+  github: LinkItem[];
+  live: LinkItem[];
   featured: boolean;
   category: string;
   improvements: string[];

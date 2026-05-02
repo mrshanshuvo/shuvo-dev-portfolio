@@ -21,6 +21,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import ImageUpload from "../components/ImageUpload";
 import MediaGalleryManager from "../components/MediaGalleryManager";
+import MultiLinkManager from "../components/MultiLinkManager";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -93,8 +94,8 @@ export default function AdminProjectsPage() {
         description: "Showcase your work here...",
         image: "",
         techNames: ["React", "Next.js"],
-        github: "",
-        live: "",
+        github: [],
+        live: [],
         featured: false,
         category: "Full Stack",
         improvements: [],
@@ -275,7 +276,7 @@ export default function AdminProjectsPage() {
                   >
                     <div className="flex flex-col xl:flex-row gap-8">
                       {/* Media Gallery */}
-                      <div className="w-full xl:w-[35rem] shrink-0 space-y-6">
+                      <div className="w-full xl:w-140 shrink-0 space-y-6">
                         <MediaGalleryManager
                           media={proj.media || []}
                           onChange={(m) => updateProject(i, "media", m)}
@@ -368,35 +369,21 @@ export default function AdminProjectsPage() {
                           </div>
                         </div>
 
-                        {/* Links */}
-                        <div className="space-y-1.5">
-                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
-                            GitHub Repository
-                          </label>
-                          <div className="relative group/input">
-                            <FaGithub className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-emerald-400 transition-colors" />
-                            <Input
-                              className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-emerald-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
-                              value={proj.github || ""}
-                              onChange={(e) => updateProject(i, "github", e.target.value)}
-                              placeholder="https://github.com/..."
-                            />
-                          </div>
-                        </div>
-                        <div className="space-y-1.5 md:col-span-1">
-                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
-                            Live Demo / Site
-                          </label>
-                          <div className="relative group/input">
-                            <FaExternalLinkAlt className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-emerald-400 transition-colors text-xs" />
-                            <Input
-                              className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-emerald-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
-                              value={proj.live || ""}
-                              onChange={(e) => updateProject(i, "live", e.target.value)}
-                              placeholder="https://project.com"
-                            />
-                          </div>
-                        </div>
+                        {/* Links Section */}
+                        <section className="space-y-8 bg-slate-950/20 p-6 rounded-[2rem] border border-white/5 md:col-span-3">
+                          <MultiLinkManager
+                            label="Repositories & Codebases"
+                            iconType="github"
+                            links={proj.github || []}
+                            onChange={(l) => updateProject(i, "github", l)}
+                          />
+                          <MultiLinkManager
+                            label="Live Deployments & Sites"
+                            iconType="live"
+                            links={proj.live || []}
+                            onChange={(l) => updateProject(i, "live", l)}
+                          />
+                        </section>
 
                         {/* Tech Stack Manager */}
                         <div className="space-y-4 md:col-span-2 lg:col-span-1">

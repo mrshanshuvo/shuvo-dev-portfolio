@@ -10,7 +10,20 @@ export async function GET() {
 
     await connectDB();
     const projects = await Project.find().sort({ order: 1 }).lean();
-    return NextResponse.json(projects);
+    
+    // Sanitize for frontend consistency (self-healing on read)
+    const sanitized = projects.map((p: any) => ({
+      ...p,
+      github: Array.isArray(p.github) 
+        ? p.github 
+        : p.github ? [{ label: "Repository", url: p.github }] : [],
+      live: Array.isArray(p.live) 
+        ? p.live 
+        : p.live ? [{ label: "Live Demo", url: p.live }] : [],
+      media: Array.isArray(p.media) ? p.media : [],
+    }));
+
+    return NextResponse.json(sanitized);
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch" }, { status: 500 });
   }
@@ -41,8 +54,12 @@ export async function PUT(req: Request) {
           description: it.description,
           image: it.image || (media[0]?.type === "image" ? media[0].url : ""),
           techNames: Array.isArray(it.techNames) ? it.techNames : [],
-          github: it.github || "",
-          live: it.live || "",
+          github: Array.isArray(it.github) 
+            ? it.github.map((g: any) => ({ label: g.label || "Repository", url: g.url || "" }))
+            : it.github ? [{ label: "Repository", url: it.github }] : [],
+          live: Array.isArray(it.live)
+            ? it.live.map((l: any) => ({ label: l.label || "Live Demo", url: l.url || "" }))
+            : it.live ? [{ label: "Live Demo", url: it.live }] : [],
           featured: !!it.featured,
           category: it.category || "Full Stack",
           improvements: Array.isArray(it.improvements) ? it.improvements : [],

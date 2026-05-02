@@ -101,7 +101,11 @@ export default function AdminDemosPage() {
   }
 
   function removeTech(i: number, tIdx: number) {
-    updateDemo(i, "tech", data[i].tech.filter((_, idx) => idx !== tIdx));
+    updateDemo(
+      i,
+      "tech",
+      data[i].tech.filter((_, idx) => idx !== tIdx),
+    );
   }
 
   return (
@@ -118,7 +122,9 @@ export default function AdminDemosPage() {
                 : "bg-red-500/20 border-red-500/50 text-red-400"
             }`}
           >
-            <div className={`p-2 rounded-full ${toast.type === "success" ? "bg-emerald-500/20" : "bg-red-500/20"}`}>
+            <div
+              className={`p-2 rounded-full ${toast.type === "success" ? "bg-emerald-500/20" : "bg-red-500/20"}`}
+            >
               {toast.type === "success" ? <FaCheck /> : <FaTimes />}
             </div>
             <span className="font-semibold">{toast.msg}</span>
@@ -150,7 +156,8 @@ export default function AdminDemosPage() {
               onClick={addDemo}
               className="bg-slate-800 hover:bg-slate-700 text-white border-white/10 rounded-xl h-11 px-5 active:scale-95 transition-all text-xs font-bold"
             >
-              <FaPlus size={12} className="mr-2 text-purple-400" /> New Experiment
+              <FaPlus size={12} className="mr-2 text-purple-400" /> New
+              Experiment
             </Button>
             <div className="w-px h-6 bg-white/10 mx-1 hidden sm:block" />
             <Button
@@ -174,7 +181,10 @@ export default function AdminDemosPage() {
             <AnimatePresence mode="popLayout">
               {loading ? (
                 Array.from({ length: 2 }).map((_, i) => (
-                  <div key={i} className="p-8 bg-slate-950/20 space-y-6 animate-pulse border-b border-white/5">
+                  <div
+                    key={i}
+                    className="p-8 bg-slate-950/20 space-y-6 animate-pulse border-b border-white/5"
+                  >
                     <div className="h-10 w-full bg-slate-800/30 rounded-xl" />
                     <div className="h-10 w-1/2 bg-slate-800/30 rounded-xl" />
                     <div className="h-24 w-full bg-slate-800/10 rounded-xl" />
@@ -185,9 +195,12 @@ export default function AdminDemosPage() {
                   <div className="w-24 h-24 bg-slate-900 rounded-3xl flex items-center justify-center mx-auto mb-6 text-slate-700">
                     <FaFlask size={48} />
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-2">Unleash Creativity</h3>
+                  <h3 className="text-2xl font-bold text-white mb-2">
+                    Unleash Creativity
+                  </h3>
                   <p className="text-slate-500 mb-10 max-w-sm mx-auto">
-                    Showcase your live demos, side projects, and interactive experiments.
+                    Showcase your live demos, side projects, and interactive
+                    experiments.
                   </p>
                   <Button
                     onClick={addDemo}
@@ -207,33 +220,33 @@ export default function AdminDemosPage() {
                   >
                     <div className="flex flex-col lg:flex-row gap-8">
                       {/* Left: Media Gallery */}
-                      <div className="w-full lg:w-[35rem] shrink-0 space-y-6">
+                      <div className="w-full lg:w-140 shrink-0 space-y-6">
                         <MediaGalleryManager
                           media={item.media || []}
                           onChange={(m) => updateDemo(i, "media", m)}
                           label="Demo Media Showcase"
                         />
                         <div className="flex items-center justify-center gap-4">
-                           <div className="flex gap-2 p-1 bg-slate-900/50 rounded-xl border border-white/5">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => move(i, "up")}
-                                disabled={i === 0}
-                                className="h-9 w-9 rounded-lg bg-slate-950 border border-white/5 text-slate-500 hover:text-white hover:bg-slate-800 disabled:opacity-20 transition-all"
-                              >
-                                <FaArrowUp size={12} />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => move(i, "down")}
-                                disabled={i === data.length - 1}
-                                className="h-9 w-9 rounded-lg bg-slate-950 border border-white/5 text-slate-500 hover:text-white hover:bg-slate-800 disabled:opacity-20 transition-all"
-                              >
-                                <FaArrowDown size={12} />
-                              </Button>
-                           </div>
+                          <div className="flex gap-2 p-1 bg-slate-900/50 rounded-xl border border-white/5">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => move(i, "up")}
+                              disabled={i === 0}
+                              className="h-9 w-9 rounded-lg bg-slate-950 border border-white/5 text-slate-500 hover:text-white hover:bg-slate-800 disabled:opacity-20 transition-all"
+                            >
+                              <FaArrowUp size={12} />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => move(i, "down")}
+                              disabled={i === data.length - 1}
+                              className="h-9 w-9 rounded-lg bg-slate-950 border border-white/5 text-slate-500 hover:text-white hover:bg-slate-800 disabled:opacity-20 transition-all"
+                            >
+                              <FaArrowDown size={12} />
+                            </Button>
+                          </div>
                         </div>
                       </div>
 
@@ -249,7 +262,9 @@ export default function AdminDemosPage() {
                             <Input
                               className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-purple-500/50 focus-visible:bg-slate-900 transition-all font-bold text-sm"
                               value={item.title}
-                              onChange={(e) => updateDemo(i, "title", e.target.value)}
+                              onChange={(e) =>
+                                updateDemo(i, "title", e.target.value)
+                              }
                               placeholder="e.g. AI Text Summarizer"
                             />
                           </div>
@@ -265,7 +280,9 @@ export default function AdminDemosPage() {
                             <Input
                               className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-purple-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
                               value={item.url}
-                              onChange={(e) => updateDemo(i, "url", e.target.value)}
+                              onChange={(e) =>
+                                updateDemo(i, "url", e.target.value)
+                              }
                               placeholder="https://lab.yourdomain.com/demo"
                             />
                           </div>
@@ -277,30 +294,35 @@ export default function AdminDemosPage() {
                             Tech Stack & Core Technologies
                           </label>
                           <div className="flex gap-2">
-                             <div className="relative group/input flex-1">
-                                <FaCode className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-purple-400 transition-colors" />
-                                <Input
-                                  className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-purple-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
-                                  value={techInputs[i] || ""}
-                                  onChange={(e) => setTechInputs(prev => ({...prev, [i]: e.target.value}))}
-                                  onKeyDown={(e) => {
-                                    if (e.key === "Enter") {
-                                      e.preventDefault();
-                                      addTech(i);
-                                    }
-                                  }}
-                                  placeholder="Add tech (e.g. PyTorch)..."
-                                />
-                             </div>
-                             <Button
+                            <div className="relative group/input flex-1">
+                              <FaCode className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-purple-400 transition-colors" />
+                              <Input
+                                className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-purple-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
+                                value={techInputs[i] || ""}
+                                onChange={(e) =>
+                                  setTechInputs((prev) => ({
+                                    ...prev,
+                                    [i]: e.target.value,
+                                  }))
+                                }
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") {
+                                    e.preventDefault();
+                                    addTech(i);
+                                  }
+                                }}
+                                placeholder="Add tech (e.g. PyTorch)..."
+                              />
+                            </div>
+                            <Button
                               type="button"
                               onClick={() => addTech(i)}
                               className="bg-slate-800 hover:bg-slate-700 text-white rounded-xl h-11 w-11 p-0 shrink-0 border border-white/5"
-                             >
+                            >
                               <FaPlus size={14} />
-                             </Button>
+                            </Button>
                           </div>
-                          
+
                           <div className="flex flex-wrap gap-2">
                             <AnimatePresence mode="popLayout">
                               {item.tech?.map((t, tIdx) => (
@@ -338,7 +360,9 @@ export default function AdminDemosPage() {
                             <Textarea
                               className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 min-h-[100px] focus-visible:ring-purple-500/50 focus-visible:bg-slate-900 transition-all font-medium leading-relaxed"
                               value={item.description}
-                              onChange={(e) => updateDemo(i, "description", e.target.value)}
+                              onChange={(e) =>
+                                updateDemo(i, "description", e.target.value)
+                              }
                               placeholder="What is this experiment about? What are the key features?"
                             />
                           </div>
@@ -349,14 +373,21 @@ export default function AdminDemosPage() {
                     {/* Actions Area */}
                     <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
                       <div className="flex items-center gap-2 text-slate-600 text-[10px] font-bold uppercase tracking-widest">
-                        <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" /> Experiment #{i + 1}
+                        <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />{" "}
+                        Experiment #{i + 1}
                       </div>
                       <Button
                         variant="ghost"
-                        onClick={() => setData((prev) => prev.filter((_, idx) => idx !== i))}
+                        onClick={() =>
+                          setData((prev) => prev.filter((_, idx) => idx !== i))
+                        }
                         className="text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl px-5 h-10 font-bold transition-all flex items-center gap-2 group text-xs"
                       >
-                        <FaTrash size={12} className="group-hover:animate-bounce" /> Remove
+                        <FaTrash
+                          size={12}
+                          className="group-hover:animate-bounce"
+                        />{" "}
+                        Remove
                       </Button>
                     </div>
                   </motion.div>
