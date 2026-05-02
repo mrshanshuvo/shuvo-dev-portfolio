@@ -8,7 +8,7 @@ export async function GET() {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   await connectDB();
-  const experiences = await Experience.find().sort({ order: 1 }).lean();
+  const experiences = await Experience.find({ type: "work" }).sort({ order: 1 }).lean();
   return NextResponse.json(experiences);
 }
 

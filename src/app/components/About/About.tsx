@@ -3,6 +3,7 @@ import AboutModel from "@/models/About";
 import SkillModel from "@/models/Skill";
 import StatModel from "@/models/Stat";
 import ExperienceModel from "@/models/Experience";
+import EducationModel from "@/models/Education";
 import type { About, Education } from "@/types";
 import AboutClient from "./AboutClient";
 
@@ -50,7 +51,7 @@ async function getAbout(): Promise<About> {
     AboutModel.findOne().lean(),
     SkillModel.find().sort({ order: 1 }).lean(),
     StatModel.find().sort({ order: 1 }).lean(),
-    ExperienceModel.find({ type: "education" }).sort({ order: 1 }).lean(),
+    EducationModel.find().sort({ order: 1 }).lean(),
   ]);
 
   if (!aboutDoc) return DEFAULT_ABOUT;
@@ -59,10 +60,10 @@ async function getAbout(): Promise<About> {
   const skills = JSON.parse(JSON.stringify(skillDocs));
   const stats = JSON.parse(JSON.stringify(statDocs));
   const education: Education[] = educationDocs.map((edu: any) => ({
-    degree: edu.title,
-    institution: edu.org,
-    period: edu.duration,
-    details: Array.isArray(edu.details) ? edu.details[0] : edu.details,
+    degree: edu.degree,
+    institution: edu.institution,
+    period: edu.period,
+    details: edu.details,
   }));
 
   // Split aboutBio into bio1 and bio2 by double newline

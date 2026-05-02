@@ -6,7 +6,7 @@ export interface IExperience extends Document {
   duration: string;
   details: string[];
   color: "emerald" | "blue" | "amber";
-  type: "work" | "education" | "certification";
+  type: "work";
   order: number;
   createdAt: Date;
   updatedAt: Date;
@@ -25,7 +25,7 @@ const ExperienceSchema = new Schema<IExperience>(
     },
     type: {
       type: String,
-      enum: ["work", "education", "certification"],
+      enum: ["work"],
       default: "work",
     },
     order: { type: Number, default: 0 },

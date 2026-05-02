@@ -5,7 +5,7 @@ import ExperienceClient from "./ExperienceClient";
 
 async function getExperiences(): Promise<Experience[]> {
   await connectDB();
-  const raw = await ExperienceModel.find().sort({ order: 1 }).lean();
+  const raw = await ExperienceModel.find({ type: "work" }).sort({ order: 1 }).lean();
   return raw.map((e) => ({
     _id: e._id.toString(),
     title: e.title,
