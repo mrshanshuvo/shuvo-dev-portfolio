@@ -240,252 +240,195 @@ export default function AdminHeroPage() {
         </header>
 
         <div className="space-y-8">
-            {/* Identity Card */}
-            <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
-              <CardHeader className="pb-2">
+          {/* Identity Card */}
+          <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
+            <CardHeader className="pb-2">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-blue-500/20 text-blue-400 rounded-xl">
+                  <FaUser size={20} />
+                </div>
+                <div>
+                  <CardTitle className="text-xl font-bold text-white">
+                    Identity
+                  </CardTitle>
+                  <CardDescription className="text-slate-400">
+                    Your personal branding and display name.
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                  First Name
+                </label>
+                <Input
+                  className="bg-slate-950/50 border-white/10 text-white rounded-xl focus-visible:ring-emerald-500/50"
+                  value={data.name}
+                  onChange={(e) =>
+                    setData((d) => ({ ...d, name: e.target.value }))
+                  }
+                  placeholder="e.g. Shahid Hasan"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                  Last Name{" "}
+                  <span className="text-blue-400 font-normal">
+                    (Highlighted)
+                  </span>
+                </label>
+                <Input
+                  className="bg-slate-950/50 border-white/10 text-white rounded-xl focus-visible:ring-emerald-500/50"
+                  value={data.lastName}
+                  onChange={(e) =>
+                    setData((d) => ({ ...d, lastName: e.target.value }))
+                  }
+                  placeholder="e.g. Shuvo"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Typing Sequences Card */}
+          <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-2.5 bg-blue-500/20 text-blue-400 rounded-xl">
-                    <FaUser size={20} />
+                  <div className="p-2.5 bg-purple-500/20 text-purple-400 rounded-xl">
+                    <FaInfoCircle size={20} />
                   </div>
                   <div>
                     <CardTitle className="text-xl font-bold text-white">
-                      Identity
+                      Typing Sequences
                     </CardTitle>
                     <CardDescription className="text-slate-400">
-                      Your personal branding and display name.
+                      Animated roles that appear on your hero section.
                     </CardDescription>
                   </div>
                 </div>
-              </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
-                    First Name
-                  </label>
-                  <Input
-                    className="bg-slate-950/50 border-white/10 text-white rounded-xl focus-visible:ring-emerald-500/50"
-                    value={data.name}
-                    onChange={(e) =>
-                      setData((d) => ({ ...d, name: e.target.value }))
-                    }
-                    placeholder="e.g. Shahid Hasan"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
-                    Last Name{" "}
-                    <span className="text-blue-400 font-normal">
-                      (Highlighted)
-                    </span>
-                  </label>
-                  <Input
-                    className="bg-slate-950/50 border-white/10 text-white rounded-xl focus-visible:ring-emerald-500/50"
-                    value={data.lastName}
-                    onChange={(e) =>
-                      setData((d) => ({ ...d, lastName: e.target.value }))
-                    }
-                    placeholder="e.g. Shuvo"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Typing Sequences Card */}
-            <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 bg-purple-500/20 text-purple-400 rounded-xl">
-                      <FaInfoCircle size={20} />
-                    </div>
-                    <div>
-                      <CardTitle className="text-xl font-bold text-white">
-                        Typing Sequences
-                      </CardTitle>
-                      <CardDescription className="text-slate-400">
-                        Animated roles that appear on your hero section.
-                      </CardDescription>
-                    </div>
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() =>
-                      setData((d) => ({
-                        ...d,
-                        typeSequences: [
-                          ...d.typeSequences,
-                          { text: "", delay: 2000 },
-                        ],
-                      }))
-                    }
-                    className="bg-slate-800 hover:bg-slate-700 text-slate-200 border-white/5 rounded-xl active:scale-95"
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setData((d) => ({
+                      ...d,
+                      typeSequences: [
+                        ...d.typeSequences,
+                        { text: "", delay: 2000 },
+                      ],
+                    }))
+                  }
+                  className="bg-slate-800 hover:bg-slate-700 text-slate-200 border-white/5 rounded-xl active:scale-95"
+                >
+                  <FaPlus size={12} className="mr-1" /> Add New
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <AnimatePresence>
+                {data.typeSequences.map((seq, i) => (
+                  <motion.div
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    key={i}
+                    className="flex flex-col md:flex-row gap-4 items-start md:items-center p-4 bg-slate-950/30 rounded-2xl border border-white/5 group transition-all hover:bg-slate-950/50"
                   >
-                    <FaPlus size={12} className="mr-1" /> Add New
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <AnimatePresence>
-                  {data.typeSequences.map((seq, i) => (
-                    <motion.div
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      key={i}
-                      className="flex flex-col md:flex-row gap-4 items-start md:items-center p-4 bg-slate-950/30 rounded-2xl border border-white/5 group transition-all hover:bg-slate-950/50"
-                    >
-                      <div className="flex-1 w-full">
-                        <Input
-                          className="bg-transparent border-white/10 text-white rounded-xl focus-visible:ring-purple-500/50 h-10"
-                          value={seq.text}
-                          onChange={(e) => updateSeq(i, "text", e.target.value)}
-                          placeholder="e.g. Full-Stack Developer"
-                        />
-                      </div>
-                      <div className="flex items-center gap-3 shrink-0">
-                        <div className="relative">
-                          <Input
-                            type="number"
-                            className="bg-transparent border-white/10 text-white rounded-xl focus-visible:ring-purple-500/50 w-28 pr-10 h-10"
-                            value={seq.delay}
-                            onChange={(e) =>
-                              updateSeq(i, "delay", +e.target.value)
-                            }
-                          />
-                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-600 uppercase">
-                            ms
-                          </span>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() =>
-                            setData((d) => ({
-                              ...d,
-                              typeSequences: d.typeSequences.filter(
-                                (_, idx) => idx !== i,
-                              ),
-                            }))
-                          }
-                          className="text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl"
-                        >
-                          <FaTimes size={14} />
-                        </Button>
-                      </div>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-                {data.typeSequences.length === 0 && (
-                  <div className="text-center py-8 bg-slate-950/20 rounded-2xl border border-dashed border-white/5">
-                    <p className="text-slate-500 text-sm italic">
-                      No typing sequences added.
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Assets Card */}
-            <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
-              <CardHeader className="pb-2">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 bg-amber-500/20 text-amber-400 rounded-xl">
-                    <FaImage size={20} />
-                  </div>
-                  <div>
-                    <CardTitle className="text-xl font-bold text-white">
-                      Assets
-                    </CardTitle>
-                    <CardDescription className="text-slate-400">
-                      Profile picture and resume document.
-                    </CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="pt-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {/* Profile Image UI */}
-                  <div className="space-y-4">
-                    <ImageUpload
-                      label="Profile Image"
-                      value={data.profileImage}
-                      onChange={(url) => setData((prev) => ({ ...prev, profileImage: url }))}
-                    />
-                  </div>
-
-                  {/* Resume PDF UI */}
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between px-1">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                        Resume PDF
-                      </label>
-                      <Badge
-                        variant="outline"
-                        className="bg-amber-500/10 text-amber-400 border-amber-500/20 text-[10px]"
-                      >
-                        {data.resumeUrl ? "Uploaded" : "Missing"}
-                      </Badge>
-                    </div>
-                    <div className="relative group overflow-hidden rounded-2xl border border-white/10 bg-slate-950/50 aspect-square max-w-[200px] mx-auto flex flex-col items-center justify-center p-6 text-center">
-                      <div
-                        className={`p-4 rounded-2xl mb-4 transition-colors ${data.resumeUrl ? "bg-amber-500/20 text-amber-500" : "bg-slate-800 text-slate-600"}`}
-                      >
-                        <FaFileAlt size={40} />
-                      </div>
-
-                      {data.resumeUrl ? (
-                        <div className="space-y-3">
-                          <p className="text-[11px] font-medium text-slate-400 break-all line-clamp-2">
-                            {data.resumeUrl.split("/").pop()}
-                          </p>
-                          <Button
-                            size="sm"
-                            variant="secondary"
-                            onClick={() => resumeInputRef.current?.click()}
-                            className="w-full bg-slate-800 hover:bg-slate-700 text-white"
-                          >
-                            {uploading === "resumeUrl"
-                              ? "Uploading..."
-                              : "Change PDF"}
-                          </Button>
-                        </div>
-                      ) : (
-                        <button
-                          onClick={() => resumeInputRef.current?.click()}
-                          className="text-xs font-bold text-slate-500 hover:text-amber-400 transition-colors"
-                        >
-                          Click to Upload PDF
-                        </button>
-                      )}
-
-                      {uploading === "resumeUrl" && (
-                        <div className="absolute inset-0 bg-slate-950/80 flex items-center justify-center">
-                          <div className="w-8 h-8 border-4 border-amber-500/20 border-t-amber-500 rounded-full animate-spin" />
-                        </div>
-                      )}
-                      <input
-                        type="file"
-                        ref={resumeInputRef}
-                        className="hidden"
-                        accept=".pdf"
-                        onChange={(e) => handleUpload(e, "resumeUrl")}
+                    <div className="flex-1 w-full">
+                      <Input
+                        className="bg-transparent border-white/10 text-white rounded-xl focus-visible:ring-purple-500/50 h-10"
+                        value={seq.text}
+                        onChange={(e) => updateSeq(i, "text", e.target.value)}
+                        placeholder="e.g. Full-Stack Developer"
                       />
                     </div>
-                    {data.resumeUrl && (
-                      <a
-                        href={data.resumeUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block text-center text-[10px] font-bold text-slate-500 hover:text-blue-400 transition-colors uppercase tracking-wider"
+                    <div className="flex items-center gap-3 shrink-0">
+                      <div className="relative">
+                        <Input
+                          type="number"
+                          className="bg-transparent border-white/10 text-white rounded-xl focus-visible:ring-purple-500/50 w-28 pr-10 h-10"
+                          value={seq.delay}
+                          onChange={(e) =>
+                            updateSeq(i, "delay", +e.target.value)
+                          }
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-600 uppercase">
+                          ms
+                        </span>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() =>
+                          setData((d) => ({
+                            ...d,
+                            typeSequences: d.typeSequences.filter(
+                              (_, idx) => idx !== i,
+                            ),
+                          }))
+                        }
+                        className="text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl"
                       >
-                        View Current File
-                      </a>
-                    )}
-                  </div>
+                        <FaTimes size={14} />
+                      </Button>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+              {data.typeSequences.length === 0 && (
+                <div className="text-center py-8 bg-slate-950/20 rounded-2xl border border-dashed border-white/5">
+                  <p className="text-slate-500 text-sm italic">
+                    No typing sequences added.
+                  </p>
                 </div>
-              </CardContent>
-            </Card>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Assets Card */}
+          <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
+            <CardHeader className="pb-2">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-amber-500/20 text-amber-400 rounded-xl">
+                  <FaImage size={20} />
+                </div>
+                <div>
+                  <CardTitle className="text-xl font-bold text-white">
+                    Assets
+                  </CardTitle>
+                  <CardDescription className="text-slate-400">
+                    Profile picture and resume document.
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Profile Image UI */}
+                <div className="space-y-4">
+                  <ImageUpload
+                    label="Profile Image"
+                    value={data.profileImage}
+                    onChange={(url) =>
+                      setData((prev) => ({ ...prev, profileImage: url }))
+                    }
+                  />
+                </div>
+
+                {/* Resume PDF UI */}
+                <div className="space-y-4">
+                  <ImageUpload
+                    label="Resume PDF"
+                    value={data.resumeUrl}
+                    onChange={(url) =>
+                      setData((prev) => ({ ...prev, resumeUrl: url }))
+                    }
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
 
