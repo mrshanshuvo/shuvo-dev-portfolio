@@ -29,6 +29,11 @@ const EducationSchema = new Schema<IEducation>(
   { timestamps: true },
 );
 
+// Force delete the model from mongoose.models in development to pick up schema changes
+if (process.env.NODE_ENV === "development") {
+  delete mongoose.models.Education;
+}
+
 const Education: Model<IEducation> =
   mongoose.models.Education ||
   mongoose.model<IEducation>("Education", EducationSchema);

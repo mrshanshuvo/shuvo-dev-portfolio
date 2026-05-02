@@ -14,29 +14,39 @@ export async function GET() {
 }
 
 export async function PUT(req: Request) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const session = await auth();
+    if (!session)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  await connectDB();
-  const items: any[] = await req.json();
+    await connectDB();
+    const items: any[] = await req.json();
 
-  await Education.deleteMany({});
-  if (items.length > 0) {
-    await Education.insertMany(
-      items.map((item: any, i: number) => ({
+    // Clean slate: delete all and re-insert for perfect synchronization
+    await Education.deleteMany({});
+    
+    if (items.length > 0) {
+      const sanitizedItems = items.map((item: any, i: number) => ({
         degree: item.degree,
         institution: item.institution,
         location: item.location || "",
         logo: item.logo || "",
         period: item.period,
         gpa: item.gpa || "",
-        details: item.details,
+        // Ensure details is an array for the new schema
+        details: Array.isArray(item.details) 
+          ? item.details 
+          : (item.details ? [item.details] : []),
         link: item.link || "",
         order: i,
-      }))
-    );
-  }
+      }));
 
-  return NextResponse.json({ message: "Education saved" });
+      await Education.insertMany(sanitizedItems);
+    }
+
+    return NextResponse.json({ message: "Education synchronized successfully" });
+  } catch (err: any) {
+    console.error("Education Sync Error:", err);
+    return NextResponse.json({ error: err.message || "Internal Server Error" }, { status: 500 });
+  }
 }
