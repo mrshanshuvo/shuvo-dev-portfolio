@@ -23,6 +23,11 @@ const TestimonialSchema = new Schema<ITestimonial>(
   { timestamps: true },
 );
 
+// Force delete the model from mongoose.models in development to pick up schema changes
+if (process.env.NODE_ENV === "development") {
+  delete mongoose.models.Testimonial;
+}
+
 const Testimonial: Model<ITestimonial> =
   mongoose.models.Testimonial || mongoose.model<ITestimonial>("Testimonial", TestimonialSchema);
 
