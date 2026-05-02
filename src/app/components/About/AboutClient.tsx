@@ -8,12 +8,17 @@ import {
   FaRobot,
   FaGraduationCap,
   FaCheckCircle,
+  FaMapMarkerAlt,
+  FaAward,
+  FaExternalLinkAlt,
+  FaCalendarAlt,
 } from "react-icons/fa";
 import { SiTensorflow, SiReact, SiNodedotjs } from "react-icons/si";
 import type { IconType } from "react-icons";
 import type { About } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import Image from "next/image";
 
 interface Props {
   about: About;
@@ -188,27 +193,81 @@ export default function AboutClient({ about }: Props) {
                 animate={isInView ? "visible" : "hidden"}
                 className="flex-1"
               >
-                <Card className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl rounded-[2rem] p-8 border border-slate-200/50 dark:border-white/10 shadow-xl h-full overflow-hidden">
-                  <CardHeader className="p-0 mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center">
-                        <FaGraduationCap className="text-blue-500 text-2xl" />
+                <Card className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl rounded-[2rem] p-8 border border-slate-200/50 dark:border-white/10 shadow-xl h-full overflow-hidden flex flex-col">
+                  <CardHeader className="p-0 mb-6">
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-4">
+                        <div className="relative w-14 h-14 shrink-0 bg-blue-500/10 rounded-2xl flex items-center justify-center overflow-hidden border border-blue-500/20 shadow-inner">
+                          {edu.logo ? (
+                             <Image 
+                               src={edu.logo} 
+                               alt={edu.institution} 
+                               fill
+                               className="object-contain p-2"
+                             />
+                          ) : (
+                            <FaGraduationCap className="text-blue-500 text-3xl" />
+                          )}
+                        </div>
+                        <div>
+                           <CardTitle className="font-display text-xl font-bold text-slate-900 dark:text-white leading-tight">
+                            Education
+                          </CardTitle>
+                          {edu.location && (
+                            <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mt-1">
+                              <FaMapMarkerAlt className="text-blue-500/60" size={10} />
+                              {edu.location}
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      <CardTitle className="font-display text-xl font-bold text-slate-900 dark:text-white">
-                        Education
-                      </CardTitle>
+                      {edu.gpa && (
+                        <Badge className="bg-blue-500/20 text-blue-500 border-blue-500/30 font-black px-3 py-1 text-[10px] rounded-lg">
+                          GPA: {edu.gpa}
+                        </Badge>
+                      )}
                     </div>
                   </CardHeader>
-                  <CardContent className="p-0">
-                    <h5 className="font-bold text-slate-900 dark:text-white mb-1 leading-snug">
-                      {edu.degree}
-                    </h5>
-                    <p className="text-blue-600 dark:text-blue-400 mb-4 font-semibold text-sm">
-                      {edu.institution}
-                    </p>
-                    <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-                      {edu.details}
-                    </p>
+                  <CardContent className="p-0 flex-1 flex flex-col">
+                    <div className="space-y-4 mb-6">
+                      <div>
+                        <h5 className="font-black text-slate-900 dark:text-white mb-1 leading-snug group-hover:text-blue-500 transition-colors">
+                          {edu.degree}
+                        </h5>
+                        <p className="text-blue-600 dark:text-blue-400 font-bold text-sm">
+                          {edu.institution}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-sm font-medium">
+                        <FaCalendarAlt size={12} className="text-blue-500/40" />
+                        {edu.period}
+                      </div>
+                      <div className="space-y-2 border-l-2 border-blue-500/10 pl-4 py-1">
+                        {Array.isArray(edu.details) ? (
+                          edu.details.map((detail, dIdx) => (
+                            <p key={dIdx} className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed italic flex gap-2 items-start">
+                              <span className="text-blue-500/40 mt-1.5 shrink-0">•</span>
+                              {detail}
+                            </p>
+                          ))
+                        ) : (
+                          <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed italic">
+                            {edu.details}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    {edu.link && (
+                      <a 
+                        href={edu.link} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="mt-auto inline-flex items-center justify-center gap-2 w-full py-3 bg-slate-100 dark:bg-slate-800 hover:bg-blue-500 hover:text-white transition-all rounded-xl text-xs font-black uppercase tracking-widest text-slate-600 dark:text-slate-300"
+                      >
+                        <FaExternalLinkAlt size={10} />
+                        View Credentials
+                      </a>
+                    )}
                   </CardContent>
                 </Card>
               </motion.div>

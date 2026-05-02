@@ -162,67 +162,70 @@ export default function ImageUpload({
           </button>
         </div>
       ) : loading ? (
-        <div className="p-6 md:p-8 rounded-[2rem] border border-white/5 bg-slate-900/50 backdrop-blur-md shadow-2xl relative overflow-hidden group">
+        <div className="p-4 rounded-[2rem] border border-white/5 bg-slate-900/50 backdrop-blur-md shadow-2xl relative overflow-hidden group aspect-square flex flex-col justify-center">
           {/* Subtle animated background glow */}
           <div className="absolute inset-0 bg-linear-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 animate-pulse" />
 
-          <div className="relative z-10">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-6">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-indigo-500/20 rounded-xl border border-indigo-500/30">
+          <div className="relative z-10 space-y-4">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-indigo-500/20 rounded-lg border border-indigo-500/30">
                   <FiRefreshCw
                     className="text-indigo-400 animate-spin"
-                    size={20}
+                    size={14}
                   />
                 </div>
                 <div>
-                  <h4 className="font-bold text-slate-200 tracking-wide text-sm">
-                    Processing Asset
+                  <h4 className="font-bold text-slate-200 tracking-wide text-[10px] uppercase">
+                    Processing
                   </h4>
-                  <span className="text-indigo-300/60 font-medium truncate text-xs max-w-[200px] block mt-0.5">
+                  <span className="text-indigo-300/60 font-medium truncate text-[9px] max-w-[80px] block mt-0.5">
                     {fileName}
                   </span>
                 </div>
               </div>
-              <span className="text-2xl font-black bg-linear-to-r from-indigo-400 to-pink-400 bg-clip-text text-transparent">
+              <span className="text-lg font-black bg-linear-to-r from-indigo-400 to-pink-400 bg-clip-text text-transparent">
                 {progress}%
               </span>
             </div>
 
             {/* Premium Gradient Progress Bar */}
-            <div className="w-full bg-slate-950 rounded-full h-4 overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] border border-white/5 relative">
+            <div className="w-full bg-slate-950 rounded-full h-2 overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] border border-white/5 relative">
               <div
                 className="h-full rounded-full transition-all duration-500 ease-out bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500 relative"
                 style={{ width: `${progress}%` }}
               >
-                {/* Embedded Shimmer inside the bar using basic CSS animation */}
+                {/* Embedded Shimmer inside the bar */}
                 <div className="absolute inset-0 w-full h-full bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-pulse" />
               </div>
             </div>
           </div>
         </div>
       ) : value ? (
-        <div className="relative group rounded-[2rem] overflow-hidden border border-white/10 aspect-video bg-slate-950 flex flex-col items-center justify-center shadow-2xl transition-all duration-500 hover:shadow-[0_10px_40px_rgba(99,102,241,0.15)] hover:border-indigo-500/30">
+        <div className="relative group/image rounded-[2rem] overflow-hidden border border-white/10 aspect-square bg-slate-950 flex flex-col items-center justify-center shadow-2xl transition-all duration-500 hover:shadow-[0_10px_40px_rgba(99,102,241,0.15)] hover:border-indigo-500/30">
           {!isPdf ? (
             <Image
               src={value}
               alt="Upload"
               fill
-              className="object-cover transition-all duration-700 group-hover:scale-105 group-hover:opacity-30 group-hover:blur-sm"
+              className="object-contain transition-all duration-700 group-hover/image:scale-105 group-hover/image:opacity-60 group-hover/image:blur-[2px]"
             />
           ) : (
             <>
               <iframe
                 src={`${value}#toolbar=0&navpanes=0&scrollbar=0&view=Fit`}
-                className="w-full h-full border-none bg-white transition-all duration-700 group-hover:opacity-30 group-hover:blur-sm"
+                className="w-full h-full border-none bg-white transition-all duration-700 group-hover/image:opacity-60 group-hover/image:blur-[2px]"
                 title="PDF Preview"
               />
               <div className="absolute inset-0 z-0 bg-transparent" />
             </>
           )}
 
+          {/* Premium Glassy Overlay */}
+          <div className="absolute inset-0 bg-white/5 opacity-0 group-hover/image:opacity-100 backdrop-blur-[px] transition-all duration-500 z-5" />
+
           {/* Glassmorphic Action Overlay */}
-          <div className="absolute inset-0 flex items-center justify-center gap-3 sm:gap-5 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 scale-95 group-hover:scale-100">
+          <div className="absolute inset-0 flex items-center justify-center gap-2 z-10 opacity-0 group-hover/image:opacity-100 transition-all duration-300 scale-95 group-hover/image:scale-100">
             <button
               type="button"
               onClick={(e) => {
@@ -231,18 +234,18 @@ export default function ImageUpload({
                 setIsPreviewOpen(true);
               }}
               title="Expand Preview"
-              className="p-4 rounded-2xl bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 backdrop-blur-md hover:bg-indigo-500/40 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(99,102,241,0.2)] transition-all duration-300"
+              className="p-2 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 backdrop-blur-md hover:bg-indigo-500/40 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(99,102,241,0.2)] transition-all duration-300"
             >
-              <FaEye size={22} />
+              <FaEye size={16} />
             </button>
             <a
               href={value}
               target="_blank"
               rel="noopener noreferrer"
               title="Open Original"
-              className="p-4 rounded-2xl bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/30 backdrop-blur-md hover:bg-fuchsia-500/40 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(217,70,239,0.2)] transition-all duration-300"
+              className="p-2 rounded-xl bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/30 backdrop-blur-md hover:bg-fuchsia-500/40 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(217,70,239,0.2)] transition-all duration-300"
             >
-              <FaExternalLinkAlt size={20} />
+              <FaExternalLinkAlt size={14} />
             </a>
             <button
               type="button"
@@ -252,9 +255,9 @@ export default function ImageUpload({
                 fileInputRef.current?.click();
               }}
               title="Change File"
-              className="p-4 rounded-2xl bg-white/10 text-white border border-white/20 backdrop-blur-md hover:bg-white/20 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(255,255,255,0.1)] transition-all duration-300"
+              className="p-2 rounded-xl bg-white/10 text-white border border-white/20 backdrop-blur-md hover:bg-white/20 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(255,255,255,0.1)] transition-all duration-300"
             >
-              <FiRefreshCw size={22} />
+              <FiRefreshCw size={16} />
             </button>
             <button
               type="button"
@@ -264,9 +267,9 @@ export default function ImageUpload({
                 onChange("");
               }}
               title="Delete File"
-              className="p-4 rounded-2xl bg-rose-500/20 text-rose-300 border border-rose-500/30 backdrop-blur-md hover:bg-rose-500/40 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(244,63,94,0.2)] transition-all duration-300"
+              className="p-2 rounded-xl bg-rose-500/20 text-rose-300 border border-rose-500/30 backdrop-blur-md hover:bg-rose-500/40 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(244,63,94,0.2)] transition-all duration-300"
             >
-              <FaTrash size={20} />
+              <FaTrash size={14} />
             </button>
           </div>
         </div>
@@ -280,8 +283,8 @@ export default function ImageUpload({
           onDrop={onDrop}
           onClick={() => fileInputRef.current?.click()}
           className={`
-            relative aspect-video rounded-[2rem] border-2 transition-all duration-500 cursor-pointer overflow-hidden
-            flex flex-col items-center justify-center p-8 group
+            relative aspect-square rounded-[2rem] border-2 transition-all duration-500 cursor-pointer overflow-hidden
+            flex flex-col items-center justify-center p-4 group/image
             ${
               isDragging
                 ? "border-indigo-400 border-solid bg-indigo-500/10 shadow-[0_0_40px_rgba(99,102,241,0.2)]"
@@ -290,23 +293,21 @@ export default function ImageUpload({
           `}
         >
           {/* Subtle background glow effect on hover */}
-          <div className="absolute inset-0 bg-linear-to-tr from-indigo-500/0 via-purple-500/0 to-pink-500/0 group-hover:from-indigo-500/5 group-hover:via-purple-500/5 group-hover:to-pink-500/5 transition-all duration-700" />
+          <div className="absolute inset-0 bg-linear-to-tr from-indigo-500/0 via-purple-500/0 to-pink-500/0 group-hover/image:from-indigo-500/5 group-hover/image:via-purple-500/5 group-hover/image:to-pink-500/5 transition-all duration-700" />
 
           <div className="relative z-10 flex flex-col items-center gap-6">
-            <div className="w-20 h-20 rounded-3xl bg-slate-800/80 shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-white/5 flex items-center justify-center group-hover:scale-110 group-hover:-translate-y-2 transition-all duration-500">
+            <div className="w-12 h-12 rounded-2xl bg-slate-800/80 shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-white/5 flex items-center justify-center group-hover/image:scale-110 group-hover/image:-translate-y-2 transition-all duration-500">
               <FaCloudUploadAlt
                 className="text-indigo-400 drop-shadow-[0_0_15px_rgba(99,102,241,0.4)]"
-                size={40}
+                size={24}
               />
             </div>
 
-            <div className="text-center space-y-2">
-              <h3 className="text-xl font-black tracking-wide bg-linear-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                Drop Asset Here
+            <div className="text-center space-y-1">
+              <h3 className="text-sm font-black tracking-wide bg-linear-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Drop Asset
               </h3>
-              <p className="text-sm text-slate-400 font-medium">
-                or click to browse from computer
-              </p>
+              <p className="text-[10px] text-slate-400 font-medium">or click</p>
             </div>
 
             <div className="flex items-center gap-3 text-[10px] uppercase tracking-widest font-bold text-slate-500 bg-slate-950/50 px-5 py-2 rounded-full border border-white/5">
@@ -364,7 +365,9 @@ export default function ImageUpload({
               </div>
 
               {/* Dynamic Content Body */}
-              <div className={`relative w-full ${!isPdf ? "aspect-auto max-h-[70vh] p-4" : "flex-1 p-6"} flex items-center justify-center bg-black/20`}>
+              <div
+                className={`relative w-full ${!isPdf ? "aspect-auto max-h-[70vh] p-4" : "flex-1 p-6"} flex items-center justify-center bg-black/20`}
+              >
                 {!isPdf ? (
                   <img
                     src={value}
@@ -381,7 +384,7 @@ export default function ImageUpload({
                   </div>
                 )}
               </div>
-              
+
               {/* Subtle Footer info */}
               <div className="px-6 py-3 border-t border-white/5 bg-slate-950/20 flex justify-center">
                 <p className="text-[9px] font-bold text-slate-500 tracking-widest uppercase">
@@ -390,7 +393,7 @@ export default function ImageUpload({
               </div>
             </div>
           </div>,
-          document.body
+          document.body,
         )}
     </div>
   );

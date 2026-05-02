@@ -27,8 +27,12 @@ export async function PUT(req: Request) {
       items.map((item: any, i: number) => ({
         degree: item.degree,
         institution: item.institution,
+        location: item.location || "",
+        logo: item.logo || "",
         period: item.period,
+        gpa: item.gpa || "",
         details: item.details,
+        link: item.link || "",
         order: i,
       }))
     );

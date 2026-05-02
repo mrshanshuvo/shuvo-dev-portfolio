@@ -70,10 +70,16 @@ export interface Profile {
 }
 
 export interface Education {
+  _id?: string;
   degree: string;
   institution: string;
+  location?: string;
+  logo?: string;
   period: string;
-  details: string;
+  gpa?: string;
+  details: string[];
+  link?: string;
+  order?: number;
 }
 
 export interface About {

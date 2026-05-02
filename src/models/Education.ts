@@ -3,8 +3,12 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 export interface IEducation extends Document {
   degree: string;
   institution: string;
+  location: string;
+  logo?: string;
   period: string;
-  details: string;
+  gpa?: string;
+  details: string[];
+  link?: string;
   order: number;
   createdAt: Date;
   updatedAt: Date;
@@ -14,8 +18,12 @@ const EducationSchema = new Schema<IEducation>(
   {
     degree: { type: String, required: true },
     institution: { type: String, required: true },
+    location: { type: String, default: "" },
+    logo: { type: String, default: "" },
     period: { type: String, required: true },
-    details: { type: String, default: "" },
+    gpa: { type: String, default: "" },
+    details: { type: [String], default: [] },
+    link: { type: String, default: "" },
     order: { type: Number, default: 0 },
   },
   { timestamps: true },
