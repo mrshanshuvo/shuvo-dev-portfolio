@@ -22,15 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-
-interface Blog {
-  title: string;
-  description: string;
-  link: string;
-  date: string;
-  tags: string[];
-  image?: string;
-}
+import type { Blog } from "@/types";
 
 export default function AdminBlogsPage() {
   const [data, setData] = useState<Blog[]>([]);

@@ -14,19 +14,14 @@ import {
   FaInfoCircle,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import MediaGalleryManager from "../components/MediaGalleryManager";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-
-interface Demo {
-  title: string;
-  description: string;
-  url: string;
-  tech: string[];
-}
+import type { Demo } from "@/types";
 
 export default function AdminDemosPage() {
   const [data, setData] = useState<Demo[]>([]);
@@ -72,6 +67,8 @@ export default function AdminDemosPage() {
         description: "A quick summary of this playground project...",
         url: "https://playground.yourdomain.com/...",
         tech: ["React"],
+        media: [],
+        order: prev.length,
       },
     ]);
   }
@@ -209,30 +206,34 @@ export default function AdminDemosPage() {
                     className="group relative p-6 md:p-8 bg-slate-950/20 transition-all border-b border-white/5 last:border-0"
                   >
                     <div className="flex flex-col lg:flex-row gap-8">
-                      {/* Left: Sorting/Icon */}
-                      <div className="w-full lg:w-32 shrink-0 flex flex-col items-center justify-center gap-4 border-r border-white/5 pr-8">
-                        <div className="w-16 h-16 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 shadow-xl shadow-purple-500/10">
-                           <FaFlask size={28} />
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => move(i, "up")}
-                            disabled={i === 0}
-                            className="h-8 w-8 rounded-lg bg-slate-900 border border-white/5 text-slate-500 hover:text-white disabled:opacity-20"
-                          >
-                            <FaArrowUp size={10} />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => move(i, "down")}
-                            disabled={i === data.length - 1}
-                            className="h-8 w-8 rounded-lg bg-slate-900 border border-white/5 text-slate-500 hover:text-white disabled:opacity-20"
-                          >
-                            <FaArrowDown size={10} />
-                          </Button>
+                      {/* Left: Media Gallery */}
+                      <div className="w-full lg:w-[35rem] shrink-0 space-y-6">
+                        <MediaGalleryManager
+                          media={item.media || []}
+                          onChange={(m) => updateDemo(i, "media", m)}
+                          label="Demo Media Showcase"
+                        />
+                        <div className="flex items-center justify-center gap-4">
+                           <div className="flex gap-2 p-1 bg-slate-900/50 rounded-xl border border-white/5">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => move(i, "up")}
+                                disabled={i === 0}
+                                className="h-9 w-9 rounded-lg bg-slate-950 border border-white/5 text-slate-500 hover:text-white hover:bg-slate-800 disabled:opacity-20 transition-all"
+                              >
+                                <FaArrowUp size={12} />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => move(i, "down")}
+                                disabled={i === data.length - 1}
+                                className="h-9 w-9 rounded-lg bg-slate-950 border border-white/5 text-slate-500 hover:text-white hover:bg-slate-800 disabled:opacity-20 transition-all"
+                              >
+                                <FaArrowDown size={12} />
+                              </Button>
+                           </div>
                         </div>
                       </div>
 

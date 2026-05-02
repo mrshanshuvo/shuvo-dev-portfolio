@@ -11,23 +11,37 @@ export interface IProject extends Document {
   featured: boolean;
   category: string;
   improvements: string[];
+  media: {
+    type: "image" | "video" | "embed";
+    url: string;
+    caption?: string;
+    thumbnail?: string;
+  }[];
   order: number;
   createdAt: Date;
   updatedAt: Date;
-}
+} 
 
 const ProjectSchema = new Schema<IProject>(
   {
     title: { type: String, required: true },
     slug: { type: String, required: true, unique: true },
     description: { type: String, required: true },
-    image: { type: String, required: true },
+  image: { type: String }, // Optional for backward compatibility
     techNames: [{ type: String }],
     github: { type: String, default: "" },
     live: { type: String, default: "" },
     featured: { type: Boolean, default: false },
     category: { type: String, default: "Full Stack" },
     improvements: [{ type: String }],
+    media: [
+      {
+        type: { type: String, enum: ["image", "video", "embed"], default: "image" },
+        url: { type: String, required: true },
+        caption: { type: String },
+        thumbnail: { type: String },
+      },
+    ],
     order: { type: Number, default: 0 },
   },
   { timestamps: true },

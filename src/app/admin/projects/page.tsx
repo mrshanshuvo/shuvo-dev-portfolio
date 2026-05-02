@@ -20,6 +20,7 @@ import {
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import ImageUpload from "../components/ImageUpload";
+import MediaGalleryManager from "../components/MediaGalleryManager";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -97,6 +98,8 @@ export default function AdminProjectsPage() {
         featured: false,
         category: "Full Stack",
         improvements: [],
+        media: [],
+        order: prev.length,
       },
     ]);
   }
@@ -193,7 +196,7 @@ export default function AdminProjectsPage() {
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
                </div>
-               <Select value={filterCategory} onValueChange={setFilterCategory}>
+               <Select value={filterCategory} onValueChange={(v) => setFilterCategory(v || "All")}>
                   <SelectTrigger className="bg-slate-950/50 border-white/10 rounded-xl w-44 h-11 text-slate-300">
                      <SelectValue placeholder="All Categories" />
                   </SelectTrigger>
@@ -271,45 +274,45 @@ export default function AdminProjectsPage() {
                     className="group relative p-6 md:p-8 bg-slate-950/20 transition-all border-b border-white/5 last:border-0"
                   >
                     <div className="flex flex-col xl:flex-row gap-8">
-                      {/* Image Section */}
-                      <div className="w-full xl:w-64 shrink-0 space-y-3">
-                        <ImageUpload
-                          label="Project Showcase"
-                          value={proj.image || ""}
-                          onChange={(url) => updateProject(i, "image", url)}
+                      {/* Media Gallery */}
+                      <div className="w-full xl:w-[35rem] shrink-0 space-y-6">
+                        <MediaGalleryManager
+                          media={proj.media || []}
+                          onChange={(m) => updateProject(i, "media", m)}
+                          label="Project Showcase Gallery"
                         />
-                        <div className="flex items-center justify-between gap-2">
-                           <div className="flex gap-2">
+                        <div className="flex items-center justify-between gap-4 px-2">
+                           <div className="flex gap-2 p-1 bg-slate-900/50 rounded-xl border border-white/5">
                               <Button
                                 variant="ghost"
                                 size="icon"
                                 onClick={() => move(i, "up")}
                                 disabled={i === 0}
-                                className="h-8 w-8 rounded-lg bg-slate-900 border border-white/5 text-slate-500 hover:text-white disabled:opacity-20"
+                                className="h-9 w-9 rounded-lg bg-slate-950 border border-white/5 text-slate-500 hover:text-white hover:bg-slate-800 disabled:opacity-20 transition-all"
                               >
-                                <FaArrowUp size={10} />
+                                <FaArrowUp size={12} />
                               </Button>
                               <Button
                                 variant="ghost"
                                 size="icon"
                                 onClick={() => move(i, "down")}
                                 disabled={i === data.length - 1}
-                                className="h-8 w-8 rounded-lg bg-slate-900 border border-white/5 text-slate-500 hover:text-white disabled:opacity-20"
+                                className="h-9 w-9 rounded-lg bg-slate-950 border border-white/5 text-slate-500 hover:text-white hover:bg-slate-800 disabled:opacity-20 transition-all"
                               >
-                                <FaArrowDown size={10} />
+                                <FaArrowDown size={12} />
                               </Button>
                            </div>
                            <Button
                               onClick={() => updateProject(i, "featured", !proj.featured)}
                               className={cn(
-                                "h-8 px-3 rounded-lg text-[10px] font-black uppercase transition-all border",
+                                "h-10 px-5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border duration-500",
                                 proj.featured 
-                                  ? "bg-amber-500 border-amber-500 text-white shadow-lg shadow-amber-500/20" 
-                                  : "bg-slate-900 border-white/5 text-slate-500 hover:text-slate-300"
+                                  ? "bg-linear-to-r from-amber-500 to-orange-500 border-amber-400 text-white shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_30px_rgba(245,158,11,0.5)] active:scale-95" 
+                                  : "bg-slate-900/50 border-white/5 text-slate-500 hover:text-slate-300 hover:border-white/10"
                               )}
                            >
-                              {proj.featured ? <FaStar className="inline mr-1" /> : <FaRegStar className="inline mr-1" />}
-                              Featured
+                              {proj.featured ? <FaStar className="inline mr-2 animate-pulse" /> : <FaRegStar className="inline mr-2" />}
+                              {proj.featured ? "Featured Hero" : "Set Featured"}
                            </Button>
                         </div>
                       </div>
@@ -441,13 +444,24 @@ export default function AdminProjectsPage() {
                              </div>
                              <Button onClick={() => addImprovement(i)} className="bg-slate-800 hover:bg-slate-700 rounded-xl h-11 w-11 p-0 border border-white/5"><FaPlus size={12} /></Button>
                           </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                          <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4">
                              {proj.improvements?.map((imp, impIdx) => (
-                               <div key={impIdx} className="flex items-center gap-3 bg-slate-950/40 border border-white/5 rounded-xl p-3 group/detail">
-                                  <div className="w-1 h-1 rounded-full bg-emerald-500" />
-                                  <span className="text-xs text-slate-300 flex-1 line-clamp-1">{imp}</span>
-                                  <Button variant="ghost" size="icon" onClick={() => removeImprovement(i, impIdx)} className="h-6 w-6 text-slate-600 hover:text-red-400 hover:bg-red-400/10 rounded-lg"><FaTimes size={10} /></Button>
-                               </div>
+                               <motion.div 
+                                 key={impIdx} 
+                                 layout
+                                 className="flex items-center gap-4 bg-slate-950/60 border border-white/5 rounded-2xl p-4 group/detail hover:border-emerald-500/30 hover:bg-slate-900/80 transition-all duration-300"
+                               >
+                                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+                                  <span className="text-[11px] text-slate-300 flex-1 leading-relaxed">{imp}</span>
+                                  <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    onClick={() => removeImprovement(i, impIdx)} 
+                                    className="h-8 w-8 text-slate-600 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all opacity-0 group-hover/detail:opacity-100"
+                                  >
+                                    <FaTimes size={12} />
+                                  </Button>
+                               </motion.div>
                              ))}
                           </div>
                         </div>

@@ -2,6 +2,13 @@ import { IconType } from "react-icons";
 
 // ─── Portfolio types ────────────────────────────────────────────────
 
+export interface MediaItem {
+  type: "image" | "video" | "embed";
+  url: string;
+  caption?: string;
+  thumbnail?: string;
+}
+
 export interface Project {
   _id?: string;
   title: string;
@@ -15,6 +22,7 @@ export interface Project {
   featured: boolean;
   category: string;
   improvements: string[];
+  media?: MediaItem[];
   order?: number;
 }
 
@@ -180,5 +188,6 @@ export interface Demo {
   description: string;
   url: string;
   tech: string[];
+  media?: MediaItem[];
   order: number;
 }

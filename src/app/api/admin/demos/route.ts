@@ -29,13 +29,26 @@ export async function PUT(req: Request) {
     await Demo.deleteMany({});
     
     if (items.length > 0) {
-      const sanitized = items.map((it: any, i: number) => ({
-        title: it.title,
-        description: it.description,
-        url: it.url,
-        tech: Array.isArray(it.tech) ? it.tech : [],
-        order: i,
-      }));
+      const sanitized = items.map((it: any, i: number) => {
+        // Self-healing: handle legacy images if they exist
+        let media = Array.isArray(it.media) ? it.media : [];
+        if (media.length === 0 && (it as any).image) {
+          media = [{ type: "image", url: (it as any).image, caption: "Demo Preview" }];
+        }
+
+        return {
+          title: it.title,
+          description: it.description,
+          url: it.url,
+          tech: Array.isArray(it.tech) ? it.tech : [],
+          media: media.map((m: any) => ({
+            type: ["image", "video", "embed"].includes(m.type) ? m.type : "image",
+            url: m.url || "",
+            caption: m.caption || "",
+          })),
+          order: i,
+        };
+      });
 
       await Demo.insertMany(sanitized);
     }

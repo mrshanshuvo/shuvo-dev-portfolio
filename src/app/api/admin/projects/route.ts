@@ -28,19 +28,33 @@ export async function PUT(req: Request) {
     await Project.deleteMany({});
     
     if (items.length > 0) {
-      const sanitized = items.map((it: any, i: number) => ({
-        title: it.title,
-        slug: it.slug || it.title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, ""),
-        description: it.description,
-        image: it.image || "",
-        techNames: Array.isArray(it.techNames) ? it.techNames : [],
-        github: it.github || "",
-        live: it.live || "",
-        featured: !!it.featured,
-        category: it.category || "Full Stack",
-        improvements: Array.isArray(it.improvements) ? it.improvements : [],
-        order: i,
-      }));
+      const sanitized = items.map((it: any, i: number) => {
+        // Self-healing: if media is empty but legacy image exists, migrate it
+        let media = Array.isArray(it.media) ? it.media : [];
+        if (media.length === 0 && it.image) {
+          media = [{ type: "image", url: it.image, caption: "Project Showcase" }];
+        }
+
+        return {
+          title: it.title,
+          slug: it.slug || it.title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, ""),
+          description: it.description,
+          image: it.image || (media[0]?.type === "image" ? media[0].url : ""),
+          techNames: Array.isArray(it.techNames) ? it.techNames : [],
+          github: it.github || "",
+          live: it.live || "",
+          featured: !!it.featured,
+          category: it.category || "Full Stack",
+          improvements: Array.isArray(it.improvements) ? it.improvements : [],
+          media: media.map((m: any) => ({
+            type: ["image", "video", "embed"].includes(m.type) ? m.type : "image",
+            url: m.url || "",
+            caption: m.caption || "",
+            thumbnail: m.thumbnail || "",
+          })),
+          order: i,
+        };
+      });
 
       await Project.insertMany(sanitized);
     }

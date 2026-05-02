@@ -5,6 +5,11 @@ export interface IDemo extends Document {
   description: string;
   url: string;
   tech: string[];
+  media: {
+    type: "image" | "video" | "embed";
+    url: string;
+    caption?: string;
+  }[];
   order: number;
 }
 
@@ -14,6 +19,13 @@ const DemoSchema = new Schema<IDemo>(
     description: { type: String, required: true },
     url: { type: String, required: true },
     tech: [{ type: String }],
+    media: [
+      {
+        type: { type: String, enum: ["image", "video", "embed"], default: "image" },
+        url: { type: String, required: true },
+        caption: { type: String },
+      },
+    ],
     order: { type: Number, default: 0 },
   },
   { timestamps: true },

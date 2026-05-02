@@ -23,7 +23,7 @@ export default function ImageUpload({
   value,
   onChange,
   label,
-  accept = "image/*,application/pdf",
+  accept = "image/*,video/*,application/pdf",
 }: ImageUploadProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -203,7 +203,16 @@ export default function ImageUpload({
         </div>
       ) : value ? (
         <div className="relative group/image rounded-[2rem] overflow-hidden border border-white/10 aspect-square bg-slate-950 flex flex-col items-center justify-center shadow-2xl transition-all duration-500 hover:shadow-[0_10px_40px_rgba(99,102,241,0.15)] hover:border-indigo-500/30">
-          {!isPdf ? (
+          {value && (value.includes("/video/upload/") || value.toLowerCase().endsWith(".mp4") || value.toLowerCase().endsWith(".webm")) ? (
+            <video
+              src={value}
+              className="w-full h-full object-cover transition-all duration-700 group-hover/image:scale-105 group-hover/image:opacity-60 group-hover/image:blur-[2px]"
+              muted
+              loop
+              onMouseOver={(e) => (e.target as HTMLVideoElement).play()}
+              onMouseOut={(e) => (e.target as HTMLVideoElement).pause()}
+            />
+          ) : !isPdf ? (
             <Image
               src={value}
               alt="Upload"
@@ -295,25 +304,25 @@ export default function ImageUpload({
           {/* Subtle background glow effect on hover */}
           <div className="absolute inset-0 bg-linear-to-tr from-indigo-500/0 via-purple-500/0 to-pink-500/0 group-hover/image:from-indigo-500/5 group-hover/image:via-purple-500/5 group-hover/image:to-pink-500/5 transition-all duration-700" />
 
-          <div className="relative z-10 flex flex-col items-center gap-6">
-            <div className="w-12 h-12 rounded-2xl bg-slate-800/80 shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-white/5 flex items-center justify-center group-hover/image:scale-110 group-hover/image:-translate-y-2 transition-all duration-500">
+          <div className="relative z-10 flex flex-col items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-slate-800/80 shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-white/5 flex items-center justify-center group-hover/image:scale-110 group-hover/image:-translate-y-1 transition-all duration-500">
               <FaCloudUploadAlt
                 className="text-indigo-400 drop-shadow-[0_0_15px_rgba(99,102,241,0.4)]"
-                size={24}
+                size={20}
               />
             </div>
-
-            <div className="text-center space-y-1">
-              <h3 className="text-sm font-black tracking-wide bg-linear-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                Drop Asset
+            <div className="text-center space-y-0.5">
+              <h3 className="text-[11px] font-black tracking-widest bg-linear-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent uppercase">
+                Drop
               </h3>
-              <p className="text-[10px] text-slate-400 font-medium">or click</p>
+              <p className="text-[8px] text-slate-500 font-bold uppercase tracking-tighter">or click</p>
             </div>
-
-            <div className="flex items-center gap-3 text-[10px] uppercase tracking-widest font-bold text-slate-500 bg-slate-950/50 px-5 py-2 rounded-full border border-white/5">
-              <span className="text-indigo-400/80">IMAGE</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-slate-700" />
-              <span className="text-fuchsia-400/80">PDF</span>
+            <div className="flex items-center gap-1.5 text-[7px] uppercase tracking-[0.2em] font-black text-slate-600 bg-slate-950/50 px-3 py-1 rounded-full border border-white/5">
+              <span className="text-indigo-400/50">IMG</span>
+              <span className="w-1 h-1 rounded-full bg-slate-800" />
+              <span className="text-purple-400/50">VID</span>
+              <span className="w-1 h-1 rounded-full bg-slate-800" />
+              <span className="text-fuchsia-400/50">PDF</span>
             </div>
           </div>
         </div>
@@ -368,7 +377,14 @@ export default function ImageUpload({
               <div
                 className={`relative w-full ${!isPdf ? "aspect-auto max-h-[70vh] p-4" : "flex-1 p-6"} flex items-center justify-center bg-black/20`}
               >
-                {!isPdf ? (
+                {value && (value.includes("/video/upload/") || value.toLowerCase().endsWith(".mp4") || value.toLowerCase().endsWith(".webm")) ? (
+                  <video
+                    src={value}
+                    controls
+                    autoPlay
+                    className="max-w-full max-h-[70vh] rounded-xl shadow-2xl transition-transform duration-500"
+                  />
+                ) : !isPdf ? (
                   <img
                     src={value}
                     alt="Preview"
