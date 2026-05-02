@@ -22,6 +22,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import ImageUpload from "../components/ImageUpload";
 import MediaGalleryManager from "../components/MediaGalleryManager";
 import MultiLinkManager from "../components/MultiLinkManager";
+import CategoryManagerDialog from "../components/CategoryManagerDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -35,25 +36,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import type { Project } from "@/types";
-
-const CATEGORY_OPTIONS = [
-  "Full Stack",
-  "Frontend",
-  "Backend",
-  "ML/AI",
-  "Mobile",
-  "Other",
-];
+import type { Project, Category as ICategory } from "@/types";
 
 export default function AdminProjectsPage() {
   const [data, setData] = useState<Project[]>([]);
+  const [categories, setCategories] = useState<ICategory[]>([]);
+  const [techInputs, setTechInputs] = useState<{ [key: number]: string }>({});
+  const [impInputs, setImpInputs] = useState<{ [key: number]: string }>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("All");
-  const [newImprovementInputs, setNewImprovementInputs] = useState<{ [key: number]: string }>({});
-  const [newTechInputs, setNewTechInputs] = useState<{ [key: number]: string }>({});
   const [toast, setToast] = useState<{
     msg: string;
     type: "success" | "error";
@@ -65,13 +58,21 @@ export default function AdminProjectsPage() {
   }
 
   useEffect(() => {
-    fetch("/api/admin/projects")
-      .then((r) => r.json())
-      .then((d) => {
-        setData(Array.isArray(d) ? d : []);
-        setLoading(false);
-      });
+    Promise.all([
+      fetch("/api/admin/projects").then((r) => r.json()),
+      fetch("/api/admin/categories").then((r) => r.json()),
+    ]).then(([projects, cats]) => {
+      setData(Array.isArray(projects) ? projects : []);
+      setCategories(Array.isArray(cats) ? cats : []);
+      setLoading(false);
+    });
   }, []);
+
+  const refreshCategories = () => {
+    fetch("/api/admin/categories")
+      .then((r) => r.json())
+      .then((cats) => setCategories(Array.isArray(cats) ? cats : []));
+  };
 
   async function handleSave() {
     setSaving(true);
@@ -124,11 +125,11 @@ export default function AdminProjectsPage() {
   }
 
   function addImprovement(i: number) {
-    const val = newImprovementInputs[i]?.trim();
+    const val = impInputs[i]?.trim();
     if (!val) return;
     const current = data[i].improvements || [];
     updateProject(i, "improvements", [...current, val]);
-    setNewImprovementInputs(prev => ({ ...prev, [i]: "" }));
+    setImpInputs(prev => ({ ...prev, [i]: "" }));
   }
 
   function removeImprovement(i: number, impIdx: number) {
@@ -136,12 +137,12 @@ export default function AdminProjectsPage() {
   }
 
   function addTech(i: number) {
-    const val = newTechInputs[i]?.trim();
+    const val = techInputs[i]?.trim();
     if (!val) return;
     const current = data[i].techNames || [];
     if (current.includes(val)) return;
     updateProject(i, "techNames", [...current, val]);
-    setNewTechInputs(prev => ({ ...prev, [i]: "" }));
+    setTechInputs(prev => ({ ...prev, [i]: "" }));
   }
 
   function removeTech(i: number, tIdx: number) {
@@ -178,7 +179,6 @@ export default function AdminProjectsPage() {
       </AnimatePresence>
 
       <div className="w-full space-y-8">
-        {/* Unified Header Section */}
         <header className="sticky top-6 z-40 flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-slate-900/60 backdrop-blur-xl p-6 md:p-8 rounded-[2rem] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
           <div className="flex items-center gap-6">
             <div className="relative">
@@ -203,9 +203,10 @@ export default function AdminProjectsPage() {
                   </SelectTrigger>
                   <SelectContent className="bg-slate-900 border-white/10 text-white">
                      <SelectItem value="All">All Categories</SelectItem>
-                     {CATEGORY_OPTIONS.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                     {categories.map(c => <SelectItem key={c.name} value={c.name}>{c.name}</SelectItem>)}
                   </SelectContent>
                </Select>
+               <CategoryManagerDialog onUpdate={refreshCategories} />
             </div>
           </div>
 
@@ -275,7 +276,6 @@ export default function AdminProjectsPage() {
                     className="group relative p-6 md:p-8 bg-slate-950/20 transition-all border-b border-white/5 last:border-0"
                   >
                     <div className="flex flex-col xl:flex-row gap-8">
-                      {/* Media Gallery */}
                       <div className="w-full xl:w-140 shrink-0 space-y-6">
                         <MediaGalleryManager
                           media={proj.media || []}
@@ -318,9 +318,7 @@ export default function AdminProjectsPage() {
                         </div>
                       </div>
 
-                      {/* Info Grid */}
                       <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4 relative z-10">
-                        {/* Title & Slug */}
                         <div className="space-y-4 md:col-span-2">
                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div className="space-y-1.5">
@@ -351,7 +349,6 @@ export default function AdminProjectsPage() {
                            </div>
                         </div>
 
-                        {/* Category */}
                         <div className="space-y-1.5 lg:col-span-1">
                           <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
                             Primary Category
@@ -362,14 +359,13 @@ export default function AdminProjectsPage() {
                                <SelectTrigger className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-emerald-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm">
                                   <SelectValue placeholder="Category" />
                                </SelectTrigger>
-                               <SelectContent className="bg-slate-900 border-white/10 text-white rounded-xl">
-                                  {CATEGORY_OPTIONS.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                               <SelectContent className="bg-slate-900 border-white/10 text-white">
+                                  {categories.map(c => <SelectItem key={c.name} value={c.name}>{c.name}</SelectItem>)}
                                </SelectContent>
                             </Select>
                           </div>
                         </div>
 
-                        {/* Links Section */}
                         <section className="space-y-8 bg-slate-950/20 p-6 rounded-[2rem] border border-white/5 md:col-span-3">
                           <MultiLinkManager
                             label="Repositories & Codebases"
@@ -395,10 +391,10 @@ export default function AdminProjectsPage() {
                                 <FaCode className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-emerald-400 transition-colors" />
                                 <Input
                                   className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-emerald-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
-                                  value={newTechInputs[i] || ""}
-                                  onChange={(e) => setNewTechInputs(prev => ({...prev, [i]: e.target.value}))}
+                                  value={techInputs[i] || ""}
+                                  onChange={(e) => setTechInputs(prev => ({ ...prev, [i]: e.target.value }))}
                                   onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addTech(i))}
-                                  placeholder="Add tech..."
+                                  placeholder="Add tech (e.g. React)..."
                                 />
                              </div>
                              <Button onClick={() => addTech(i)} className="bg-slate-800 hover:bg-slate-700 rounded-xl h-11 w-11 p-0 border border-white/5"><FaPlus size={12} /></Button>
@@ -423,10 +419,10 @@ export default function AdminProjectsPage() {
                                 <FaInfoCircle className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-emerald-400 transition-colors" />
                                 <Input
                                   className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-emerald-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
-                                  value={newImprovementInputs[i] || ""}
-                                  onChange={(e) => setNewImprovementInputs(prev => ({...prev, [i]: e.target.value}))}
+                                  value={impInputs[i] || ""}
+                                  onChange={(e) => setImpInputs(prev => ({ ...prev, [i]: e.target.value }))}
                                   onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addImprovement(i))}
-                                  placeholder="Optimized bundle size by 40%..."
+                                  placeholder="Add technical improvement..."
                                 />
                              </div>
                              <Button onClick={() => addImprovement(i)} className="bg-slate-800 hover:bg-slate-700 rounded-xl h-11 w-11 p-0 border border-white/5"><FaPlus size={12} /></Button>

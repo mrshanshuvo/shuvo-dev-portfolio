@@ -187,6 +187,13 @@ export interface WorkflowStep {
   order: number;
 }
 
+export interface Category {
+  _id?: string;
+  name: string;
+  slug: string;
+  order: number;
+}
+
 export interface Demo {
   _id?: string;
   title: string;

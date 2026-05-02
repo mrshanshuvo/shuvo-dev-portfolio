@@ -24,6 +24,7 @@ import {
   FaFlask,
   FaProjectDiagram as FaWorkflow,
   FaCog,
+  FaLayerGroup,
 } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
