@@ -1,11 +1,13 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import {
   FaTrash,
   FaFileAlt,
   FaExternalLinkAlt,
   FaEye,
   FaTimes,
+  FaCloudUploadAlt,
 } from "react-icons/fa";
 import Image from "next/image";
 import { FiRefreshCw } from "react-icons/fi";
@@ -29,7 +31,12 @@ export default function ImageUpload({
   const [fileName, setFileName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleUpload = async (file: File) => {
     setLoading(true);
@@ -133,59 +140,89 @@ export default function ImageUpload({
   const isPdf = value?.toLowerCase().endsWith(".pdf");
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 w-full">
       {label && (
-        <label className="text-xs font-black uppercase tracking-widest text-slate-500">
+        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400/80 pl-1">
           {label}
         </label>
       )}
 
       {error ? (
-        <div className="p-6 rounded-2xl border border-red-500/30 bg-red-500/10 text-red-400 relative">
-          <h3 className="font-bold text-lg mb-2 text-red-500">Upload Error</h3>
-          <p className="text-sm">{error}</p>
+        <div className="p-6 rounded-[2rem] border border-rose-500/20 bg-linear-to-br from-rose-500/10 to-rose-900/10 text-rose-400 relative backdrop-blur-md shadow-[0_8px_32px_0_rgba(244,63,94,0.1)]">
+          <h3 className="font-bold text-lg mb-2 text-rose-400 flex items-center gap-3">
+            <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse shadow-[0_0_10px_rgba(244,63,94,0.6)]" />
+            Upload Failed
+          </h3>
+          <p className="text-sm opacity-80 font-medium pl-5">{error}</p>
           <button
             onClick={() => setError(null)}
-            className="absolute top-4 right-4 text-red-400 hover:text-red-300 font-bold p-2"
+            className="absolute top-5 right-5 text-rose-400/50 hover:text-rose-400 p-2 hover:rotate-90 transition-all duration-300 bg-black/20 hover:bg-black/40 rounded-full"
           >
-            ✕
+            <FaTimes size={16} />
           </button>
         </div>
       ) : loading ? (
-        <div className="p-6 rounded-2xl border border-white/10 bg-slate-900 shadow-sm text-slate-200">
-          <div className="flex flex-col md:flex-row md:items-center gap-2 mb-4">
-            <span className="font-semibold text-slate-300">Uploading:</span>
-            <span className="text-blue-400 font-medium truncate">
-              {fileName}
-            </span>
-          </div>
-          <div className="w-full bg-slate-800 rounded-full h-2.5 mb-2 overflow-hidden">
-            <div
-              className="bg-blue-500 h-2.5 rounded-full transition-all duration-300 ease-out"
-              style={{ width: `${progress}%` }}
-            ></div>
-          </div>
-          <div className="text-right text-xs text-slate-400">
-            {progress}% Complete
+        <div className="p-6 md:p-8 rounded-[2rem] border border-white/5 bg-slate-900/50 backdrop-blur-md shadow-2xl relative overflow-hidden group">
+          {/* Subtle animated background glow */}
+          <div className="absolute inset-0 bg-linear-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 animate-pulse" />
+
+          <div className="relative z-10">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-indigo-500/20 rounded-xl border border-indigo-500/30">
+                  <FiRefreshCw
+                    className="text-indigo-400 animate-spin"
+                    size={20}
+                  />
+                </div>
+                <div>
+                  <h4 className="font-bold text-slate-200 tracking-wide text-sm">
+                    Processing Asset
+                  </h4>
+                  <span className="text-indigo-300/60 font-medium truncate text-xs max-w-[200px] block mt-0.5">
+                    {fileName}
+                  </span>
+                </div>
+              </div>
+              <span className="text-2xl font-black bg-linear-to-r from-indigo-400 to-pink-400 bg-clip-text text-transparent">
+                {progress}%
+              </span>
+            </div>
+
+            {/* Premium Gradient Progress Bar */}
+            <div className="w-full bg-slate-950 rounded-full h-4 overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] border border-white/5 relative">
+              <div
+                className="h-full rounded-full transition-all duration-500 ease-out bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500 relative"
+                style={{ width: `${progress}%` }}
+              >
+                {/* Embedded Shimmer inside the bar using basic CSS animation */}
+                <div className="absolute inset-0 w-full h-full bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-pulse" />
+              </div>
+            </div>
           </div>
         </div>
       ) : value ? (
-        <div className="relative group rounded-3xl overflow-hidden border border-white/10 aspect-video bg-slate-950 flex flex-col items-center justify-center">
+        <div className="relative group rounded-[2rem] overflow-hidden border border-white/10 aspect-video bg-slate-950 flex flex-col items-center justify-center shadow-2xl transition-all duration-500 hover:shadow-[0_10px_40px_rgba(99,102,241,0.15)] hover:border-indigo-500/30">
           {!isPdf ? (
             <Image
               src={value}
               alt="Upload"
               fill
-              className="object-cover transition-transform duration-500 group-hover:scale-110"
+              className="object-cover transition-all duration-700 group-hover:scale-105 group-hover:opacity-30 group-hover:blur-sm"
             />
           ) : (
-            <iframe
-              src={`${value}#toolbar=0&navpanes=0&scrollbar=0&view=Fit`}
-              className="w-full h-full pointer-events-none border-none bg-white overflow-hidden"
-              title="PDF Preview"
-            />
+            <>
+              <iframe
+                src={`${value}#toolbar=0&navpanes=0&scrollbar=0&view=Fit`}
+                className="w-full h-full border-none bg-white transition-all duration-700 group-hover:opacity-30 group-hover:blur-sm"
+                title="PDF Preview"
+              />
+              <div className="absolute inset-0 z-0 bg-transparent" />
+            </>
           )}
-          <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 z-10">
+
+          {/* Glassmorphic Action Overlay */}
+          <div className="absolute inset-0 flex items-center justify-center gap-3 sm:gap-5 z-10 opacity-0 group-hover:opacity-100 transition-all duration-300 scale-95 group-hover:scale-100">
             <button
               type="button"
               onClick={(e) => {
@@ -193,17 +230,17 @@ export default function ImageUpload({
                 e.stopPropagation();
                 setIsPreviewOpen(true);
               }}
-              title="View Preview Here"
-              className="p-4 rounded-2xl bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 hover:scale-105 transition-all"
+              title="Expand Preview"
+              className="p-4 rounded-2xl bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 backdrop-blur-md hover:bg-indigo-500/40 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(99,102,241,0.2)] transition-all duration-300"
             >
-              <FaEye size={24} />
+              <FaEye size={22} />
             </button>
             <a
               href={value}
               target="_blank"
               rel="noopener noreferrer"
-              title="View File in New Tab"
-              className="p-4 rounded-2xl bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 hover:scale-105 transition-all"
+              title="Open Original"
+              className="p-4 rounded-2xl bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/30 backdrop-blur-md hover:bg-fuchsia-500/40 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(217,70,239,0.2)] transition-all duration-300"
             >
               <FaExternalLinkAlt size={20} />
             </a>
@@ -214,10 +251,10 @@ export default function ImageUpload({
                 e.stopPropagation();
                 fileInputRef.current?.click();
               }}
-              title="Replace File"
-              className="p-4 rounded-2xl bg-white/10 text-white hover:bg-white/20 hover:scale-105 transition-all"
+              title="Change File"
+              className="p-4 rounded-2xl bg-white/10 text-white border border-white/20 backdrop-blur-md hover:bg-white/20 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(255,255,255,0.1)] transition-all duration-300"
             >
-              <FiRefreshCw size={24} />
+              <FiRefreshCw size={22} />
             </button>
             <button
               type="button"
@@ -226,8 +263,8 @@ export default function ImageUpload({
                 e.stopPropagation();
                 onChange("");
               }}
-              title="Remove File"
-              className="p-4 rounded-2xl bg-red-500/20 text-red-400 hover:bg-red-500/30 hover:scale-105 transition-all"
+              title="Delete File"
+              className="p-4 rounded-2xl bg-rose-500/20 text-rose-300 border border-rose-500/30 backdrop-blur-md hover:bg-rose-500/40 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(244,63,94,0.2)] transition-all duration-300"
             >
               <FaTrash size={20} />
             </button>
@@ -243,18 +280,40 @@ export default function ImageUpload({
           onDrop={onDrop}
           onClick={() => fileInputRef.current?.click()}
           className={`
-            relative aspect-video rounded-2xl border-2 border-dashed transition-all duration-300 cursor-pointer overflow-hidden
-            flex flex-col items-center justify-center p-8 
-            ${isDragging ? "border-blue-500 bg-blue-500/10" : "border-blue-500/50 bg-blue-500/5 hover:bg-blue-500/10"}
+            relative aspect-video rounded-[2rem] border-2 transition-all duration-500 cursor-pointer overflow-hidden
+            flex flex-col items-center justify-center p-8 group
+            ${
+              isDragging
+                ? "border-indigo-400 border-solid bg-indigo-500/10 shadow-[0_0_40px_rgba(99,102,241,0.2)]"
+                : "border-slate-700 border-dashed bg-slate-900/50 hover:border-indigo-500/50 hover:bg-slate-800/80"
+            }
           `}
         >
-          <div className="text-center">
-            <p className="text-blue-500 font-semibold text-lg md:text-xl">
-              Drag & drop files here,{" "}
-              <span className="font-normal text-blue-400">
-                or click to select
-              </span>
-            </p>
+          {/* Subtle background glow effect on hover */}
+          <div className="absolute inset-0 bg-linear-to-tr from-indigo-500/0 via-purple-500/0 to-pink-500/0 group-hover:from-indigo-500/5 group-hover:via-purple-500/5 group-hover:to-pink-500/5 transition-all duration-700" />
+
+          <div className="relative z-10 flex flex-col items-center gap-6">
+            <div className="w-20 h-20 rounded-3xl bg-slate-800/80 shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-white/5 flex items-center justify-center group-hover:scale-110 group-hover:-translate-y-2 transition-all duration-500">
+              <FaCloudUploadAlt
+                className="text-indigo-400 drop-shadow-[0_0_15px_rgba(99,102,241,0.4)]"
+                size={40}
+              />
+            </div>
+
+            <div className="text-center space-y-2">
+              <h3 className="text-xl font-black tracking-wide bg-linear-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Drop Asset Here
+              </h3>
+              <p className="text-sm text-slate-400 font-medium">
+                or click to browse from computer
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3 text-[10px] uppercase tracking-widest font-bold text-slate-500 bg-slate-950/50 px-5 py-2 rounded-full border border-white/5">
+              <span className="text-indigo-400/80">IMAGE</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-slate-700" />
+              <span className="text-fuchsia-400/80">PDF</span>
+            </div>
           </div>
         </div>
       )}
@@ -267,47 +326,72 @@ export default function ImageUpload({
         className="hidden"
       />
 
-      {/* Fullscreen Preview Modal */}
-      {isPreviewOpen && value && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md">
-          <div className="relative w-full max-w-6xl h-[90vh] bg-slate-900 rounded-3xl overflow-hidden border border-white/10 shadow-2xl flex flex-col">
-            <div className="flex items-center justify-between p-4 border-b border-white/10 bg-slate-950/50">
-              <h3 className="text-white font-semibold truncate px-2">
-                File Preview
-              </h3>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setIsPreviewOpen(false);
-                }}
-                className="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-xl transition-colors"
-              >
-                <FaTimes size={24} />
-              </button>
-            </div>
-            <div className="flex-1 w-full h-full p-4 md:p-6 relative bg-slate-950/50">
-              {!isPdf ? (
-                <div className="relative w-full h-full">
-                  <Image
+      {/* Fullscreen Premium Preview Modal */}
+      {isMounted &&
+        isPreviewOpen &&
+        value &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-9999 flex items-center justify-center p-4 sm:p-8 bg-slate-950/80 backdrop-blur-sm transition-all duration-500"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsPreviewOpen(false);
+            }}
+          >
+            <div
+              className={`relative w-full ${isPdf ? "max-w-5xl h-[85vh]" : "max-w-4xl"} bg-slate-900/90 backdrop-blur-3xl rounded-[2rem] overflow-hidden border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col transition-all duration-500 scale-100`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Refined Header */}
+              <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-slate-950/40">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.8)]"></div>
+                  <h3 className="text-white text-[10px] font-bold tracking-[0.2em] uppercase opacity-70">
+                    Preview Mode
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsPreviewOpen(false);
+                  }}
+                  className="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-full transition-all duration-300"
+                >
+                  <FaTimes size={18} />
+                </button>
+              </div>
+
+              {/* Dynamic Content Body */}
+              <div className={`relative w-full ${!isPdf ? "aspect-auto max-h-[70vh] p-4" : "flex-1 p-6"} flex items-center justify-center bg-black/20`}>
+                {!isPdf ? (
+                  <img
                     src={value}
                     alt="Preview"
-                    fill
-                    className="object-contain"
+                    className="max-w-full max-h-[70vh] object-contain rounded-xl shadow-2xl transition-transform duration-500"
                   />
-                </div>
-              ) : (
-                <iframe
-                  src={`${value}#toolbar=1&navpanes=0&scrollbar=1&view=FitH`}
-                  className="w-full h-full rounded-xl bg-white"
-                  title="PDF Full Preview"
-                />
-              )}
+                ) : (
+                  <div className="w-full h-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-white">
+                    <iframe
+                      src={`${value}#toolbar=1&navpanes=0&scrollbar=1&view=Fit`}
+                      className="w-full h-full border-none"
+                      title="PDF Full Preview"
+                    />
+                  </div>
+                )}
+              </div>
+              
+              {/* Subtle Footer info */}
+              <div className="px-6 py-3 border-t border-white/5 bg-slate-950/20 flex justify-center">
+                <p className="text-[9px] font-bold text-slate-500 tracking-widest uppercase">
+                  End of Preview
+                </p>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </div>
   );
 }

@@ -290,6 +290,50 @@ export default function AdminHeroPage() {
             </CardContent>
           </Card>
 
+          {/* Assets Card */}
+          <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
+            <CardHeader className="pb-2">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-amber-500/20 text-amber-400 rounded-xl">
+                  <FaImage size={20} />
+                </div>
+                <div>
+                  <CardTitle className="text-xl font-bold text-white">
+                    Assets
+                  </CardTitle>
+                  <CardDescription className="text-slate-400">
+                    Profile picture and resume document.
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Profile Image UI */}
+                <div className="space-y-4">
+                  <ImageUpload
+                    label="Profile Image"
+                    value={data.profileImage}
+                    onChange={(url) =>
+                      setData((prev) => ({ ...prev, profileImage: url }))
+                    }
+                  />
+                </div>
+
+                {/* Resume PDF UI */}
+                <div className="space-y-4">
+                  <ImageUpload
+                    label="Resume PDF"
+                    value={data.resumeUrl}
+                    onChange={(url) =>
+                      setData((prev) => ({ ...prev, resumeUrl: url }))
+                    }
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Typing Sequences Card */}
           <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
             <CardHeader className="pb-4">
@@ -383,50 +427,6 @@ export default function AdminHeroPage() {
                   </p>
                 </div>
               )}
-            </CardContent>
-          </Card>
-
-          {/* Assets Card */}
-          <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
-            <CardHeader className="pb-2">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-amber-500/20 text-amber-400 rounded-xl">
-                  <FaImage size={20} />
-                </div>
-                <div>
-                  <CardTitle className="text-xl font-bold text-white">
-                    Assets
-                  </CardTitle>
-                  <CardDescription className="text-slate-400">
-                    Profile picture and resume document.
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Profile Image UI */}
-                <div className="space-y-4">
-                  <ImageUpload
-                    label="Profile Image"
-                    value={data.profileImage}
-                    onChange={(url) =>
-                      setData((prev) => ({ ...prev, profileImage: url }))
-                    }
-                  />
-                </div>
-
-                {/* Resume PDF UI */}
-                <div className="space-y-4">
-                  <ImageUpload
-                    label="Resume PDF"
-                    value={data.resumeUrl}
-                    onChange={(url) =>
-                      setData((prev) => ({ ...prev, resumeUrl: url }))
-                    }
-                  />
-                </div>
-              </div>
             </CardContent>
           </Card>
         </div>
