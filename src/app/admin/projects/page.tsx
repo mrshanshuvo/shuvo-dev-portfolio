@@ -251,19 +251,6 @@ export default function AdminProjectsPage() {
     })
     .sort((a, b) => (a.order || 0) - (b.order || 0));
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
-          <p className="text-slate-400 font-medium animate-pulse">
-            Loading Projects...
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8">
       {/* Toast */}
@@ -322,7 +309,10 @@ export default function AdminProjectsPage() {
             </div>
             <div className="flex gap-4">
               <div className="w-48 shrink-0">
-                <Select value={filterCategory} onValueChange={(val) => val && setFilterCategory(val)}>
+                <Select
+                  value={filterCategory}
+                  onValueChange={(val) => val && setFilterCategory(val)}
+                >
                   <SelectTrigger className="bg-slate-950/50 border-white/10 text-slate-200 rounded-2xl h-12">
                     <div className="flex items-center gap-2">
                       <FaFilter size={14} className="text-emerald-400" />
@@ -366,98 +356,130 @@ export default function AdminProjectsPage() {
         ) : (
           <div className="grid grid-cols-1 gap-4">
             <AnimatePresence mode="popLayout">
-              {filteredProjects.map((p, idx) => (
-                <motion.div
-                  key={p._id || idx}
-                  layout
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ delay: idx * 0.05 }}
-                >
-                  <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl hover:border-emerald-500/30 transition-all group overflow-hidden">
-                    <CardContent className="p-4 md:p-6 flex flex-col md:flex-row items-center gap-6">
-                      {/* Image Preview */}
-                      <div className="w-full md:w-32 h-32 rounded-2xl bg-slate-950/50 overflow-hidden shrink-0 border border-white/5 relative group/img">
-                        <Image
-                          src={p.image || "/images/placeholder.png"}
-                          alt={p.title}
-                          fill
-                          className="object-cover transition-transform group-hover/img:scale-110"
-                          onError={(e) => {
-                            (e.target as any).src =
-                              "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Crect width='128' height='128' fill='%231e293b'/%3E%3C/svg%3E";
-                          }}
-                          unoptimized
-                        />
-                        {p.featured && (
-                          <div className="absolute top-2 left-2 p-1.5 bg-amber-500 text-white rounded-lg shadow-lg">
-                            <FaStar size={10} />
+              {loading
+                ? /* Skeleton Loader List */
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <motion.div
+                      key={`skeleton-${i}`}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.1 }}
+                    >
+                      <Card className="rounded-3xl border border-white/5 bg-slate-900/20 backdrop-blur-sm overflow-hidden">
+                        <CardContent className="p-4 md:p-6 flex flex-col md:flex-row items-center gap-6">
+                          <div className="w-full md:w-32 h-32 rounded-2xl bg-slate-800/30 animate-pulse shrink-0" />
+                          <div className="flex-1 space-y-3">
+                            <div className="flex items-center gap-3">
+                              <div className="h-6 w-1/3 bg-slate-800/40 rounded-lg animate-pulse" />
+                              <div className="h-5 w-16 bg-slate-800/20 rounded-full animate-pulse" />
+                            </div>
+                            <div className="h-4 w-full bg-slate-800/10 rounded animate-pulse" />
+                            <div className="flex gap-2 pt-2">
+                              <div className="h-5 w-12 bg-slate-800/20 rounded-lg animate-pulse" />
+                              <div className="h-5 w-12 bg-slate-800/20 rounded-lg animate-pulse" />
+                              <div className="h-5 w-12 bg-slate-800/20 rounded-lg animate-pulse" />
+                            </div>
                           </div>
-                        )}
-                      </div>
-
-                      {/* Content */}
-                      <div className="flex-1 min-w-0 text-center md:text-left">
-                        <div className="flex flex-col md:flex-row md:items-center gap-2 mb-2">
-                          <h3 className="text-xl font-bold text-white truncate">
-                            {p.title}
-                          </h3>
-                          <div className="flex justify-center md:justify-start gap-2">
-                            <Badge
-                              variant="outline"
-                              className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                            >
-                              {p.category}
-                            </Badge>
-                            {p.order !== undefined && (
-                              <Badge
-                                variant="outline"
-                                className="bg-blue-500/10 text-blue-400 border-blue-500/20"
-                              >
-                                Order: {p.order}
-                              </Badge>
+                          <div className="flex gap-2 shrink-0 md:pl-6 md:border-l md:border-white/5">
+                            <div className="w-10 h-10 bg-slate-800/30 rounded-xl animate-pulse" />
+                            <div className="w-10 h-10 bg-slate-800/30 rounded-xl animate-pulse" />
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))
+                : filteredProjects.map((p, idx) => (
+                    <motion.div
+                      key={p._id || idx}
+                      layout
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ delay: idx * 0.05 }}
+                    >
+                      <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl hover:border-emerald-500/30 transition-all group overflow-hidden">
+                        <CardContent className="p-4 md:p-6 flex flex-col md:flex-row items-center gap-6">
+                          {/* Image Preview */}
+                          <div className="w-full md:w-32 h-32 rounded-2xl bg-slate-950/50 overflow-hidden shrink-0 border border-white/5 relative group/img">
+                            <Image
+                              src={p.image || "/images/placeholder.png"}
+                              alt={p.title}
+                              fill
+                              className="object-cover transition-transform group-hover/img:scale-110"
+                              onError={(e) => {
+                                (e.target as any).src =
+                                  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Crect width='128' height='128' fill='%231e293b'/%3E%3C/svg%3E";
+                              }}
+                              unoptimized
+                            />
+                            {p.featured && (
+                              <div className="absolute top-2 left-2 p-1.5 bg-amber-500 text-white rounded-lg shadow-lg">
+                                <FaStar size={10} />
+                              </div>
                             )}
                           </div>
-                        </div>
-                        <p className="text-slate-400 text-sm line-clamp-2 mb-4">
-                          {p.description}
-                        </p>
-                        <div className="flex flex-wrap justify-center md:justify-start gap-2">
-                          {p.techNames.map((t) => (
-                            <span
-                              key={t}
-                              className="px-2 py-1 bg-slate-950/50 text-slate-500 border border-white/5 rounded-lg text-[10px] font-bold uppercase tracking-wider"
-                            >
-                              {t}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
 
-                      {/* Actions */}
-                      <div className="flex items-center gap-2 md:pl-6 md:border-l md:border-white/10 shrink-0">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => openEdit(p)}
-                          className="w-10 h-10 rounded-xl bg-slate-950/30 text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
-                        >
-                          <FaEdit size={16} />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDelete(p._id!)}
-                          className="w-10 h-10 rounded-xl bg-slate-950/30 text-slate-400 hover:text-red-400 hover:bg-red-400/10 transition-all"
-                        >
-                          <FaTrash size={16} />
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
+                          {/* Content */}
+                          <div className="flex-1 min-w-0 text-center md:text-left">
+                            <div className="flex flex-col md:flex-row md:items-center gap-2 mb-2">
+                              <h3 className="text-xl font-bold text-white truncate">
+                                {p.title}
+                              </h3>
+                              <div className="flex justify-center md:justify-start gap-2">
+                                <Badge
+                                  variant="outline"
+                                  className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                                >
+                                  {p.category}
+                                </Badge>
+                                {p.order !== undefined && (
+                                  <Badge
+                                    variant="outline"
+                                    className="bg-blue-500/10 text-blue-400 border-blue-500/20"
+                                  >
+                                    Order: {p.order}
+                                  </Badge>
+                                )}
+                              </div>
+                            </div>
+                            <p className="text-slate-400 text-sm line-clamp-2 mb-4">
+                              {p.description}
+                            </p>
+                            <div className="flex flex-wrap justify-center md:justify-start gap-2">
+                              {p.techNames.map((t) => (
+                                <span
+                                  key={t}
+                                  className="px-2 py-1 bg-slate-950/50 text-slate-500 border border-white/5 rounded-lg text-[10px] font-bold uppercase tracking-wider"
+                                >
+                                  {t}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Actions */}
+                          <div className="flex items-center gap-2 md:pl-6 md:border-l md:border-white/10 shrink-0">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => openEdit(p)}
+                              className="w-10 h-10 rounded-xl bg-slate-950/30 text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
+                            >
+                              <FaEdit size={16} />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDelete(p._id!)}
+                              className="w-10 h-10 rounded-xl bg-slate-950/30 text-slate-400 hover:text-red-400 hover:bg-red-400/10 transition-all"
+                            >
+                              <FaTrash size={16} />
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
             </AnimatePresence>
           </div>
         )}
@@ -575,7 +597,9 @@ export default function AdminProjectsPage() {
                         <ImageUpload
                           label="Project Image"
                           value={form.image}
-                          onChange={(url) => setForm((f) => ({ ...f, image: url }))}
+                          onChange={(url) =>
+                            setForm((f) => ({ ...f, image: url }))
+                          }
                         />
                       </div>
                       <div className="space-y-4">
@@ -629,7 +653,12 @@ export default function AdminProjectsPage() {
                         <label className="text-sm font-medium text-slate-400 ml-1">
                           Category
                         </label>
-                        <Select value={form.category} onValueChange={(val) => val && setForm((f) => ({ ...f, category: val }))}>
+                        <Select
+                          value={form.category}
+                          onValueChange={(val) =>
+                            val && setForm((f) => ({ ...f, category: val }))
+                          }
+                        >
                           <SelectTrigger className="bg-slate-950/50 border-white/10 text-slate-200 rounded-xl">
                             <SelectValue placeholder="Select Category" />
                           </SelectTrigger>
@@ -793,8 +822,6 @@ export default function AdminProjectsPage() {
           </div>
         )}
       </AnimatePresence>
-
-
     </div>
   );
 }

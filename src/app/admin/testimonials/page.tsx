@@ -80,12 +80,7 @@ export default function AdminTestimonialsPage() {
     });
   }
 
-  if (loading)
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
-        <div className="w-12 h-12 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin" />
-      </div>
-    );
+
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8">
@@ -143,81 +138,106 @@ export default function AdminTestimonialsPage() {
             </div>
           </CardHeader>
           <CardContent className="space-y-6">
-            <AnimatePresence>
-              {data.map((item, i) => (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  key={i}
-                  className="p-6 bg-slate-950/40 rounded-2xl border border-white/5 relative group"
-                >
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() =>
-                      setData((prev) => prev.filter((_, idx) => idx !== i))
-                    }
-                    className="absolute top-4 right-4 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl"
+            <AnimatePresence mode="popLayout">
+              {loading ? (
+                /* Skeleton Loader List */
+                Array.from({ length: 3 }).map((_, i) => (
+                  <motion.div
+                    key={`skeleton-${i}`}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.1 }}
                   >
-                    <FaTimes size={14} />
-                  </Button>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                      <ImageUpload
-                        label="Client Avatar"
-                        value={item.avatar || ""}
-                        onChange={(url) => updateTestimonial(i, "avatar", url)}
-                      />
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
-                          Client Name
-                        </label>
-                        <div className="relative">
-                          <FaUserCircle className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                    <div className="p-6 bg-slate-950/20 rounded-2xl border border-white/5 space-y-6 animate-pulse mb-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-4">
+                          <div className="w-full h-32 bg-slate-800/30 rounded-2xl" />
+                          <div className="h-10 w-full bg-slate-800/40 rounded-xl" />
+                          <div className="h-10 w-full bg-slate-800/40 rounded-xl" />
+                        </div>
+                        <div className="h-40 bg-slate-800/20 rounded-2xl w-full" />
+                      </div>
+                    </div>
+                  </motion.div>
+                ))
+              ) : (
+                data.map((item, i) => (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    key={i}
+                    className="p-6 bg-slate-950/40 rounded-2xl border border-white/5 relative group mb-4"
+                  >
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() =>
+                        setData((prev) => prev.filter((_, idx) => idx !== i))
+                      }
+                      className="absolute top-4 right-4 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl"
+                    >
+                      <FaTimes size={14} />
+                    </Button>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-4">
+                        <ImageUpload
+                          label="Client Avatar"
+                          value={item.avatar || ""}
+                          onChange={(url) =>
+                            updateTestimonial(i, "avatar", url)
+                          }
+                        />
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
+                            Client Name
+                          </label>
+                          <div className="relative">
+                            <FaUserCircle className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                            <Input
+                              className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-10"
+                              value={item.name}
+                              onChange={(e) =>
+                                updateTestimonial(i, "name", e.target.value)
+                              }
+                              placeholder="John Doe"
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
+                            Role / Position
+                          </label>
                           <Input
-                            className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-10"
-                            value={item.name}
+                            className="bg-slate-900/50 border-white/10 text-white rounded-xl"
+                            value={item.role}
                             onChange={(e) =>
-                              updateTestimonial(i, "name", e.target.value)
+                              updateTestimonial(i, "role", e.target.value)
                             }
-                            placeholder="John Doe"
+                            placeholder="CTO at Tech Corp"
                           />
                         </div>
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
-                          Role / Position
+                          Testimonial Content
                         </label>
-                        <Input
-                          className="bg-slate-900/50 border-white/10 text-white rounded-xl"
-                          value={item.role}
-                          onChange={(e) =>
-                            updateTestimonial(i, "role", e.target.value)
-                          }
-                          placeholder="CTO at Tech Corp"
-                        />
+                        <div className="relative">
+                          <FaQuoteLeft className="absolute left-3 top-3 text-slate-700" />
+                          <Textarea
+                            className="bg-slate-900/50 border-white/10 text-white rounded-xl min-h-[100px] pl-10"
+                            value={item.content}
+                            onChange={(e) =>
+                              updateTestimonial(i, "content", e.target.value)
+                            }
+                            placeholder="He is an amazing developer..."
+                          />
+                        </div>
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
-                        Testimonial Content
-                      </label>
-                      <div className="relative">
-                        <FaQuoteLeft className="absolute left-3 top-3 text-slate-700" />
-                        <Textarea
-                          className="bg-slate-900/50 border-white/10 text-white rounded-xl min-h-[100px] pl-10"
-                          value={item.content}
-                          onChange={(e) =>
-                            updateTestimonial(i, "content", e.target.value)
-                          }
-                          placeholder="He is an amazing developer..."
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                ))
+              )}
             </AnimatePresence>
             {data.length === 0 && (
               <div className="text-center py-12 border-2 border-dashed border-white/5 rounded-3xl">

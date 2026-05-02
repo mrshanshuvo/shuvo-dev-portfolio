@@ -181,19 +181,6 @@ export default function AdminExperiencePage() {
     }));
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
-          <p className="text-slate-400 font-medium animate-pulse">
-            Loading Experience...
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8">
       {/* Toast */}
@@ -238,20 +225,43 @@ export default function AdminExperiencePage() {
           </Button>
         </header>
 
-        {/* Experience List */}
-        {items.length === 0 ? (
-          <div className="text-center py-20 bg-slate-900/20 rounded-3xl border border-dashed border-white/5">
-            <div className="w-16 h-16 bg-slate-800/50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-600">
-              <FaListUl size={24} />
-            </div>
-            <p className="text-slate-400 font-medium">
-              No experience entries found. Add your first one!
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            <AnimatePresence mode="popLayout">
-              {items.map((item, idx) => {
+        <div className="space-y-4">
+          <AnimatePresence mode="popLayout">
+            {loading ? (
+              /* Skeleton List */
+              Array.from({ length: 3 }).map((_, i) => (
+                <motion.div
+                  key={`skeleton-${i}`}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                >
+                  <Card className="rounded-3xl border border-white/5 bg-slate-900/20 backdrop-blur-sm overflow-hidden animate-pulse">
+                    <CardContent className="p-6 flex flex-col md:flex-row items-start gap-6">
+                      <div className="p-4 rounded-2xl border bg-slate-800/40 w-12 h-12 shrink-0 border-white/5" />
+                      <div className="flex-1 space-y-4 w-full">
+                        <div className="h-6 w-1/3 bg-slate-800 rounded-lg" />
+                        <div className="h-4 w-1/4 bg-slate-800/50 rounded" />
+                        <div className="space-y-2 pt-2">
+                          <div className="h-3 w-full bg-slate-800/20 rounded" />
+                          <div className="h-3 w-5/6 bg-slate-800/20 rounded" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))
+            ) : items.length === 0 ? (
+              <div className="text-center py-20 bg-slate-900/20 rounded-3xl border border-dashed border-white/5">
+                <div className="w-16 h-16 bg-slate-800/50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-600">
+                  <FaListUl size={24} />
+                </div>
+                <p className="text-slate-400 font-medium">
+                  No experience entries found. Add your first one!
+                </p>
+              </div>
+            ) : (
+              items.map((item, idx) => {
                 const Icon = TYPE_ICONS[item.type] || FaBriefcase;
                 const colors = COLOR_MAP[item.color] || COLOR_MAP.emerald;
 
@@ -370,10 +380,10 @@ export default function AdminExperiencePage() {
                     </Card>
                   </motion.div>
                 );
-              })}
-            </AnimatePresence>
-          </div>
-        )}
+              })
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
       {/* Form Modal */}
@@ -638,8 +648,6 @@ export default function AdminExperiencePage() {
           </div>
         )}
       </AnimatePresence>
-
-
     </div>
   );
 }

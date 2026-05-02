@@ -88,12 +88,7 @@ export default function AdminServicesPage() {
     setFeatureInput((prev) => ({ ...prev, [i]: "" }));
   }
 
-  if (loading)
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
-        <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
-      </div>
-    );
+
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8">
@@ -151,121 +146,144 @@ export default function AdminServicesPage() {
             </div>
           </CardHeader>
           <CardContent className="space-y-6">
-            <AnimatePresence>
-              {data.map((item, i) => (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  key={i}
-                  className="p-6 bg-slate-950/40 rounded-2xl border border-white/5 relative group space-y-4"
-                >
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() =>
-                      setData((prev) => prev.filter((_, idx) => idx !== i))
-                    }
-                    className="absolute top-4 right-4 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl"
+            <AnimatePresence mode="popLayout">
+              {loading ? (
+                /* Skeleton Loader List */
+                Array.from({ length: 3 }).map((_, i) => (
+                  <motion.div
+                    key={`skeleton-${i}`}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.1 }}
                   >
-                    <FaTimes size={14} />
-                  </Button>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
-                        Service Title
-                      </label>
-                      <Input
-                        className="bg-slate-900/50 border-white/10 text-white rounded-xl"
-                        value={item.title}
-                        onChange={(e) =>
-                          updateService(i, "title", e.target.value)
-                        }
-                      />
+                    <div className="p-6 bg-slate-950/20 rounded-2xl border border-white/5 space-y-6 animate-pulse mb-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="h-10 bg-slate-800/40 rounded-xl w-full" />
+                        <div className="h-10 bg-slate-800/40 rounded-xl w-full" />
+                      </div>
+                      <div className="h-20 bg-slate-800/20 rounded-xl w-full" />
+                      <div className="h-10 bg-slate-800/30 rounded-xl w-full" />
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
-                        Icon Name
-                      </label>
-                      <Input
-                        className="bg-slate-900/50 border-white/10 text-white rounded-xl"
-                        value={item.icon}
-                        onChange={(e) =>
-                          updateService(i, "icon", e.target.value)
-                        }
-                        placeholder="FaCode, FaDatabase..."
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
-                      Description
-                    </label>
-                    <Textarea
-                      className="bg-slate-900/50 border-white/10 text-white rounded-xl min-h-[80px]"
-                      value={item.description}
-                      onChange={(e) =>
-                        updateService(i, "description", e.target.value)
+                  </motion.div>
+                ))
+              ) : (
+                data.map((item, i) => (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    key={i}
+                    className="p-6 bg-slate-950/40 rounded-2xl border border-white/5 relative group space-y-4 mb-4"
+                  >
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() =>
+                        setData((prev) => prev.filter((_, idx) => idx !== i))
                       }
-                    />
-                  </div>
+                      className="absolute top-4 right-4 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl"
+                    >
+                      <FaTimes size={14} />
+                    </Button>
 
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
-                      Key Features
-                    </label>
-                    <div className="flex gap-2">
-                      <Input
-                        className="bg-slate-900/50 border-white/10 text-white rounded-xl flex-1"
-                        value={featureInput[i] || ""}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
+                          Service Title
+                        </label>
+                        <Input
+                          className="bg-slate-900/50 border-white/10 text-white rounded-xl"
+                          value={item.title}
+                          onChange={(e) =>
+                            updateService(i, "title", e.target.value)
+                          }
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
+                          Icon Name
+                        </label>
+                        <Input
+                          className="bg-slate-900/50 border-white/10 text-white rounded-xl"
+                          value={item.icon}
+                          onChange={(e) =>
+                            updateService(i, "icon", e.target.value)
+                          }
+                          placeholder="FaCode, FaDatabase..."
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
+                        Description
+                      </label>
+                      <Textarea
+                        className="bg-slate-900/50 border-white/10 text-white rounded-xl min-h-[80px]"
+                        value={item.description}
                         onChange={(e) =>
-                          setFeatureInput((prev) => ({
-                            ...prev,
-                            [i]: e.target.value,
-                          }))
+                          updateService(i, "description", e.target.value)
                         }
-                        onKeyDown={(e) =>
-                          e.key === "Enter" &&
-                          (e.preventDefault(), addFeature(i))
-                        }
-                        placeholder="Add feature..."
                       />
-                      <Button
-                        onClick={() => addFeature(i)}
-                        variant="outline"
-                        className="rounded-xl border-white/10"
-                      >
-                        Add
-                      </Button>
                     </div>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {item.features.map((feat, fIdx) => (
-                        <Badge
-                          key={fIdx}
-                          variant="secondary"
-                          className="bg-white/5 text-slate-300 border-white/10 gap-2 pl-3"
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
+                        Key Features
+                      </label>
+                      <div className="flex gap-2">
+                        <Input
+                          className="bg-slate-900/50 border-white/10 text-white rounded-xl flex-1"
+                          value={featureInput[i] || ""}
+                          onChange={(e) =>
+                            setFeatureInput((prev) => ({
+                              ...prev,
+                              [i]: e.target.value,
+                            }))
+                          }
+                          onKeyDown={(e) =>
+                            e.key === "Enter" &&
+                            (e.preventDefault(), addFeature(i))
+                          }
+                          placeholder="Add feature..."
+                        />
+                        <Button
+                          onClick={() => addFeature(i)}
+                          variant="outline"
+                          className="rounded-xl border-white/10"
                         >
-                          {feat}
-                          <button
-                            onClick={() =>
-                              updateService(
-                                i,
-                                "features",
-                                item.features.filter((_, idx) => idx !== fIdx),
-                              )
-                            }
-                            className="hover:text-red-400"
+                          Add
+                        </Button>
+                      </div>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {item.features.map((feat, fIdx) => (
+                          <Badge
+                            key={fIdx}
+                            variant="secondary"
+                            className="bg-white/5 text-slate-300 border-white/10 gap-2 pl-3"
                           >
-                            <FaTimes size={10} />
-                          </button>
-                        </Badge>
-                      ))}
+                            {feat}
+                            <button
+                              onClick={() =>
+                                updateService(
+                                  i,
+                                  "features",
+                                  item.features.filter(
+                                    (_, idx) => idx !== fIdx,
+                                  ),
+                                )
+                              }
+                              className="hover:text-red-400"
+                            >
+                              <FaTimes size={10} />
+                            </button>
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                ))
+              )}
             </AnimatePresence>
           </CardContent>
         </Card>

@@ -105,14 +105,6 @@ export default function AdminSocialsPage() {
       return next;
     });
   }
-
-  if (loading)
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
-        <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
-      </div>
-    );
-
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8">
       <AnimatePresence>
@@ -169,58 +161,79 @@ export default function AdminSocialsPage() {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <AnimatePresence>
-              {links.map((link, i) => {
-                const Icon = platformIconMap[link.platform] || FaLink;
-                return (
+            <AnimatePresence mode="popLayout">
+              {loading ? (
+                /* Skeleton Loader List */
+                Array.from({ length: 4 }).map((_, i) => (
                   <motion.div
+                    key={`skeleton-${i}`}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    key={i}
-                    className="flex flex-col md:flex-row gap-4 p-4 bg-slate-950/40 rounded-2xl border border-white/5 items-center"
+                    transition={{ delay: i * 0.1 }}
+                    className="flex flex-col md:flex-row gap-4 p-4 bg-slate-950/20 rounded-2xl border border-white/5 items-center animate-pulse mb-4"
                   >
-                    <div className="w-full md:w-48">
-                      <Select
-                        value={link.platform}
-                        onValueChange={(val) => val && updateLink(i, "platform", val)}
-                      >
-                        <SelectTrigger className="bg-slate-900/50 border-white/10 text-slate-200 rounded-xl">
-                          <div className="flex items-center gap-2">
-                            <Icon size={16} className="text-blue-400" />
-                            <SelectValue />
-                          </div>
-                        </SelectTrigger>
-                        <SelectContent className="bg-slate-900 border-white/10 text-slate-200">
-                          {PLATFORM_OPTIONS.map((p) => (
-                            <SelectItem key={p} value={p}>
-                              {p}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="flex-1 w-full">
-                      <Input
-                        className="bg-slate-900/50 border-white/10 text-slate-200 rounded-xl"
-                        value={link.href}
-                        onChange={(e) => updateLink(i, "href", e.target.value)}
-                        placeholder="https://..."
-                      />
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() =>
-                        setLinks((prev) => prev.filter((_, idx) => idx !== i))
-                      }
-                      className="text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl"
-                    >
-                      <FaTimes size={16} />
-                    </Button>
+                    <div className="w-full md:w-48 h-10 bg-slate-800/40 rounded-xl" />
+                    <div className="flex-1 w-full h-10 bg-slate-800/20 rounded-xl" />
+                    <div className="w-10 h-10 bg-slate-800/10 rounded-xl" />
                   </motion.div>
-                );
-              })}
+                ))
+              ) : (
+                links.map((link, i) => {
+                  const Icon = platformIconMap[link.platform] || FaLink;
+                  return (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      key={i}
+                      className="flex flex-col md:flex-row gap-4 p-4 bg-slate-950/40 rounded-2xl border border-white/5 items-center mb-4"
+                    >
+                      <div className="w-full md:w-48">
+                        <Select
+                          value={link.platform}
+                          onValueChange={(val) =>
+                            val && updateLink(i, "platform", val)
+                          }
+                        >
+                          <SelectTrigger className="bg-slate-900/50 border-white/10 text-slate-200 rounded-xl">
+                            <div className="flex items-center gap-2">
+                              <Icon size={16} className="text-blue-400" />
+                              <SelectValue />
+                            </div>
+                          </SelectTrigger>
+                          <SelectContent className="bg-slate-900 border-white/10 text-slate-200">
+                            {PLATFORM_OPTIONS.map((p) => (
+                              <SelectItem key={p} value={p}>
+                                {p}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="flex-1 w-full">
+                        <Input
+                          className="bg-slate-900/50 border-white/10 text-slate-200 rounded-xl"
+                          value={link.href}
+                          onChange={(e) =>
+                            updateLink(i, "href", e.target.value)
+                          }
+                          placeholder="https://..."
+                        />
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() =>
+                          setLinks((prev) => prev.filter((_, idx) => idx !== i))
+                        }
+                        className="text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl"
+                      >
+                        <FaTimes size={16} />
+                      </Button>
+                    </motion.div>
+                  );
+                })
+              )}
             </AnimatePresence>
           </CardContent>
         </Card>

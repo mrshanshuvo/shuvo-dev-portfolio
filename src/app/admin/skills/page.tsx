@@ -103,13 +103,6 @@ export default function AdminSkillsPage() {
     });
   }
 
-  if (loading)
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
-        <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
-      </div>
-    );
-
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8">
       <AnimatePresence>
@@ -166,98 +159,120 @@ export default function AdminSkillsPage() {
             </div>
           </CardHeader>
           <CardContent className="space-y-6">
-            <AnimatePresence>
-              {skills.map((skill, i) => {
-                const Icon = iconMap[skill.iconName] || FaCode;
-                return (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    key={i}
-                    className="p-5 bg-slate-950/40 rounded-2xl border border-white/5 space-y-4"
-                  >
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                          Category
-                        </label>
-                        <Input
-                          className="bg-slate-900/50 border-white/10 text-white rounded-xl"
-                          value={skill.name}
-                          onChange={(e) =>
-                            updateSkill(i, "name", e.target.value)
-                          }
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                          Icon & Tech
-                        </label>
-                        <div className="flex gap-2">
-                          <Select
-                            value={skill.iconName}
-                            onValueChange={(val) =>
-                              val && updateSkill(i, "iconName", val)
-                            }
-                          >
-                            <SelectTrigger className="w-[120px] bg-slate-900/50 border-white/10 text-white rounded-xl">
-                              <Icon size={16} className="text-purple-400" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-slate-900 border-white/10 text-white">
-                              {ICON_OPTIONS.map((ic) => (
-                                <SelectItem key={ic} value={ic}>
-                                  {ic}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <Input
-                            className="bg-slate-900/50 border-white/10 text-white rounded-xl flex-1"
-                            value={skill.tech}
-                            onChange={(e) =>
-                              updateSkill(i, "tech", e.target.value)
-                            }
-                          />
+            <AnimatePresence mode="popLayout">
+              {loading
+                ? /* Skeleton Loader List */
+                  Array.from({ length: 4 }).map((_, i) => (
+                    <motion.div
+                      key={`skeleton-${i}`}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.05 }}
+                    >
+                      <div className="p-5 bg-slate-950/20 rounded-2xl border border-white/5 space-y-4 animate-pulse">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="h-10 bg-slate-800/40 rounded-xl" />
+                          <div className="h-10 bg-slate-800/40 rounded-xl" />
                         </div>
+                        <div className="h-4 bg-slate-800/20 rounded-full w-full" />
                       </div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                          Proficiency
-                        </label>
-                        <Badge className="bg-purple-500/10 text-purple-400 border-purple-500/20">
-                          {skill.level}%
-                        </Badge>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <Slider
-                          value={[skill.level]}
-                          onValueChange={(vals) =>
-                            updateSkill(i, "level", Array.isArray(vals) ? vals[0] : vals)
-                          }
-                          max={100}
-                          step={1}
-                          className="flex-1"
-                        />
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() =>
-                            setSkills((prev) =>
-                              prev.filter((_, idx) => idx !== i),
-                            )
-                          }
-                          className="text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl"
-                        >
-                          <FaTimes size={16} />
-                        </Button>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
+                    </motion.div>
+                  ))
+                : skills.map((skill, i) => {
+                    const Icon = iconMap[skill.iconName] || FaCode;
+                    return (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        key={i}
+                        className="p-5 bg-slate-950/40 rounded-2xl border border-white/5 space-y-4"
+                      >
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                              Category
+                            </label>
+                            <Input
+                              className="bg-slate-900/50 border-white/10 text-white rounded-xl"
+                              value={skill.name}
+                              onChange={(e) =>
+                                updateSkill(i, "name", e.target.value)
+                              }
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                              Icon & Tech
+                            </label>
+                            <div className="flex gap-2">
+                              <Select
+                                value={skill.iconName}
+                                onValueChange={(val) =>
+                                  val && updateSkill(i, "iconName", val)
+                                }
+                              >
+                                <SelectTrigger className="w-[120px] bg-slate-900/50 border-white/10 text-white rounded-xl">
+                                  <Icon size={16} className="text-purple-400" />
+                                </SelectTrigger>
+                                <SelectContent className="bg-slate-900 border-white/10 text-white">
+                                  {ICON_OPTIONS.map((ic) => (
+                                    <SelectItem key={ic} value={ic}>
+                                      {ic}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <Input
+                                className="bg-slate-900/50 border-white/10 text-white rounded-xl flex-1"
+                                value={skill.tech}
+                                onChange={(e) =>
+                                  updateSkill(i, "tech", e.target.value)
+                                }
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                              Proficiency
+                            </label>
+                            <Badge className="bg-purple-500/10 text-purple-400 border-purple-500/20">
+                              {skill.level}%
+                            </Badge>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <Slider
+                              value={[skill.level]}
+                              onValueChange={(vals) =>
+                                updateSkill(
+                                  i,
+                                  "level",
+                                  Array.isArray(vals) ? vals[0] : vals,
+                                )
+                              }
+                              max={100}
+                              step={1}
+                              className="flex-1"
+                            />
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() =>
+                                setSkills((prev) =>
+                                  prev.filter((_, idx) => idx !== i),
+                                )
+                              }
+                              className="text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl"
+                            >
+                              <FaTimes size={16} />
+                            </Button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
             </AnimatePresence>
           </CardContent>
         </Card>

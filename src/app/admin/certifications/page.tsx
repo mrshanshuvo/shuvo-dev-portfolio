@@ -81,12 +81,7 @@ export default function AdminCertificationsPage() {
     });
   }
 
-  if (loading)
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
-        <div className="w-12 h-12 border-4 border-amber-500/20 border-t-amber-500 rounded-full animate-spin" />
-      </div>
-    );
+
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8">
@@ -144,100 +139,125 @@ export default function AdminCertificationsPage() {
             </div>
           </CardHeader>
           <CardContent className="space-y-6">
-            <AnimatePresence>
-              {data.map((item, i) => (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  key={i}
-                  className="p-5 bg-slate-950/40 rounded-2xl border border-white/5 relative group"
-                >
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() =>
-                      setData((prev) => prev.filter((_, idx) => idx !== i))
-                    }
-                    className="absolute top-4 right-4 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"
+            <AnimatePresence mode="popLayout">
+              {loading ? (
+                /* Skeleton Loader List */
+                Array.from({ length: 3 }).map((_, i) => (
+                  <motion.div
+                    key={`skeleton-${i}`}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.1 }}
                   >
-                    <FaTimes size={14} />
-                  </Button>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                      <ImageUpload
-                        label="Certification Image / Logo"
-                        value={item.image || ""}
-                        onChange={(url) => updateCert(i, "image", url)}
-                      />
+                    <div className="p-5 bg-slate-950/20 rounded-2xl border border-white/5 space-y-6 animate-pulse mb-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-4">
+                          <div className="w-full h-32 bg-slate-800/30 rounded-2xl" />
+                          <div className="h-10 w-full bg-slate-800/40 rounded-xl" />
+                        </div>
+                        <div className="space-y-6 pt-4">
+                          <div className="h-10 w-full bg-slate-800/40 rounded-xl" />
+                          <div className="h-10 w-full bg-slate-800/40 rounded-xl" />
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))
+              ) : (
+                data.map((item, i) => (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    key={i}
+                    className="p-5 bg-slate-950/40 rounded-2xl border border-white/5 relative group mb-4"
+                  >
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() =>
+                        setData((prev) => prev.filter((_, idx) => idx !== i))
+                      }
+                      className="absolute top-4 right-4 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <FaTimes size={14} />
+                    </Button>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-4">
+                        <ImageUpload
+                          label="Certification Image / Logo"
+                          value={item.image || ""}
+                          onChange={(url) => updateCert(i, "image", url)}
+                        />
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
+                            Certification Title
+                          </label>
+                          <div className="relative">
+                            <FaAward className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                            <Input
+                              className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-10"
+                              value={item.title}
+                              onChange={(e) =>
+                                updateCert(i, "title", e.target.value)
+                              }
+                              placeholder="AWS Certified Developer"
+                            />
+                          </div>
+                        </div>
+                      </div>
                       <div className="space-y-2">
                         <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
-                          Certification Title
+                          Issuing Organization
                         </label>
                         <div className="relative">
-                          <FaAward className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                          <FaBuilding className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
                           <Input
                             className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-10"
-                            value={item.title}
+                            value={item.issuer}
                             onChange={(e) =>
-                              updateCert(i, "title", e.target.value)
+                              updateCert(i, "issuer", e.target.value)
                             }
-                            placeholder="AWS Certified Developer"
+                            placeholder="Amazon Web Services"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
+                          Date Obtained
+                        </label>
+                        <div className="relative">
+                          <FaCalendarAlt className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                          <Input
+                            className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-10"
+                            value={item.date}
+                            onChange={(e) =>
+                              updateCert(i, "date", e.target.value)
+                            }
+                            placeholder="June 2024"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
+                          Credential URL (Optional)
+                        </label>
+                        <div className="relative">
+                          <FaLink className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                          <Input
+                            className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-10"
+                            value={item.link}
+                            onChange={(e) =>
+                              updateCert(i, "link", e.target.value)
+                            }
+                            placeholder="https://verify.cert..."
                           />
                         </div>
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
-                        Issuing Organization
-                      </label>
-                      <div className="relative">
-                        <FaBuilding className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-                        <Input
-                          className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-10"
-                          value={item.issuer}
-                          onChange={(e) =>
-                            updateCert(i, "issuer", e.target.value)
-                          }
-                          placeholder="Amazon Web Services"
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
-                        Date Obtained
-                      </label>
-                      <div className="relative">
-                        <FaCalendarAlt className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-                        <Input
-                          className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-10"
-                          value={item.date}
-                          onChange={(e) =>
-                            updateCert(i, "date", e.target.value)
-                          }
-                          placeholder="June 2024"
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
-                        Credential URL (Optional)
-                      </label>
-                      <div className="relative">
-                        <FaLink className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-                        <Input
-                          className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-10"
-                          value={item.link}
-                          onChange={(e) =>
-                            updateCert(i, "link", e.target.value)
-                          }
-                          placeholder="https://verify.cert..."
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                ))
+              )}
             </AnimatePresence>
             {data.length === 0 && (
               <div className="text-center py-12 border-2 border-dashed border-white/5 rounded-3xl">

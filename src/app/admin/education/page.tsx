@@ -77,137 +77,104 @@ export default function AdminEducationPage() {
     });
   }
 
-  if (loading)
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
-        <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
-      </div>
-    );
-
-  return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8">
-      <AnimatePresence>
-        {toast && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className={`fixed top-6 right-6 z-50 px-6 py-4 rounded-2xl shadow-2xl backdrop-blur-xl border flex items-center gap-3 ${
-              toast.type === "success"
-                ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
-                : "bg-red-500/20 border-red-500/50 text-red-400"
-            }`}
-          >
-            {toast.type === "success" ? <FaCheck /> : <FaTimes />}
-            <span className="font-semibold">{toast.msg}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div className="max-w-4xl mx-auto">
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-          <div>
-            <h1 className="text-4xl font-bold text-white tracking-tight mb-2">
-              Education
-            </h1>
-            <p className="text-slate-400">
-              Manage your academic background and certifications.
-            </p>
-          </div>
-          <Button
-            onClick={handleSave}
-            disabled={saving}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold px-8 shadow-lg shadow-emerald-600/20"
-          >
-            <FaSave className={cn("mr-2", saving && "animate-spin")} />
-            {saving ? "Saving..." : "Save Education"}
-          </Button>
-        </header>
-
-        <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
-          <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-xl font-bold text-white">
-                Qualifications
-              </CardTitle>
-              <Button
-                variant="outline"
-                onClick={addEdu}
-                className="bg-slate-800 hover:bg-slate-700 text-slate-200 border-white/5 rounded-xl"
-              >
-                <FaPlus size={12} className="mr-2" /> Add New
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <AnimatePresence>
-              {education.map((edu, i) => (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  key={i}
-                  className="p-5 bg-slate-950/40 rounded-2xl border border-white/5 space-y-4"
-                >
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                        Degree
-                      </label>
-                      <Input
-                        className="bg-slate-900/50 border-white/10 text-white rounded-xl"
-                        value={edu.degree}
-                        onChange={(e) => updateEdu(i, "degree", e.target.value)}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                        Institution
-                      </label>
-                      <Input
-                        className="bg-slate-900/50 border-white/10 text-white rounded-xl"
-                        value={edu.institution}
-                        onChange={(e) =>
-                          updateEdu(i, "institution", e.target.value)
-                        }
-                      />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                        Period
-                      </label>
-                      <Input
-                        className="bg-slate-900/50 border-white/10 text-white rounded-xl"
-                        value={edu.period}
-                        onChange={(e) => updateEdu(i, "period", e.target.value)}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                        Details
-                      </label>
-                      <Input
-                        className="bg-slate-900/50 border-white/10 text-white rounded-xl"
-                        value={edu.details}
-                        onChange={(e) =>
-                          updateEdu(i, "details", e.target.value)
-                        }
-                      />
-                    </div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    onClick={() =>
-                      setEducation((prev) => prev.filter((_, idx) => idx !== i))
-                    }
-                    className="text-red-400 hover:bg-red-400/10 w-full rounded-xl mt-2"
+            <AnimatePresence mode="popLayout">
+              {loading ? (
+                /* Skeleton Loader List */
+                Array.from({ length: 3 }).map((_, i) => (
+                  <motion.div
+                    key={`skeleton-${i}`}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.1 }}
                   >
-                    Remove Entry
-                  </Button>
-                </motion.div>
-              ))}
+                    <div className="p-5 bg-slate-950/20 rounded-2xl border border-white/5 space-y-4 animate-pulse mb-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="h-10 bg-slate-800/40 rounded-xl w-full" />
+                        <div className="h-10 bg-slate-800/40 rounded-xl w-full" />
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="h-10 bg-slate-800/20 rounded-xl w-full" />
+                        <div className="h-10 bg-slate-800/20 rounded-xl w-full" />
+                      </div>
+                      <div className="h-10 bg-red-400/10 rounded-xl w-full" />
+                    </div>
+                  </motion.div>
+                ))
+              ) : (
+                education.map((edu, i) => (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    key={i}
+                    className="p-5 bg-slate-950/40 rounded-2xl border border-white/5 space-y-4 mb-4"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                          Degree
+                        </label>
+                        <Input
+                          className="bg-slate-900/50 border-white/10 text-white rounded-xl"
+                          value={edu.degree}
+                          onChange={(e) =>
+                            updateEdu(i, "degree", e.target.value)
+                          }
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                          Institution
+                        </label>
+                        <Input
+                          className="bg-slate-900/50 border-white/10 text-white rounded-xl"
+                          value={edu.institution}
+                          onChange={(e) =>
+                            updateEdu(i, "institution", e.target.value)
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                          Period
+                        </label>
+                        <Input
+                          className="bg-slate-900/50 border-white/10 text-white rounded-xl"
+                          value={edu.period}
+                          onChange={(e) =>
+                            updateEdu(i, "period", e.target.value)
+                          }
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                          Details
+                        </label>
+                        <Input
+                          className="bg-slate-900/50 border-white/10 text-white rounded-xl"
+                          value={edu.details}
+                          onChange={(e) =>
+                            updateEdu(i, "details", e.target.value)
+                          }
+                        />
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      onClick={() =>
+                        setEducation((prev) =>
+                          prev.filter((_, idx) => idx !== i),
+                        )
+                      }
+                      className="text-red-400 hover:bg-red-400/10 w-full rounded-xl mt-2"
+                    >
+                      Remove Entry
+                    </Button>
+                  </motion.div>
+                ))
+              )}
             </AnimatePresence>
           </CardContent>
         </Card>

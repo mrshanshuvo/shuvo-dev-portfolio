@@ -167,17 +167,7 @@ export default function AdminAboutPage() {
     });
   }
 
-  if (loading)
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
-          <p className="text-slate-400 font-medium animate-pulse">
-            Loading About Data...
-          </p>
-        </div>
-      </div>
-    );
+
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8">
@@ -231,88 +221,184 @@ export default function AdminAboutPage() {
         </header>
 
         <div className="space-y-8">
-          <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-blue-500/20 text-blue-400 rounded-xl">
-                  <FaUser size={20} />
-                </div>
-                <div>
-                  <CardTitle className="text-white">
-                    Professional Bio
-                  </CardTitle>
-                  <CardDescription>
-                    Two paragraphs that tell your story.
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
-                  Paragraph 1
-                </label>
-                <Textarea
-                  className="bg-slate-950/50 border-white/10 text-white rounded-2xl min-h-[120px] focus-visible:ring-blue-500/50"
-                  value={data.bio1}
-                  onChange={(e) =>
-                    setData((d) => ({ ...d, bio1: e.target.value }))
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
-                  Paragraph 2
-                </label>
-                <Textarea
-                  className="bg-slate-950/50 border-white/10 text-white rounded-2xl min-h-[120px] focus-visible:ring-blue-500/50"
-                  value={data.bio2}
-                  onChange={(e) =>
-                    setData((d) => ({ ...d, bio2: e.target.value }))
-                  }
-                />
-              </div>
-            </CardContent>
-          </Card>
+          {loading ? (
+            /* Skeleton State */
+            Array.from({ length: 3 }).map((_, i) => (
+              <motion.div
+                key={`skeleton-${i}`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <Card className="rounded-3xl border border-white/5 bg-slate-900/20 backdrop-blur-sm overflow-hidden">
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 bg-slate-800/40 rounded-xl w-10 h-10 animate-pulse" />
+                      <div className="space-y-2">
+                        <div className="h-5 w-32 bg-slate-800/60 rounded-lg animate-pulse" />
+                        <div className="h-3 w-48 bg-slate-800/30 rounded-lg animate-pulse" />
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-6 space-y-4">
+                    <div className="h-24 bg-slate-800/20 rounded-2xl animate-pulse" />
+                    <div className="h-24 bg-slate-800/20 rounded-2xl animate-pulse" />
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))
+          ) : (
+            <div className="space-y-8 animate-in fade-in duration-700">
+              <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-blue-500/20 text-blue-400 rounded-xl">
+                      <FaUser size={20} />
+                    </div>
+                    <div>
+                      <CardTitle className="text-white">
+                        Professional Bio
+                      </CardTitle>
+                      <CardDescription>
+                        Two paragraphs that tell your story.
+                      </CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                      Paragraph 1
+                    </label>
+                    <Textarea
+                      className="bg-slate-950/50 border-white/10 text-white rounded-2xl min-h-[120px] focus-visible:ring-blue-500/50"
+                      value={data.bio1}
+                      onChange={(e) =>
+                        setData((d) => ({ ...d, bio1: e.target.value }))
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                      Paragraph 2
+                    </label>
+                    <Textarea
+                      className="bg-slate-950/50 border-white/10 text-white rounded-2xl min-h-[120px] focus-visible:ring-blue-500/50"
+                      value={data.bio2}
+                      onChange={(e) =>
+                        setData((d) => ({ ...d, bio2: e.target.value }))
+                      }
+                    />
+                  </div>
+                </CardContent>
+              </Card>
 
-          <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-pink-500/20 text-pink-400 rounded-xl">
-                  <FaLightbulb size={20} />
-                </div>
-                <div>
-                  <CardTitle className="text-white">
-                    Key Highlights
-                  </CardTitle>
-                  <CardDescription>
-                    Short bullet points of what you bring to the table.
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex flex-wrap gap-2">
-                <AnimatePresence>
-                  {data.highlights.map((h, i) => (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      key={i}
+              <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-pink-500/20 text-pink-400 rounded-xl">
+                      <FaLightbulb size={20} />
+                    </div>
+                    <div>
+                      <CardTitle className="text-white">
+                        Key Highlights
+                      </CardTitle>
+                      <CardDescription>
+                        Short bullet points of what you bring to the table.
+                      </CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex flex-wrap gap-2">
+                    <AnimatePresence>
+                      {data.highlights.map((h, i) => (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.9 }}
+                          key={i}
+                        >
+                          <Badge
+                            variant="secondary"
+                            className="pl-3 pr-1 py-1 gap-1 bg-slate-800 text-slate-200 border-white/5 rounded-full"
+                          >
+                            {h}
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() =>
+                                setData((d) => ({
+                                  ...d,
+                                  highlights: d.highlights.filter(
+                                    (_, idx) => idx !== i,
+                                  ),
+                                }))
+                              }
+                              className="h-5 w-5 rounded-full hover:bg-red-500/20 hover:text-red-400"
+                            >
+                              <FaTimes size={10} />
+                            </Button>
+                          </Badge>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
+                  <div className="flex gap-2">
+                    <Input
+                      className="bg-slate-950/50 border-white/10 text-white rounded-xl focus-visible:ring-pink-500/50"
+                      value={highlightInput}
+                      onChange={(e) => setHighlightInput(e.target.value)}
+                      onKeyDown={(e) =>
+                        e.key === "Enter" &&
+                        (e.preventDefault(), addHighlight())
+                      }
+                      placeholder="e.g. Expert in modern React..."
+                    />
+                    <Button
+                      onClick={addHighlight}
+                      size="icon"
+                      className="bg-slate-800 hover:bg-slate-700 text-white rounded-xl shrink-0"
                     >
+                      <FaPlus size={14} />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-blue-500/20 text-blue-400 rounded-xl">
+                      <FaLayerGroup size={20} />
+                    </div>
+                    <div>
+                      <CardTitle className="text-white">
+                        Tech Stack List
+                      </CardTitle>
+                      <CardDescription>
+                        A comprehensive list of technologies for the scrolling
+                        banner.
+                      </CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex flex-wrap gap-2">
+                    {data.techList.map((t, i) => (
                       <Badge
-                        variant="secondary"
-                        className="pl-3 pr-1 py-1 gap-1 bg-slate-800 text-slate-200 border-white/5 rounded-full"
+                        key={i}
+                        variant="outline"
+                        className="pl-3 pr-1 py-1 gap-1 bg-slate-950/50 text-slate-300 border-white/5 rounded-lg"
                       >
-                        {h}
+                        {t}
                         <Button
                           variant="ghost"
                           size="icon"
                           onClick={() =>
                             setData((d) => ({
                               ...d,
-                              highlights: d.highlights.filter(
+                              techList: d.techList.filter(
                                 (_, idx) => idx !== i,
                               ),
                             }))
@@ -322,96 +408,30 @@ export default function AdminAboutPage() {
                           <FaTimes size={10} />
                         </Button>
                       </Badge>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </div>
-              <div className="flex gap-2">
-                <Input
-                  className="bg-slate-950/50 border-white/10 text-white rounded-xl focus-visible:ring-pink-500/50"
-                  value={highlightInput}
-                  onChange={(e) => setHighlightInput(e.target.value)}
-                  onKeyDown={(e) =>
-                    e.key === "Enter" &&
-                    (e.preventDefault(), addHighlight())
-                  }
-                  placeholder="e.g. Expert in modern React..."
-                />
-                <Button
-                  onClick={addHighlight}
-                  size="icon"
-                  className="bg-slate-800 hover:bg-slate-700 text-white rounded-xl shrink-0"
-                >
-                  <FaPlus size={14} />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-blue-500/20 text-blue-400 rounded-xl">
-                  <FaLayerGroup size={20} />
-                </div>
-                <div>
-                  <CardTitle className="text-white">
-                    Tech Stack List
-                  </CardTitle>
-                  <CardDescription>
-                    A comprehensive list of technologies for the scrolling
-                    banner.
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex flex-wrap gap-2">
-                {data.techList.map((t, i) => (
-                  <Badge
-                    key={i}
-                    variant="outline"
-                    className="pl-3 pr-1 py-1 gap-1 bg-slate-950/50 text-slate-300 border-white/5 rounded-lg"
-                  >
-                    {t}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() =>
-                        setData((d) => ({
-                          ...d,
-                          techList: d.techList.filter(
-                            (_, idx) => idx !== i,
-                          ),
-                        }))
+                    ))}
+                  </div>
+                  <div className="flex gap-2">
+                    <Input
+                      className="bg-slate-950/50 border-white/10 text-white rounded-xl focus-visible:ring-blue-500/50"
+                      value={techInput}
+                      onChange={(e) => setTechInput(e.target.value)}
+                      onKeyDown={(e) =>
+                        e.key === "Enter" && (e.preventDefault(), addTech())
                       }
-                      className="h-5 w-5 rounded-full hover:bg-red-500/20 hover:text-red-400"
+                      placeholder="Add technology (e.g. Docker)..."
+                    />
+                    <Button
+                      onClick={addTech}
+                      size="icon"
+                      className="bg-slate-800 hover:bg-slate-700 text-white rounded-xl shrink-0"
                     >
-                      <FaTimes size={10} />
+                      <FaPlus size={14} />
                     </Button>
-                  </Badge>
-                ))}
-              </div>
-              <div className="flex gap-2">
-                <Input
-                  className="bg-slate-950/50 border-white/10 text-white rounded-xl focus-visible:ring-blue-500/50"
-                  value={techInput}
-                  onChange={(e) => setTechInput(e.target.value)}
-                  onKeyDown={(e) =>
-                    e.key === "Enter" && (e.preventDefault(), addTech())
-                  }
-                  placeholder="Add technology (e.g. Docker)..."
-                />
-                <Button
-                  onClick={addTech}
-                  size="icon"
-                  className="bg-slate-800 hover:bg-slate-700 text-white rounded-xl shrink-0"
-                >
-                  <FaPlus size={14} />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </div>
       </div>
     </div>

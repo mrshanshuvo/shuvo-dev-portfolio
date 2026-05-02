@@ -63,12 +63,7 @@ export default function AdminStatsPage() {
     });
   }
 
-  if (loading)
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
-        <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
-      </div>
-    );
+
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8">
@@ -126,43 +121,60 @@ export default function AdminStatsPage() {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <AnimatePresence>
-              {stats.map((stat, i) => (
-                <motion.div
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  key={i}
-                  className="flex gap-4 items-center p-4 bg-slate-950/40 rounded-2xl border border-white/5"
-                >
-                  <div className="w-24">
-                    <Input
-                      className="bg-slate-900/50 border-white/10 text-amber-400 font-black text-center rounded-xl"
-                      value={stat.number}
-                      onChange={(e) => updateStat(i, "number", e.target.value)}
-                      placeholder="20+"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <Input
-                      className="bg-slate-900/50 border-white/10 text-white rounded-xl"
-                      value={stat.label}
-                      onChange={(e) => updateStat(i, "label", e.target.value)}
-                      placeholder="Projects Finished"
-                    />
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() =>
-                      setStats((prev) => prev.filter((_, idx) => idx !== i))
-                    }
-                    className="text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl"
+            <AnimatePresence mode="popLayout">
+              {loading ? (
+                /* Skeleton Loader List */
+                Array.from({ length: 4 }).map((_, i) => (
+                  <motion.div
+                    key={`skeleton-${i}`}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.1 }}
+                    className="flex gap-4 items-center p-4 bg-slate-950/20 rounded-2xl border border-white/5 animate-pulse mb-4"
                   >
-                    <FaTimes size={16} />
-                  </Button>
-                </motion.div>
-              ))}
+                    <div className="w-24 h-10 bg-slate-800/40 rounded-xl" />
+                    <div className="flex-1 h-10 bg-slate-800/20 rounded-xl" />
+                    <div className="w-10 h-10 bg-slate-800/10 rounded-xl" />
+                  </motion.div>
+                ))
+              ) : (
+                stats.map((stat, i) => (
+                  <motion.div
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    key={i}
+                    className="flex gap-4 items-center p-4 bg-slate-950/40 rounded-2xl border border-white/5 mb-4"
+                  >
+                    <div className="w-24">
+                      <Input
+                        className="bg-slate-900/50 border-white/10 text-amber-400 font-black text-center rounded-xl"
+                        value={stat.number}
+                        onChange={(e) => updateStat(i, "number", e.target.value)}
+                        placeholder="20+"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <Input
+                        className="bg-slate-900/50 border-white/10 text-white rounded-xl"
+                        value={stat.label}
+                        onChange={(e) => updateStat(i, "label", e.target.value)}
+                        placeholder="Projects Finished"
+                      />
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() =>
+                        setStats((prev) => prev.filter((_, idx) => idx !== i))
+                      }
+                      className="text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl"
+                    >
+                      <FaTimes size={16} />
+                    </Button>
+                  </motion.div>
+                ))
+              )}
             </AnimatePresence>
           </CardContent>
         </Card>
