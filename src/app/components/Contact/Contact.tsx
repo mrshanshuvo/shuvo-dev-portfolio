@@ -38,11 +38,15 @@ const platformIconMap: Record<string, IconType> = {
 interface Props {
   socialLinks: import("@/types").SocialLink[];
   contactEmail: string;
+  contactPhone?: string;
+  contactLocation?: string;
 }
 
 export default function Contact({
   socialLinks: rawSocialLinks,
   contactEmail,
+  contactPhone,
+  contactLocation,
 }: Props) {
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
@@ -61,13 +65,15 @@ export default function Contact({
     {
       icon: FaPhone,
       label: "Phone",
-      value: "+88017 94280136",
-      link: "tel:+8801794280136",
+      value: contactPhone || "+88017 94280136",
+      link: contactPhone
+        ? `tel:${contactPhone.replace(/\s+/g, "")}`
+        : "tel:+8801794280136",
     },
     {
       icon: FaMapMarkerAlt,
       label: "Location",
-      value: "12/C/1, Girza Road, Borobagh, Mirpur, Dhaka, Bangladesh",
+      value: contactLocation || "Mirpur, Dhaka, Bangladesh",
       link: null,
     },
   ];

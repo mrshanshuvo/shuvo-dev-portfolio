@@ -70,7 +70,12 @@ export default async function Home() {
         <Suspense fallback={<SectionSkeleton cols={3} />}>
           <Testimonials />
         </Suspense>
-        <Contact socialLinks={socialLinks} contactEmail={contactEmail} />
+        <Contact
+          socialLinks={socialLinks}
+          contactEmail={contactEmail}
+          contactPhone={settingDoc?.contactPhone}
+          contactLocation={settingDoc?.contactLocation}
+        />
       </main>
       <Footer socialLinks={socialLinks} />
     </>

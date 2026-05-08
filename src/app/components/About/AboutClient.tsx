@@ -199,23 +199,26 @@ export default function AboutClient({ about }: Props) {
                       <div className="flex items-center gap-4">
                         <div className="relative w-14 h-14 shrink-0 bg-blue-500/10 rounded-2xl flex items-center justify-center overflow-hidden border border-blue-500/20 shadow-inner">
                           {edu.logo ? (
-                             <Image 
-                               src={edu.logo} 
-                               alt={edu.institution} 
-                               fill
-                               className="object-contain p-2"
-                             />
+                            <Image
+                              src={edu.logo}
+                              alt={edu.institution}
+                              fill
+                              className="object-contain p-2"
+                            />
                           ) : (
                             <FaGraduationCap className="text-blue-500 text-3xl" />
                           )}
                         </div>
                         <div>
-                           <CardTitle className="font-display text-xl font-bold text-slate-900 dark:text-white leading-tight">
+                          <CardTitle className="font-display text-xl font-bold text-slate-900 dark:text-white leading-tight">
                             Education
                           </CardTitle>
                           {edu.location && (
                             <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mt-1">
-                              <FaMapMarkerAlt className="text-blue-500/60" size={10} />
+                              <FaMapMarkerAlt
+                                className="text-blue-500/60"
+                                size={10}
+                              />
                               {edu.location}
                             </div>
                           )}
@@ -245,8 +248,13 @@ export default function AboutClient({ about }: Props) {
                       <div className="space-y-2 border-l-2 border-blue-500/10 pl-4 py-1">
                         {Array.isArray(edu.details) ? (
                           edu.details.map((detail, dIdx) => (
-                            <p key={dIdx} className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed italic flex gap-2 items-start">
-                              <span className="text-blue-500/40 mt-1.5 shrink-0">•</span>
+                            <p
+                              key={dIdx}
+                              className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed italic flex gap-2 items-start"
+                            >
+                              <span className="text-blue-500/40 mt-1.5 shrink-0">
+                                •
+                              </span>
                               {detail}
                             </p>
                           ))
@@ -258,9 +266,9 @@ export default function AboutClient({ about }: Props) {
                       </div>
                     </div>
                     {edu.link && (
-                      <a 
-                        href={edu.link} 
-                        target="_blank" 
+                      <a
+                        href={edu.link}
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="mt-auto inline-flex items-center justify-center gap-2 w-full py-3 bg-slate-100 dark:bg-slate-800 hover:bg-blue-500 hover:text-white transition-all rounded-xl text-xs font-black uppercase tracking-widest text-slate-600 dark:text-slate-300"
                       >

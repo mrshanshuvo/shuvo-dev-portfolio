@@ -17,55 +17,132 @@ dotenv.config({ path: ".env.local" });
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 // --- Models (inline to avoid Next.js module issues) ---
-const ProjectSchema = new mongoose.Schema({
-  title: String, slug: String, description: String, image: String,
-  techNames: [String], github: String, live: String, featured: Boolean,
-  category: String, improvements: [String], order: Number,
-}, { timestamps: true });
+const ProjectSchema = new mongoose.Schema(
+  {
+    title: String,
+    slug: String,
+    description: String,
+    image: String,
+    techNames: [String],
+    github: String,
+    live: String,
+    featured: Boolean,
+    category: String,
+    improvements: [String],
+    order: Number,
+  },
+  { timestamps: true },
+);
 
-const ExperienceSchema = new mongoose.Schema({
-  title: String, org: String, duration: String, details: [String],
-  color: String, type: String, order: Number,
-}, { timestamps: true });
+const ExperienceSchema = new mongoose.Schema(
+  {
+    title: String,
+    org: String,
+    duration: String,
+    details: [String],
+    color: String,
+    type: String,
+    order: Number,
+  },
+  { timestamps: true },
+);
 
-const AboutSchema = new mongoose.Schema({
-  bio1: String, bio2: String, highlights: [String],
-  stats: [{ number: String, label: String }],
-  skills: [{ name: String, tech: String, level: Number, iconName: String }],
-  techList: [String],
-  education: [{ degree: String, institution: String, period: String, details: String }],
-}, { timestamps: true });
+const AboutSchema = new mongoose.Schema(
+  {
+    bio1: String,
+    bio2: String,
+    highlights: [String],
+    stats: [{ number: String, label: String }],
+    skills: [{ name: String, tech: String, level: Number, iconName: String }],
+    techList: [String],
+    education: [
+      { degree: String, institution: String, period: String, details: String },
+    ],
+  },
+  { timestamps: true },
+);
 
-const HeroSchema = new mongoose.Schema({
-  name: String, lastName: String,
-  typeSequences: [{ text: String, delay: Number }],
-  bio: String, profileImage: String, resumeUrl: String,
-  socialLinks: [{ platform: String, href: String, label: String }],
-}, { timestamps: true });
+const HeroSchema = new mongoose.Schema(
+  {
+    name: String,
+    lastName: String,
+    typeSequences: [{ text: String, delay: Number }],
+    bio: String,
+    profileImage: String,
+    resumeUrl: String,
+    socialLinks: [{ platform: String, href: String, label: String }],
+  },
+  { timestamps: true },
+);
 
-const ServiceSchema = new mongoose.Schema({
-  title: String, description: String, icon: String, features: [String], order: Number
-}, { timestamps: true });
+const ServiceSchema = new mongoose.Schema(
+  {
+    title: String,
+    description: String,
+    icon: String,
+    features: [String],
+    order: Number,
+  },
+  { timestamps: true },
+);
 
-const WorkflowSchema = new mongoose.Schema({
-  title: String, description: String, icon: String, order: Number
-}, { timestamps: true });
+const WorkflowSchema = new mongoose.Schema(
+  {
+    title: String,
+    description: String,
+    icon: String,
+    order: Number,
+  },
+  { timestamps: true },
+);
 
-const DemoSchema = new mongoose.Schema({
-  title: String, description: String, url: String, tech: [String], order: Number
-}, { timestamps: true });
+const DemoSchema = new mongoose.Schema(
+  {
+    title: String,
+    description: String,
+    url: String,
+    tech: [String],
+    order: Number,
+  },
+  { timestamps: true },
+);
 
-const BlogSchema = new mongoose.Schema({
-  title: String, description: String, link: String, date: String, tags: [String], image: String, order: Number
-}, { timestamps: true });
+const BlogSchema = new mongoose.Schema(
+  {
+    title: String,
+    description: String,
+    link: String,
+    date: String,
+    tags: [String],
+    image: String,
+    order: Number,
+  },
+  { timestamps: true },
+);
 
-const CertificationSchema = new mongoose.Schema({
-  title: String, issuer: String, date: String, link: String, image: String, order: Number
-}, { timestamps: true });
+const CertificationSchema = new mongoose.Schema(
+  {
+    title: String,
+    issuer: String,
+    date: String,
+    link: String,
+    image: String,
+    order: Number,
+  },
+  { timestamps: true },
+);
 
-const TestimonialSchema = new mongoose.Schema({
-  name: String, role: String, content: String, avatar: String, company: String, order: Number
-}, { timestamps: true });
+const TestimonialSchema = new mongoose.Schema(
+  {
+    name: String,
+    role: String,
+    content: String,
+    avatar: String,
+    company: String,
+    order: Number,
+  },
+  { timestamps: true },
+);
 
 async function main() {
   const uri = process.env.MONGODB_URI;
@@ -74,21 +151,32 @@ async function main() {
   await mongoose.connect(uri);
   console.log("✅ Connected to MongoDB");
 
-  const Project = mongoose.models.Project || mongoose.model("Project", ProjectSchema);
-  const Experience = mongoose.models.Experience || mongoose.model("Experience", ExperienceSchema);
+  const Project =
+    mongoose.models.Project || mongoose.model("Project", ProjectSchema);
+  const Experience =
+    mongoose.models.Experience ||
+    mongoose.model("Experience", ExperienceSchema);
   const About = mongoose.models.About || mongoose.model("About", AboutSchema);
   const Hero = mongoose.models.Hero || mongoose.model("Hero", HeroSchema);
-  const Service = mongoose.models.Service || mongoose.model("Service", ServiceSchema);
-  const Workflow = mongoose.models.Workflow || mongoose.model("Workflow", WorkflowSchema);
+  const Service =
+    mongoose.models.Service || mongoose.model("Service", ServiceSchema);
+  const Workflow =
+    mongoose.models.Workflow || mongoose.model("Workflow", WorkflowSchema);
   const Demo = mongoose.models.Demo || mongoose.model("Demo", DemoSchema);
   const Blog = mongoose.models.Blog || mongoose.model("Blog", BlogSchema);
-  const Certification = mongoose.models.Certification || mongoose.model("Certification", CertificationSchema);
-  const Testimonial = mongoose.models.Testimonial || mongoose.model("Testimonial", TestimonialSchema);
+  const Certification =
+    mongoose.models.Certification ||
+    mongoose.model("Certification", CertificationSchema);
+  const Testimonial =
+    mongoose.models.Testimonial ||
+    mongoose.model("Testimonial", TestimonialSchema);
 
   // --- 1. Generate & print admin password hash ---
   const ADMIN_PASSWORD = "admin123"; // ← change this to your desired password
   const hash = await bcrypt.hash(ADMIN_PASSWORD, 12);
-  console.log("\n🔑 Admin Password Hash (copy to .env.local → ADMIN_PASSWORD_HASH):");
+  console.log(
+    "\n🔑 Admin Password Hash (copy to .env.local → ADMIN_PASSWORD_HASH):",
+  );
   console.log(hash);
   console.log(`   Password to use for login: "${ADMIN_PASSWORD}"\n`);
 
@@ -98,7 +186,8 @@ async function main() {
     {
       title: "Medical Camp Management System (MCMS)",
       slug: "mcms",
-      description: "Full MERN stack system for managing medical camps with organizer & participant roles. Firebase Admin setup, Stripe payment, JWT authentication.",
+      description:
+        "Full MERN stack system for managing medical camps with organizer & participant roles. Firebase Admin setup, Stripe payment, JWT authentication.",
       image: "/images/mcms.png",
       techNames: ["React", "Next.js", "Node.js", "MongoDB", "Tailwind CSS"],
       github: "https://github.com/mrshanshuvo/mcms",
@@ -117,7 +206,8 @@ async function main() {
     {
       title: "WhereIsIt",
       slug: "whereisit",
-      description: "Lost & found portal for posting and recovering items. Backend API, JWT & Firebase Auth, stats tracking.",
+      description:
+        "Lost & found portal for posting and recovering items. Backend API, JWT & Firebase Auth, stats tracking.",
       image: "/images/whereisit.png",
       techNames: ["React", "Node.js", "Express.js", "MongoDB", "Firebase"],
       github: "https://github.com/mrshanshuvo/whereisit",
@@ -136,9 +226,17 @@ async function main() {
     {
       title: "Parcel Delivery System (ProFast)",
       slug: "profast",
-      description: "Parcel tracking website with live map integration and responsive UI. Leaflet map, tracking dashboard, role-based UI.",
+      description:
+        "Parcel tracking website with live map integration and responsive UI. Leaflet map, tracking dashboard, role-based UI.",
       image: "/images/profast.png",
-      techNames: ["React", "Node.js", "Express.js", "MongoDB", "Leaflet", "Tailwind CSS"],
+      techNames: [
+        "React",
+        "Node.js",
+        "Express.js",
+        "MongoDB",
+        "Leaflet",
+        "Tailwind CSS",
+      ],
       github: "https://github.com/mrshanshuvo/zap-shift-client",
       live: "https://profast-94805.web.app/",
       featured: true,
@@ -155,7 +253,8 @@ async function main() {
     {
       title: "Car Doctor Next.js",
       slug: "car-doctor-nextjs",
-      description: "Car repair booking platform with real-time scheduling and responsive UI.",
+      description:
+        "Car repair booking platform with real-time scheduling and responsive UI.",
       image: "/images/car-doctor.png",
       techNames: ["Next.js", "React", "Tailwind CSS", "Node.js"],
       github: "https://github.com/mrshanshuvo/car-doctor",
@@ -173,7 +272,8 @@ async function main() {
     {
       title: "My Personal Portfolio",
       slug: "my-portfolio",
-      description: "Explore my full-stack projects, UI/UX designs, and professional journey in one interactive place.",
+      description:
+        "Explore my full-stack projects, UI/UX designs, and professional journey in one interactive place.",
       image: "/images/portfolio.png",
       techNames: ["Next.js", "React", "Tailwind CSS", "Node.js"],
       github: "https://github.com/mrshanshuvo/my-portfolio-1",
@@ -253,14 +353,59 @@ async function main() {
       { number: "5", label: "Certifications" },
     ],
     skills: [
-      { name: "Frontend", tech: "React, Next.js, JavaScript", level: 90, iconName: "SiReact" },
-      { name: "Backend", tech: "Node.js, Express, Django", level: 85, iconName: "SiNodedotjs" },
-      { name: "Database", tech: "MongoDB, MySQL, Firebase", level: 80, iconName: "FaDatabase" },
-      { name: "DevOps", tech: "Netlify, Docker, Vercel", level: 75, iconName: "FaCloud" },
-      { name: "ML/AI", tech: "TensorFlow, PyTorch, Scikit-learn", level: 70, iconName: "SiTensorflow" },
-      { name: "Other", tech: "Python, Java, C++", level: 85, iconName: "FaRobot" },
+      {
+        name: "Frontend",
+        tech: "React, Next.js, JavaScript",
+        level: 90,
+        iconName: "SiReact",
+      },
+      {
+        name: "Backend",
+        tech: "Node.js, Express, Django",
+        level: 85,
+        iconName: "SiNodedotjs",
+      },
+      {
+        name: "Database",
+        tech: "MongoDB, MySQL, Firebase",
+        level: 80,
+        iconName: "FaDatabase",
+      },
+      {
+        name: "DevOps",
+        tech: "Netlify, Docker, Vercel",
+        level: 75,
+        iconName: "FaCloud",
+      },
+      {
+        name: "ML/AI",
+        tech: "TensorFlow, PyTorch, Scikit-learn",
+        level: 70,
+        iconName: "SiTensorflow",
+      },
+      {
+        name: "Other",
+        tech: "Python, Java, C++",
+        level: 85,
+        iconName: "FaRobot",
+      },
     ],
-    techList: ["React", "Next.js", "Node.js", "Express", "MongoDB", "Python", "Django", "TensorFlow", "Git", "Tailwind CSS", "TypeScript", "PostgreSQL", "AWS", "Docker"],
+    techList: [
+      "React",
+      "Next.js",
+      "Node.js",
+      "Express",
+      "MongoDB",
+      "Python",
+      "Django",
+      "TensorFlow",
+      "Git",
+      "Tailwind CSS",
+      "TypeScript",
+      "PostgreSQL",
+      "AWS",
+      "Docker",
+    ],
     education: [
       {
         degree: "BSc in Computer Science & Engineering",
@@ -287,10 +432,26 @@ async function main() {
     profileImage: "/PP1.jpeg",
     resumeUrl: "/Resume_of_Shahid_Hasan_Shuvo.pdf",
     socialLinks: [
-      { platform: "GitHub", href: "https://github.com/mrshanshuvo", label: "GitHub" },
-      { platform: "LinkedIn", href: "https://linkedin.com/in/shahidhasanshovu", label: "LinkedIn" },
-      { platform: "LeetCode", href: "https://leetcode.com/yourusername", label: "LeetCode" },
-      { platform: "Email", href: "mailto:mrshanshuvo@gmail.com", label: "Email" },
+      {
+        platform: "GitHub",
+        href: "https://github.com/mrshanshuvo",
+        label: "GitHub",
+      },
+      {
+        platform: "LinkedIn",
+        href: "https://linkedin.com/in/shahidhasanshovu",
+        label: "LinkedIn",
+      },
+      {
+        platform: "LeetCode",
+        href: "https://leetcode.com/yourusername",
+        label: "LeetCode",
+      },
+      {
+        platform: "Email",
+        href: "mailto:mrshanshuvo@gmail.com",
+        label: "Email",
+      },
     ],
   });
   console.log("✅ Hero seeded");
@@ -300,35 +461,77 @@ async function main() {
   await Service.insertMany([
     {
       title: "Full-Stack Development",
-      description: "Building scalable, high-performance web applications using the MERN stack and Next.js.",
+      description:
+        "Building scalable, high-performance web applications using the MERN stack and Next.js.",
       icon: "FaCode",
-      features: ["Custom Web Apps", "API Integration", "DB Architecture", "Performance Optimization"],
-      order: 0
+      features: [
+        "Custom Web Apps",
+        "API Integration",
+        "DB Architecture",
+        "Performance Optimization",
+      ],
+      order: 0,
     },
     {
       title: "Machine Learning & AI",
-      description: "Integrating intelligent models and automated workflows to solve complex data-driven problems.",
+      description:
+        "Integrating intelligent models and automated workflows to solve complex data-driven problems.",
       icon: "FaBrain",
-      features: ["Predictive Analytics", "NLP Solutions", "Computer Vision", "Model Deployment"],
-      order: 1
+      features: [
+        "Predictive Analytics",
+        "NLP Solutions",
+        "Computer Vision",
+        "Model Deployment",
+      ],
+      order: 1,
     },
     {
       title: "Cloud & DevOps",
-      description: "Streamlining development with CI/CD pipelines, Docker, and scalable cloud infrastructure.",
+      description:
+        "Streamlining development with CI/CD pipelines, Docker, and scalable cloud infrastructure.",
       icon: "FaCloud",
-      features: ["AWS/Vercel Deployment", "Dockerization", "CI/CD Workflows", "Security Audits"],
-      order: 2
-    }
+      features: [
+        "AWS/Vercel Deployment",
+        "Dockerization",
+        "CI/CD Workflows",
+        "Security Audits",
+      ],
+      order: 2,
+    },
   ]);
   console.log("✅ Services seeded");
 
   // --- 7. Seed Workflow ---
   await Workflow.deleteMany({});
   await Workflow.insertMany([
-    { title: "Discovery", description: "Understanding your vision, goals, and technical requirements deeply.", icon: "FaSearch", order: 0 },
-    { title: "Design", description: "Creating intuitive UI/UX prototypes and system architectures.", icon: "FaBezierCurve", order: 1 },
-    { title: "Development", description: "Writing clean, scalable code with continuous integration and testing.", icon: "FaLaptopCode", order: 2 },
-    { title: "Deployment", description: "Launching your product with zero downtime and performance monitoring.", icon: "FaRocket", order: 3 }
+    {
+      title: "Discovery",
+      description:
+        "Understanding your vision, goals, and technical requirements deeply.",
+      icon: "FaSearch",
+      order: 0,
+    },
+    {
+      title: "Design",
+      description:
+        "Creating intuitive UI/UX prototypes and system architectures.",
+      icon: "FaBezierCurve",
+      order: 1,
+    },
+    {
+      title: "Development",
+      description:
+        "Writing clean, scalable code with continuous integration and testing.",
+      icon: "FaLaptopCode",
+      order: 2,
+    },
+    {
+      title: "Deployment",
+      description:
+        "Launching your product with zero downtime and performance monitoring.",
+      icon: "FaRocket",
+      order: 3,
+    },
   ]);
   console.log("✅ Workflow seeded");
 
@@ -337,18 +540,20 @@ async function main() {
   await Demo.insertMany([
     {
       title: "AI Image Classifier",
-      description: "Real-time object detection using TensorFlow.js directly in your browser.",
+      description:
+        "Real-time object detection using TensorFlow.js directly in your browser.",
       url: "https://tfjs-demo.example.com",
       tech: ["TensorFlow.js", "React", "Webcam API"],
-      order: 0
+      order: 0,
     },
     {
       title: "3D Portfolio Scene",
-      description: "Interactive 3D environment built with Three.js and React Three Fiber.",
+      description:
+        "Interactive 3D environment built with Three.js and React Three Fiber.",
       url: "https://threejs-scene.example.com",
       tech: ["Three.js", "R3F", "GLSL"],
-      order: 1
-    }
+      order: 1,
+    },
   ]);
   console.log("✅ Demos seeded");
 
@@ -357,22 +562,24 @@ async function main() {
   await Blog.insertMany([
     {
       title: "Mastering Next.js Server Components",
-      description: "A deep dive into the App Router and how to optimize your data fetching strategies.",
+      description:
+        "A deep dive into the App Router and how to optimize your data fetching strategies.",
       link: "https://dev.to/example/nextjs-server-components",
       date: "Oct 12, 2025",
       tags: ["Next.js", "React", "Web Dev"],
       image: "https://images.unsplash.com/photo-1618477388954-7852f32655ec",
-      order: 0
+      order: 0,
     },
     {
       title: "The Future of AI in Web Development",
-      description: "How LLMs and agentic AI are transforming the way we write and maintain code.",
+      description:
+        "How LLMs and agentic AI are transforming the way we write and maintain code.",
       link: "https://medium.com/example/ai-web-dev",
       date: "Nov 05, 2025",
       tags: ["AI", "Future Tech", "Software Engineering"],
       image: "https://images.unsplash.com/photo-1677442136019-21780ecad995",
-      order: 1
-    }
+      order: 1,
+    },
   ]);
   console.log("✅ Blog seeded");
 
@@ -385,7 +592,7 @@ async function main() {
       date: "2024",
       link: "https://example.com/cert/react",
       image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee",
-      order: 0
+      order: 0,
     },
     {
       title: "Google Cloud Engineering",
@@ -393,8 +600,8 @@ async function main() {
       date: "2023",
       link: "https://example.com/cert/gcp",
       image: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8",
-      order: 1
-    }
+      order: 1,
+    },
   ]);
   console.log("✅ Certifications seeded");
 
@@ -405,18 +612,20 @@ async function main() {
       name: "John Doe",
       role: "Senior Project Manager",
       company: "TechFlow",
-      content: "Shahid's attention to detail and ability to tackle complex backend challenges is truly exceptional. He's a reliable engineer who delivers quality.",
+      content:
+        "Shahid's attention to detail and ability to tackle complex backend challenges is truly exceptional. He's a reliable engineer who delivers quality.",
       avatar: "https://i.pravatar.cc/150?u=john",
-      order: 0
+      order: 0,
     },
     {
       name: "Sarah Smith",
       role: "Lead UI/UX Designer",
       company: "CreativeEdge",
-      content: "Working with Shahid was a breeze. He translated my designs into pixel-perfect, highly interactive components that exceeded expectations.",
+      content:
+        "Working with Shahid was a breeze. He translated my designs into pixel-perfect, highly interactive components that exceeded expectations.",
       avatar: "https://i.pravatar.cc/150?u=sarah",
-      order: 1
-    }
+      order: 1,
+    },
   ]);
   console.log("✅ Testimonials seeded");
 

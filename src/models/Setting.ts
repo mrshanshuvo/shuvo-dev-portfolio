@@ -5,6 +5,8 @@ export interface ISetting extends Document {
   siteDescription: string;
   keywords: string[];
   contactEmail: string;
+  contactPhone: string;
+  contactLocation: string;
   ogImage: string;
   isHireable: boolean;
   maintenanceMode: boolean;
@@ -18,6 +20,8 @@ const SettingSchema = new Schema<ISetting>(
     siteDescription: { type: String, default: "A professional portfolio" },
     keywords: [{ type: String }],
     contactEmail: { type: String, default: "" },
+    contactPhone: { type: String, default: "" },
+    contactLocation: { type: String, default: "" },
     ogImage: { type: String, default: "" },
     isHireable: { type: Boolean, default: true },
     maintenanceMode: { type: Boolean, default: false },

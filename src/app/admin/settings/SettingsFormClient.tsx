@@ -129,6 +129,34 @@ export default function SettingsForm({
               placeholder="you@example.com"
             />
           </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-slate-500">
+                Contact Phone
+              </label>
+              <Input
+                value={settings.contactPhone}
+                onChange={(e) =>
+                  setSettings({ ...settings, contactPhone: e.target.value })
+                }
+                className="bg-slate-950 border-white/10 rounded-xl"
+                placeholder="+880123456789"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-widest text-slate-500">
+                Contact Location
+              </label>
+              <Input
+                value={settings.contactLocation}
+                onChange={(e) =>
+                  setSettings({ ...settings, contactLocation: e.target.value })
+                }
+                className="bg-slate-950 border-white/10 rounded-xl"
+                placeholder="Dhaka, Bangladesh"
+              />
+            </div>
+          </div>
           <div className="flex items-center justify-between p-6 rounded-2xl bg-slate-950 border border-white/5">
             <div>
               <p className="text-white font-bold text-sm">Open for Hiring</p>
