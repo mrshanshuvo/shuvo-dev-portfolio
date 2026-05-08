@@ -29,19 +29,38 @@ export default function EducationClient({ education }: Props) {
     <section
       id="education"
       ref={ref}
-      className="relative py-24 bg-slate-50/50 dark:bg-slate-950/20 overflow-hidden"
+      className="relative py-24 bg-white dark:bg-slate-950 overflow-hidden"
     >
-      <div className="absolute top-20 left-0 w-72 h-72 bg-blue-500/5 rounded-full blur-3xl" />
+      <div className="absolute top-20 left-0 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-20 right-0 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl" />
 
       <div className="relative max-w-350 mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          className="text-center mb-16"
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20"
         >
-          <h2 className="font-display text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
-            Academic <span className="text-blue-500">Background</span>
-          </h2>
+          <div className="text-left">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.5 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="flex items-center gap-3 text-blue-500 font-black uppercase tracking-[0.3em] text-sm mb-4"
+            >
+              <FaGraduationCap /> Learning Journey
+            </motion.div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight whitespace-nowrap">
+              Academic{" "}
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-indigo-500">
+                Background
+              </span>
+            </h2>
+          </div>
+          <p className="text-slate-600 dark:text-slate-400 max-w-xl md:text-right text-md md:text-lg font-medium leading-relaxed line-clamp-2">
+            A chronicle of my formal education and academic achievements that
+            laid the foundation for my engineering career.
+          </p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -50,12 +50,31 @@ export default function SkillsClient({ skills, techList }: Props) {
       <div className="relative max-w-350 mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          className="text-center mb-16"
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20"
         >
-          <h2 className="font-display text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
-            Technical <span className="text-emerald-500">Mastery</span>
-          </h2>
+          <div className="text-left">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.5 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="flex items-center gap-3 text-emerald-500 font-black uppercase tracking-[0.3em] text-sm mb-4"
+            >
+              <FaCode /> Technical Stack
+            </motion.div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight whitespace-nowrap">
+              Technical{" "}
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-cyan-500">
+                Mastery
+              </span>
+            </h2>
+          </div>
+          <p className="text-slate-600 dark:text-slate-400 max-w-xl md:text-right text-md md:text-lg font-medium leading-relaxed line-clamp-2">
+            A comprehensive overview of my technical expertise, proficiency
+            levels, and the specialized tools I use to build intelligent
+            systems.
+          </p>
         </motion.div>
         <div className="space-y-16">
           <motion.div
@@ -130,7 +149,7 @@ export default function SkillsClient({ skills, techList }: Props) {
                 Technologies I Work With
               </h4>
             </div>
-            <div className="overflow-hidden relative bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl rounded-[2rem] py-8 border border-slate-200/50 dark:border-white/10 shadow-xl">
+            <div className="overflow-hidden relative py-6">
               <motion.div
                 className="flex space-x-12 px-6"
                 animate={{ x: [0, -1000] }}
@@ -147,10 +166,10 @@ export default function SkillsClient({ skills, techList }: Props) {
                   <Badge
                     key={index}
                     variant="outline"
-                    className="flex items-center gap-2 px-4 py-2 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium whitespace-nowrap"
+                    className="flex items-center gap-2 px-4 py-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium whitespace-nowrap"
                   >
                     <FaCode className="text-emerald-600 dark:text-emerald-400" />
-                    <span>{tech}</span>
+                    <span className="text-lg">{tech}</span>
                   </Badge>
                 ))}
               </motion.div>
