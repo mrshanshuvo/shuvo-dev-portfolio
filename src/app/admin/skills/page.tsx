@@ -55,6 +55,8 @@ const iconMap: Record<string, any> = {
 
 export default function AdminSkillsPage() {
   const [skills, setSkills] = useState<Skill[]>([]);
+  const [techList, setTechList] = useState<string[]>([]);
+  const [techInput, setTechInput] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{
@@ -71,7 +73,8 @@ export default function AdminSkillsPage() {
     fetch("/api/admin/skills")
       .then((r) => r.json())
       .then((d) => {
-        setSkills(Array.isArray(d) ? d : []);
+        setSkills(Array.isArray(d.skills) ? d.skills : []);
+        setTechList(Array.isArray(d.techList) ? d.techList : []);
         setLoading(false);
       });
   }, []);
@@ -81,7 +84,7 @@ export default function AdminSkillsPage() {
     const res = await fetch("/api/admin/skills", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(skills),
+      body: JSON.stringify({ skills, techList }),
     });
     setSaving(false);
     if (res.ok) showToast("Skills saved!");
@@ -101,6 +104,12 @@ export default function AdminSkillsPage() {
       next[i] = { ...next[i], [field]: val };
       return next;
     });
+  }
+
+  function addTech() {
+    if (!techInput.trim()) return;
+    setTechList((prev) => [...prev, techInput.trim()]);
+    setTechInput("");
   }
 
   return (
@@ -274,6 +283,63 @@ export default function AdminSkillsPage() {
                     );
                   })}
             </AnimatePresence>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden mt-8">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-blue-500/20 text-blue-400 rounded-xl">
+                <FaCode size={20} />
+              </div>
+              <div>
+                <CardTitle className="text-white">Tech Stack List</CardTitle>
+                <CardDescription>
+                  Technologies displayed in the scrolling banner.
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex flex-wrap gap-2">
+              {techList.map((t, i) => (
+                <Badge
+                  key={i}
+                  variant="outline"
+                  className="pl-3 pr-1 py-1 gap-1 bg-slate-950/50 text-slate-300 border-white/5 rounded-lg"
+                >
+                  {t}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() =>
+                      setTechList((prev) => prev.filter((_, idx) => idx !== i))
+                    }
+                    className="h-5 w-5 rounded-full hover:bg-red-500/20 hover:text-red-400"
+                  >
+                    <FaTimes size={10} />
+                  </Button>
+                </Badge>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <Input
+                className="bg-slate-950/50 border-white/10 text-white rounded-xl focus-visible:ring-blue-500/50"
+                value={techInput}
+                onChange={(e) => setTechInput(e.target.value)}
+                onKeyDown={(e) =>
+                  e.key === "Enter" && (e.preventDefault(), addTech())
+                }
+                placeholder="Add technology (e.g. Docker)..."
+              />
+              <Button
+                onClick={addTech}
+                size="icon"
+                className="bg-slate-800 hover:bg-slate-700 text-white rounded-xl shrink-0"
+              >
+                <FaPlus size={14} />
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>

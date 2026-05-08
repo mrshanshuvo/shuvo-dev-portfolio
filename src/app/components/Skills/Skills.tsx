@@ -1,18 +1,18 @@
 import { connectDB } from "@/lib/mongodb";
 import SkillModel from "@/models/Skill";
-import AboutModel from "@/models/About";
+import TechModel from "@/models/Tech";
 import SkillsClient from "./SkillsClient";
 
 async function getSkillsData() {
   await connectDB();
-  const [skillDocs, aboutDoc] = await Promise.all([
+  const [skillDocs, techDoc] = await Promise.all([
     SkillModel.find().sort({ order: 1 }).lean(),
-    AboutModel.findOne().lean(),
+    TechModel.findOne().lean(),
   ]);
 
   return {
     skills: JSON.parse(JSON.stringify(skillDocs)),
-    techList: aboutDoc?.techList || [],
+    techList: techDoc?.techList || [],
   };
 }
 

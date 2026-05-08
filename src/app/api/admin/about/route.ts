@@ -20,6 +20,7 @@ export async function GET() {
 
   return NextResponse.json({
     ...(about ?? {}),
+    title: about?.title || "Hello! I'm Shuvo",
     bio1: (about?.aboutBio || "").split("\n\n")[0] || "",
     bio2: (about?.aboutBio || "").split("\n\n").slice(1).join("\n\n") || "",
     skills: skills || [],
@@ -43,6 +44,7 @@ export async function PUT(request: Request) {
   // Only manage what this route owns: bio text, highlights, techList.
   // Skills → /api/admin/skills, Stats → /api/admin/stats, Education → /api/admin/education
   const aboutData = {
+    title: body.title || "Hello! I'm Shuvo",
     aboutBio: `${body.bio1 || ""}\n\n${body.bio2 || ""}`.trim(),
     highlights: body.highlights || [],
     techList: body.techList || [],

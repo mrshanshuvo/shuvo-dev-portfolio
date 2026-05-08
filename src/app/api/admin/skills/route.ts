@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import Skill from "@/models/Skill";
+import Tech from "@/models/Tech";
 
 export async function GET() {
   const session = await auth();
@@ -9,8 +10,15 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   await connectDB();
-  const skills = await Skill.find().sort({ order: 1 }).lean();
-  return NextResponse.json(skills);
+  const [skills, techDoc] = await Promise.all([
+    Skill.find().sort({ order: 1 }).lean(),
+    Tech.findOne().lean(),
+  ]);
+
+  return NextResponse.json({
+    skills: skills || [],
+    techList: techDoc?.techList || [],
+  });
 }
 
 export async function PUT(req: Request) {
@@ -19,12 +27,13 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   await connectDB();
-  const items: any[] = await req.json();
+  const { skills, techList } = await req.json();
 
+  // Save Skills
   await Skill.deleteMany({});
-  if (items.length > 0) {
+  if (skills && skills.length > 0) {
     await Skill.insertMany(
-      items.map((s, i) => ({
+      skills.map((s: any, i: number) => ({
         name: s.name,
         tech: s.tech,
         level: s.level,
@@ -35,5 +44,12 @@ export async function PUT(req: Request) {
     );
   }
 
-  return NextResponse.json({ message: "Skills saved" });
+  // Save Tech List
+  await Tech.findOneAndUpdate(
+    {},
+    { techList: techList || [] },
+    { upsert: true, new: true },
+  );
+
+  return NextResponse.json({ message: "Skills & Tech saved" });
 }

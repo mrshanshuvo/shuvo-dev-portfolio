@@ -48,12 +48,12 @@ const ICON_OPTIONS = [
 ];
 
 const DEFAULT: About = {
+  title: "Hello! I'm Shuvo",
   bio1: "",
   bio2: "",
   highlights: [],
   stats: [],
   skills: [],
-  techList: [],
   education: [],
 };
 
@@ -105,11 +105,7 @@ export default function AdminAboutPage() {
     setHighlightInput("");
   }
 
-  function addTech() {
-    if (!techInput.trim()) return;
-    setData((d) => ({ ...d, techList: [...d.techList, techInput.trim()] }));
-    setTechInput("");
-  }
+
 
   function addStat() {
     setData((d) => ({
@@ -266,6 +262,19 @@ export default function AdminAboutPage() {
                 <CardContent className="space-y-6">
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                      Section Title
+                    </label>
+                    <Input
+                      className="bg-slate-950/50 border-white/10 text-white rounded-2xl focus-visible:ring-blue-500/50"
+                      value={data.title}
+                      onChange={(e) =>
+                        setData((d) => ({ ...d, title: e.target.value }))
+                      }
+                      placeholder="e.g. Hello! I'm Shuvo"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
                       Paragraph 1
                     </label>
                     <Textarea
@@ -355,71 +364,6 @@ export default function AdminAboutPage() {
                     />
                     <Button
                       onClick={addHighlight}
-                      size="icon"
-                      className="bg-slate-800 hover:bg-slate-700 text-white rounded-xl shrink-0"
-                    >
-                      <FaPlus size={14} />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 bg-blue-500/20 text-blue-400 rounded-xl">
-                      <FaLayerGroup size={20} />
-                    </div>
-                    <div>
-                      <CardTitle className="text-white">
-                        Tech Stack List
-                      </CardTitle>
-                      <CardDescription>
-                        A comprehensive list of technologies for the scrolling
-                        banner.
-                      </CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex flex-wrap gap-2">
-                    {data.techList.map((t, i) => (
-                      <Badge
-                        key={i}
-                        variant="outline"
-                        className="pl-3 pr-1 py-1 gap-1 bg-slate-950/50 text-slate-300 border-white/5 rounded-lg"
-                      >
-                        {t}
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() =>
-                            setData((d) => ({
-                              ...d,
-                              techList: d.techList.filter(
-                                (_, idx) => idx !== i,
-                              ),
-                            }))
-                          }
-                          className="h-5 w-5 rounded-full hover:bg-red-500/20 hover:text-red-400"
-                        >
-                          <FaTimes size={10} />
-                        </Button>
-                      </Badge>
-                    ))}
-                  </div>
-                  <div className="flex gap-2">
-                    <Input
-                      className="bg-slate-950/50 border-white/10 text-white rounded-xl focus-visible:ring-blue-500/50"
-                      value={techInput}
-                      onChange={(e) => setTechInput(e.target.value)}
-                      onKeyDown={(e) =>
-                        e.key === "Enter" && (e.preventDefault(), addTech())
-                      }
-                      placeholder="Add technology (e.g. Docker)..."
-                    />
-                    <Button
-                      onClick={addTech}
                       size="icon"
                       className="bg-slate-800 hover:bg-slate-700 text-white rounded-xl shrink-0"
                     >

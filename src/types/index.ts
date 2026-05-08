@@ -77,11 +77,11 @@ export interface Profile {
   typeSequences: TypeSequenceItem[];
   heroBio: string;
   socialLinks: SocialLink[];
+  aboutTitle: string;
   aboutBio: string;
   highlights: string[];
   stats: Stat[];
   skills: Skill[];
-  techList: string[];
 }
 
 export interface Education {
@@ -99,12 +99,12 @@ export interface Education {
 
 export interface About {
   _id?: string;
+  title: string;
   bio1: string;
   bio2: string;
   highlights: string[];
   stats: Stat[];
   skills: Skill[];
-  techList: string[];
   education: Education[];
 }
 

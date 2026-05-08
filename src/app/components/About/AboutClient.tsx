@@ -57,8 +57,8 @@ export default function AboutClient({ about }: Props) {
             </h2>
           </div>
           <p className="text-md md:text-lg text-slate-600 dark:text-slate-400 max-w-xl md:text-right font-medium leading-relaxed line-clamp-2">
-            Architecting high-performance digital experiences through the lens of
-            modern software engineering and machine intelligence.
+            Architecting high-performance digital experiences through the lens
+            of modern software engineering and machine intelligence.
           </p>
         </motion.div>
 
@@ -99,7 +99,7 @@ export default function AboutClient({ about }: Props) {
             <Card className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl rounded-[2rem] p-10 border border-slate-200/50 dark:border-white/10 shadow-xl hover:shadow-2xl transition-shadow h-full overflow-hidden">
               <div className="flex items-center gap-4 mb-8">
                 <CardTitle className="font-display text-3xl font-bold text-slate-900 dark:text-white">
-                  Hello! I&apos;m Shuvo
+                  {about.title}
                 </CardTitle>
               </div>
               <CardContent className="p-0">

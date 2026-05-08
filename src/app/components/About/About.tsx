@@ -20,12 +20,12 @@ async function getAbout(): Promise<About> {
 
   return {
     _id: aboutRaw._id?.toString(),
+    title: aboutRaw.title || "Hello! I'm Shuvo",
     bio1: bios[0] || "",
     bio2: bios.slice(1).join("\n\n") || "",
     highlights: aboutRaw.highlights || [],
     stats: stats,
     skills: [], // Independent now
-    techList: [], // Independent now
     education: [], // Independent now
   };
 }
