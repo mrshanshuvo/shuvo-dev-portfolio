@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   FaPlus,
@@ -106,11 +107,14 @@ function SortableProjectCard({
       {/* Thumbnail */}
       <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-800 shrink-0 border border-white/5">
         {thumb ? (
-          <img
-            src={thumb}
-            alt={project.title}
-            className="w-full h-full object-cover"
-          />
+          <div className="relative w-full h-full">
+            <Image
+              src={thumb}
+              alt={project.title}
+              fill
+              className="object-cover"
+            />
+          </div>
         ) : (
           <div className="w-full h-full flex items-center justify-center text-slate-700">
             <FaImage size={20} />
@@ -215,11 +219,14 @@ function DragOverlayCard({ project }: { project: Project }) {
       </div>
       <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-700 shrink-0 border border-white/10">
         {thumb ? (
-          <img
-            src={thumb}
-            alt={project.title}
-            className="w-full h-full object-cover"
-          />
+          <div className="relative w-full h-full">
+            <Image
+              src={thumb}
+              alt={project.title}
+              fill
+              className="object-cover"
+            />
+          </div>
         ) : (
           <div className="w-full h-full flex items-center justify-center text-slate-600">
             <FaImage size={20} />

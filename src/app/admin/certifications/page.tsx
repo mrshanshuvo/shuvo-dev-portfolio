@@ -29,13 +29,14 @@ interface Certification {
   link?: string;
   image?: string;
   details: string[];
+  order: number;
 }
 
 export default function AdminCertificationsPage() {
   const [data, setData] = useState<Certification[]>([]);
-  const [newDetailInputs, setNewDetailInputs] = useState<{ [key: number]: string }>(
-    {}
-  );
+  const [newDetailInputs, setNewDetailInputs] = useState<{
+    [key: number]: string;
+  }>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{
@@ -79,6 +80,7 @@ export default function AdminCertificationsPage() {
         link: "",
         details: [],
         image: "",
+        order: prev.length,
       },
     ]);
   }
@@ -126,8 +128,6 @@ export default function AdminCertificationsPage() {
     });
   }
 
-
-
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-10 space-y-10">
       <AnimatePresence>
@@ -142,7 +142,9 @@ export default function AdminCertificationsPage() {
                 : "bg-red-500/20 border-red-500/50 text-red-400"
             }`}
           >
-            <div className={`p-2 rounded-full ${toast.type === "success" ? "bg-emerald-500/20" : "bg-red-500/20"}`}>
+            <div
+              className={`p-2 rounded-full ${toast.type === "success" ? "bg-emerald-500/20" : "bg-red-500/20"}`}
+            >
               {toast.type === "success" ? <FaCheck /> : <FaTimes />}
             </div>
             <span className="font-semibold">{toast.msg}</span>
@@ -174,7 +176,8 @@ export default function AdminCertificationsPage() {
               onClick={addCert}
               className="bg-slate-800 hover:bg-slate-700 text-white border-white/10 rounded-xl h-11 px-5 active:scale-95 transition-all text-xs font-bold"
             >
-              <FaPlus size={12} className="mr-2 text-amber-400" /> Add Certification
+              <FaPlus size={12} className="mr-2 text-amber-400" /> Add
+              Certification
             </Button>
             <div className="w-px h-6 bg-white/10 mx-1 hidden sm:block" />
             <Button
@@ -198,7 +201,10 @@ export default function AdminCertificationsPage() {
             <AnimatePresence mode="popLayout">
               {loading ? (
                 Array.from({ length: 2 }).map((_, i) => (
-                  <div key={i} className="p-8 bg-slate-950/20 space-y-6 animate-pulse border-b border-white/5">
+                  <div
+                    key={i}
+                    className="p-8 bg-slate-950/20 space-y-6 animate-pulse border-b border-white/5"
+                  >
                     <div className="flex gap-8">
                       <div className="w-32 h-32 bg-slate-800/40 rounded-3xl" />
                       <div className="flex-1 space-y-4">
@@ -213,9 +219,12 @@ export default function AdminCertificationsPage() {
                   <div className="w-24 h-24 bg-slate-900 rounded-3xl flex items-center justify-center mx-auto mb-6 text-slate-700">
                     <FaAward size={48} />
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-2">Showcase Your Skills</h3>
+                  <h3 className="text-2xl font-bold text-white mb-2">
+                    Showcase Your Skills
+                  </h3>
                   <p className="text-slate-500 mb-10 max-w-sm mx-auto">
-                    Add your professional certifications to validate your expertise.
+                    Add your professional certifications to validate your
+                    expertise.
                   </p>
                   <Button
                     onClick={addCert}
@@ -275,7 +284,9 @@ export default function AdminCertificationsPage() {
                             <Input
                               className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-amber-500/50 focus-visible:bg-slate-900 transition-all font-bold text-sm"
                               value={item.title}
-                              onChange={(e) => updateCert(i, "title", e.target.value)}
+                              onChange={(e) =>
+                                updateCert(i, "title", e.target.value)
+                              }
                               placeholder="e.g. AWS Certified Solutions Architect"
                             />
                           </div>
@@ -291,7 +302,9 @@ export default function AdminCertificationsPage() {
                             <Input
                               className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-amber-500/50 focus-visible:bg-slate-900 transition-all font-bold text-sm"
                               value={item.issuer}
-                              onChange={(e) => updateCert(i, "issuer", e.target.value)}
+                              onChange={(e) =>
+                                updateCert(i, "issuer", e.target.value)
+                              }
                               placeholder="e.g. Amazon Web Services"
                             />
                           </div>
@@ -307,7 +320,9 @@ export default function AdminCertificationsPage() {
                             <Input
                               className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-amber-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
                               value={item.date}
-                              onChange={(e) => updateCert(i, "date", e.target.value)}
+                              onChange={(e) =>
+                                updateCert(i, "date", e.target.value)
+                              }
                               placeholder="e.g. June 2024"
                             />
                           </div>
@@ -319,31 +334,36 @@ export default function AdminCertificationsPage() {
                             Skills & Key Achievements
                           </label>
                           <div className="flex gap-2">
-                             <div className="relative group/input flex-1">
-                                <FaInfoCircle className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-amber-400 transition-colors" />
-                                <Input
-                                  className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-amber-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
-                                  value={newDetailInputs[i] || ""}
-                                  onChange={(e) => setNewDetailInputs(prev => ({...prev, [i]: e.target.value}))}
-                                  onKeyDown={(e) => {
-                                    if (e.key === "Enter") {
-                                      e.preventDefault();
-                                      e.stopPropagation();
-                                      addDetail(i);
-                                    }
-                                  }}
-                                  placeholder="Add a skill or achievement..."
-                                />
-                             </div>
-                             <Button
+                            <div className="relative group/input flex-1">
+                              <FaInfoCircle className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-amber-400 transition-colors" />
+                              <Input
+                                className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-amber-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
+                                value={newDetailInputs[i] || ""}
+                                onChange={(e) =>
+                                  setNewDetailInputs((prev) => ({
+                                    ...prev,
+                                    [i]: e.target.value,
+                                  }))
+                                }
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    addDetail(i);
+                                  }
+                                }}
+                                placeholder="Add a skill or achievement..."
+                              />
+                            </div>
+                            <Button
                               type="button"
                               onClick={() => addDetail(i)}
                               className="bg-slate-800 hover:bg-slate-700 text-white rounded-xl h-11 w-11 p-0 shrink-0 border border-white/5"
-                             >
+                            >
                               <FaPlus size={14} />
-                             </Button>
+                            </Button>
                           </div>
-                          
+
                           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
                             <AnimatePresence mode="popLayout">
                               {item.details?.map((d, dIdx) => (
@@ -382,7 +402,9 @@ export default function AdminCertificationsPage() {
                             <Input
                               className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-amber-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
                               value={item.link || ""}
-                              onChange={(e) => updateCert(i, "link", e.target.value)}
+                              onChange={(e) =>
+                                updateCert(i, "link", e.target.value)
+                              }
                               placeholder="https://verify.cert..."
                             />
                           </div>
@@ -393,14 +415,21 @@ export default function AdminCertificationsPage() {
                     {/* Actions Area */}
                     <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
                       <div className="flex items-center gap-2 text-slate-600 text-[10px] font-bold uppercase tracking-widest">
-                        <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" /> Certificate #{i + 1}
+                        <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />{" "}
+                        Certificate #{i + 1}
                       </div>
                       <Button
                         variant="ghost"
-                        onClick={() => setData((prev) => prev.filter((_, idx) => idx !== i))}
+                        onClick={() =>
+                          setData((prev) => prev.filter((_, idx) => idx !== i))
+                        }
                         className="text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl px-5 h-10 font-bold transition-all flex items-center gap-2 group text-xs"
                       >
-                        <FaTrash size={12} className="group-hover:animate-bounce" /> Remove
+                        <FaTrash
+                          size={12}
+                          className="group-hover:animate-bounce"
+                        />{" "}
+                        Remove
                       </Button>
                     </div>
                   </motion.div>

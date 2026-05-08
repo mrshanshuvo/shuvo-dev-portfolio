@@ -14,6 +14,7 @@ export default function CustomCursor() {
     const hasTouch =
       window.matchMedia("(pointer: coarse)").matches ||
       navigator.maxTouchPoints > 0;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsTouchDevice(hasTouch);
   }, []);
 

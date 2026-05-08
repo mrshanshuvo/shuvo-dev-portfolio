@@ -35,6 +35,7 @@ export default function ImageUpload({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
   }, []);
 
@@ -203,7 +204,10 @@ export default function ImageUpload({
         </div>
       ) : value ? (
         <div className="relative group/image rounded-[2rem] overflow-hidden border border-white/10 aspect-square bg-slate-950 flex flex-col items-center justify-center shadow-2xl transition-all duration-500 hover:shadow-[0_10px_40px_rgba(99,102,241,0.15)] hover:border-indigo-500/30">
-          {value && (value.includes("/video/upload/") || value.toLowerCase().endsWith(".mp4") || value.toLowerCase().endsWith(".webm")) ? (
+          {value &&
+          (value.includes("/video/upload/") ||
+            value.toLowerCase().endsWith(".mp4") ||
+            value.toLowerCase().endsWith(".webm")) ? (
             <video
               src={value}
               className="w-full h-full object-cover transition-all duration-700 group-hover/image:scale-105 group-hover/image:opacity-60 group-hover/image:blur-[2px]"
@@ -315,7 +319,9 @@ export default function ImageUpload({
               <h3 className="text-[11px] font-black tracking-widest bg-linear-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent uppercase">
                 Drop
               </h3>
-              <p className="text-[8px] text-slate-500 font-bold uppercase tracking-tighter">or click</p>
+              <p className="text-[8px] text-slate-500 font-bold uppercase tracking-tighter">
+                or click
+              </p>
             </div>
             <div className="flex items-center gap-1.5 text-[7px] uppercase tracking-[0.2em] font-black text-slate-600 bg-slate-950/50 px-3 py-1 rounded-full border border-white/5">
               <span className="text-indigo-400/50">IMG</span>
@@ -377,7 +383,10 @@ export default function ImageUpload({
               <div
                 className={`relative w-full ${!isPdf ? "aspect-auto max-h-[70vh] p-4" : "flex-1 p-6"} flex items-center justify-center bg-black/20`}
               >
-                {value && (value.includes("/video/upload/") || value.toLowerCase().endsWith(".mp4") || value.toLowerCase().endsWith(".webm")) ? (
+                {value &&
+                (value.includes("/video/upload/") ||
+                  value.toLowerCase().endsWith(".mp4") ||
+                  value.toLowerCase().endsWith(".webm")) ? (
                   <video
                     src={value}
                     controls
@@ -385,11 +394,14 @@ export default function ImageUpload({
                     className="max-w-full max-h-[70vh] rounded-xl shadow-2xl transition-transform duration-500"
                   />
                 ) : !isPdf ? (
-                  <img
-                    src={value}
-                    alt="Preview"
-                    className="max-w-full max-h-[70vh] object-contain rounded-xl shadow-2xl transition-transform duration-500"
-                  />
+                  <div className="relative w-full h-[70vh]">
+                    <Image
+                      src={value}
+                      alt="Preview"
+                      fill
+                      className="object-contain rounded-xl shadow-2xl transition-transform duration-500"
+                    />
+                  </div>
                 ) : (
                   <div className="w-full h-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-white">
                     <iframe

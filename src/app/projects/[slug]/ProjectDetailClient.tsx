@@ -24,7 +24,8 @@ export default function ProjectDetailClient({ project }: Props) {
           href="/projects"
           className="group inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-emerald-500 dark:hover:text-emerald-400 text-sm mb-12 transition-all font-bold uppercase tracking-widest"
         >
-          <FaArrowLeft className="text-xs group-hover:-translate-x-1 transition-transform" /> Back to Project Archive
+          <FaArrowLeft className="text-xs group-hover:-translate-x-1 transition-transform" />{" "}
+          Back to Project Archive
         </Link>
 
         <motion.div
@@ -37,7 +38,7 @@ export default function ProjectDetailClient({ project }: Props) {
               {project.title}
             </h1>
             <div className="flex items-center gap-4">
-               <span className="px-4 py-1.5 bg-emerald-500 text-white font-black text-xs rounded-full uppercase tracking-[0.2em]">
+              <span className="px-4 py-1.5 bg-emerald-500 text-white font-black text-xs rounded-full uppercase tracking-[0.2em]">
                 {project.category}
               </span>
               <div className="h-px flex-1 bg-slate-200 dark:bg-white/10" />
@@ -59,7 +60,9 @@ export default function ProjectDetailClient({ project }: Props) {
           <div className="grid lg:grid-cols-3 gap-16">
             <div className="lg:col-span-2 space-y-12">
               <div>
-                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6 uppercase tracking-wider">The Story</h2>
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6 uppercase tracking-wider">
+                  The Story
+                </h2>
                 <p className="text-slate-600 dark:text-slate-300 text-xl leading-relaxed font-medium">
                   {project.description}
                 </p>
@@ -89,7 +92,9 @@ export default function ProjectDetailClient({ project }: Props) {
 
             <div className="space-y-10">
               <div>
-                <h3 className="text-sm font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-6">Tech Stack</h3>
+                <h3 className="text-sm font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-6">
+                  Tech Stack
+                </h3>
                 <div className="flex flex-wrap gap-3">
                   {project.techNames.map((name) => {
                     const Icon = getIcon(name);
@@ -107,11 +112,13 @@ export default function ProjectDetailClient({ project }: Props) {
               </div>
 
               <div className="pt-10 border-t border-slate-200 dark:border-white/10 space-y-4">
-                 <h3 className="text-sm font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-6">Links</h3>
+                <h3 className="text-sm font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-6">
+                  Links
+                </h3>
                 <div className="flex flex-col gap-4">
-                  {project.github && (
+                  {project.github && project.github.length > 0 && (
                     <a
-                      href={project.github}
+                      href={project.github[0].url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-center gap-3 px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-950 rounded-2xl font-black transition-all hover:scale-105 shadow-xl"
@@ -119,9 +126,9 @@ export default function ProjectDetailClient({ project }: Props) {
                       <FaGithub size={20} /> View Source Code
                     </a>
                   )}
-                  {project.live && (
+                  {project.live && project.live.length > 0 && (
                     <a
-                      href={project.live}
+                      href={project.live[0].url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-center gap-3 px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-black transition-all hover:scale-105 shadow-xl shadow-emerald-500/20"

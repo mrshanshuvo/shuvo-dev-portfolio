@@ -28,6 +28,7 @@ interface Testimonial {
   content: string;
   avatar?: string;
   company?: string;
+  order: number;
 }
 
 export default function AdminTestimonialsPage() {
@@ -68,7 +69,14 @@ export default function AdminTestimonialsPage() {
   function addTestimonial() {
     setData((prev) => [
       ...prev,
-      { name: "Client Name", role: "CEO", content: "", company: "", avatar: "" },
+      {
+        name: "Client Name",
+        role: "CEO",
+        content: "",
+        company: "",
+        avatar: "",
+        order: prev.length,
+      },
     ]);
   }
 
@@ -104,7 +112,9 @@ export default function AdminTestimonialsPage() {
                 : "bg-red-500/20 border-red-500/50 text-red-400"
             }`}
           >
-            <div className={`p-2 rounded-full ${toast.type === "success" ? "bg-emerald-500/20" : "bg-red-500/20"}`}>
+            <div
+              className={`p-2 rounded-full ${toast.type === "success" ? "bg-emerald-500/20" : "bg-red-500/20"}`}
+            >
               {toast.type === "success" ? <FaCheck /> : <FaTimes />}
             </div>
             <span className="font-semibold">{toast.msg}</span>
@@ -160,7 +170,10 @@ export default function AdminTestimonialsPage() {
             <AnimatePresence mode="popLayout">
               {loading ? (
                 Array.from({ length: 2 }).map((_, i) => (
-                  <div key={i} className="p-8 bg-slate-950/20 space-y-6 animate-pulse border-b border-white/5">
+                  <div
+                    key={i}
+                    className="p-8 bg-slate-950/20 space-y-6 animate-pulse border-b border-white/5"
+                  >
                     <div className="flex gap-8">
                       <div className="w-32 h-32 bg-slate-800/40 rounded-3xl" />
                       <div className="flex-1 space-y-4">
@@ -175,7 +188,9 @@ export default function AdminTestimonialsPage() {
                   <div className="w-24 h-24 bg-slate-900 rounded-3xl flex items-center justify-center mx-auto mb-6 text-slate-700">
                     <FaQuoteLeft size={48} />
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-2">Build Your Credibility</h3>
+                  <h3 className="text-2xl font-bold text-white mb-2">
+                    Build Your Credibility
+                  </h3>
                   <p className="text-slate-500 mb-10 max-w-sm mx-auto">
                     Add client testimonials to showcase the impact of your work.
                   </p>
@@ -201,7 +216,9 @@ export default function AdminTestimonialsPage() {
                         <ImageUpload
                           label="Client Photo"
                           value={item.avatar || ""}
-                          onChange={(url) => updateTestimonial(i, "avatar", url)}
+                          onChange={(url) =>
+                            updateTestimonial(i, "avatar", url)
+                          }
                         />
                         <div className="flex items-center justify-center gap-2">
                           <Button
@@ -237,7 +254,9 @@ export default function AdminTestimonialsPage() {
                             <Input
                               className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-blue-500/50 focus-visible:bg-slate-900 transition-all font-bold text-sm"
                               value={item.name}
-                              onChange={(e) => updateTestimonial(i, "name", e.target.value)}
+                              onChange={(e) =>
+                                updateTestimonial(i, "name", e.target.value)
+                              }
                               placeholder="e.g. Jane Smith"
                             />
                           </div>
@@ -253,7 +272,9 @@ export default function AdminTestimonialsPage() {
                             <Input
                               className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-blue-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
                               value={item.role}
-                              onChange={(e) => updateTestimonial(i, "role", e.target.value)}
+                              onChange={(e) =>
+                                updateTestimonial(i, "role", e.target.value)
+                              }
                               placeholder="e.g. Product Manager"
                             />
                           </div>
@@ -269,7 +290,9 @@ export default function AdminTestimonialsPage() {
                             <Input
                               className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-blue-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
                               value={item.company || ""}
-                              onChange={(e) => updateTestimonial(i, "company", e.target.value)}
+                              onChange={(e) =>
+                                updateTestimonial(i, "company", e.target.value)
+                              }
                               placeholder="e.g. Stripe"
                             />
                           </div>
@@ -285,7 +308,9 @@ export default function AdminTestimonialsPage() {
                             <Textarea
                               className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 min-h-[100px] focus-visible:ring-blue-500/50 focus-visible:bg-slate-900 transition-all font-medium leading-relaxed"
                               value={item.content}
-                              onChange={(e) => updateTestimonial(i, "content", e.target.value)}
+                              onChange={(e) =>
+                                updateTestimonial(i, "content", e.target.value)
+                              }
                               placeholder="Share the impact you made..."
                             />
                           </div>
@@ -296,14 +321,21 @@ export default function AdminTestimonialsPage() {
                     {/* Actions Area */}
                     <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
                       <div className="flex items-center gap-2 text-slate-600 text-[10px] font-bold uppercase tracking-widest">
-                        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" /> Testimonial #{i + 1}
+                        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />{" "}
+                        Testimonial #{i + 1}
                       </div>
                       <Button
                         variant="ghost"
-                        onClick={() => setData((prev) => prev.filter((_, idx) => idx !== i))}
+                        onClick={() =>
+                          setData((prev) => prev.filter((_, idx) => idx !== i))
+                        }
                         className="text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl px-5 h-10 font-bold transition-all flex items-center gap-2 group text-xs"
                       >
-                        <FaTrash size={12} className="group-hover:animate-bounce" /> Remove
+                        <FaTrash
+                          size={12}
+                          className="group-hover:animate-bounce"
+                        />{" "}
+                        Remove
                       </Button>
                     </div>
                   </motion.div>

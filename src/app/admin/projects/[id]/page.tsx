@@ -2,8 +2,18 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import {
-  FaCheck, FaTimes, FaSave, FaArrowLeft, FaStar, FaRegStar,
-  FaGithub, FaExternalLinkAlt, FaCode, FaInfoCircle, FaPlus, FaTrash,
+  FaCheck,
+  FaTimes,
+  FaSave,
+  FaArrowLeft,
+  FaStar,
+  FaRegStar,
+  FaGithub,
+  FaExternalLinkAlt,
+  FaCode,
+  FaInfoCircle,
+  FaPlus,
+  FaTrash,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import ImageUpload from "../../components/ImageUpload";
@@ -14,10 +24,19 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import type { Project, MediaItem, Category as ICategory, LinkItem } from "@/types";
+import type {
+  Project,
+  MediaItem,
+  Category as ICategory,
+  LinkItem,
+} from "@/types";
 
 const EMPTY_PROJECT: Omit<Project, "_id"> = {
   title: "",
@@ -46,7 +65,10 @@ export default function ProjectEditPage() {
   const [impInput, setImpInput] = useState("");
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
-  const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
+  const [toast, setToast] = useState<{
+    msg: string;
+    type: "success" | "error";
+  } | null>(null);
 
   function showToast(msg: string, type: "success" | "error" = "success") {
     setToast({ msg, type });
@@ -78,14 +100,16 @@ export default function ProjectEditPage() {
           techNames: Array.isArray(project.techNames) ? project.techNames : [],
           github: Array.isArray(project.github) ? project.github : [],
           live: Array.isArray(project.live) ? project.live : [],
-          improvements: Array.isArray(project.improvements) ? project.improvements : [],
+          improvements: Array.isArray(project.improvements)
+            ? project.improvements
+            : [],
           media: Array.isArray(project.media) ? project.media : [],
           featured: !!project.featured,
         });
       }
       setLoading(false);
     });
-  }, [id]);
+  }, [id, isNew]);
 
   async function handleSave() {
     if (!form.title.trim()) {
@@ -154,11 +178,22 @@ export default function ProjectEditPage() {
               "fixed top-8 left-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-2xl border backdrop-blur-xl shadow-2xl",
               toast.type === "success"
                 ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
-                : "bg-red-500/20 border-red-500/50 text-red-400"
+                : "bg-red-500/20 border-red-500/50 text-red-400",
             )}
           >
-            <div className={cn("p-1.5 rounded-full", toast.type === "success" ? "bg-emerald-500/20" : "bg-red-500/20")}>
-              {toast.type === "success" ? <FaCheck size={10} /> : <FaTimes size={10} />}
+            <div
+              className={cn(
+                "p-1.5 rounded-full",
+                toast.type === "success"
+                  ? "bg-emerald-500/20"
+                  : "bg-red-500/20",
+              )}
+            >
+              {toast.type === "success" ? (
+                <FaCheck size={10} />
+              ) : (
+                <FaTimes size={10} />
+              )}
             </div>
             <span className="font-bold text-sm">{toast.msg}</span>
           </motion.div>
@@ -182,7 +217,9 @@ export default function ProjectEditPage() {
                 {isNew ? "New Project" : "Editing"}
               </span>
               {!isNew && (
-                <p className="text-sm font-bold text-white truncate max-w-xs">{form.title}</p>
+                <p className="text-sm font-bold text-white truncate max-w-xs">
+                  {form.title}
+                </p>
               )}
             </div>
           </div>
@@ -205,7 +242,10 @@ export default function ProjectEditPage() {
                   Saving...
                 </div>
               ) : (
-                <><FaSave className="mr-2" size={12} /> {isNew ? "Create Project" : "Save Changes"}</>
+                <>
+                  <FaSave className="mr-2" size={12} />{" "}
+                  {isNew ? "Create Project" : "Save Changes"}
+                </>
               )}
             </Button>
           </div>
@@ -214,10 +254,8 @@ export default function ProjectEditPage() {
 
       {/* Form */}
       <main className="p-6 md:p-12 max-w-7xl mx-auto space-y-10">
-
         {/* Row 1: Media + Core Info */}
         <div className="flex flex-col xl:flex-row gap-8">
-
           {/* Left: Media Gallery */}
           <div className="w-full xl:w-140 shrink-0 space-y-6">
             <MediaGalleryManager
@@ -262,10 +300,14 @@ export default function ProjectEditPage() {
                     "h-12 w-12 rounded-xl border transition-all",
                     form.featured
                       ? "bg-amber-500/10 border-amber-500/30 text-amber-400"
-                      : "bg-slate-900/50 border-white/10 text-slate-600 hover:text-amber-400"
+                      : "bg-slate-900/50 border-white/10 text-slate-600 hover:text-amber-400",
                   )}
                 >
-                  {form.featured ? <FaStar size={18} /> : <FaRegStar size={18} />}
+                  {form.featured ? (
+                    <FaStar size={18} />
+                  ) : (
+                    <FaRegStar size={18} />
+                  )}
                 </Button>
               </div>
             </div>
@@ -275,13 +317,18 @@ export default function ProjectEditPage() {
               <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
                 Category
               </label>
-              <Select value={form.category ?? ""} onValueChange={(v) => update("category", v || "")}>
+              <Select
+                value={form.category ?? ""}
+                onValueChange={(v) => update("category", v || "")}
+              >
                 <SelectTrigger className="bg-slate-900/50 border-white/10 text-white rounded-xl h-11">
                   <SelectValue placeholder="Select category..." />
                 </SelectTrigger>
                 <SelectContent className="bg-slate-900 border-white/10 text-white">
                   {categories.map((c) => (
-                    <SelectItem key={c.name} value={c.name}>{c.name}</SelectItem>
+                    <SelectItem key={c.name} value={c.name}>
+                      {c.name}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -307,12 +354,17 @@ export default function ProjectEditPage() {
               </label>
               <div className="flex gap-2">
                 <div className="relative group/input flex-1">
-                  <FaCode className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-emerald-400 transition-colors" size={12} />
+                  <FaCode
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-emerald-400 transition-colors"
+                    size={12}
+                  />
                   <Input
                     className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-10 h-11 focus-visible:ring-emerald-500/50"
                     value={techInput}
                     onChange={(e) => setTechInput(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addTech())}
+                    onKeyDown={(e) =>
+                      e.key === "Enter" && (e.preventDefault(), addTech())
+                    }
                     placeholder="Add technology..."
                   />
                 </div>
@@ -337,7 +389,12 @@ export default function ProjectEditPage() {
                         <FaTimes
                           size={9}
                           className="text-slate-600 group-hover/badge:text-red-400 cursor-pointer transition-colors"
-                          onClick={() => update("techNames", form.techNames.filter((x) => x !== t))}
+                          onClick={() =>
+                            update(
+                              "techNames",
+                              form.techNames.filter((x) => x !== t),
+                            )
+                          }
                         />
                       </Badge>
                     </motion.div>
@@ -371,12 +428,17 @@ export default function ProjectEditPage() {
           </label>
           <div className="flex gap-2">
             <div className="relative group/input flex-1">
-              <FaInfoCircle className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-emerald-400 transition-colors" size={12} />
+              <FaInfoCircle
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-emerald-400 transition-colors"
+                size={12}
+              />
               <Input
                 className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-10 h-11 focus-visible:ring-emerald-500/50"
                 value={impInput}
                 onChange={(e) => setImpInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addImprovement())}
+                onKeyDown={(e) =>
+                  e.key === "Enter" && (e.preventDefault(), addImprovement())
+                }
                 placeholder="e.g. Reduced load time by 60%..."
               />
             </div>
@@ -402,7 +464,12 @@ export default function ProjectEditPage() {
                   <FaTrash
                     size={10}
                     className="text-slate-700 group-hover/imp:text-red-400 cursor-pointer transition-colors shrink-0"
-                    onClick={() => update("improvements", (form.improvements ?? []).filter((_, idx) => idx !== i))}
+                    onClick={() =>
+                      update(
+                        "improvements",
+                        (form.improvements ?? []).filter((_, idx) => idx !== i),
+                      )
+                    }
                   />
                 </motion.div>
               ))}

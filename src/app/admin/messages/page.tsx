@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   FaTrash,
   FaEnvelope,
@@ -42,7 +42,7 @@ export default function AdminMessagesPage() {
     setTimeout(() => setToast(null), 3000);
   }
 
-  async function load() {
+  const load = useCallback(async () => {
     try {
       const res = await fetch("/api/admin/messages");
       const data = await res.json();
@@ -52,11 +52,12 @@ export default function AdminMessagesPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
-  }, []);
+  }, [load]);
 
   async function handleDelete(id: string) {
     if (!confirm("Are you sure you want to delete this message?")) return;

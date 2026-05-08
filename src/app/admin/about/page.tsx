@@ -153,21 +153,19 @@ export default function AdminAboutPage() {
           degree: "New Degree",
           institution: "University",
           period: "2020-2024",
-          details: "",
+          details: [],
         },
       ],
     }));
   }
 
-  function updateEducation(i: number, field: keyof Education, val: string) {
+  function updateEducation(i: number, field: keyof Education, val: any) {
     setData((d) => {
       const edu = [...d.education];
       edu[i] = { ...edu[i], [field]: val };
       return { ...d, education: edu };
     });
   }
-
-
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8">

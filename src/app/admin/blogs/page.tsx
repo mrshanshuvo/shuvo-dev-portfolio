@@ -70,6 +70,7 @@ export default function AdminBlogsPage() {
         date: new Date().getFullYear().toString(),
         tags: ["Tech"],
         image: "",
+        order: prev.length,
       },
     ]);
   }
@@ -102,7 +103,11 @@ export default function AdminBlogsPage() {
   }
 
   function removeTag(i: number, tagIdx: number) {
-    updateBlog(i, "tags", data[i].tags.filter((_, idx) => idx !== tagIdx));
+    updateBlog(
+      i,
+      "tags",
+      data[i].tags.filter((_, idx) => idx !== tagIdx),
+    );
   }
 
   return (
@@ -119,7 +124,9 @@ export default function AdminBlogsPage() {
                 : "bg-red-500/20 border-red-500/50 text-red-400"
             }`}
           >
-            <div className={`p-2 rounded-full ${toast.type === "success" ? "bg-emerald-500/20" : "bg-red-500/20"}`}>
+            <div
+              className={`p-2 rounded-full ${toast.type === "success" ? "bg-emerald-500/20" : "bg-red-500/20"}`}
+            >
               {toast.type === "success" ? <FaCheck /> : <FaTimes />}
             </div>
             <span className="font-semibold">{toast.msg}</span>
@@ -175,7 +182,10 @@ export default function AdminBlogsPage() {
             <AnimatePresence mode="popLayout">
               {loading ? (
                 Array.from({ length: 2 }).map((_, i) => (
-                  <div key={i} className="p-8 bg-slate-950/20 space-y-6 animate-pulse border-b border-white/5">
+                  <div
+                    key={i}
+                    className="p-8 bg-slate-950/20 space-y-6 animate-pulse border-b border-white/5"
+                  >
                     <div className="flex gap-8">
                       <div className="w-32 h-32 bg-slate-800/40 rounded-3xl" />
                       <div className="flex-1 space-y-4">
@@ -190,9 +200,12 @@ export default function AdminBlogsPage() {
                   <div className="w-24 h-24 bg-slate-900 rounded-3xl flex items-center justify-center mx-auto mb-6 text-slate-700">
                     <FaPenNib size={48} />
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-2">Share Your Insights</h3>
+                  <h3 className="text-2xl font-bold text-white mb-2">
+                    Share Your Insights
+                  </h3>
                   <p className="text-slate-500 mb-10 max-w-sm mx-auto">
-                    Publish technical articles and build your authority as an expert.
+                    Publish technical articles and build your authority as an
+                    expert.
                   </p>
                   <Button
                     onClick={addBlog}
@@ -252,7 +265,9 @@ export default function AdminBlogsPage() {
                             <Input
                               className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-blue-500/50 focus-visible:bg-slate-900 transition-all font-bold text-sm"
                               value={item.title}
-                              onChange={(e) => updateBlog(i, "title", e.target.value)}
+                              onChange={(e) =>
+                                updateBlog(i, "title", e.target.value)
+                              }
                               placeholder="e.g. Master Next.js 15 Server Actions"
                             />
                           </div>
@@ -268,7 +283,9 @@ export default function AdminBlogsPage() {
                             <Input
                               className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-blue-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
                               value={item.link}
-                              onChange={(e) => updateBlog(i, "link", e.target.value)}
+                              onChange={(e) =>
+                                updateBlog(i, "link", e.target.value)
+                              }
                               placeholder="https://medium.com/@your-profile/..."
                             />
                           </div>
@@ -284,7 +301,9 @@ export default function AdminBlogsPage() {
                             <Input
                               className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-blue-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
                               value={item.date}
-                              onChange={(e) => updateBlog(i, "date", e.target.value)}
+                              onChange={(e) =>
+                                updateBlog(i, "date", e.target.value)
+                              }
                               placeholder="e.g. May 2024"
                             />
                           </div>
@@ -296,30 +315,35 @@ export default function AdminBlogsPage() {
                             Topics & Tags
                           </label>
                           <div className="flex gap-2">
-                             <div className="relative group/input flex-1">
-                                <FaTags className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-blue-400 transition-colors" />
-                                <Input
-                                  className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-blue-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
-                                  value={tagInputs[i] || ""}
-                                  onChange={(e) => setTagInputs(prev => ({...prev, [i]: e.target.value}))}
-                                  onKeyDown={(e) => {
-                                    if (e.key === "Enter") {
-                                      e.preventDefault();
-                                      addTag(i);
-                                    }
-                                  }}
-                                  placeholder="Add a tag (e.g. Next.js)..."
-                                />
-                             </div>
-                             <Button
+                            <div className="relative group/input flex-1">
+                              <FaTags className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-blue-400 transition-colors" />
+                              <Input
+                                className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-blue-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
+                                value={tagInputs[i] || ""}
+                                onChange={(e) =>
+                                  setTagInputs((prev) => ({
+                                    ...prev,
+                                    [i]: e.target.value,
+                                  }))
+                                }
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") {
+                                    e.preventDefault();
+                                    addTag(i);
+                                  }
+                                }}
+                                placeholder="Add a tag (e.g. Next.js)..."
+                              />
+                            </div>
+                            <Button
                               type="button"
                               onClick={() => addTag(i)}
                               className="bg-slate-800 hover:bg-slate-700 text-white rounded-xl h-11 w-11 p-0 shrink-0 border border-white/5"
-                             >
+                            >
                               <FaPlus size={14} />
-                             </Button>
+                            </Button>
                           </div>
-                          
+
                           <div className="flex flex-wrap gap-2">
                             <AnimatePresence mode="popLayout">
                               {item.tags?.map((tag, tIdx) => (
@@ -357,7 +381,9 @@ export default function AdminBlogsPage() {
                             <Textarea
                               className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 min-h-[80px] focus-visible:ring-blue-500/50 focus-visible:bg-slate-900 transition-all font-medium leading-relaxed"
                               value={item.description}
-                              onChange={(e) => updateBlog(i, "description", e.target.value)}
+                              onChange={(e) =>
+                                updateBlog(i, "description", e.target.value)
+                              }
                               placeholder="Write a catchy summary for this article..."
                             />
                           </div>
@@ -368,14 +394,21 @@ export default function AdminBlogsPage() {
                     {/* Actions Area */}
                     <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
                       <div className="flex items-center gap-2 text-slate-600 text-[10px] font-bold uppercase tracking-widest">
-                        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" /> Article #{i + 1}
+                        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />{" "}
+                        Article #{i + 1}
                       </div>
                       <Button
                         variant="ghost"
-                        onClick={() => setData((prev) => prev.filter((_, idx) => idx !== i))}
+                        onClick={() =>
+                          setData((prev) => prev.filter((_, idx) => idx !== i))
+                        }
                         className="text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl px-5 h-10 font-bold transition-all flex items-center gap-2 group text-xs"
                       >
-                        <FaTrash size={12} className="group-hover:animate-bounce" /> Remove
+                        <FaTrash
+                          size={12}
+                          className="group-hover:animate-bounce"
+                        />{" "}
+                        Remove
                       </Button>
                     </div>
                   </motion.div>

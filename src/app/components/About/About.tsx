@@ -23,30 +23,72 @@ const DEFAULT_ABOUT: About = {
     { number: "5", label: "Certifications" },
   ],
   skills: [
-    { name: "Frontend", tech: "React, Next.js, JavaScript", level: 90, iconName: "SiReact" },
-    { name: "Backend", tech: "Node.js, Express, Django", level: 85, iconName: "SiNodedotjs" },
-    { name: "Database", tech: "MongoDB, MySQL, Firebase", level: 80, iconName: "FaDatabase" },
-    { name: "DevOps", tech: "Netlify, Docker, Vercel", level: 75, iconName: "FaCloud" },
-    { name: "ML/AI", tech: "TensorFlow, PyTorch, Scikit-learn", level: 70, iconName: "SiTensorflow" },
-    { name: "Other", tech: "Python, Java, C++", level: 85, iconName: "FaRobot" },
+    {
+      name: "Frontend",
+      tech: "React, Next.js, JavaScript",
+      level: 90,
+      iconName: "SiReact",
+    },
+    {
+      name: "Backend",
+      tech: "Node.js, Express, Django",
+      level: 85,
+      iconName: "SiNodedotjs",
+    },
+    {
+      name: "Database",
+      tech: "MongoDB, MySQL, Firebase",
+      level: 80,
+      iconName: "FaDatabase",
+    },
+    {
+      name: "DevOps",
+      tech: "Netlify, Docker, Vercel",
+      level: 75,
+      iconName: "FaCloud",
+    },
+    {
+      name: "ML/AI",
+      tech: "TensorFlow, PyTorch, Scikit-learn",
+      level: 70,
+      iconName: "SiTensorflow",
+    },
+    {
+      name: "Other",
+      tech: "Python, Java, C++",
+      level: 85,
+      iconName: "FaRobot",
+    },
   ],
   techList: [
-    "React", "Next.js", "Node.js", "Express", "MongoDB", "Python",
-    "Django", "TensorFlow", "Git", "Tailwind CSS", "TypeScript", "PostgreSQL", "AWS", "Docker",
+    "React",
+    "Next.js",
+    "Node.js",
+    "Express",
+    "MongoDB",
+    "Python",
+    "Django",
+    "TensorFlow",
+    "Git",
+    "Tailwind CSS",
+    "TypeScript",
+    "PostgreSQL",
+    "AWS",
+    "Docker",
   ],
   education: [
     {
       degree: "BSc in Computer Science & Engineering",
       institution: "Green University of Bangladesh",
       period: "2021 - 2024",
-      details: "Specialized in Software Engineering & Machine Learning",
+      details: ["Specialized in Software Engineering & Machine Learning"],
     },
   ],
 };
 
 async function getAbout(): Promise<About> {
   await connectDB();
-  
+
   const [aboutDoc, skillDocs, statDocs, educationDocs] = await Promise.all([
     AboutModel.findOne().lean(),
     SkillModel.find().sort({ order: 1 }).lean(),
@@ -73,7 +115,9 @@ async function getAbout(): Promise<About> {
     _id: about._id?.toString(),
     bio1: bios[0] || DEFAULT_ABOUT.bio1,
     bio2: bios.slice(1).join("\n\n") || DEFAULT_ABOUT.bio2,
-    highlights: about.highlights?.length ? about.highlights : DEFAULT_ABOUT.highlights,
+    highlights: about.highlights?.length
+      ? about.highlights
+      : DEFAULT_ABOUT.highlights,
     stats: stats.length ? stats : DEFAULT_ABOUT.stats,
     skills: skills.length ? skills : DEFAULT_ABOUT.skills,
     techList: about.techList?.length ? about.techList : DEFAULT_ABOUT.techList,

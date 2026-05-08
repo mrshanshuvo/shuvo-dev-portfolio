@@ -8,7 +8,13 @@ import { getIcon } from "@/lib/techIconMap";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-export default function ProjectCard({ project, index }: { project: Project; index: number }) {
+export default function ProjectCard({
+  project,
+  index,
+}: {
+  project: Project;
+  index: number;
+}) {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
@@ -119,14 +125,14 @@ export default function ProjectCard({ project, index }: { project: Project; inde
             >
               Explore Project
             </Button>
-            {project.github && (
+            {project.github && project.github.length > 0 && (
               <Button
                 variant="outline"
                 size="icon"
                 nativeButton={false}
                 render={
                   <a
-                    href={project.github}
+                    href={project.github[0].url}
                     target="_blank"
                     rel="noopener noreferrer"
                   />
@@ -137,14 +143,14 @@ export default function ProjectCard({ project, index }: { project: Project; inde
                 <FaGithub size={18} />
               </Button>
             )}
-            {project.live && (
+            {project.live && project.live.length > 0 && (
               <Button
                 variant="outline"
                 size="icon"
                 nativeButton={false}
                 render={
                   <a
-                    href={project.live}
+                    href={project.live[0].url}
                     target="_blank"
                     rel="noopener noreferrer"
                   />
