@@ -32,13 +32,13 @@ export default function AboutClient({ about }: Props) {
       <div className="absolute top-20 right-0 w-72 h-72 bg-emerald-500/5 rounded-full blur-3xl" />
       <div className="absolute bottom-20 left-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl" />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative max-w-350 mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.5 }}
-          className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20"
+          className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12"
         >
           <div className="text-left">
             <motion.div
@@ -57,8 +57,8 @@ export default function AboutClient({ about }: Props) {
             </h2>
           </div>
           <p className="text-md md:text-lg text-slate-600 dark:text-slate-400 max-w-xl md:text-right font-medium leading-relaxed line-clamp-2">
-            Architecting high-performance digital experiences through the lens
-            of modern software engineering and machine intelligence.
+            Architecting high-performance digital experiences powered by modern
+            software engineering and intelligent systems.
           </p>
         </motion.div>
 
@@ -76,7 +76,7 @@ export default function AboutClient({ about }: Props) {
               whileHover={{ y: -5, scale: 1.02 }}
               className="relative group h-full"
             >
-              <Card className="h-full text-center p-8 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl rounded-[2rem] border border-slate-200/50 dark:border-white/10 hover:border-emerald-500/50 transition-all duration-300 shadow-xl overflow-hidden">
+              <Card className="h-full text-center p-6 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl rounded-2xl border border-slate-200/50 dark:border-white/10 hover:border-emerald-500/50 transition-all duration-300 shadow-xl overflow-hidden">
                 <div className="font-display text-5xl font-black bg-linear-to-r from-emerald-600 to-blue-600 dark:from-emerald-400 dark:to-blue-500 bg-clip-text text-transparent mb-2">
                   {stat.number}
                 </div>
@@ -97,7 +97,7 @@ export default function AboutClient({ about }: Props) {
             className="md:col-span-2 h-full"
           >
             <Card className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl rounded-[2rem] p-10 border border-slate-200/50 dark:border-white/10 shadow-xl hover:shadow-2xl transition-shadow h-full overflow-hidden">
-              <div className="flex items-center gap-4 mb-8">
+              <div className="flex items-center gap-4">
                 <CardTitle className="font-display text-3xl font-bold text-slate-900 dark:text-white">
                   {about.title}
                 </CardTitle>

@@ -108,7 +108,7 @@ export default function Navbar({ resumeUrl }: Props) {
       <div
         className={`transition-all duration-300 ${scrolled ? "py-3" : "py-6"}`}
       >
-        <div className="max-w-350 mx-auto px-6 lg:px-8">
+        <div className="max-w-350 mx-auto px-4 sm:px-6 lg:px-8">
           <div
             className={`relative transition-all duration-300 ${
               scrolled

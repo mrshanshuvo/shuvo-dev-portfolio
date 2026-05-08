@@ -25,10 +25,7 @@ function getSkillIcon(iconName: string): IconType {
   return iconMap[iconName] ?? FaDatabase;
 }
 
-export default function SkillsClient({
-  skills,
-  techList,
-}: Props) {
+export default function SkillsClient({ skills, techList }: Props) {
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
@@ -49,8 +46,8 @@ export default function SkillsClient({
       className="relative py-24 bg-white dark:bg-slate-950 overflow-hidden"
     >
       <div className="absolute top-20 left-0 w-72 h-72 bg-emerald-500/5 rounded-full blur-3xl" />
-      
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <div className="relative max-w-350 mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -60,7 +57,6 @@ export default function SkillsClient({
             Technical <span className="text-emerald-500">Mastery</span>
           </h2>
         </motion.div>
-
         <div className="space-y-16">
           <motion.div
             variants={containerVariants}

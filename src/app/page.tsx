@@ -7,7 +7,6 @@ import Education from "./components/Education/Education";
 import Contact from "./components/Contact/Contact";
 import Projects from "./components/Projects/Projects";
 import Experience from "./components/Experience/Experience";
-import Footer from "./components/Footer/Footer";
 import Services from "./components/Services/Services";
 import Workflow from "./components/Workflow/Workflow";
 import Playground from "./components/Playground/Playground";
@@ -85,7 +84,6 @@ export default async function Home() {
           contactLocation={settingDoc?.contactLocation}
         />
       </main>
-      <Footer socialLinks={socialLinks} />
     </>
   );
 }

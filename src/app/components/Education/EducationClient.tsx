@@ -16,9 +16,7 @@ interface Props {
   education: Education[];
 }
 
-export default function EducationClient({
-  education,
-}: Props) {
+export default function EducationClient({ education }: Props) {
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
@@ -34,8 +32,8 @@ export default function EducationClient({
       className="relative py-24 bg-slate-50/50 dark:bg-slate-950/20 overflow-hidden"
     >
       <div className="absolute top-20 left-0 w-72 h-72 bg-blue-500/5 rounded-full blur-3xl" />
-      
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <div className="relative max-w-350 mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}

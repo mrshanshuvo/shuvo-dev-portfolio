@@ -33,7 +33,7 @@ const colorMap: Record<string, { bg: string; text: string }> = {
 export default function ExperienceClient({ experiences }: Props) {
   return (
     <section id="experience" className="py-24 bg-slate-50 dark:bg-slate-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-350 mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
