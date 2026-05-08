@@ -2,23 +2,50 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
-  FaPlus, FaCheck, FaTimes, FaSearch, FaFilter, FaStar, FaRegStar,
-  FaTrash, FaEdit, FaGithub, FaExternalLinkAlt, FaImage, FaVideo,
-  FaLayerGroup, FaGripVertical, FaCode,
+  FaPlus,
+  FaCheck,
+  FaTimes,
+  FaSearch,
+  FaFilter,
+  FaStar,
+  FaRegStar,
+  FaTrash,
+  FaEdit,
+  FaGithub,
+  FaExternalLinkAlt,
+  FaImage,
+  FaVideo,
+  FaLayerGroup,
+  FaGripVertical,
+  FaCode,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEndEvent,
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+  DragStartEvent,
+  DragOverlay,
 } from "@dnd-kit/core";
 import {
-  SortableContext, useSortable, verticalListSortingStrategy, arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+  arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import type { Project, Category as ICategory } from "@/types";
@@ -36,8 +63,14 @@ function SortableProjectCard({
   onDelete: () => void;
   deleting: boolean;
 }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-    useSortable({ id: project._id! });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: project._id! });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -45,7 +78,8 @@ function SortableProjectCard({
     opacity: isDragging ? 0.4 : 1,
   };
 
-  const thumb = project.media?.find((m) => m.type === "image")?.url || project.image || "";
+  const thumb =
+    project.media?.find((m) => m.type === "image")?.url || project.image || "";
   const mediaCount = project.media?.length ?? 0;
   const imgCount = project.media?.filter((m) => m.type === "image").length ?? 0;
   const vidCount = project.media?.filter((m) => m.type === "video").length ?? 0;
@@ -72,7 +106,11 @@ function SortableProjectCard({
       {/* Thumbnail */}
       <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-800 shrink-0 border border-white/5">
         {thumb ? (
-          <img src={thumb} alt={project.title} className="w-full h-full object-cover" />
+          <img
+            src={thumb}
+            alt={project.title}
+            className="w-full h-full object-cover"
+          />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-slate-700">
             <FaImage size={20} />
@@ -83,8 +121,12 @@ function SortableProjectCard({
       {/* Info */}
       <div className="flex-1 min-w-0 space-y-1.5">
         <div className="flex items-center gap-2">
-          {project.featured && <FaStar className="text-amber-400 shrink-0" size={11} />}
-          <h3 className="font-bold text-white text-sm truncate">{project.title}</h3>
+          {project.featured && (
+            <FaStar className="text-amber-400 shrink-0" size={11} />
+          )}
+          <h3 className="font-bold text-white text-sm truncate">
+            {project.title}
+          </h3>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           {project.category && (
@@ -93,26 +135,43 @@ function SortableProjectCard({
             </Badge>
           )}
           {(project.techNames ?? []).slice(0, 3).map((t) => (
-            <span key={t} className="text-[9px] text-slate-500 bg-slate-800/50 px-1.5 py-0.5 rounded-md font-medium">
+            <span
+              key={t}
+              className="text-[9px] text-slate-500 bg-slate-800/50 px-1.5 py-0.5 rounded-md font-medium"
+            >
               {t}
             </span>
           ))}
           {(project.techNames?.length ?? 0) > 3 && (
-            <span className="text-[9px] text-slate-600">+{(project.techNames?.length ?? 0) - 3}</span>
+            <span className="text-[9px] text-slate-600">
+              +{(project.techNames?.length ?? 0) - 3}
+            </span>
           )}
         </div>
         <div className="flex items-center gap-3 text-[10px] text-slate-600">
           {mediaCount > 0 && (
             <span className="flex items-center gap-1">
-              {imgCount > 0 && <><FaImage size={9} /> {imgCount}</>}
-              {vidCount > 0 && <><FaVideo size={9} className="ml-1" /> {vidCount}</>}
+              {imgCount > 0 && (
+                <>
+                  <FaImage size={9} /> {imgCount}
+                </>
+              )}
+              {vidCount > 0 && (
+                <>
+                  <FaVideo size={9} className="ml-1" /> {vidCount}
+                </>
+              )}
             </span>
           )}
           {(project.github?.length ?? 0) > 0 && (
-            <span className="flex items-center gap-1"><FaGithub size={9} /> {project.github!.length}</span>
+            <span className="flex items-center gap-1">
+              <FaGithub size={9} /> {project.github!.length}
+            </span>
           )}
           {(project.live?.length ?? 0) > 0 && (
-            <span className="flex items-center gap-1"><FaExternalLinkAlt size={9} /> {project.live!.length}</span>
+            <span className="flex items-center gap-1">
+              <FaExternalLinkAlt size={9} /> {project.live!.length}
+            </span>
           )}
         </div>
       </div>
@@ -141,6 +200,69 @@ function SortableProjectCard({
   );
 }
 
+// ─── Drag Overlay Card (floats under cursor) ────────────────────────────────
+function DragOverlayCard({ project }: { project: Project }) {
+  const thumb =
+    project.media?.find((m) => m.type === "image")?.url || project.image || "";
+  const mediaCount = project.media?.length ?? 0;
+  const imgCount = project.media?.filter((m) => m.type === "image").length ?? 0;
+  const vidCount = project.media?.filter((m) => m.type === "video").length ?? 0;
+
+  return (
+    <div className="flex items-center gap-4 bg-slate-800/90 backdrop-blur-xl border border-emerald-500/30 rounded-[1.5rem] p-4 shadow-[0_20px_60px_rgba(0,0,0,0.6)] ring-1 ring-emerald-500/20 rotate-1 scale-105">
+      <div className="cursor-grabbing text-emerald-400 shrink-0">
+        <FaGripVertical size={14} />
+      </div>
+      <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-700 shrink-0 border border-white/10">
+        {thumb ? (
+          <img
+            src={thumb}
+            alt={project.title}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-slate-600">
+            <FaImage size={20} />
+          </div>
+        )}
+      </div>
+      <div className="flex-1 min-w-0 space-y-1.5">
+        <div className="flex items-center gap-2">
+          {project.featured && (
+            <FaStar className="text-amber-400 shrink-0" size={11} />
+          )}
+          <h3 className="font-bold text-white text-sm truncate">
+            {project.title}
+          </h3>
+        </div>
+        <div className="flex items-center gap-2">
+          {project.category && (
+            <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[9px] font-black rounded-lg px-2 py-0.5">
+              {project.category}
+            </Badge>
+          )}
+        </div>
+        <div className="flex items-center gap-3 text-[10px] text-slate-500">
+          {mediaCount > 0 && (
+            <span className="flex items-center gap-1">
+              {imgCount > 0 && (
+                <>
+                  <FaImage size={9} /> {imgCount}
+                </>
+              )}
+              {vidCount > 0 && (
+                <>
+                  <FaVideo size={9} className="ml-1" /> {vidCount}
+                </>
+              )}
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Page ───────────────────────────────────────────────────────────────
 export default function AdminProjectsListPage() {
   const router = useRouter();
@@ -149,11 +271,17 @@ export default function AdminProjectsListPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("All");
-  const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
+  const [toast, setToast] = useState<{
+    msg: string;
+    type: "success" | "error";
+  } | null>(null);
 
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+  );
 
   function showToast(msg: string, type: "success" | "error" = "success") {
     setToast({ msg, type });
@@ -171,12 +299,14 @@ export default function AdminProjectsListPage() {
     });
   };
 
-  useEffect(() => { fetchAll(); }, []);
+  useEffect(() => {
+    fetchAll();
+  }, []);
 
   const refreshCategories = () => {
-    fetch("/api/admin/categories").then((r) => r.json()).then((cats) =>
-      setCategories(Array.isArray(cats) ? cats : [])
-    );
+    fetch("/api/admin/categories")
+      .then((r) => r.json())
+      .then((cats) => setCategories(Array.isArray(cats) ? cats : []));
   };
 
   async function saveOrder(ordered: Project[]) {
@@ -191,7 +321,12 @@ export default function AdminProjectsListPage() {
     else showToast("Order saved!");
   }
 
+  function handleDragStart(event: DragStartEvent) {
+    setActiveId(event.active.id as string);
+  }
+
   function handleDragEnd(event: DragEndEvent) {
+    setActiveId(null);
     const { active, over } = event;
     if (!over || active.id === over.id) return;
     const oldIdx = data.findIndex((p) => p._id === active.id);
@@ -235,13 +370,26 @@ export default function AdminProjectsListPage() {
               "fixed top-8 left-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-2xl border backdrop-blur-xl shadow-2xl",
               toast.type === "success"
                 ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
-                : "bg-red-500/20 border-red-500/50 text-red-400"
+                : "bg-red-500/20 border-red-500/50 text-red-400",
             )}
           >
-            <div className={cn("p-1.5 rounded-full", toast.type === "success" ? "bg-emerald-500/20" : "bg-red-500/20")}>
-              {toast.type === "success" ? <FaCheck size={10} /> : <FaTimes size={10} />}
+            <div
+              className={cn(
+                "p-1.5 rounded-full",
+                toast.type === "success"
+                  ? "bg-emerald-500/20"
+                  : "bg-red-500/20",
+              )}
+            >
+              {toast.type === "success" ? (
+                <FaCheck size={10} />
+              ) : (
+                <FaTimes size={10} />
+              )}
             </div>
-            <span className="font-bold text-sm tracking-tight">{toast.msg}</span>
+            <span className="font-bold text-sm tracking-tight">
+              {toast.msg}
+            </span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -255,7 +403,9 @@ export default function AdminProjectsListPage() {
             </div>
             <h1 className="text-2xl font-black text-white tracking-tight">
               Projects{" "}
-              <span className="text-slate-600 font-medium text-lg">({data.length})</span>
+              <span className="text-slate-600 font-medium text-lg">
+                ({data.length})
+              </span>
             </h1>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
@@ -272,7 +422,10 @@ export default function AdminProjectsListPage() {
         {/* Filters */}
         <div className="flex gap-3 mt-4 flex-wrap">
           <div className="relative flex-1 min-w-[180px] max-w-xs">
-            <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600" size={12} />
+            <FaSearch
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600"
+              size={12}
+            />
             <Input
               className="bg-slate-900/50 border-white/5 rounded-xl pl-9 h-10 text-sm focus-visible:ring-emerald-500/30"
               value={searchQuery}
@@ -280,7 +433,10 @@ export default function AdminProjectsListPage() {
               placeholder="Search projects..."
             />
           </div>
-          <Select value={filterCategory} onValueChange={(v) => setFilterCategory(v || "All")}>
+          <Select
+            value={filterCategory}
+            onValueChange={(v) => setFilterCategory(v || "All")}
+          >
             <SelectTrigger className="bg-slate-900/50 border-white/5 rounded-xl h-10 w-[160px] text-sm">
               <FaFilter className="mr-2 text-slate-600" size={10} />
               <SelectValue />
@@ -288,7 +444,9 @@ export default function AdminProjectsListPage() {
             <SelectContent className="bg-slate-900 border-white/10 text-white">
               <SelectItem value="All">All Categories</SelectItem>
               {categories.map((c) => (
-                <SelectItem key={c.name} value={c.name}>{c.name}</SelectItem>
+                <SelectItem key={c.name} value={c.name}>
+                  {c.name}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -306,14 +464,21 @@ export default function AdminProjectsListPage() {
         {loading ? (
           <div className="space-y-3">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-24 bg-slate-900/30 rounded-[1.5rem] animate-pulse border border-white/5" />
+              <div
+                key={i}
+                className="h-24 bg-slate-900/30 rounded-[1.5rem] animate-pulse border border-white/5"
+              />
             ))}
           </div>
         ) : data.length === 0 ? (
           <div className="py-32 text-center border-2 border-dashed border-white/5 rounded-[3rem]">
             <FaCode size={48} className="mx-auto text-slate-800 mb-4" />
-            <h3 className="text-xl font-bold text-slate-400 mb-2">No projects yet</h3>
-            <p className="text-slate-600 text-sm mb-8">Start building your portfolio by adding your first project.</p>
+            <h3 className="text-xl font-bold text-slate-400 mb-2">
+              No projects yet
+            </h3>
+            <p className="text-slate-600 text-sm mb-8">
+              Start building your portfolio by adding your first project.
+            </p>
             <Button
               onClick={() => router.push("/admin/projects/new")}
               className="bg-emerald-600/10 text-emerald-400 hover:bg-emerald-600/20 border border-emerald-500/20 px-8 h-12 rounded-xl font-bold"
@@ -331,7 +496,9 @@ export default function AdminProjectsListPage() {
                     <SortableProjectCard
                       key={project._id}
                       project={project}
-                      onEdit={() => router.push(`/admin/projects/${project._id}`)}
+                      onEdit={() =>
+                        router.push(`/admin/projects/${project._id}`)
+                      }
                       onDelete={() => handleDelete(project._id!)}
                       deleting={deletingId === project._id}
                     />
@@ -340,15 +507,25 @@ export default function AdminProjectsListPage() {
               </div>
             ) : (
               // DnD-enabled full list
-              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-                <SortableContext items={data.map((p) => p._id!)} strategy={verticalListSortingStrategy}>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={data.map((p) => p._id!)}
+                  strategy={verticalListSortingStrategy}
+                >
                   <div className="space-y-3">
                     <AnimatePresence mode="popLayout">
                       {data.map((project) => (
                         <SortableProjectCard
                           key={project._id}
                           project={project}
-                          onEdit={() => router.push(`/admin/projects/${project._id}`)}
+                          onEdit={() =>
+                            router.push(`/admin/projects/${project._id}`)
+                          }
                           onDelete={() => handleDelete(project._id!)}
                           deleting={deletingId === project._id}
                         />
@@ -356,6 +533,13 @@ export default function AdminProjectsListPage() {
                     </AnimatePresence>
                   </div>
                 </SortableContext>
+                <DragOverlay dropAnimation={null}>
+                  {activeId ? (
+                    <DragOverlayCard
+                      project={data.find((p) => p._id === activeId)!}
+                    />
+                  ) : null}
+                </DragOverlay>
               </DndContext>
             )}
 
