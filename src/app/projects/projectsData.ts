@@ -26,8 +26,8 @@ export const projects: Project[] = [
     image: "/images/mcms.png",
     technologies: [FaReact, SiNextdotjs, FaNodeJs, SiMongodb, SiTailwindcss],
     techNames: ["React", "Next.js", "Node.js", "MongoDB", "Tailwind CSS"],
-    github: "https://github.com/mrshanshuvo/mcms",
-    live: "https://mcms-auth.web.app/",
+    github: [{ label: "GitHub", url: "https://github.com/mrshanshuvo/mcms" }],
+    live: [{ label: "Live Demo", url: "https://mcms-auth.web.app/" }],
     featured: true,
     category: "Full Stack",
     improvements: [
@@ -46,8 +46,15 @@ export const projects: Project[] = [
     image: "/images/whereisit.png",
     technologies: [FaReact, FaNodeJs, SiExpress, SiMongodb, FaMobileAlt],
     techNames: ["React", "Node.js", "Express.js", "MongoDB", "Firebase"],
-    github: "https://github.com/mrshanshuvo/whereisit",
-    live: "https://simple-firebase-auth-9089a.web.app/",
+    github: [
+      { label: "GitHub", url: "https://github.com/mrshanshuvo/whereisit" },
+    ],
+    live: [
+      {
+        label: "Live Demo",
+        url: "https://simple-firebase-auth-9089a.web.app/",
+      },
+    ],
     featured: true,
     category: "Full Stack",
     improvements: [
@@ -80,8 +87,13 @@ export const projects: Project[] = [
       "Leaflet",
       "Tailwind CSS",
     ],
-    github: "https://github.com/mrshanshuvo/zap-shift-client",
-    live: "https://profast-94805.web.app/",
+    github: [
+      {
+        label: "GitHub",
+        url: "https://github.com/mrshanshuvo/zap-shift-client",
+      },
+    ],
+    live: [{ label: "Live Demo", url: "https://profast-94805.web.app/" }],
     featured: true,
     category: "Full Stack",
     improvements: [
@@ -100,8 +112,12 @@ export const projects: Project[] = [
     image: "/images/car-doctor.png",
     technologies: [SiNextdotjs, FaReact, SiTailwindcss, FaNodeJs],
     techNames: ["Next.js", "React", "Tailwind CSS", "Node.js"],
-    github: "https://github.com/mrshanshuvo/car-doctor",
-    live: "https://car-doctor-nextjs-ten.vercel.app/",
+    github: [
+      { label: "GitHub", url: "https://github.com/mrshanshuvo/car-doctor" },
+    ],
+    live: [
+      { label: "Live Demo", url: "https://car-doctor-nextjs-ten.vercel.app/" },
+    ],
     featured: false,
     category: "Full Stack",
     improvements: [
@@ -119,8 +135,15 @@ export const projects: Project[] = [
     image: "/images/portfolio.png",
     technologies: [SiNextdotjs, FaReact, SiTailwindcss, FaNodeJs],
     techNames: ["Next.js", "React", "Tailwind CSS", "Node.js"],
-    github: "https://github.com/mrshanshuvo/my-portfolio-1",
-    live: "https://my-portfolio-1-five-tawny.vercel.app/",
+    github: [
+      { label: "GitHub", url: "https://github.com/mrshanshuvo/my-portfolio-1" },
+    ],
+    live: [
+      {
+        label: "Live Demo",
+        url: "https://my-portfolio-1-five-tawny.vercel.app/",
+      },
+    ],
     featured: false,
     category: "Full Stack",
     improvements: [
