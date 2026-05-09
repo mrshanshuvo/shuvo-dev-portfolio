@@ -60,7 +60,7 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { AdminDialogShell } from "../components/AdminDialogShell";
-import { AdminField, AdminInput } from "../components/AdminFields";
+import { AdminField, AdminInput, AdminSelect } from "../components/AdminFields";
 
 const ICON_OPTIONS = [
   "SiReact",
@@ -550,7 +550,7 @@ export default function AdminSkillsPage() {
               {/* Left Column: Visuals & Mastery */}
               <div className="space-y-8">
                 <AdminField label="Visual Icon">
-                  <Select
+                  <AdminSelect
                     value={currentSkill.iconName}
                     onValueChange={(val) => {
                       if (val) {
@@ -559,27 +559,13 @@ export default function AdminSkillsPage() {
                         );
                       }
                     }}
-                  >
-                    <SelectTrigger className="bg-slate-950/40 border-white/5 rounded-xl h-12 font-bold shadow-inner shadow-black/20 focus:ring-4 focus:ring-emerald-500/5 transition-all">
-                      <SelectValue placeholder="Select icon" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-slate-900 border-white/10 text-white rounded-xl shadow-2xl">
-                      {ICON_OPTIONS.map((p) => (
-                        <SelectItem
-                          key={p}
-                          value={p}
-                          className="rounded-lg py-2.5 focus:bg-purple-500/10 focus:text-purple-400"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="w-5 h-5 rounded bg-white/5 flex items-center justify-center">
-                              {iconOptionsMap[p] || <FaCode size={10} />}
-                            </div>
-                            <span className="text-xs">{p}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    options={ICON_OPTIONS.map((p) => ({
+                      label: p,
+                      value: p,
+                      icon: iconOptionsMap[p] || <FaCode size={10} />,
+                    }))}
+                    placeholder="Select icon"
+                  />
                 </AdminField>
 
                 <AdminField label={`Expertise Mastery: ${currentSkill.level}%`}>

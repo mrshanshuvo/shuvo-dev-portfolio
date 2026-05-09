@@ -1,7 +1,13 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { FaChevronDown, FaSearch, FaPlus, FaCheck, FaTimes } from "react-icons/fa";
+import {
+  FaChevronDown,
+  FaSearch,
+  FaPlus,
+  FaCheck,
+  FaTimes,
+} from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -41,7 +47,7 @@ export default function CategoryCombobox({
   }, []);
 
   const filtered = categories.filter((c) =>
-    c.name.toLowerCase().includes(search.toLowerCase())
+    c.name.toLowerCase().includes(search.toLowerCase()),
   );
 
   const toggleCategory = (name: string) => {
@@ -57,7 +63,10 @@ export default function CategoryCombobox({
 
     const newCat = {
       name: search.trim(),
-      slug: search.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+      slug: search
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-"),
       order: categories.length,
     };
 
@@ -87,7 +96,7 @@ export default function CategoryCombobox({
           "w-full flex flex-wrap gap-2 p-2 min-h-[56px] bg-white dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 rounded-2xl transition-all cursor-pointer outline-none",
           open
             ? "border-emerald-500/50 ring-2 ring-emerald-500/20"
-            : "border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10"
+            : "border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10",
         )}
       >
         {value.length === 0 && (
@@ -122,7 +131,7 @@ export default function CategoryCombobox({
           <FaChevronDown
             className={cn(
               "text-slate-500 text-xs transition-transform",
-              open && "rotate-180"
+              open && "rotate-180",
             )}
           />
         </div>
@@ -164,7 +173,7 @@ export default function CategoryCombobox({
                       "flex items-center justify-between px-3 py-2.5 rounded-xl text-sm transition-colors text-left w-full",
                       isActive
                         ? "bg-emerald-500/10 text-emerald-400 font-bold"
-                        : "text-slate-300 hover:bg-white/5 hover:text-white"
+                        : "text-slate-300 hover:bg-white/5 hover:text-white",
                     )}
                   >
                     <span className="truncate">{c.name}</span>

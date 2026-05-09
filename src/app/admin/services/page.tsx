@@ -494,13 +494,14 @@ export default function AdminServicesPage() {
                     {currentService.features.map((feature, i) => (
                       <motion.div
                         key={i}
-                        initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, x: 20 }}
-                        className="flex items-center gap-4 p-4 bg-slate-950/50 border border-white/5 rounded-2xl group/item"
+                        layout
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        className="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 rounded-2xl group/item"
                       >
-                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/50 shrink-0" />
-                        <span className="text-sm text-slate-300 flex-1 font-medium">
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                        <span className="text-sm text-slate-700 dark:text-slate-300 flex-1 font-medium">
                           {feature}
                         </span>
                         <button

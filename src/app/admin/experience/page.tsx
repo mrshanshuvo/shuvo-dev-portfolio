@@ -588,7 +588,7 @@ export default function AdminExperiencePage() {
                             setDetailInput("");
                           }
                         }}
-                        className="bg-slate-800 hover:bg-slate-700 text-white rounded-xl h-12 px-6 border border-white/5 font-bold"
+                        className="bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white rounded-xl h-12 px-6 border border-slate-200 dark:border-white/5 font-bold shadow-inner shadow-black/5 dark:shadow-black/20"
                       >
                         Add
                       </Button>
@@ -598,13 +598,14 @@ export default function AdminExperiencePage() {
                         {(currentExp.details || []).map((detail, i) => (
                           <motion.div
                             key={i}
-                            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, x: 20 }}
-                            className="flex items-center gap-4 p-4 bg-slate-950/40 border border-white/5 rounded-2xl group/item shadow-inner shadow-black/10"
+                            layout
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            className="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-white/5 rounded-2xl group/item shadow-inner shadow-black/5 dark:shadow-black/10"
                           >
-                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/50 shrink-0" />
-                            <span className="text-sm text-slate-300 flex-1 font-medium">
+                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                            <span className="text-sm text-slate-700 dark:text-slate-300 flex-1 font-medium">
                               {detail}
                             </span>
                             <button

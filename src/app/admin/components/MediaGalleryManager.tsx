@@ -180,7 +180,7 @@ export default function MediaGalleryManager({
                 <div className="relative group/input">
                   <FaLink className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within/input:text-slate-400 transition-colors" />
                   <Input
-                    className="bg-slate-900/50 border-white/5 rounded-xl pl-12 h-11 focus-visible:ring-white/10"
+                    className="bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-white/5 rounded-xl pl-12 h-11 focus-visible:ring-emerald-500/10 text-slate-900 dark:text-white shadow-inner dark:shadow-none"
                     value={item.url}
                     onChange={(e) => updateItem(i, "url", e.target.value)}
                     placeholder="Source URL..."
@@ -195,7 +195,7 @@ export default function MediaGalleryManager({
                 <div className="relative group/input">
                   <FaInfoCircle className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within/input:text-slate-400 transition-colors" />
                   <Input
-                    className="bg-slate-900/50 border-white/5 rounded-xl pl-12 h-11 focus-visible:ring-white/10"
+                    className="bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-white/5 rounded-xl pl-12 h-11 focus-visible:ring-emerald-500/10 text-slate-900 dark:text-white shadow-inner dark:shadow-none"
                     value={item.caption || ""}
                     onChange={(e) => updateItem(i, "caption", e.target.value)}
                     placeholder="Describe this media..."

@@ -152,7 +152,9 @@ function SortableSocialRow({
             <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
               {item.label}
             </h3>
-            <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{item.href}</p>
+            <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+              {item.href}
+            </p>
           </div>
         </div>
       </div>
@@ -369,7 +371,10 @@ export default function AdminSocialsPage() {
               </div>
             ) : data.length === 0 ? (
               <div className="text-center py-20 bg-white dark:bg-slate-950/20 rounded-3xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
-                <FaLink className="mx-auto text-slate-200 dark:text-slate-800 mb-4" size={40} />
+                <FaLink
+                  className="mx-auto text-slate-200 dark:text-slate-800 mb-4"
+                  size={40}
+                />
                 <p className="text-slate-400 dark:text-slate-500 font-medium">
                   No social links found. Add your profiles above.
                 </p>
@@ -427,14 +432,14 @@ export default function AdminSocialsPage() {
       <AdminDialogShell
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
-        title={currentSocial?._id ? "Modify Connection" : "Add Digital Node"}
-        subtitle="Manage your global social presence"
+        title={currentSocial?._id ? "Update Link" : "Add Digital Node"}
+        subtitle=""
         icon={FaLink}
         iconColor="text-cyan-400"
         accentColor="from-cyan-500/5 to-blue-500/5"
         onSave={handleAddOrUpdate}
         saving={saving}
-        saveLabel={currentSocial?._id ? "Update Link" : "Establish Connection"}
+        saveLabel={currentSocial?._id ? "Update Link" : "Add Link"}
         savingLabel="Propagating..."
       >
         {currentSocial && (
@@ -457,10 +462,10 @@ export default function AdminSocialsPage() {
                     }
                   }}
                 >
-                  <SelectTrigger className="bg-slate-950/50 border-white/5 rounded-2xl h-14 font-bold text-base">
+                  <SelectTrigger className="bg-white dark:bg-slate-950/40 border-slate-200 dark:border-white/5 rounded-2xl h-14 font-bold text-base text-slate-900 dark:text-slate-200 shadow-inner dark:shadow-black/20 focus:ring-4 focus:ring-cyan-500/5 transition-all">
                     <SelectValue placeholder="Select platform" />
                   </SelectTrigger>
-                  <SelectContent className="bg-slate-900 border-white/10 text-white rounded-2xl shadow-2xl backdrop-blur-xl">
+                  <SelectContent className="bg-white dark:bg-slate-900 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-2xl shadow-2xl backdrop-blur-xl">
                     {PLATFORM_OPTIONS.map((p) => (
                       <SelectItem
                         key={p}

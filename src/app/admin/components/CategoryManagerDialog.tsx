@@ -108,7 +108,7 @@ export default function CategoryManagerDialog({
           </Button>
         }
       />
-      <DialogContent className="max-w-2xl bg-slate-950 border-white/10 text-white rounded-[2.5rem] p-8 max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-2xl bg-white dark:bg-slate-950 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-[2.5rem] p-8 max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
         <DialogHeader className="mb-6">
           <div className="flex items-center gap-3 text-emerald-400 mb-2">
             <FaLayerGroup size={16} />
@@ -122,7 +122,7 @@ export default function CategoryManagerDialog({
               onClick={addCategory}
               variant="outline"
               size="sm"
-              className="bg-slate-900 border-white/5 rounded-xl h-9 px-4 font-bold"
+              className="bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-white/5 rounded-xl h-9 px-4 font-bold text-slate-700 dark:text-slate-200"
             >
               <FaPlus className="mr-2" /> Add
             </Button>
@@ -138,11 +138,11 @@ export default function CategoryManagerDialog({
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="group relative bg-slate-900/50 border border-white/5 p-4 rounded-2xl flex items-center gap-4 hover:border-white/10 transition-all"
+                className="group relative bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/5 p-4 rounded-2xl flex items-center gap-4 hover:border-slate-300 dark:hover:border-white/10 transition-all"
               >
                 <div className="flex-1">
                   <Input
-                    className="bg-transparent border-none p-0 h-7 text-sm font-bold text-white focus-visible:ring-0"
+                    className="bg-transparent border-none p-0 h-7 text-sm font-bold text-slate-900 dark:text-white focus-visible:ring-0"
                     value={cat.name}
                     onChange={(e) => updateCategory(i, "name", e.target.value)}
                     placeholder="Category Name..."
@@ -183,7 +183,7 @@ export default function CategoryManagerDialog({
           </AnimatePresence>
 
           {data.length === 0 && (
-            <div className="py-12 text-center border-2 border-dashed border-white/5 rounded-2xl">
+            <div className="py-12 text-center border-2 border-dashed border-slate-200 dark:border-white/5 rounded-2xl bg-slate-50/50 dark:bg-transparent">
               <p className="text-slate-500 text-sm">No categories defined.</p>
             </div>
           )}

@@ -527,7 +527,7 @@ export default function AdminCertificationsPage() {
                             setSkillInput("");
                           }
                         }}
-                        className="h-12 px-4 bg-white/5 hover:bg-white/10 text-white rounded-xl font-bold"
+                        className="h-12 px-4 bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white rounded-xl font-bold border border-slate-200 dark:border-white/5 shadow-inner shadow-black/5 dark:shadow-black/20"
                       >
                         <FaPlus size={12} />
                       </Button>
@@ -537,7 +537,7 @@ export default function AdminCertificationsPage() {
                         <Badge
                           key={i}
                           variant="secondary"
-                          className="bg-yellow-500/10 text-yellow-400 border-yellow-500/20 px-3 py-1.5 gap-2 rounded-xl group transition-all"
+                          className="bg-yellow-50 dark:bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-200 dark:border-yellow-500/20 px-3 py-1.5 gap-2 rounded-xl group transition-all shadow-sm dark:shadow-none"
                         >
                           <span className="text-xs">{detail}</span>
                           <button

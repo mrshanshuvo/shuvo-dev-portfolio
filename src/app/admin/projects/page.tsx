@@ -457,7 +457,7 @@ export default function AdminProjectsListPage() {
                 size={12}
               />
               <Input
-                className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-white/5 rounded-xl pl-9 h-10 text-xs focus-visible:ring-emerald-500/30 text-slate-900 dark:text-white"
+                className="bg-white dark:bg-slate-950 border-slate-200 dark:border-white/5 rounded-xl pl-9 h-10 text-xs focus-visible:ring-emerald-500/30 text-slate-900 dark:text-white shadow-sm dark:shadow-none"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search projects..."
@@ -468,11 +468,11 @@ export default function AdminProjectsListPage() {
               value={filterCategory}
               onValueChange={(v) => setFilterCategory(v || "All")}
             >
-              <SelectTrigger className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-white/5 rounded-xl h-10 w-[150px] text-xs text-slate-900 dark:text-white">
+              <SelectTrigger className="bg-white dark:bg-slate-950 border-slate-200 dark:border-white/5 rounded-xl h-10 w-[150px] text-xs text-slate-900 dark:text-white shadow-sm dark:shadow-none">
                 <FaFilter className="mr-2 text-slate-600" size={10} />
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-slate-900 border-white/10 text-white">
+              <SelectContent className="bg-white dark:bg-slate-900 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl shadow-2xl">
                 <SelectItem value="All">All Categories</SelectItem>
                 {categories.map((c) => (
                   <SelectItem key={c.name} value={c.name}>

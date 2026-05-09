@@ -372,16 +372,16 @@ export default function AdminStatsPage() {
       <AdminDialogShell
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
-        title={currentStat?._id ? "Adjust Metric" : "Forge New Milestone"}
-        subtitle="Quantify your professional achievements"
+        title={currentStat?._id ? "Adjust Metric" : "New Milestone"}
+        subtitle=""
         icon={FaChartBar}
         iconColor="text-rose-400"
         accentColor="from-rose-500/5 to-pink-500/5"
         onSave={handleAddOrUpdate}
         saving={saving}
-        saveLabel={currentStat?._id ? "Update Metric" : "Establish Milestone"}
+        saveLabel={currentStat?._id ? "Update Metric" : "Add Milestone"}
         savingLabel="Calibrating..."
-        maxWidth="md"
+        maxWidth="2xl"
       >
         {currentStat && (
           <div className="space-y-6">

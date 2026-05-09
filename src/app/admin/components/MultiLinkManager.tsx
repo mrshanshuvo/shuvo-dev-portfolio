@@ -68,7 +68,7 @@ export default function MultiLinkManager({
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="group relative bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/5 p-3 rounded-2xl space-y-2 hover:border-slate-300 dark:hover:border-white/10 transition-all"
+              className="group relative bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-white/5 p-3 rounded-2xl space-y-2 hover:border-slate-300 dark:hover:border-white/10 transition-all shadow-sm dark:shadow-none"
             >
               <div className="flex items-center gap-2">
                 <Icon
@@ -95,7 +95,7 @@ export default function MultiLinkManager({
                 </Button>
               </div>
               <Input
-                className="bg-white dark:bg-slate-950/50 border-slate-200 dark:border-white/5 h-8 text-[10px] text-slate-500 dark:text-slate-400 rounded-lg focus-visible:ring-emerald-500/20"
+                className="bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-white/5 h-8 text-[10px] text-slate-500 dark:text-slate-400 rounded-lg focus-visible:ring-emerald-500/20 shadow-inner dark:shadow-none"
                 value={link.url}
                 onChange={(e) => updateLink(i, "url", e.target.value)}
                 placeholder="URL"

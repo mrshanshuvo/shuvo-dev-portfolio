@@ -328,7 +328,7 @@ export default function ProjectEditPage() {
                   />
                   <Button
                     onClick={addTech}
-                    className="bg-slate-800 hover:bg-slate-700 text-white rounded-2xl h-14 w-14 shrink-0 border border-white/5"
+                    className="bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white rounded-2xl h-14 w-14 shrink-0 border border-slate-200 dark:border-white/5 shadow-inner shadow-black/5 dark:shadow-black/20"
                   >
                     <FaPlus size={14} />
                   </Button>
