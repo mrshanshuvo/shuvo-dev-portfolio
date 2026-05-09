@@ -3,23 +3,13 @@ import ProjectModel from "@/models/Project";
 import type { Project } from "@/types";
 import ProjectsClient from "./ProjectsClient";
 
-async function getProjects(): Promise<Project[]> {
+async function getProjects() {
   await connectDB();
-  const raw = await ProjectModel.find({ featured: true }).sort({ order: 1, createdAt: -1 }).lean();
-  return raw.map((p) => ({
-    _id: p._id.toString(),
-    title: p.title,
-    slug: p.slug,
-    description: p.description,
-    image: p.image,
-    techNames: p.techNames,
-    github: p.github,
-    live: p.live,
-    featured: p.featured,
-    category: p.category,
-    improvements: p.improvements,
-    order: p.order,
-  }));
+  const raw = await ProjectModel.find({ featured: true })
+    .sort({ order: 1, createdAt: -1 })
+    .lean();
+  // Ensure deep serialization of subdocuments (github/live links)
+  return JSON.parse(JSON.stringify(raw));
 }
 
 export default async function Projects() {

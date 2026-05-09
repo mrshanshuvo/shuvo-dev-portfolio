@@ -1,15 +1,25 @@
 import { NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import Blog from "@/models/Blog";
 
-import { auth } from "@/lib/auth";
-
-export async function GET() {
+export async function GET(req: Request) {
   try {
     const session = await auth();
-    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!session)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     await connectDB();
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (id) {
+      const item = await Blog.findById(id);
+      if (!item)
+        return NextResponse.json({ error: "Not found" }, { status: 404 });
+      return NextResponse.json(item);
+    }
+
     const data = await Blog.find().sort({ order: 1 }).lean();
     return NextResponse.json(data);
   } catch (error) {
@@ -17,34 +27,106 @@ export async function GET() {
   }
 }
 
+export async function POST(req: Request) {
+  try {
+    const session = await auth();
+    if (!session)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    await connectDB();
+    const body = await req.json();
+
+    const lastItem = await Blog.findOne().sort({ order: -1 });
+    const order = lastItem ? lastItem.order + 1 : 0;
+
+    const newItem = await Blog.create({ ...body, order });
+    return NextResponse.json(newItem);
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to create" }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: Request) {
+  try {
+    const session = await auth();
+    if (!session)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    await connectDB();
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+    const body = await req.json();
+
+    if (id) {
+      const updated = await Blog.findByIdAndUpdate(id, body, { new: true });
+      if (!updated)
+        return NextResponse.json({ error: "Not found" }, { status: 404 });
+      return NextResponse.json(updated);
+    }
+
+    if (Array.isArray(body)) {
+      const updates = body.map((item, idx) =>
+        Blog.findByIdAndUpdate(item._id, { order: idx }),
+      );
+      await Promise.all(updates);
+      return NextResponse.json({ message: "Order updated" });
+    }
+
+    return NextResponse.json(
+      { error: "ID or array required" },
+      { status: 400 },
+    );
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to update" }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const session = await auth();
+    if (!session)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    await connectDB();
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (!id)
+      return NextResponse.json({ error: "ID required" }, { status: 400 });
+
+    const deleted = await Blog.findByIdAndDelete(id);
+    if (!deleted)
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+    return NextResponse.json({ message: "Deleted" });
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to delete" }, { status: 500 });
+  }
+}
+
 export async function PUT(req: Request) {
   try {
     const session = await auth();
-    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!session)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     await connectDB();
-    const items: any[] = await req.json();
+    const items = await req.json();
 
-    // Clean slate synchronization
-    await Blog.deleteMany({});
-    
-    if (items.length > 0) {
-      const sanitized = items.map((it: any, i: number) => ({
-        title: it.title,
-        description: it.description,
-        link: it.link,
-        date: it.date,
-        tags: Array.isArray(it.tags) ? it.tags : [],
-        image: it.image || "",
-        order: i,
-      }));
-
-      await Blog.insertMany(sanitized);
+    if (Array.isArray(items)) {
+      const updates = items.map((item, idx) =>
+        Blog.findByIdAndUpdate(
+          item._id,
+          { ...item, order: idx },
+          { upsert: true },
+        ),
+      );
+      await Promise.all(updates);
+      return NextResponse.json({ message: "Bulk saved" });
     }
 
-    return NextResponse.json({ message: "Blogs synchronized" });
-  } catch (error: any) {
-    console.error("Blog Sync Error:", error);
-    return NextResponse.json({ error: error.message || "Failed to save" }, { status: 500 });
+    return NextResponse.json({ error: "Array required" }, { status: 400 });
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to save" }, { status: 500 });
   }
 }

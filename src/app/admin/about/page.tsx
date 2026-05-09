@@ -15,27 +15,16 @@ import {
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Shadcn UI Imports
+import { AdminField, AdminInput, AdminTextarea } from "../components/AdminFields";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
-  CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
+  CardContent,
 } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Slider } from "@/components/ui/slider";
-import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
 const ICON_OPTIONS = [
@@ -236,135 +225,130 @@ export default function AdminAboutPage() {
             ))
           ) : (
             <div className="space-y-8 animate-in fade-in duration-700">
-              <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 bg-blue-500/20 text-blue-400 rounded-xl">
-                      <FaUser size={20} />
+              <div className="grid grid-cols-1 gap-8">
+                <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
+                  <CardHeader>
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 bg-blue-500/20 text-blue-400 rounded-xl">
+                        <FaUser size={20} />
+                      </div>
+                      <div>
+                        <CardTitle className="text-white">
+                          Professional Bio
+                        </CardTitle>
+                        <CardDescription>
+                          Two paragraphs that tell your story.
+                        </CardDescription>
+                      </div>
                     </div>
-                    <div>
-                      <CardTitle className="text-white">
-                        Professional Bio
-                      </CardTitle>
-                      <CardDescription>
-                        Two paragraphs that tell your story.
-                      </CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
-                      Section Title
-                    </label>
-                    <Input
-                      className="bg-slate-950/50 border-white/10 text-white rounded-2xl focus-visible:ring-blue-500/50"
-                      value={data.title}
-                      onChange={(e) =>
-                        setData((d) => ({ ...d, title: e.target.value }))
-                      }
-                      placeholder="e.g. Hello! I'm Shuvo"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
-                      Paragraph 1
-                    </label>
-                    <Textarea
-                      className="bg-slate-950/50 border-white/10 text-white rounded-2xl min-h-[120px] focus-visible:ring-blue-500/50"
-                      value={data.bio1}
-                      onChange={(e) =>
-                        setData((d) => ({ ...d, bio1: e.target.value }))
-                      }
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
-                      Paragraph 2
-                    </label>
-                    <Textarea
-                      className="bg-slate-950/50 border-white/10 text-white rounded-2xl min-h-[120px] focus-visible:ring-blue-500/50"
-                      value={data.bio2}
-                      onChange={(e) =>
-                        setData((d) => ({ ...d, bio2: e.target.value }))
-                      }
-                    />
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardHeader>
+                  <CardContent className="space-y-8 pt-0">
+                    <AdminField label="Section Title">
+                      <AdminInput
+                        value={data.title}
+                        onChange={(e) =>
+                          setData((d) => ({ ...d, title: e.target.value }))
+                        }
+                        placeholder="e.g. Hello! I'm Shuvo"
+                      />
+                    </AdminField>
+                    <AdminField label="Bio Paragraph 1">
+                      <AdminTextarea
+                        className="min-h-[140px]"
+                        value={data.bio1}
+                        onChange={(e) =>
+                          setData((d) => ({ ...d, bio1: e.target.value }))
+                        }
+                      />
+                    </AdminField>
+                    <AdminField label="Bio Paragraph 2">
+                      <AdminTextarea
+                        className="min-h-[140px]"
+                        value={data.bio2}
+                        onChange={(e) =>
+                          setData((d) => ({ ...d, bio2: e.target.value }))
+                        }
+                      />
+                    </AdminField>
+                  </CardContent>
+                </Card>
 
-              <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 bg-pink-500/20 text-pink-400 rounded-xl">
-                      <FaLightbulb size={20} />
+                <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
+                  <CardHeader>
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 bg-pink-500/20 text-pink-400 rounded-xl">
+                        <FaLightbulb size={20} />
+                      </div>
+                      <div>
+                        <CardTitle className="text-white">
+                          Key Highlights
+                        </CardTitle>
+                        <CardDescription>
+                          Short bullet points of what you bring to the table.
+                        </CardDescription>
+                      </div>
                     </div>
-                    <div>
-                      <CardTitle className="text-white">
-                        Key Highlights
-                      </CardTitle>
-                      <CardDescription>
-                        Short bullet points of what you bring to the table.
-                      </CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex flex-wrap gap-2">
-                    <AnimatePresence>
-                      {data.highlights.map((h, i) => (
-                        <motion.div
-                          initial={{ opacity: 0, scale: 0.9 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.9 }}
-                          key={i}
-                        >
-                          <Badge
-                            variant="secondary"
-                            className="pl-3 pr-1 py-1 gap-1 bg-slate-800 text-slate-200 border-white/5 rounded-full"
+                  </CardHeader>
+                  <CardContent className="space-y-6 pt-0">
+                    <AdminField label="Highlights Checklist">
+                      <div className="space-y-4">
+                        <div className="flex flex-wrap gap-2">
+                          <AnimatePresence>
+                            {data.highlights.map((h, i) => (
+                              <motion.div
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.9 }}
+                                key={i}
+                              >
+                                <Badge
+                                  variant="secondary"
+                                  className="pl-3 pr-1 py-1 gap-1 bg-slate-800 text-slate-200 border-white/5 rounded-full"
+                                >
+                                  {h}
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() =>
+                                      setData((d) => ({
+                                        ...d,
+                                        highlights: d.highlights.filter(
+                                          (_, idx) => idx !== i,
+                                        ),
+                                      }))
+                                    }
+                                    className="h-5 w-5 rounded-full hover:bg-red-500/20 hover:text-red-400"
+                                  >
+                                    <FaTimes size={10} />
+                                  </Button>
+                                </Badge>
+                              </motion.div>
+                            ))}
+                          </AnimatePresence>
+                        </div>
+                        <div className="flex gap-2">
+                          <AdminInput
+                            value={highlightInput}
+                            onChange={(e) => setHighlightInput(e.target.value)}
+                            onKeyDown={(e) =>
+                              e.key === "Enter" &&
+                              (e.preventDefault(), addHighlight())
+                            }
+                            placeholder="e.g. Expert in modern React..."
+                          />
+                          <Button
+                            onClick={addHighlight}
+                            size="icon"
+                            className="bg-slate-800 hover:bg-slate-700 text-white rounded-xl shrink-0 h-14 w-14"
                           >
-                            {h}
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() =>
-                                setData((d) => ({
-                                  ...d,
-                                  highlights: d.highlights.filter(
-                                    (_, idx) => idx !== i,
-                                  ),
-                                }))
-                              }
-                              className="h-5 w-5 rounded-full hover:bg-red-500/20 hover:text-red-400"
-                            >
-                              <FaTimes size={10} />
-                            </Button>
-                          </Badge>
-                        </motion.div>
-                      ))}
-                    </AnimatePresence>
-                  </div>
-                  <div className="flex gap-2">
-                    <Input
-                      className="bg-slate-950/50 border-white/10 text-white rounded-xl focus-visible:ring-pink-500/50"
-                      value={highlightInput}
-                      onChange={(e) => setHighlightInput(e.target.value)}
-                      onKeyDown={(e) =>
-                        e.key === "Enter" &&
-                        (e.preventDefault(), addHighlight())
-                      }
-                      placeholder="e.g. Expert in modern React..."
-                    />
-                    <Button
-                      onClick={addHighlight}
-                      size="icon"
-                      className="bg-slate-800 hover:bg-slate-700 text-white rounded-xl shrink-0"
-                    >
-                      <FaPlus size={14} />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                            <FaPlus size={14} />
+                          </Button>
+                        </div>
+                      </div>
+                    </AdminField>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           )}
         </div>

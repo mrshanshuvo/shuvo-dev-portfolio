@@ -3,35 +3,130 @@ import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import Stat from "@/models/Stat";
 
-export async function GET() {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+export async function GET(req: Request) {
+  try {
+    const session = await auth();
+    if (!session)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  await connectDB();
-  const stats = await Stat.find().sort({ order: 1 }).lean();
-  return NextResponse.json(stats);
+    await connectDB();
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (id) {
+      const item = await Stat.findById(id);
+      if (!item)
+        return NextResponse.json({ error: "Not found" }, { status: 404 });
+      return NextResponse.json(item);
+    }
+
+    const stats = await Stat.find().sort({ order: 1 }).lean();
+    return NextResponse.json(stats);
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to fetch" }, { status: 500 });
+  }
+}
+
+export async function POST(req: Request) {
+  try {
+    const session = await auth();
+    if (!session)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    await connectDB();
+    const body = await req.json();
+
+    const lastItem = await Stat.findOne().sort({ order: -1 });
+    const order = lastItem ? lastItem.order + 1 : 0;
+
+    const newItem = await Stat.create({ ...body, order });
+    return NextResponse.json(newItem);
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to create" }, { status: 500 });
+  }
+}
+
+export async function PATCH(req: Request) {
+  try {
+    const session = await auth();
+    if (!session)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    await connectDB();
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+    const body = await req.json();
+
+    if (id) {
+      const updated = await Stat.findByIdAndUpdate(id, body, { new: true });
+      if (!updated)
+        return NextResponse.json({ error: "Not found" }, { status: 404 });
+      return NextResponse.json(updated);
+    }
+
+    if (Array.isArray(body)) {
+      const updates = body.map((item, idx) =>
+        Stat.findByIdAndUpdate(item._id, { order: idx }),
+      );
+      await Promise.all(updates);
+      return NextResponse.json({ message: "Order updated" });
+    }
+
+    return NextResponse.json(
+      { error: "ID or array required" },
+      { status: 400 },
+    );
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to update" }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const session = await auth();
+    if (!session)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    await connectDB();
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (!id)
+      return NextResponse.json({ error: "ID required" }, { status: 400 });
+
+    const deleted = await Stat.findByIdAndDelete(id);
+    if (!deleted)
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+    return NextResponse.json({ message: "Deleted" });
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to delete" }, { status: 500 });
+  }
 }
 
 export async function PUT(req: Request) {
-  const session = await auth();
-  if (!session)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const session = await auth();
+    if (!session)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  await connectDB();
-  const items: any[] = await req.json();
+    await connectDB();
+    const items = await req.json();
 
-  await Stat.deleteMany({});
-  if (items.length > 0) {
-    await Stat.insertMany(
-      items.map((s, i) => ({
-        number: s.number,
-        label: s.label,
-        order: i,
-        _id: undefined,
-      })),
-    );
+    if (Array.isArray(items)) {
+      const updates = items.map((item, idx) =>
+        Stat.findByIdAndUpdate(
+          item._id,
+          { ...item, order: idx },
+          { upsert: true },
+        ),
+      );
+      await Promise.all(updates);
+      return NextResponse.json({ message: "Bulk saved" });
+    }
+
+    return NextResponse.json({ error: "Array required" }, { status: 400 });
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to save" }, { status: 500 });
   }
-
-  return NextResponse.json({ message: "Stats saved" });
 }

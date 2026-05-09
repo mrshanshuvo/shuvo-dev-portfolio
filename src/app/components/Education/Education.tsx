@@ -3,20 +3,11 @@ import EducationModel from "@/models/Education";
 import type { Education as EducationType } from "@/types";
 import EducationClient from "./EducationClient";
 
-async function getEducation(): Promise<EducationType[]> {
+async function getEducation() {
   await connectDB();
-  const educationDocs = await EducationModel.find().sort({ order: 1 }).lean();
-
-  return educationDocs.map((edu: any) => ({
-    degree: edu.degree,
-    institution: edu.institution,
-    period: edu.period,
-    details: edu.details,
-    location: edu.location,
-    logo: edu.logo,
-    gpa: edu.gpa,
-    link: edu.link,
-  }));
+  const raw = await EducationModel.find().sort({ order: 1 }).lean();
+  // Ensure deep serialization for subdocuments
+  return JSON.parse(JSON.stringify(raw));
 }
 
 export default async function Education() {

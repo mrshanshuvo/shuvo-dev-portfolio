@@ -1,44 +1,167 @@
 "use client";
 import { useState, useEffect } from "react";
 import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragOverlay,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import {
   FaPlus,
-  FaTimes,
   FaCheck,
-  FaSave,
+  FaTimes,
   FaQuoteLeft,
-  FaUserCircle,
-  FaBuilding,
-  FaArrowUp,
-  FaArrowDown,
+  FaGripVertical,
+  FaEdit,
   FaTrash,
-  FaUserTie,
+  FaUser,
+  FaBriefcase,
+  FaBuilding,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
-import ImageUpload from "../components/ImageUpload";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import ImageUpload from "../components/ImageUpload";
+import { AdminDialogShell } from "../components/AdminDialogShell";
+import { AdminField, AdminInput, AdminTextarea } from "../components/AdminFields";
 
 interface Testimonial {
+  _id?: string;
   name: string;
   role: string;
+  company: string;
   content: string;
-  avatar?: string;
-  company?: string;
+  avatar: string;
   order: number;
+}
+
+function SortableTestimonialRow({
+  item,
+  onEdit,
+  onDelete,
+  isDeleting,
+}: {
+  item: Testimonial;
+  onEdit: () => void;
+  onDelete: () => void;
+  isDeleting: boolean;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: item._id! });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        "group flex items-center gap-4 bg-slate-900/40 backdrop-blur-xl border border-white/5 hover:border-white/10 rounded-2xl p-4 transition-all duration-300",
+        isDragging && "z-50 border-amber-500/50 shadow-2xl shadow-amber-500/10",
+      )}
+    >
+      <div
+        {...attributes}
+        {...listeners}
+        className="cursor-grab active:cursor-grabbing text-slate-600 hover:text-amber-400 transition-colors"
+      >
+        <FaGripVertical size={14} />
+      </div>
+
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-3">
+          {item.avatar ? (
+            <img
+              src={item.avatar}
+              alt={item.name}
+              className="w-8 h-8 rounded-full object-cover border border-white/10"
+            />
+          ) : (
+            <div className="p-2 bg-amber-500/10 text-amber-400 rounded-full">
+              <FaUser size={12} />
+            </div>
+          )}
+          <div className="min-w-0">
+            <h3 className="font-bold text-white truncate text-sm">
+              {item.name}
+            </h3>
+            <p className="text-[10px] text-slate-500 truncate uppercase tracking-widest">
+              {item.role} {item.company && `at ${item.company}`}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onEdit}
+          className="h-8 w-8 rounded-lg text-slate-400 hover:text-amber-400 hover:bg-amber-400/10"
+        >
+          <FaEdit size={12} />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onDelete}
+          disabled={isDeleting}
+          className="h-8 w-8 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-400/10"
+        >
+          {isDeleting ? (
+            <div className="h-3 w-3 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
+          ) : (
+            <FaTrash size={12} />
+          )}
+        </Button>
+      </div>
+    </div>
+  );
 }
 
 export default function AdminTestimonialsPage() {
   const [data, setData] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [currentTestimonial, setCurrentTestimonial] =
+    useState<Testimonial | null>(null);
   const [toast, setToast] = useState<{
     msg: string;
     type: "success" | "error";
   } | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
 
   function showToast(msg: string, type: "success" | "error" = "success") {
     setToast({ msg, type });
@@ -46,296 +169,309 @@ export default function AdminTestimonialsPage() {
   }
 
   useEffect(() => {
-    fetch("/api/admin/testimonials")
-      .then((r) => r.json())
-      .then((d) => {
-        setData(Array.isArray(d) ? d : []);
-        setLoading(false);
-      });
+    fetchTestimonials();
   }, []);
 
-  async function handleSave() {
+  async function fetchTestimonials() {
+    setLoading(true);
+    const r = await fetch("/api/admin/testimonials");
+    const d = await r.json();
+    setData(Array.isArray(d) ? d : []);
+    setLoading(false);
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm("Are you sure you want to delete this testimonial?")) return;
+    setDeletingId(id);
+    const res = await fetch(`/api/admin/testimonials?id=${id}`, {
+      method: "DELETE",
+    });
+    setDeletingId(null);
+    if (res.ok) {
+      setData((prev) => prev.filter((s) => s._id !== id));
+      showToast("Testimonial deleted.");
+    } else {
+      showToast("Failed to delete.", "error");
+    }
+  }
+
+  async function handleAddOrUpdate() {
+    if (!currentTestimonial?.name || !currentTestimonial?.content) return;
     setSaving(true);
-    const res = await fetch("/api/admin/testimonials", {
-      method: "PUT",
+
+    const isEdit = !!currentTestimonial._id;
+    const url = isEdit
+      ? `/api/admin/testimonials?id=${currentTestimonial._id}`
+      : "/api/admin/testimonials";
+    const method = isEdit ? "PATCH" : "POST";
+
+    const res = await fetch(url, {
+      method,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+      body: JSON.stringify(currentTestimonial),
     });
+
     setSaving(false);
-    if (res.ok) showToast("Social proof synchronized!");
-    else showToast("Failed to save records.", "error");
+    if (res.ok) {
+      setIsDialogOpen(false);
+      showToast(isEdit ? "Testimonial updated!" : "Testimonial added!");
+      fetchTestimonials();
+    } else {
+      showToast("Failed to save.", "error");
+    }
   }
 
-  function addTestimonial() {
-    setData((prev) => [
-      ...prev,
-      {
-        name: "Client Name",
-        role: "CEO",
-        content: "",
-        company: "",
-        avatar: "",
-        order: prev.length,
-      },
-    ]);
+  function openEdit(item: Testimonial) {
+    setCurrentTestimonial({ ...item });
+    setIsDialogOpen(true);
   }
 
-  function updateTestimonial(i: number, field: keyof Testimonial, val: string) {
-    setData((prev) => {
-      const next = [...prev];
-      next[i] = { ...next[i], [field]: val };
-      return next;
+  function openNew() {
+    setCurrentTestimonial({
+      name: "",
+      role: "",
+      company: "",
+      content: "",
+      avatar: "",
+      order: data.length,
     });
+    setIsDialogOpen(true);
   }
 
-  function move(i: number, dir: "up" | "down") {
-    setData((prev) => {
-      const next = [...prev];
-      const j = dir === "up" ? i - 1 : i + 1;
-      if (j < 0 || j >= next.length) return prev;
-      [next[i], next[j]] = [next[j], next[i]];
-      return next;
-    });
+  function handleDragEnd(event: any) {
+    const { active, over } = event;
+    if (active && over && active.id !== over.id) {
+      const oldIndex = data.findIndex((i) => i._id === active.id);
+      const newIndex = data.findIndex((i) => i._id === over.id);
+      const newData = arrayMove(data, oldIndex, newIndex);
+      setData(newData);
+      // Auto save order using PATCH
+      setTimeout(() => {
+        fetch("/api/admin/testimonials", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newData),
+        });
+      }, 0);
+    }
+    setActiveId(null);
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8 space-y-6">
+    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8 space-y-6 font-sans">
       <AnimatePresence>
         {toast && (
           <motion.div
-            initial={{ opacity: 0, y: -20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className={`fixed top-6 right-6 z-50 px-6 py-4 rounded-2xl shadow-2xl backdrop-blur-xl border flex items-center gap-3 ${
+            initial={{ opacity: 0, y: -20, x: "-50%" }}
+            animate={{ opacity: 1, y: 0, x: "-50%" }}
+            exit={{ opacity: 0, y: -20, x: "-50%" }}
+            className={cn(
+              "fixed top-8 left-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-2xl border backdrop-blur-xl shadow-2xl",
               toast.type === "success"
                 ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
-                : "bg-red-500/20 border-red-500/50 text-red-400"
-            }`}
+                : "bg-red-500/20 border-red-500/50 text-red-400",
+            )}
           >
             <div
-              className={`p-2 rounded-full ${toast.type === "success" ? "bg-emerald-500/20" : "bg-red-500/20"}`}
+              className={cn(
+                "p-1.5 rounded-full",
+                toast.type === "success"
+                  ? "bg-emerald-500/20"
+                  : "bg-red-500/20",
+              )}
             >
-              {toast.type === "success" ? <FaCheck /> : <FaTimes />}
+              {toast.type === "success" ? (
+                <FaCheck size={10} />
+              ) : (
+                <FaTimes size={10} />
+              )}
             </div>
-            <span className="font-semibold">{toast.msg}</span>
+            <span className="font-bold text-sm tracking-tight">
+              {toast.msg}
+            </span>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="w-full space-y-6">
-        {/* Action bar — title is already shown in the AdminTopbar breadcrumb */}
-        <div className="flex items-center justify-between gap-4 flex-wrap">
-          <Badge
-            variant="outline"
-            className="bg-blue-500/10 text-blue-400 border-blue-500/20 px-4 py-1.5 rounded-full font-bold uppercase tracking-widest text-[10px]"
-          >
-            {data.length} {data.length === 1 ? "Testimonial" : "Testimonials"}
-          </Badge>
-
+      <div className="max-w-4xl mx-auto space-y-6">
+        <div className="flex items-center justify-between bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-4">
           <div className="flex items-center gap-3">
-            <Button
+            <Badge
               variant="outline"
-              onClick={addTestimonial}
-              className="bg-slate-800 hover:bg-slate-700 text-white border-white/10 rounded-xl h-10 px-5 active:scale-95 transition-all text-xs font-bold"
+              className="bg-amber-500/10 text-amber-400 border-amber-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[9px]"
             >
-              <FaPlus size={12} className="mr-2 text-blue-400" /> Add Quote
-            </Button>
-            <Button
-              onClick={handleSave}
-              disabled={saving}
-              className="bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold px-6 h-10 shadow-lg shadow-blue-600/20 active:scale-95 transition-all group text-xs"
-            >
-              <FaSave
-                className={cn(
-                  "mr-2 transition-transform duration-500",
-                  saving ? "animate-spin" : "group-hover:rotate-12",
-                )}
-              />
-              {saving ? "Syncing..." : "Save Changes"}
-            </Button>
+              {data.length} Testimonials
+            </Badge>
           </div>
+          <Button
+            onClick={openNew}
+            className="bg-amber-600 hover:bg-amber-500 text-white rounded-xl font-bold px-6 h-10 shadow-lg shadow-amber-600/20 active:scale-95 transition-all group text-xs"
+          >
+            <FaPlus className="mr-2 group-hover:rotate-90 transition-transform duration-300" />
+            Add Testimonial
+          </Button>
         </div>
 
-        <Card className="bg-slate-900/20 backdrop-blur-xl overflow-hidden shadow-2xl border border-white/5 rounded-[2.5rem]">
-          <CardContent className="p-0">
-            <AnimatePresence mode="popLayout">
-              {loading ? (
-                Array.from({ length: 2 }).map((_, i) => (
+        <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-2xl shadow-black/40">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-xl font-black text-white tracking-tight">
+              Client Feedback
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="space-y-3">
+                {Array.from({ length: 3 }).map((_, i) => (
                   <div
                     key={i}
-                    className="p-8 bg-slate-950/20 space-y-6 animate-pulse border-b border-white/5"
-                  >
-                    <div className="flex gap-8">
-                      <div className="w-32 h-32 bg-slate-800/40 rounded-3xl" />
-                      <div className="flex-1 space-y-4">
-                        <div className="h-10 w-full bg-slate-800/30 rounded-xl" />
-                        <div className="h-10 w-1/2 bg-slate-800/30 rounded-xl" />
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : data.length === 0 ? (
-                <div className="p-24 text-center">
-                  <div className="w-24 h-24 bg-slate-900 rounded-3xl flex items-center justify-center mx-auto mb-6 text-slate-700">
-                    <FaQuoteLeft size={48} />
-                  </div>
-                  <h3 className="text-2xl font-bold text-white mb-2">
-                    Build Your Credibility
-                  </h3>
-                  <p className="text-slate-500 mb-10 max-w-sm mx-auto">
-                    Add client testimonials to showcase the impact of your work.
-                  </p>
-                  <Button
-                    onClick={addTestimonial}
-                    className="bg-blue-600/10 text-blue-400 hover:bg-blue-600/20 border border-blue-500/20 rounded-2xl px-10 h-14 font-bold text-lg"
-                  >
-                    Add Your First Testimonial
-                  </Button>
-                </div>
-              ) : (
-                data.map((item, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className="group relative p-6 md:p-8 bg-slate-950/20 transition-all border-b border-white/5 last:border-0"
-                  >
-                    <div className="flex flex-col lg:flex-row gap-8">
-                      {/* Avatar Section */}
-                      <div className="w-full lg:w-40 shrink-0 space-y-3">
-                        <ImageUpload
-                          label="Client Photo"
-                          value={item.avatar || ""}
-                          onChange={(url) =>
-                            updateTestimonial(i, "avatar", url)
-                          }
+                    className="h-16 bg-slate-800/20 rounded-2xl animate-pulse"
+                  />
+                ))}
+              </div>
+            ) : data.length === 0 ? (
+              <div className="text-center py-20 bg-slate-950/20 rounded-3xl border border-dashed border-white/5">
+                <FaQuoteLeft
+                  className="mx-auto text-slate-800 mb-4"
+                  size={40}
+                />
+                <p className="text-slate-500 font-medium">
+                  No testimonials yet. Add your first client feedback above.
+                </p>
+              </div>
+            ) : (
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragStart={(e) => setActiveId(e.active.id as string)}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={data.map((s) => s._id!)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="space-y-3">
+                    <AnimatePresence mode="popLayout">
+                      {data.map((item) => (
+                        <SortableTestimonialRow
+                          key={item._id}
+                          item={item}
+                          onEdit={() => openEdit(item)}
+                          onDelete={() => handleDelete(item._id!)}
+                          isDeleting={deletingId === item._id}
                         />
-                        <div className="flex items-center justify-center gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => move(i, "up")}
-                            disabled={i === 0}
-                            className="h-8 w-8 rounded-lg bg-slate-900 border border-white/5 text-slate-500 hover:text-white disabled:opacity-20"
-                          >
-                            <FaArrowUp size={10} />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => move(i, "down")}
-                            disabled={i === data.length - 1}
-                            className="h-8 w-8 rounded-lg bg-slate-900 border border-white/5 text-slate-500 hover:text-white disabled:opacity-20"
-                          >
-                            <FaArrowDown size={10} />
-                          </Button>
-                        </div>
-                      </div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
+                </SortableContext>
 
-                      {/* Info Grid */}
-                      <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4 relative z-10">
-                        {/* Name */}
-                        <div className="space-y-1.5 md:col-span-2">
-                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
-                            Client Name
-                          </label>
-                          <div className="relative group/input">
-                            <FaUserCircle className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-blue-400 transition-colors" />
-                            <Input
-                              className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-blue-500/50 focus-visible:bg-slate-900 transition-all font-bold text-sm"
-                              value={item.name}
-                              onChange={(e) =>
-                                updateTestimonial(i, "name", e.target.value)
-                              }
-                              placeholder="e.g. Jane Smith"
-                            />
-                          </div>
-                        </div>
-
-                        {/* Role */}
-                        <div className="space-y-1.5">
-                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
-                            Role / Position
-                          </label>
-                          <div className="relative group/input">
-                            <FaUserTie className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-blue-400 transition-colors" />
-                            <Input
-                              className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-blue-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
-                              value={item.role}
-                              onChange={(e) =>
-                                updateTestimonial(i, "role", e.target.value)
-                              }
-                              placeholder="e.g. Product Manager"
-                            />
-                          </div>
-                        </div>
-
-                        {/* Company */}
-                        <div className="space-y-1.5">
-                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
-                            Company
-                          </label>
-                          <div className="relative group/input">
-                            <FaBuilding className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-blue-400 transition-colors" />
-                            <Input
-                              className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-blue-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
-                              value={item.company || ""}
-                              onChange={(e) =>
-                                updateTestimonial(i, "company", e.target.value)
-                              }
-                              placeholder="e.g. Stripe"
-                            />
-                          </div>
-                        </div>
-
-                        {/* Content */}
-                        <div className="space-y-1.5 md:col-span-2 lg:col-span-3 xl:col-span-4">
-                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
-                            Testimonial Quote
-                          </label>
-                          <div className="relative group/input">
-                            <FaQuoteLeft className="absolute left-4 top-4 text-slate-700 group-focus-within/input:text-blue-400 transition-colors" />
-                            <Textarea
-                              className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 min-h-[100px] focus-visible:ring-blue-500/50 focus-visible:bg-slate-900 transition-all font-medium leading-relaxed"
-                              value={item.content}
-                              onChange={(e) =>
-                                updateTestimonial(i, "content", e.target.value)
-                              }
-                              placeholder="Share the impact you made..."
-                            />
-                          </div>
-                        </div>
+                <DragOverlay dropAnimation={null}>
+                  {activeId ? (
+                    <div className="flex items-center gap-4 bg-slate-800/90 backdrop-blur-xl border border-amber-500/30 rounded-2xl p-4 shadow-2xl opacity-90 scale-105">
+                      <FaGripVertical className="text-amber-400" size={14} />
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-bold text-white truncate text-sm">
+                          {data.find((s) => s._id === activeId)?.name}
+                        </h3>
                       </div>
                     </div>
+                  ) : null}
+                </DragOverlay>
+              </DndContext>
+            )}
 
-                    {/* Actions Area */}
-                    <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-slate-600 text-[10px] font-bold uppercase tracking-widest">
-                        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />{" "}
-                        Testimonial #{i + 1}
-                      </div>
-                      <Button
-                        variant="ghost"
-                        onClick={() =>
-                          setData((prev) => prev.filter((_, idx) => idx !== i))
-                        }
-                        className="text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl px-5 h-10 font-bold transition-all flex items-center gap-2 group text-xs"
-                      >
-                        <FaTrash
-                          size={12}
-                          className="group-hover:animate-bounce"
-                        />{" "}
-                        Remove
-                      </Button>
-                    </div>
-                  </motion.div>
-                ))
-              )}
-            </AnimatePresence>
+            {!loading && data.length > 0 && (
+              <p className="text-center text-[10px] text-slate-700 mt-8 font-bold uppercase tracking-widest">
+                Drag rows to reorder • Changes save automatically
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>
+
+      <AdminDialogShell
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        title={currentTestimonial?._id ? "Refine Feedback" : "Add Client Praise"}
+        subtitle="Capture and showcase client satisfaction"
+        icon={FaQuoteLeft}
+        iconColor="text-amber-400"
+        accentColor="from-amber-500/5 to-orange-500/5"
+        onSave={handleAddOrUpdate}
+        saving={saving}
+        saveLabel={currentTestimonial?._id ? "Update Feedback" : "Add Praise"}
+        savingLabel="Processing..."
+        maxWidth="lg"
+      >
+        {currentTestimonial && (
+          <div className="space-y-6 max-h-[60vh] overflow-y-auto px-1 custom-scrollbar">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <AdminField label="Client Name">
+                <AdminInput
+                  icon={FaUser}
+                  value={currentTestimonial.name}
+                  onChange={(e) =>
+                    setCurrentTestimonial({
+                      ...currentTestimonial,
+                      name: e.target.value,
+                    })
+                  }
+                  placeholder="e.g. John Doe"
+                />
+              </AdminField>
+              <AdminField label="Job Role">
+                <AdminInput
+                  icon={FaBriefcase}
+                  value={currentTestimonial.role}
+                  onChange={(e) =>
+                    setCurrentTestimonial({
+                      ...currentTestimonial,
+                      role: e.target.value,
+                    })
+                  }
+                  placeholder="e.g. CEO"
+                />
+              </AdminField>
+            </div>
+
+            <AdminField label="Company / Organization">
+              <AdminInput
+                icon={FaBuilding}
+                value={currentTestimonial.company}
+                onChange={(e) =>
+                  setCurrentTestimonial({
+                    ...currentTestimonial,
+                    company: e.target.value,
+                  })
+                }
+                placeholder="e.g. Future Labs Inc."
+              />
+            </AdminField>
+
+            <AdminField label="Testimonial Narrative">
+              <AdminTextarea
+                value={currentTestimonial.content}
+                onChange={(e) =>
+                  setCurrentTestimonial({
+                    ...currentTestimonial,
+                    content: e.target.value,
+                  })
+                }
+                placeholder="What they said about your work..."
+                className="min-h-[120px]"
+              />
+            </AdminField>
+
+            <AdminField label="Client Avatar">
+              <ImageUpload
+                value={currentTestimonial.avatar}
+                onChange={(url) =>
+                  setCurrentTestimonial({ ...currentTestimonial, avatar: url })
+                }
+              />
+            </AdminField>
+          </div>
+        )}
+      </AdminDialogShell>
     </div>
   );
 }

@@ -16,9 +16,9 @@ import {
   FaExternalLinkAlt,
   FaImage,
   FaVideo,
-  FaLayerGroup,
   FaGripVertical,
   FaCode,
+  FaInfoCircle,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -49,8 +49,37 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import type { Project, Category as ICategory } from "@/types";
+import type {
+  Project,
+  Category as ICategory,
+  MediaItem,
+  LinkItem,
+} from "@/types";
 import CategoryManagerDialog from "../components/CategoryManagerDialog";
+import { AdminSheetShell } from "../components/AdminSheetShell";
+import {
+  AdminField,
+  AdminInput,
+  AdminTextarea,
+} from "../components/AdminFields";
+import ImageUpload from "../components/ImageUpload";
+import MediaGalleryManager from "../components/MediaGalleryManager";
+import MultiLinkManager from "../components/MultiLinkManager";
+
+const EMPTY_PROJECT: Omit<Project, "_id"> = {
+  title: "",
+  slug: "",
+  description: "",
+  image: "",
+  techNames: [],
+  github: [],
+  live: [],
+  featured: false,
+  category: "",
+  improvements: [],
+  media: [],
+  order: 0,
+};
 
 // ─── Sortable Row ───────────────────────────────────────────────────────────
 function SortableProjectCard({
@@ -277,10 +306,16 @@ export default function AdminProjectsListPage() {
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [currentProject, setCurrentProject] = useState<
+    Omit<Project, "_id"> & { _id?: string }
+  >(EMPTY_PROJECT);
+  const [techInput, setTechInput] = useState("");
+  const [impInput, setImpInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("All");
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [toast, setToast] = useState<{
     msg: string;
     type: "success" | "error";
@@ -316,31 +351,80 @@ export default function AdminProjectsListPage() {
       .then((cats) => setCategories(Array.isArray(cats) ? cats : []));
   };
 
-  async function saveOrder(ordered: Project[]) {
+  async function handleSave() {
+    if (!currentProject.title.trim()) {
+      showToast("Title is required.", "error");
+      return;
+    }
     setSaving(true);
-    const res = await fetch("/api/admin/projects", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(ordered),
-    });
+    const isEdit = !!currentProject._id;
+    let res: Response;
+    if (!isEdit) {
+      res = await fetch("/api/admin/projects", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify([
+          ...data,
+          { ...currentProject, order: data.length },
+        ]),
+      });
+    } else {
+      res = await fetch(`/api/admin/projects/${currentProject._id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(currentProject),
+      });
+    }
     setSaving(false);
-    if (!res.ok) showToast("Failed to save order.", "error");
-    else showToast("Order saved!");
+    if (res.ok) {
+      showToast(isEdit ? "Project saved!" : "Project created!");
+      setIsSheetOpen(false);
+      fetchAll();
+    } else {
+      showToast("Failed to save.", "error");
+    }
+  }
+
+  function openEdit(project: Project) {
+    setCurrentProject({ ...project });
+    setIsSheetOpen(true);
+  }
+
+  function openNew() {
+    setCurrentProject({ ...EMPTY_PROJECT });
+    setIsSheetOpen(true);
   }
 
   function handleDragStart(event: DragStartEvent) {
     setActiveId(event.active.id as string);
   }
 
-  function handleDragEnd(event: DragEndEvent) {
-    setActiveId(null);
+  async function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
+    setActiveId(null);
     if (!over || active.id === over.id) return;
-    const oldIdx = data.findIndex((p) => p._id === active.id);
-    const newIdx = data.findIndex((p) => p._id === over.id);
-    const reordered = arrayMove(data, oldIdx, newIdx);
-    setData(reordered);
-    saveOrder(reordered);
+
+    const oldIndex = data.findIndex((p) => p._id === active.id);
+    const newIndex = data.findIndex((p) => p._id === over.id);
+
+    const newData = arrayMove(data, oldIndex, newIndex).map((p, i) => ({
+      ...p,
+      order: i,
+    }));
+
+    setData(newData);
+
+    try {
+      await fetch("/api/admin/projects", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newData),
+      });
+    } catch (err) {
+      console.error("Failed to reorder:", err);
+      showToast("Failed to sync order.", "error");
+      fetchAll();
+    }
   }
 
   async function handleDelete(id: string) {
@@ -447,14 +531,14 @@ export default function AdminProjectsListPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            {saving && (
+            {saving && !isSheetOpen && (
               <div className="flex items-center gap-2 text-slate-500 text-[10px] font-bold uppercase tracking-widest mr-2">
                 <div className="w-2.5 h-2.5 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin" />
                 Syncing...
               </div>
             )}
             <Button
-              onClick={() => router.push("/admin/projects/new")}
+              onClick={openNew}
               className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl h-10 px-6 font-black shadow-lg shadow-emerald-600/20 text-xs"
             >
               <FaPlus className="mr-2" size={12} /> Add Project
@@ -464,97 +548,375 @@ export default function AdminProjectsListPage() {
 
         <div className="w-full">
           {/* List Content */}
-        {loading ? (
-          <div className="space-y-3">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div
-                key={i}
-                className="h-24 bg-slate-900/30 rounded-[1.5rem] animate-pulse border border-white/5"
-              />
-            ))}
-          </div>
-        ) : data.length === 0 ? (
-          <div className="py-32 text-center border-2 border-dashed border-white/5 rounded-[3rem]">
-            <FaCode size={48} className="mx-auto text-slate-800 mb-4" />
-            <h3 className="text-xl font-bold text-slate-400 mb-2">
-              No projects yet
-            </h3>
-            <p className="text-slate-600 text-sm mb-8">
-              Start building your portfolio by adding your first project.
-            </p>
-            <Button
-              onClick={() => router.push("/admin/projects/new")}
-              className="bg-emerald-600/10 text-emerald-400 hover:bg-emerald-600/20 border border-emerald-500/20 px-8 h-12 rounded-xl font-bold"
-            >
-              <FaPlus className="mr-2" /> Add First Project
-            </Button>
-          </div>
-        ) : (
-          <>
-            {isFiltered ? (
-              // Non-DnD view when filtering (can't reorder filtered subset)
-              <div className="space-y-3">
-                <AnimatePresence mode="popLayout">
-                  {filtered.map((project) => (
-                    <SortableProjectCard
-                      key={project._id}
-                      project={project}
-                      onEdit={() =>
-                        router.push(`/admin/projects/${project._id}`)
-                      }
-                      onDelete={() => handleDelete(project._id!)}
-                      deleting={deletingId === project._id}
-                    />
-                  ))}
-                </AnimatePresence>
-              </div>
-            ) : (
-              // DnD-enabled full list
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragStart={handleDragStart}
-                onDragEnd={handleDragEnd}
+          {loading ? (
+            <div className="space-y-3">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-24 bg-slate-900/30 rounded-[1.5rem] animate-pulse border border-white/5"
+                />
+              ))}
+            </div>
+          ) : data.length === 0 ? (
+            <div className="py-32 text-center border-2 border-dashed border-white/5 rounded-[3rem]">
+              <FaCode size={48} className="mx-auto text-slate-800 mb-4" />
+              <h3 className="text-xl font-bold text-slate-400 mb-2">
+                No projects yet
+              </h3>
+              <p className="text-slate-600 text-sm mb-8">
+                Start building your portfolio by adding your first project.
+              </p>
+              <Button
+                onClick={openNew}
+                className="bg-emerald-600/10 text-emerald-400 hover:bg-emerald-600/20 border border-emerald-500/20 px-8 h-12 rounded-xl font-bold"
               >
-                <SortableContext
-                  items={data.map((p) => p._id!)}
-                  strategy={verticalListSortingStrategy}
+                <FaPlus className="mr-2" /> Add First Project
+              </Button>
+            </div>
+          ) : (
+            <>
+              {isFiltered ? (
+                // Non-DnD view when filtering (can't reorder filtered subset)
+                <div className="space-y-3">
+                  <AnimatePresence mode="popLayout">
+                    {filtered.map((project) => (
+                      <SortableProjectCard
+                        key={project._id}
+                        project={project}
+                        onEdit={() => openEdit(project)}
+                        onDelete={() => handleDelete(project._id!)}
+                        deleting={deletingId === project._id}
+                      />
+                    ))}
+                  </AnimatePresence>
+                </div>
+              ) : (
+                // DnD-enabled full list
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragStart={handleDragStart}
+                  onDragEnd={handleDragEnd}
                 >
-                  <div className="space-y-3">
-                    <AnimatePresence mode="popLayout">
-                      {data.map((project) => (
-                        <SortableProjectCard
-                          key={project._id}
-                          project={project}
-                          onEdit={() =>
-                            router.push(`/admin/projects/${project._id}`)
+                  <SortableContext
+                    items={data.map((p) => p._id!)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <div className="space-y-3">
+                      <AnimatePresence mode="popLayout">
+                        {data.map((project) => (
+                          <SortableProjectCard
+                            key={project._id}
+                            project={project}
+                            onEdit={() => openEdit(project)}
+                            onDelete={() => handleDelete(project._id!)}
+                            deleting={deletingId === project._id}
+                          />
+                        ))}
+                      </AnimatePresence>
+                    </div>
+                  </SortableContext>
+                  <DragOverlay dropAnimation={null}>
+                    {activeId ? (
+                      <DragOverlayCard
+                        project={data.find((p) => p._id === activeId)!}
+                      />
+                    ) : null}
+                  </DragOverlay>
+                </DndContext>
+              )}
+
+              <p className="text-center text-[10px] text-slate-700 mt-8 font-bold uppercase tracking-widest">
+                {isFiltered
+                  ? `Showing ${filtered.length} of ${data.length} projects`
+                  : "Drag rows to reorder • Changes save automatically"}
+              </p>
+            </>
+          )}
+        </div>
+      </div>
+
+      <AdminSheetShell
+        open={isSheetOpen}
+        onOpenChange={setIsSheetOpen}
+        title={currentProject._id ? "Refine Project" : "New Portfolio Piece"}
+        subtitle="Curate and showcase your best technical work"
+        icon={FaCode}
+        iconColor="text-emerald-400"
+        accentColor="from-emerald-500/5 to-cyan-500/5"
+        onSave={handleSave}
+        saving={saving}
+        maxWidth="4xl"
+      >
+        <div className="space-y-12 pb-10">
+          {/* Row 1: Media + Core Info */}
+          <div className="flex flex-col lg:flex-row gap-10">
+            {/* Left: Media Gallery */}
+            <div className="w-full lg:w-[380px] shrink-0 space-y-8">
+              <MediaGalleryManager
+                media={(currentProject.media as MediaItem[]) || []}
+                onChange={(m) =>
+                  setCurrentProject({ ...currentProject, media: m as any })
+                }
+                label="Project Showcase"
+              />
+              <AdminField label="Thumbnail / Cover">
+                <ImageUpload
+                  value={currentProject.image || ""}
+                  onChange={(v) =>
+                    setCurrentProject({ ...currentProject, image: v })
+                  }
+                />
+              </AdminField>
+            </div>
+
+            {/* Right: Core Fields */}
+            <div className="flex-1 space-y-8">
+              <div className="flex gap-4 items-start">
+                <AdminField label="Project Title" className="flex-1">
+                  <AdminInput
+                    value={currentProject.title}
+                    onChange={(e) =>
+                      setCurrentProject({
+                        ...currentProject,
+                        title: e.target.value,
+                      })
+                    }
+                    placeholder="e.g. AI-Powered Dashboard"
+                  />
+                </AdminField>
+                <div className="pt-2">
+                  <Button
+                    variant="ghost"
+                    onClick={() =>
+                      setCurrentProject({
+                        ...currentProject,
+                        featured: !currentProject.featured,
+                      })
+                    }
+                    className={cn(
+                      "h-14 w-14 rounded-2xl border transition-all",
+                      currentProject.featured
+                        ? "bg-amber-500/10 border-amber-500/30 text-amber-400"
+                        : "bg-slate-950/50 border-white/5 text-slate-600 hover:text-amber-400",
+                    )}
+                  >
+                    {currentProject.featured ? (
+                      <FaStar size={20} />
+                    ) : (
+                      <FaRegStar size={20} />
+                    )}
+                  </Button>
+                </div>
+              </div>
+
+              <AdminField label="Category">
+                <Select
+                  value={currentProject.category || ""}
+                  onValueChange={(v) =>
+                    setCurrentProject({ ...currentProject, category: v || "" })
+                  }
+                >
+                  <SelectTrigger className="bg-slate-950/50 border-white/5 rounded-2xl h-14 font-bold">
+                    <SelectValue placeholder="Select category..." />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-900 border-white/10 text-white rounded-2xl">
+                    {categories.map((c) => (
+                      <SelectItem key={c.name} value={c.name}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </AdminField>
+
+              <AdminField label="Value Proposition (Description)">
+                <AdminTextarea
+                  className="min-h-[160px]"
+                  value={currentProject.description}
+                  onChange={(e) =>
+                    setCurrentProject({
+                      ...currentProject,
+                      description: e.target.value,
+                    })
+                  }
+                  placeholder="What problem does this project solve?"
+                />
+              </AdminField>
+
+              <AdminField label="Tech Stack">
+                <div className="space-y-4">
+                  <div className="flex gap-3">
+                    <AdminInput
+                      icon={FaCode}
+                      value={techInput}
+                      onChange={(e) => setTechInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          const val = techInput.trim();
+                          if (val && !currentProject.techNames.includes(val)) {
+                            setCurrentProject({
+                              ...currentProject,
+                              techNames: [...currentProject.techNames, val],
+                            });
+                            setTechInput("");
                           }
-                          onDelete={() => handleDelete(project._id!)}
-                          deleting={deletingId === project._id}
-                        />
+                        }
+                      }}
+                      placeholder="Add technology..."
+                    />
+                    <Button
+                      onClick={() => {
+                        const val = techInput.trim();
+                        if (val && !currentProject.techNames.includes(val)) {
+                          setCurrentProject({
+                            ...currentProject,
+                            techNames: [...currentProject.techNames, val],
+                          });
+                          setTechInput("");
+                        }
+                      }}
+                      className="bg-slate-800 hover:bg-slate-700 text-white rounded-2xl h-14 w-14 shrink-0 border border-white/5"
+                    >
+                      <FaPlus size={14} />
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <AnimatePresence mode="popLayout">
+                      {currentProject.techNames.map((t) => (
+                        <motion.div
+                          key={t}
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.8 }}
+                        >
+                          <Badge className="bg-slate-900 border-white/5 text-slate-300 flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs group/badge cursor-default">
+                            {t}
+                            <FaTimes
+                              size={9}
+                              className="text-slate-600 group-hover/badge:text-red-400 cursor-pointer transition-colors"
+                              onClick={() =>
+                                setCurrentProject({
+                                  ...currentProject,
+                                  techNames: currentProject.techNames.filter(
+                                    (x) => x !== t,
+                                  ),
+                                })
+                              }
+                            />
+                          </Badge>
+                        </motion.div>
                       ))}
                     </AnimatePresence>
                   </div>
-                </SortableContext>
-                <DragOverlay dropAnimation={null}>
-                  {activeId ? (
-                    <DragOverlayCard
-                      project={data.find((p) => p._id === activeId)!}
-                    />
-                  ) : null}
-                </DragOverlay>
-              </DndContext>
-            )}
+                </div>
+              </AdminField>
+            </div>
+          </div>
 
-            <p className="text-center text-[10px] text-slate-700 mt-8 font-bold uppercase tracking-widest">
-              {isFiltered
-                ? `Showing ${filtered.length} of ${data.length} projects`
-                : "Drag rows to reorder • Changes save automatically"}
-            </p>
-          </>
-        )}
-      </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="p-8 bg-slate-950/40 rounded-[2.5rem] border border-white/5 space-y-8">
+              <MultiLinkManager
+                label="Repositories"
+                iconType="github"
+                links={(currentProject.github as LinkItem[]) || []}
+                onChange={(l) =>
+                  setCurrentProject({ ...currentProject, github: l as any })
+                }
+              />
+            </div>
+            <div className="p-8 bg-slate-950/40 rounded-[2.5rem] border border-white/5 space-y-8">
+              <MultiLinkManager
+                label="Live Deployments"
+                iconType="live"
+                links={(currentProject.live as LinkItem[]) || []}
+                onChange={(l) =>
+                  setCurrentProject({ ...currentProject, live: l as any })
+                }
+              />
+            </div>
+          </div>
+
+          <AdminField label="Key Improvements & Impacts">
+            <div className="space-y-6">
+              <div className="flex gap-3">
+                <AdminInput
+                  icon={FaInfoCircle}
+                  value={impInput}
+                  onChange={(e) => setImpInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      const val = impInput.trim();
+                      if (val) {
+                        setCurrentProject({
+                          ...currentProject,
+                          improvements: [
+                            ...(currentProject.improvements ?? []),
+                            val,
+                          ],
+                        });
+                        setImpInput("");
+                      }
+                    }
+                  }}
+                  placeholder="e.g. Reduced bundle size by 40%..."
+                />
+                <Button
+                  onClick={() => {
+                    const val = impInput.trim();
+                    if (val) {
+                      setCurrentProject({
+                        ...currentProject,
+                        improvements: [
+                          ...(currentProject.improvements ?? []),
+                          val,
+                        ],
+                      });
+                      setImpInput("");
+                    }
+                  }}
+                  className="bg-slate-800 hover:bg-slate-700 text-white rounded-2xl h-14 w-14 shrink-0 border border-white/5"
+                >
+                  <FaPlus size={14} />
+                </Button>
+              </div>
+              <div className="space-y-3">
+                <AnimatePresence mode="popLayout">
+                  {(currentProject.improvements ?? []).map((imp, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 10 }}
+                      className="flex items-center gap-4 bg-slate-950/50 border border-white/5 rounded-2xl px-5 py-4 group/imp"
+                    >
+                      <div className="w-2 h-2 rounded-full bg-emerald-500/40 shrink-0" />
+                      <span className="text-sm text-slate-300 flex-1 font-medium leading-relaxed">
+                        {imp}
+                      </span>
+                      <button
+                        onClick={() =>
+                          setCurrentProject({
+                            ...currentProject,
+                            improvements: (
+                              currentProject.improvements ?? []
+                            ).filter((_, idx) => idx !== i),
+                          })
+                        }
+                        className="text-slate-600 hover:text-red-400 transition-colors p-2 hover:bg-red-400/10 rounded-lg"
+                      >
+                        <FaTrash size={12} />
+                      </button>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+            </div>
+          </AdminField>
+        </div>
+      </AdminSheetShell>
     </div>
-  </div>
   );
 }

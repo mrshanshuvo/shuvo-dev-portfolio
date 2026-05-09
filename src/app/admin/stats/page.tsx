@@ -1,17 +1,13 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
-import type { Stat } from "@/types";
-import { FaPlus, FaTimes, FaCheck, FaSave, FaGripLines } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
 import {
   DndContext,
-  DragOverlay,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
   useSensor,
   useSensors,
-  PointerSensor,
-  KeyboardSensor,
-  type DragEndEvent,
-  type DragStartEvent,
+  DragOverlay,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -21,23 +17,43 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-
-// Shadcn UI Imports
+import {
+  FaPlus,
+  FaTimes,
+  FaCheck,
+  FaChartBar,
+  FaGripVertical,
+  FaEdit,
+  FaTrash,
+  FaHashtag,
+} from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { AdminDialogShell } from "../components/AdminDialogShell";
+import { AdminField, AdminInput } from "../components/AdminFields";
 
-// ─── Sortable row (each stat) ────────────────────────────────────────────────
-interface RowProps {
-  id: string;
-  stat: Stat;
-  index: number;
-  onUpdate: (i: number, field: keyof Stat, val: string) => void;
-  onRemove: (i: number) => void;
+interface Stat {
+  _id?: string;
+  number: string;
+  label: string;
+  order: number;
 }
 
-function SortableStatItem({ id, stat, index, onUpdate, onRemove }: RowProps) {
+function SortableStatRow({
+  item,
+  onEdit,
+  onDelete,
+  isDeleting,
+}: {
+  item: Stat;
+  onEdit: () => void;
+  onDelete: () => void;
+  isDeleting: boolean;
+}) {
   const {
     attributes,
     listeners,
@@ -45,107 +61,89 @@ function SortableStatItem({ id, stat, index, onUpdate, onRemove }: RowProps) {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id });
+  } = useSortable({ id: item._id! });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.35 : 1,
-    zIndex: isDragging ? 50 : "auto",
+    opacity: isDragging ? 0.5 : 1,
   };
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className="flex gap-3 items-center p-4 bg-slate-950/40 rounded-2xl border border-white/5 mb-3 group"
+      className={cn(
+        "group flex items-center gap-4 bg-slate-900/40 backdrop-blur-xl border border-white/5 hover:border-white/10 rounded-2xl p-4 transition-all duration-300",
+        isDragging && "z-50 border-rose-500/50 shadow-2xl shadow-rose-500/10",
+      )}
     >
-      {/* Drag handle */}
-      <button
+      <div
         {...attributes}
         {...listeners}
-        className="cursor-grab active:cursor-grabbing text-slate-600 hover:text-slate-400 transition-colors p-1 rounded-lg hover:bg-slate-800/60 shrink-0 touch-none"
-        aria-label="Drag to reorder"
-        type="button"
+        className="cursor-grab active:cursor-grabbing text-slate-600 hover:text-rose-400 transition-colors"
       >
-        <FaGripLines size={14} />
-      </button>
-
-      {/* Order badge */}
-      <span className="text-[10px] font-bold text-slate-600 w-5 text-center shrink-0">
-        {index + 1}
-      </span>
-
-      {/* Number field */}
-      <div className="w-24">
-        <Input
-          className="bg-slate-900/50 border-white/10 text-amber-400 font-black text-center rounded-xl"
-          value={stat.number}
-          onChange={(e) => onUpdate(index, "number", e.target.value)}
-          placeholder="20+"
-        />
+        <FaGripVertical size={14} />
       </div>
 
-      {/* Label field */}
-      <div className="flex-1">
-        <Input
-          className="bg-slate-900/50 border-white/10 text-white rounded-xl"
-          value={stat.label}
-          onChange={(e) => onUpdate(index, "label", e.target.value)}
-          placeholder="Projects Finished"
-        />
-      </div>
-
-      {/* Remove button */}
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => onRemove(index)}
-        className="text-slate-600 hover:text-red-400 hover:bg-red-400/10 rounded-xl shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
-        type="button"
-      >
-        <FaTimes size={14} />
-      </Button>
-    </div>
-  );
-}
-
-// ─── Drag Overlay card ───────────────────────────────────────────────────────
-function StatOverlay({ stat }: { stat: Stat }) {
-  return (
-    <div className="w-full flex gap-3 items-center p-4 bg-slate-800/90 backdrop-blur-xl rounded-2xl border border-amber-500/30 shadow-2xl shadow-amber-500/10 ring-1 ring-amber-400/20">
-      <FaGripLines size={14} className="text-amber-400/70 shrink-0" />
-      <span className="w-5" />
-      <div className="w-24">
-        <div className="bg-slate-900/80 border border-white/10 rounded-xl px-3 py-2 text-amber-400 font-black text-center text-sm">
-          {stat.number}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-rose-500/10 text-rose-400 rounded-lg">
+            <FaHashtag size={14} />
+          </div>
+          <div className="min-w-0">
+            <h3 className="font-bold text-white truncate text-sm">
+              {item.label}
+            </h3>
+            <p className="text-xs text-rose-400 font-bold tracking-tight">
+              {item.number}
+            </p>
+          </div>
         </div>
       </div>
-      <div className="flex-1">
-        <div className="bg-slate-900/80 border border-white/10 rounded-xl px-3 py-2 text-white text-sm">
-          {stat.label}
-        </div>
+
+      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onEdit}
+          className="h-8 w-8 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-400/10"
+        >
+          <FaEdit size={12} />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onDelete}
+          disabled={isDeleting}
+          className="h-8 w-8 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-400/10"
+        >
+          {isDeleting ? (
+            <div className="h-3 w-3 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
+          ) : (
+            <FaTrash size={12} />
+          )}
+        </Button>
       </div>
     </div>
   );
 }
 
-// ─── Main Page ───────────────────────────────────────────────────────────────
 export default function AdminStatsPage() {
-  const [stats, setStats] = useState<Stat[]>([]);
+  const [data, setData] = useState<Stat[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [lastSavedAt, setLastSavedAt] = useState<number>(0);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [currentStat, setCurrentStat] = useState<Stat | null>(null);
   const [toast, setToast] = useState<{
     msg: string;
     type: "success" | "error";
   } | null>(null);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: { distance: 6 },
-    }),
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
@@ -157,229 +155,257 @@ export default function AdminStatsPage() {
   }
 
   useEffect(() => {
-    fetch("/api/admin/stats")
-      .then((r) => r.json())
-      .then((d) => {
-        const loaded = Array.isArray(d) ? d : [];
-        // Ensure each stat has an order field
-        setStats(
-          loaded.map((s: Stat, i: number) => ({ ...s, order: s.order ?? i })),
-        );
-        setLoading(false);
-      });
+    fetchStats();
   }, []);
 
-  async function handleSave() {
-    setSaving(true);
-    const payload = stats.map((s, i) => ({ ...s, order: i }));
-    const res = await fetch("/api/admin/stats", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+  async function fetchStats() {
+    setLoading(true);
+    const r = await fetch("/api/admin/stats");
+    const d = await r.json();
+    setData(Array.isArray(d) ? d : []);
+    setLoading(false);
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm("Are you sure you want to delete this stat?")) return;
+    setDeletingId(id);
+    const res = await fetch(`/api/admin/stats?id=${id}`, {
+      method: "DELETE",
     });
+    setDeletingId(null);
+    if (res.ok) {
+      setData((prev) => prev.filter((s) => s._id !== id));
+      showToast("Stat deleted.");
+    } else {
+      showToast("Failed to delete.", "error");
+    }
+  }
+
+  async function handleAddOrUpdate() {
+    if (!currentStat?.label || !currentStat?.number) return;
+    setSaving(true);
+
+    const isEdit = !!currentStat._id;
+    const url = isEdit
+      ? `/api/admin/stats?id=${currentStat._id}`
+      : "/api/admin/stats";
+    const method = isEdit ? "PATCH" : "POST";
+
+    const res = await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(currentStat),
+    });
+
     setSaving(false);
     if (res.ok) {
-      setLastSavedAt(Date.now());
-      showToast("Stats saved!");
+      setIsDialogOpen(false);
+      showToast(isEdit ? "Stat updated!" : "Stat added!");
+      fetchStats();
     } else {
       showToast("Failed to save.", "error");
     }
   }
 
-  function addStat() {
-    setStats((prev) => [
-      ...prev,
-      { number: "0", label: "New Stat", order: prev.length },
-    ]);
+  function openEdit(item: Stat) {
+    setCurrentStat({ ...item });
+    setIsDialogOpen(true);
   }
 
-  const updateStat = useCallback(
-    (i: number, field: keyof Stat, val: string) => {
-      setStats((prev) => {
-        const next = [...prev];
-        next[i] = { ...next[i], [field]: val };
-        return next;
-      });
-    },
-    [],
-  );
-
-  const removeStat = useCallback((i: number) => {
-    setStats((prev) => prev.filter((_, idx) => idx !== i));
-  }, []);
-
-  function handleDragStart(e: DragStartEvent) {
-    setActiveId(e.active.id as string);
+  function openNew() {
+    setCurrentStat({
+      label: "",
+      number: "",
+      order: data.length,
+    });
+    setIsDialogOpen(true);
   }
 
-  function handleDragEnd(e: DragEndEvent) {
-    const { active, over } = e;
-    if (over && active.id !== over.id) {
-      setStats((prev) => {
-        const oldIndex = prev.findIndex((_, i) => i.toString() === active.id);
-        const newIndex = prev.findIndex((_, i) => i.toString() === over.id);
-        return arrayMove(prev, oldIndex, newIndex).map((s, i) => ({
-          ...s,
-          order: i,
-        }));
-      });
+  function handleDragEnd(event: any) {
+    const { active, over } = event;
+    if (active && over && active.id !== over.id) {
+      const oldIndex = data.findIndex((i) => i._id === active.id);
+      const newIndex = data.findIndex((i) => i._id === over.id);
+      const newData = arrayMove(data, oldIndex, newIndex);
+      setData(newData);
+      // Auto save order using PATCH
+      setTimeout(() => {
+        fetch("/api/admin/stats", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newData),
+        });
+      }, 0);
     }
     setActiveId(null);
   }
 
-  const activeStat = activeId !== null ? stats[Number(activeId)] : null;
-
-  // Most recent updatedAt: prefer the local save timestamp (instant feedback),
-  // falling back to the server's updatedAt on initial load.
-  const serverUpdatedAt = stats
-    .map((s) => (s.updatedAt ? new Date(s.updatedAt).getTime() : 0))
-    .reduce((a, b) => Math.max(a, b), 0);
-  const lastUpdated = Math.max(lastSavedAt, serverUpdatedAt);
-
   return (
-    <DndContext
-      sensors={sensors}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-    >
-      <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8 space-y-6">
-        {/* Toast notification */}
-        <AnimatePresence>
-          {toast && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
+    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8 space-y-6">
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, x: "-50%" }}
+            animate={{ opacity: 1, y: 0, x: "-50%" }}
+            exit={{ opacity: 0, y: -20, x: "-50%" }}
+            className={cn(
+              "fixed top-8 left-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-2xl border backdrop-blur-xl shadow-2xl",
+              toast.type === "success"
+                ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
+                : "bg-red-500/20 border-red-500/50 text-red-400",
+            )}
+          >
+            <div
               className={cn(
-                "fixed top-6 right-6 z-50 px-6 py-4 rounded-2xl shadow-2xl backdrop-blur-xl border flex items-center gap-3",
+                "p-1.5 rounded-full",
                 toast.type === "success"
-                  ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
-                  : "bg-red-500/20 border-red-500/50 text-red-400",
+                  ? "bg-emerald-500/20"
+                  : "bg-red-500/20",
               )}
             >
-              {toast.type === "success" ? <FaCheck /> : <FaTimes />}
-              <span className="font-semibold">{toast.msg}</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <div className="max-w-3xl mx-auto space-y-6">
-          {/* Action bar — title is already shown in the AdminTopbar breadcrumb */}
-          <div className="flex items-center justify-end gap-4">
-            <Button
-              onClick={handleSave}
-              disabled={saving}
-              className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold px-8 h-10 shadow-lg shadow-emerald-600/20 active:scale-95 transition-all group text-xs"
-            >
-              <FaSave
-                className={cn(
-                  "mr-2 transition-transform duration-500",
-                  saving ? "animate-spin" : "group-hover:rotate-12",
-                )}
-              />
-              {saving ? "Saving..." : "Save Stats"}
-            </Button>
-          </div>
-
-          <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
-            <CardHeader className="pb-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-xl font-bold text-white">
-                    Milestones
-                  </CardTitle>
-                  {lastUpdated > 0 && (
-                    <p className="text-[12px] text-slate-600 mt-0.5">
-                      Last updated {new Date(lastUpdated).toLocaleString()}
-                    </p>
-                  )}
-                </div>
-                <Button
-                  variant="outline"
-                  onClick={addStat}
-                  className="bg-slate-800 hover:bg-slate-700 text-slate-200 border-white/5 rounded-xl"
-                >
-                  <FaPlus size={12} className="mr-2" /> Add Stat
-                </Button>
-              </div>
-            </CardHeader>
-
-            <CardContent>
-              {/* Column labels */}
-              {!loading && stats.length > 0 && (
-                <div className="flex gap-3 items-center px-1 mb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-600">
-                  <span className="w-5" />
-                  <span className="w-5" />
-                  <span className="w-24 text-center">Number</span>
-                  <span className="flex-1">Label</span>
-                  <span className="w-9" />
-                </div>
-              )}
-
-              {/* Skeleton */}
-              {loading ? (
-                <div className="space-y-3">
-                  {Array.from({ length: 4 }).map((_, i) => (
-                    <motion.div
-                      key={`skeleton-${i}`}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.08 }}
-                      className="flex gap-3 items-center p-4 bg-slate-950/20 rounded-2xl border border-white/5 animate-pulse"
-                    >
-                      <div className="w-6 h-4 bg-slate-800/60 rounded" />
-                      <div className="w-24 h-9 bg-slate-800/40 rounded-xl" />
-                      <div className="flex-1 h-9 bg-slate-800/20 rounded-xl" />
-                      <div className="w-9 h-9 bg-slate-800/10 rounded-xl" />
-                    </motion.div>
-                  ))}
-                </div>
+              {toast.type === "success" ? (
+                <FaCheck size={10} />
               ) : (
-                /* Sortable list – DndContext is at the top level */
+                <FaTimes size={10} />
+              )}
+            </div>
+            <span className="font-bold text-sm tracking-tight">
+              {toast.msg}
+            </span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="max-w-4xl mx-auto space-y-6">
+        <div className="flex items-center justify-between bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-4">
+          <div className="flex items-center gap-3">
+            <Badge
+              variant="outline"
+              className="bg-rose-500/10 text-rose-400 border-rose-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[9px]"
+            >
+              {data.length} Portfolio Stats
+            </Badge>
+          </div>
+          <Button
+            onClick={openNew}
+            className="bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-bold px-6 h-10 shadow-lg shadow-rose-600/20 active:scale-95 transition-all group text-xs"
+          >
+            <FaPlus className="mr-2 group-hover:rotate-90 transition-transform duration-300" />
+            Add Stat
+          </Button>
+        </div>
+
+        <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-xl font-bold text-white">
+              Portfolio Statistics
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="space-y-3">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="h-16 bg-slate-800/20 rounded-2xl animate-pulse"
+                  />
+                ))}
+              </div>
+            ) : data.length === 0 ? (
+              <div className="text-center py-20 bg-slate-950/20 rounded-3xl border border-dashed border-white/5">
+                <FaChartBar className="mx-auto text-slate-800 mb-4" size={40} />
+                <p className="text-slate-500 font-medium">
+                  No stats found. Show off your numbers above.
+                </p>
+              </div>
+            ) : (
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragStart={(e) => setActiveId(e.active.id as string)}
+                onDragEnd={handleDragEnd}
+              >
                 <SortableContext
-                  items={stats.map((_, i) => i.toString())}
+                  items={data.map((s) => s._id!)}
                   strategy={verticalListSortingStrategy}
                 >
-                  <AnimatePresence mode="popLayout">
-                    {stats.map((stat, i) => (
-                      <motion.div
-                        key={stat._id ?? `stat-${i}`}
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ duration: 0.18 }}
-                      >
-                        <SortableStatItem
-                          id={i.toString()}
-                          stat={stat}
-                          index={i}
-                          onUpdate={updateStat}
-                          onRemove={removeStat}
+                  <div className="space-y-3">
+                    <AnimatePresence mode="popLayout">
+                      {data.map((item) => (
+                        <SortableStatRow
+                          key={item._id}
+                          item={item}
+                          onEdit={() => openEdit(item)}
+                          onDelete={() => handleDelete(item._id!)}
+                          isDeleting={deletingId === item._id}
                         />
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
+                      ))}
+                    </AnimatePresence>
+                  </div>
                 </SortableContext>
-              )}
 
-              {!loading && stats.length === 0 && (
-                <div className="text-center py-16 text-slate-600">
-                  <p className="text-lg font-medium">No stats yet</p>
-                  <p className="text-sm mt-1">
-                    Click &ldquo;Add Stat&rdquo; to get started.
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+                <DragOverlay dropAnimation={null}>
+                  {activeId ? (
+                    <div className="flex items-center gap-4 bg-slate-800/90 backdrop-blur-xl border border-rose-500/30 rounded-2xl p-4 shadow-2xl opacity-90 scale-105">
+                      <FaGripVertical className="text-rose-400" size={14} />
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-bold text-white truncate text-sm">
+                          {data.find((s) => s._id === activeId)?.label}
+                        </h3>
+                      </div>
+                    </div>
+                  ) : null}
+                </DragOverlay>
+              </DndContext>
+            )}
 
-      {/* DragOverlay lives outside all backdrop-blur/overflow containers so
-          dnd-kit's fixed-position coordinate system is unaffected */}
-      <DragOverlay dropAnimation={null}>
-        {activeStat ? <StatOverlay stat={activeStat} /> : null}
-      </DragOverlay>
-    </DndContext>
+            {!loading && data.length > 0 && (
+              <p className="text-center text-[10px] text-slate-700 mt-8 font-bold uppercase tracking-widest">
+                Drag rows to reorder • Changes save automatically
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      </div>      <AdminDialogShell
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        title={currentStat?._id ? "Adjust Metric" : "Forge New Milestone"}
+        subtitle="Quantify your professional achievements"
+        icon={FaChartBar}
+        iconColor="text-rose-400"
+        accentColor="from-rose-500/5 to-pink-500/5"
+        onSave={handleAddOrUpdate}
+        saving={saving}
+        saveLabel={currentStat?._id ? "Update Metric" : "Establish Milestone"}
+        savingLabel="Calibrating..."
+        maxWidth="md"
+      >
+        {currentStat && (
+          <div className="space-y-6">
+            <AdminField label="Metric Description">
+              <AdminInput
+                icon={FaChartBar}
+                value={currentStat.label}
+                onChange={(e) =>
+                  setCurrentStat({ ...currentStat, label: e.target.value })
+                }
+                placeholder="e.g. Years of Experience"
+              />
+            </AdminField>
+
+            <AdminField label="Quantitative Value">
+              <AdminInput
+                className="font-black text-xl tracking-wider"
+                value={currentStat.number}
+                onChange={(e) =>
+                  setCurrentStat({ ...currentStat, number: e.target.value })
+                }
+                placeholder="e.g. 5+, 100+, etc."
+              />
+            </AdminField>
+          </div>
+        )}
+      </AdminDialogShell>
+    </div>
   );
 }

@@ -1,50 +1,182 @@
 "use client";
 import { useState, useEffect } from "react";
-import type { Education } from "@/types";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragOverlay,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import {
   FaPlus,
   FaTimes,
   FaCheck,
-  FaSave,
   FaGraduationCap,
+  FaGripVertical,
+  FaEdit,
+  FaTrash,
   FaUniversity,
   FaCalendarAlt,
-  FaInfoCircle,
-  FaTrash,
-  FaArrowUp,
-  FaArrowDown,
   FaMapMarkerAlt,
   FaLink,
   FaAward,
+  FaInfoCircle,
 } from "react-icons/fa";
+import { AdminDialogShell } from "../components/AdminDialogShell";
+import {
+  AdminField,
+  AdminInput,
+  AdminTextarea,
+} from "../components/AdminFields";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 import ImageUpload from "../components/ImageUpload";
 
-// Shadcn UI Imports
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
+interface Education {
+  _id?: string;
+  degree: string;
+  institution: string;
+  location: string;
+  logo: string;
+  period: string;
+  gpa: string;
+  details: string[];
+  link: string;
+  order: number;
+}
+
+function SortableEduRow({
+  edu,
+  onEdit,
+  onDelete,
+  isDeleting,
+}: {
+  edu: Education;
+  onEdit: () => void;
+  onDelete: () => void;
+  isDeleting: boolean;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: edu._id! });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        "group flex items-center gap-4 bg-slate-900/40 backdrop-blur-xl border border-white/5 hover:border-white/10 rounded-2xl p-4 transition-all duration-300",
+        isDragging && "z-50 border-blue-500/50 shadow-2xl shadow-blue-500/10",
+      )}
+    >
+      <div
+        {...attributes}
+        {...listeners}
+        className="cursor-grab active:cursor-grabbing text-slate-600 hover:text-blue-400 transition-colors"
+      >
+        <FaGripVertical size={14} />
+      </div>
+
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-3">
+          {edu.logo ? (
+            <img
+              src={edu.logo}
+              alt={edu.institution}
+              className="w-8 h-8 rounded-lg object-contain bg-white/5 p-1"
+            />
+          ) : (
+            <div className="p-2 bg-blue-500/10 text-blue-400 rounded-lg">
+              <FaGraduationCap size={14} />
+            </div>
+          )}
+          <div className="min-w-0">
+            <h3 className="font-bold text-white truncate text-sm">
+              {edu.degree}
+            </h3>
+            <p className="text-xs text-slate-400 truncate">{edu.institution}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-6 pr-2">
+        <div className="hidden md:flex items-center gap-2 text-slate-500">
+          <FaCalendarAlt size={10} />
+          <span className="text-[10px] font-medium">{edu.period}</span>
+        </div>
+
+        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onEdit}
+            className="h-8 w-8 rounded-lg text-slate-400 hover:text-blue-400 hover:bg-blue-400/10"
+          >
+            <FaEdit size={12} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onDelete}
+            disabled={isDeleting}
+            className="h-8 w-8 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-400/10"
+          >
+            {isDeleting ? (
+              <div className="h-3 w-3 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <FaTrash size={12} />
+            )}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function AdminEducationPage() {
-  const [education, setEducation] = useState<Education[]>([]);
-  const [newDetailInputs, setNewDetailInputs] = useState<
-    Record<number, string>
-  >({});
+  const [data, setData] = useState<Education[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [currentEdu, setCurrentEdu] = useState<Education | null>(null);
+  const [detailInput, setDetailInput] = useState("");
   const [toast, setToast] = useState<{
     msg: string;
     type: "success" | "error";
   } | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
 
   function showToast(msg: string, type: "success" | "error" = "success") {
     setToast({ msg, type });
@@ -52,436 +184,413 @@ export default function AdminEducationPage() {
   }
 
   useEffect(() => {
-    fetch("/api/admin/education")
-      .then((r) => r.json())
-      .then((d) => {
-        setEducation(Array.isArray(d) ? d : []);
-        setLoading(false);
-      });
+    fetchEducation();
   }, []);
 
-  async function handleSave() {
+  async function fetchEducation() {
+    setLoading(true);
+    const r = await fetch("/api/admin/education");
+    const d = await r.json();
+    setData(Array.isArray(d) ? d : []);
+    setLoading(false);
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm("Are you sure you want to delete this education record?"))
+      return;
+    setDeletingId(id);
+    const res = await fetch(`/api/admin/education?id=${id}`, {
+      method: "DELETE",
+    });
+    setDeletingId(null);
+    if (res.ok) {
+      setData((prev) => prev.filter((s) => s._id !== id));
+      showToast("Record deleted.");
+    } else {
+      showToast("Failed to delete.", "error");
+    }
+  }
+
+  async function handleAddOrUpdate() {
+    if (!currentEdu?.degree || !currentEdu?.institution) return;
     setSaving(true);
-    const res = await fetch("/api/admin/education", {
-      method: "PUT",
+
+    const isEdit = !!currentEdu._id;
+    const url = isEdit
+      ? `/api/admin/education?id=${currentEdu._id}`
+      : "/api/admin/education";
+    const method = isEdit ? "PATCH" : "POST";
+
+    const res = await fetch(url, {
+      method,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(education),
+      body: JSON.stringify(currentEdu),
     });
+
     setSaving(false);
-    if (res.ok) showToast("Education records synchronized!");
-    else showToast("Failed to save records.", "error");
+    if (res.ok) {
+      setIsDialogOpen(false);
+      showToast(isEdit ? "Education updated!" : "Education added!");
+      fetchEducation();
+    } else {
+      showToast("Failed to save.", "error");
+    }
   }
 
-  function addEdu() {
-    setEducation((prev) => [
-      ...prev,
-      {
-        degree: "New Degree",
-        institution: "Institution Name",
-        location: "",
-        logo: "",
-        period: "2020 - 2024",
-        gpa: "",
-        details: [],
-        link: "",
-        order: prev.length,
-      },
-    ]);
+  function openEdit(edu: Education) {
+    setCurrentEdu({ ...edu });
+    setIsDialogOpen(true);
   }
 
-  function updateEdu(i: number, field: keyof Education, val: any) {
-    setEducation((prev) => {
-      const next = [...prev];
-      next[i] = { ...next[i], [field]: val };
-      return next;
+  function openNew() {
+    setCurrentEdu({
+      degree: "",
+      institution: "",
+      location: "",
+      logo: "",
+      period: "",
+      gpa: "",
+      details: [],
+      link: "",
+      order: data.length,
     });
+    setIsDialogOpen(true);
   }
 
-  function addDetail(i: number) {
-    const val = newDetailInputs[i]?.trim();
-    if (!val) return;
-    setEducation((prev) => {
-      const next = [...prev];
-      next[i] = {
-        ...next[i],
-        details: [...(next[i].details || []), val],
-      };
-      return next;
-    });
-    setNewDetailInputs((prev) => ({ ...prev, [i]: "" }));
-  }
-
-  function removeDetail(eduIdx: number, detailIdx: number) {
-    setEducation((prev) => {
-      const next = [...prev];
-      next[eduIdx].details = next[eduIdx].details.filter(
-        (_, idx) => idx !== detailIdx,
-      );
-      return next;
-    });
-  }
-
-  function move(i: number, dir: "up" | "down") {
-    setEducation((prev) => {
-      const next = [...prev];
-      const j = dir === "up" ? i - 1 : i + 1;
-      if (j < 0 || j >= next.length) return prev;
-      [next[i], next[j]] = [next[j], next[i]];
-      return next;
-    });
+  function handleDragEnd(event: any) {
+    const { active, over } = event;
+    if (active && over && active.id !== over.id) {
+      const oldIndex = data.findIndex((i) => i._id === active.id);
+      const newIndex = data.findIndex((i) => i._id === over.id);
+      const newData = arrayMove(data, oldIndex, newIndex);
+      setData(newData);
+      // Auto save order using PATCH
+      setTimeout(() => {
+        fetch("/api/admin/education", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newData),
+        });
+      }, 0);
+    }
+    setActiveId(null);
   }
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8 space-y-6">
-      {/* Toast Notification */}
       <AnimatePresence>
         {toast && (
           <motion.div
-            initial={{ opacity: 0, y: -20, x: 20 }}
-            animate={{ opacity: 1, y: 0, x: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className={`fixed top-6 right-6 z-50 px-6 py-4 rounded-2xl shadow-2xl backdrop-blur-xl border flex items-center gap-3 ${
+            initial={{ opacity: 0, y: -20, x: "-50%" }}
+            animate={{ opacity: 1, y: 0, x: "-50%" }}
+            exit={{ opacity: 0, y: -20, x: "-50%" }}
+            className={cn(
+              "fixed top-8 left-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-2xl border backdrop-blur-xl shadow-2xl",
               toast.type === "success"
                 ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
-                : "bg-red-500/20 border-red-500/50 text-red-400"
-            }`}
+                : "bg-red-500/20 border-red-500/50 text-red-400",
+            )}
           >
             <div
-              className={`p-2 rounded-full ${toast.type === "success" ? "bg-emerald-500/20" : "bg-red-500/20"}`}
+              className={cn(
+                "p-1.5 rounded-full",
+                toast.type === "success"
+                  ? "bg-emerald-500/20"
+                  : "bg-red-500/20",
+              )}
             >
-              {toast.type === "success" ? <FaCheck /> : <FaTimes />}
+              {toast.type === "success" ? (
+                <FaCheck size={10} />
+              ) : (
+                <FaTimes size={10} />
+              )}
             </div>
-            <span className="font-semibold">{toast.msg}</span>
+            <span className="font-bold text-sm tracking-tight">
+              {toast.msg}
+            </span>
           </motion.div>
         )}
       </AnimatePresence>
-
-      <div className="w-full space-y-6">
-        {/* Action bar — title is already shown in the AdminTopbar breadcrumb */}
-        <div className="flex items-center justify-between gap-4 flex-wrap">
-          <Badge
-            variant="outline"
-            className="bg-blue-500/10 text-blue-400 border-blue-500/20 px-4 py-1.5 rounded-full font-bold uppercase tracking-widest text-[10px]"
-          >
-            {education.length}{" "}
-            {education.length === 1 ? "Institution" : "Institutions"}
-          </Badge>
-
+      <div className="max-w-4xl mx-auto space-y-6">
+        <div className="flex items-center justify-between bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-4">
           <div className="flex items-center gap-3">
-            <Button
+            <Badge
               variant="outline"
-              onClick={addEdu}
-              className="bg-slate-800 hover:bg-slate-700 text-white border-white/10 rounded-xl h-10 px-5 active:scale-95 transition-all text-xs font-bold"
+              className="bg-blue-500/10 text-blue-400 border-blue-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[9px]"
             >
-              <FaPlus size={12} className="mr-2 text-blue-400" /> Add
-              Institution
-            </Button>
-            <Button
-              onClick={handleSave}
-              disabled={saving}
-              className="bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold px-6 h-10 shadow-lg shadow-blue-600/20 active:scale-95 transition-all group text-xs"
-            >
-              <FaSave
-                className={cn(
-                  "mr-2 transition-transform duration-500",
-                  saving ? "animate-spin" : "group-hover:rotate-12",
-                )}
-              />
-              {saving ? "Syncing..." : "Save Changes"}
-            </Button>
+              {data.length} Records
+            </Badge>
           </div>
+          <Button
+            onClick={openNew}
+            className="bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold px-6 h-10 shadow-lg shadow-blue-600/20 active:scale-95 transition-all group text-xs"
+          >
+            <FaPlus className="mr-2 group-hover:rotate-90 transition-transform duration-300" />
+            Add Education
+          </Button>
         </div>
 
-        <Card className="bg-slate-900/20 backdrop-blur-xl overflow-hidden shadow-2xl">
+        <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-xl font-bold text-white">
+              Academic Journey
+            </CardTitle>
+          </CardHeader>
           <CardContent>
-            <AnimatePresence mode="popLayout">
-              {loading ? (
-                /* Premium Skeleton Loader */
-                Array.from({ length: 2 }).map((_, i) => (
+            {loading ? (
+              <div className="space-y-3">
+                {Array.from({ length: 3 }).map((_, i) => (
                   <div
                     key={i}
-                    className="p-4 md:p-8 bg-slate-950/20 space-y-6 animate-pulse mb-8"
-                  >
-                    <div className="flex gap-8">
-                      <div className="w-32 h-32 bg-slate-800/40 rounded-3xl" />
-                      <div className="flex-1 space-y-4">
-                        <div className="h-10 w-full bg-slate-800/30 rounded-xl" />
-                        <div className="h-10 w-1/2 bg-slate-800/30 rounded-xl" />
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : education.length === 0 ? (
-                <div className="p-4 md:p-8 text-center py-24">
-                  <div className="w-24 h-24 bg-slate-900 rounded-3xl flex items-center justify-center mx-auto mb-6 text-slate-700">
-                    <FaGraduationCap size={48} />
-                  </div>
-                  <h3 className="text-2xl font-bold text-white mb-2">
-                    Build Your Foundation
-                  </h3>
-                  <p className="text-slate-500 mb-10 max-w-sm mx-auto">
-                    Display your academic background with the detail it
-                    deserves.
-                  </p>
-                  <Button
-                    onClick={addEdu}
-                    className="bg-blue-600/10 text-blue-400 hover:bg-blue-600/20 border border-blue-500/20 rounded-2xl px-10 h-14 font-bold text-lg"
-                  >
-                    Add Your First Degree
-                  </Button>
-                </div>
-              ) : (
-                education.map((edu, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className="group relative p-4 md:p-8 bg-slate-950/20 transition-all  overflow-hidden"
-                  >
-                    {/* Background Accent */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 blur-[100px] pointer-events-none" />
-
-                    <div className="flex flex-col lg:flex-row gap-8">
-                      {/* Logo Section */}
-                      <div className="w-full lg:w-40 shrink-0 space-y-3">
-                        <ImageUpload
-                          label="Univ. Logo"
-                          value={edu.logo || ""}
-                          onChange={(url) => updateEdu(i, "logo", url)}
+                    className="h-20 bg-slate-800/20 rounded-2xl animate-pulse"
+                  />
+                ))}
+              </div>
+            ) : data.length === 0 ? (
+              <div className="text-center py-20 bg-slate-950/20 rounded-3xl border border-dashed border-white/5">
+                <FaGraduationCap
+                  className="mx-auto text-slate-800 mb-4"
+                  size={40}
+                />
+                <p className="text-slate-500 font-medium">
+                  No education history found. Add your first record above.
+                </p>
+              </div>
+            ) : (
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragStart={(e) => setActiveId(e.active.id as string)}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={data.map((s) => s._id!)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="space-y-3">
+                    <AnimatePresence mode="popLayout">
+                      {data.map((edu) => (
+                        <SortableEduRow
+                          key={edu._id}
+                          edu={edu}
+                          onEdit={() => openEdit(edu)}
+                          onDelete={() => handleDelete(edu._id!)}
+                          isDeleting={deletingId === edu._id}
                         />
-                        <div className="flex items-center justify-center gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => move(i, "up")}
-                            disabled={i === 0}
-                            className="h-8 w-8 rounded-lg bg-slate-900 border border-white/5 text-slate-500 hover:text-white disabled:opacity-20"
-                          >
-                            <FaArrowUp size={10} />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => move(i, "down")}
-                            disabled={i === education.length - 1}
-                            className="h-8 w-8 rounded-lg bg-slate-900 border border-white/5 text-slate-500 hover:text-white disabled:opacity-20"
-                          >
-                            <FaArrowDown size={10} />
-                          </Button>
-                        </div>
-                      </div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
+                </SortableContext>
 
-                      {/* Info Grid */}
-                      <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-4 relative z-10">
-                        {/* Degree Name */}
-                        <div className="space-y-1.5 md:col-span-2">
-                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
-                            Degree / Program Name
-                          </label>
-                          <div className="relative group/input">
-                            <FaGraduationCap className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-blue-400 transition-colors" />
-                            <Input
-                              className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-blue-500/50 focus-visible:bg-slate-900 transition-all font-bold text-sm"
-                              value={edu.degree}
-                              onChange={(e) =>
-                                updateEdu(i, "degree", e.target.value)
-                              }
-                              placeholder="e.g. Bachelor of Science in CSE"
-                            />
-                          </div>
-                        </div>
-
-                        {/* Institution */}
-                        <div className="space-y-1.5 md:col-span-2 lg:col-span-2">
-                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
-                            Institution
-                          </label>
-                          <div className="relative group/input">
-                            <FaUniversity className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-blue-400 transition-colors" />
-                            <Input
-                              className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-blue-500/50 focus-visible:bg-slate-900 transition-all font-bold text-sm"
-                              value={edu.institution}
-                              onChange={(e) =>
-                                updateEdu(i, "institution", e.target.value)
-                              }
-                              placeholder="e.g. Green University of Bangladesh"
-                            />
-                          </div>
-                        </div>
-
-                        {/* Period */}
-                        <div className="space-y-1.5">
-                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
-                            Duration / Period
-                          </label>
-                          <div className="relative group/input">
-                            <FaCalendarAlt className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-blue-400 transition-colors" />
-                            <Input
-                              className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-blue-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
-                              value={edu.period}
-                              onChange={(e) =>
-                                updateEdu(i, "period", e.target.value)
-                              }
-                              placeholder="e.g. 2021 - 2024"
-                            />
-                          </div>
-                        </div>
-
-                        {/* GPA */}
-                        <div className="space-y-1.5">
-                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
-                            GPA / Grade
-                          </label>
-                          <div className="relative group/input">
-                            <FaAward className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-blue-400 transition-colors" />
-                            <Input
-                              className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-blue-500/50 focus-visible:bg-slate-900 transition-all font-bold text-sm"
-                              value={edu.gpa || ""}
-                              onChange={(e) =>
-                                updateEdu(i, "gpa", e.target.value)
-                              }
-                              placeholder="e.g. 3.92 / 4.0"
-                            />
-                          </div>
-                        </div>
-
-                        {/* Location */}
-                        <div className="space-y-2.5 md:col-span-2">
-                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
-                            Location
-                          </label>
-                          <div className="relative group/input">
-                            <FaMapMarkerAlt className="absolute left-4 top-5 text-slate-600 group-focus-within/input:text-blue-400 transition-colors" />
-                            <Textarea
-                              className="bg-slate-900/50 border-white/10 text-white rounded-2xl pl-12 h-fit w-full focus-visible:ring-blue-500/50 focus-visible:bg-slate-900 transition-all font-medium"
-                              value={edu.location || ""}
-                              onChange={(e) =>
-                                updateEdu(i, "location", e.target.value)
-                              }
-                              placeholder="e.g. Dhaka, Bangladesh"
-                            />
-                          </div>
-                        </div>
-
-                        {/* Details Manager */}
-                        <div className="space-y-4 md:col-span-2 lg:col-span-3 xl:col-span-4">
-                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
-                            Highlights & Key Achievements
-                          </label>
-                          <div className="flex gap-2">
-                            <div className="relative group/input flex-1">
-                              <FaInfoCircle className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-blue-400 transition-colors" />
-                              <Input
-                                className="bg-slate-900/50 border-white/10 text-white rounded-2xl pl-12 h-14 focus-visible:ring-blue-500/50 focus-visible:bg-slate-900 transition-all font-medium"
-                                value={newDetailInputs[i] || ""}
-                                onChange={(e) =>
-                                  setNewDetailInputs((prev) => ({
-                                    ...prev,
-                                    [i]: e.target.value,
-                                  }))
-                                }
-                                onKeyDown={(e) => {
-                                  if (e.key === "Enter") {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    addDetail(i);
-                                  }
-                                }}
-                                placeholder="Add an achievement..."
-                              />
-                            </div>
-                            <Button
-                              type="button"
-                              onClick={() => addDetail(i)}
-                              className="bg-slate-800 hover:bg-slate-700 text-white rounded-2xl h-14 w-14 p-0 shrink-0 border border-white/5"
-                            >
-                              <FaPlus size={16} />
-                            </Button>
-                          </div>
-
-                          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-                            <AnimatePresence mode="popLayout">
-                              {edu.details?.map((d, dIdx) => (
-                                <motion.div
-                                  key={dIdx}
-                                  initial={{ opacity: 0, x: -10 }}
-                                  animate={{ opacity: 1, x: 0 }}
-                                  exit={{ opacity: 0, scale: 0.95 }}
-                                  className="flex items-center gap-3 bg-slate-950/40 border border-white/5 rounded-2xl p-3 group/detail"
-                                >
-                                  <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
-                                  <span className="text-sm text-slate-300 flex-1 leading-relaxed font-medium">
-                                    {d}
-                                  </span>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => removeDetail(i, dIdx)}
-                                    className="h-8 w-8 text-slate-600 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all"
-                                  >
-                                    <FaTimes size={14} />
-                                  </Button>
-                                </motion.div>
-                              ))}
-                            </AnimatePresence>
-                            {(!edu.details || edu.details.length === 0) && (
-                              <p className="text-center py-4 text-slate-600 text-[10px] uppercase tracking-widest font-black opacity-30 italic md:col-span-2 xl:col-span-3">
-                                No highlights added yet.
-                              </p>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Link */}
-                        <div className="space-y-1.5 md:col-span-2 lg:col-span-3 xl:col-span-4">
-                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
-                            Credential / Verification Link
-                          </label>
-                          <div className="relative group/input">
-                            <FaLink className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-blue-400 transition-colors" />
-                            <Input
-                              className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-12 h-11 focus-visible:ring-blue-500/50 focus-visible:bg-slate-900 transition-all font-medium text-sm"
-                              value={edu.link || ""}
-                              onChange={(e) =>
-                                updateEdu(i, "link", e.target.value)
-                              }
-                              placeholder="https://verify.university.edu/..."
-                            />
-                          </div>
-                        </div>
+                <DragOverlay dropAnimation={null}>
+                  {activeId ? (
+                    <div className="flex items-center gap-4 bg-slate-800/90 backdrop-blur-xl border border-blue-500/30 rounded-2xl p-4 shadow-2xl opacity-90 scale-105">
+                      <FaGripVertical className="text-blue-400" size={14} />
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-bold text-white truncate text-sm">
+                          {data.find((s) => s._id === activeId)?.degree}
+                        </h3>
                       </div>
                     </div>
+                  ) : null}
+                </DragOverlay>
+              </DndContext>
+            )}
 
-                    {/* Actions Area */}
-                    <div className="mt-10 pt-8 border-t border-white/5 flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-slate-600 text-[10px] font-bold uppercase tracking-widest">
-                        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />{" "}
-                        Ranked Position #{i + 1}
-                      </div>
-                      <Button
-                        variant="ghost"
-                        onClick={() =>
-                          setEducation((prev) =>
-                            prev.filter((_, idx) => idx !== i),
-                          )
-                        }
-                        className="text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl px-6 h-12 font-bold transition-all flex items-center gap-2 group"
-                      >
-                        <FaTrash
-                          size={14}
-                          className="group-hover:animate-bounce"
-                        />{" "}
-                        Delete Record
-                      </Button>
-                    </div>
-                  </motion.div>
-                ))
-              )}
-            </AnimatePresence>
+            {!loading && data.length > 0 && (
+              <p className="text-center text-[10px] text-slate-700 mt-8 font-bold uppercase tracking-widest">
+                Drag rows to reorder • Changes save automatically
+              </p>
+            )}
           </CardContent>
         </Card>
-      </div>
+      </div>{" "}
+      <AdminDialogShell
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        title={currentEdu?._id ? "Edit Academic Record" : "Add New Education"}
+        subtitle="Chronicle your academic journey and achievements"
+        icon={FaGraduationCap}
+        iconColor="text-blue-400"
+        accentColor="from-blue-500/5 to-indigo-500/5"
+        onSave={handleAddOrUpdate}
+        saving={saving}
+        saveLabel={
+          currentEdu?._id ? "Update Academic File" : "Finalize Admission"
+        }
+        savingLabel="Recording..."
+        maxWidth="3xl"
+      >
+        {currentEdu && (
+          <div className="space-y-8 max-h-[60vh] overflow-y-auto px-1 custom-scrollbar">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <AdminField label="Degree / Course">
+                <AdminInput
+                  icon={FaGraduationCap}
+                  value={currentEdu.degree}
+                  onChange={(e) =>
+                    setCurrentEdu({ ...currentEdu, degree: e.target.value })
+                  }
+                  placeholder="e.g. B.Sc in Computer Science"
+                />
+              </AdminField>
+              <AdminField label="Institution">
+                <AdminInput
+                  icon={FaUniversity}
+                  value={currentEdu.institution}
+                  onChange={(e) =>
+                    setCurrentEdu({
+                      ...currentEdu,
+                      institution: e.target.value,
+                    })
+                  }
+                  placeholder="e.g. Stanford University"
+                />
+              </AdminField>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <AdminField label="Location">
+                <AdminInput
+                  icon={FaMapMarkerAlt}
+                  value={currentEdu.location}
+                  onChange={(e) =>
+                    setCurrentEdu({ ...currentEdu, location: e.target.value })
+                  }
+                  placeholder="e.g. California, USA"
+                />
+              </AdminField>
+              <AdminField label="Period">
+                <AdminInput
+                  icon={FaCalendarAlt}
+                  value={currentEdu.period}
+                  onChange={(e) =>
+                    setCurrentEdu({ ...currentEdu, period: e.target.value })
+                  }
+                  placeholder="e.g. 2020 - 2024"
+                />
+              </AdminField>
+              <AdminField label="Grade / GPA">
+                <AdminInput
+                  icon={FaAward}
+                  value={currentEdu.gpa}
+                  onChange={(e) =>
+                    setCurrentEdu({ ...currentEdu, gpa: e.target.value })
+                  }
+                  placeholder="e.g. 3.9 / 4.0"
+                />
+              </AdminField>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <AdminField label="Institution Logo">
+                <ImageUpload
+                  value={currentEdu.logo}
+                  onChange={(url) =>
+                    setCurrentEdu({ ...currentEdu, logo: url })
+                  }
+                />
+              </AdminField>
+              <div className="space-y-8">
+                <AdminField label="Official Website">
+                  <AdminInput
+                    icon={FaLink}
+                    value={currentEdu.link}
+                    onChange={(e) =>
+                      setCurrentEdu({ ...currentEdu, link: e.target.value })
+                    }
+                    placeholder="https://university.edu"
+                  />
+                </AdminField>
+                <div className="p-5 bg-blue-500/5 border border-blue-500/10 rounded-3xl flex items-start gap-4">
+                  <FaInfoCircle
+                    className="text-blue-400 shrink-0 mt-1"
+                    size={16}
+                  />
+                  <p className="text-xs text-slate-400 leading-relaxed font-medium">
+                    Connecting your academic background with official
+                    institutions adds credibility to your profile.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <AdminField label="Academic Highlights">
+              <div className="space-y-4">
+                <div className="flex gap-3">
+                  <AdminInput
+                    icon={FaInfoCircle}
+                    value={detailInput}
+                    onChange={(e) => setDetailInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        if (detailInput.trim()) {
+                          setCurrentEdu({
+                            ...currentEdu,
+                            details: [
+                              ...currentEdu.details,
+                              detailInput.trim(),
+                            ],
+                          });
+                          setDetailInput("");
+                        }
+                      }
+                    }}
+                    placeholder="e.g. Dean's List, Research in AI, etc."
+                    className="h-14"
+                  />
+                  <Button
+                    onClick={() => {
+                      if (detailInput.trim()) {
+                        setCurrentEdu({
+                          ...currentEdu,
+                          details: [...currentEdu.details, detailInput.trim()],
+                        });
+                        setDetailInput("");
+                      }
+                    }}
+                    className="bg-slate-800 hover:bg-slate-700 text-white rounded-2xl h-14 px-6 border border-white/5 font-bold"
+                  >
+                    Add
+                  </Button>
+                </div>
+                <div className="grid grid-cols-1 gap-3">
+                  <AnimatePresence mode="popLayout">
+                    {currentEdu.details.map((detail, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, x: 20 }}
+                        className="flex items-center gap-4 p-4 bg-slate-950/50 border border-white/5 rounded-2xl group/item"
+                      >
+                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500/50 shrink-0 group-hover/item:scale-150 transition-transform" />
+                        <span className="text-sm text-slate-300 flex-1 font-medium">
+                          {detail}
+                        </span>
+                        <button
+                          onClick={() =>
+                            setCurrentEdu({
+                              ...currentEdu,
+                              details: currentEdu.details.filter(
+                                (_, idx) => idx !== i,
+                              ),
+                            })
+                          }
+                          className="text-slate-600 hover:text-red-400 transition-colors p-2 hover:bg-red-400/10 rounded-lg"
+                        >
+                          <FaTimes size={14} />
+                        </button>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+              </div>
+            </AdminField>
+          </div>
+        )}
+      </AdminDialogShell>
     </div>
   );
 }
