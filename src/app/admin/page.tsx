@@ -360,26 +360,15 @@ export default async function AdminDashboard() {
   ];
 
   return (
-    <div className="p-4 md:p-10 space-y-12">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div className="relative">
-          <div className="absolute -left-4 top-0 w-1 h-12 bg-emerald-500 rounded-full blur-sm" />
-          <h1 className="text-4xl font-black text-white tracking-tight mb-2">
-            System <span className="text-emerald-400">Overview</span>
-          </h1>
-          <p className="text-slate-400 font-medium">
-            Manage your professional presence and track interactions.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 px-4 py-1.5 rounded-full font-bold uppercase tracking-widest text-[10px]">
-            System Online
-          </Badge>
-          <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20 px-4 py-1.5 rounded-full font-bold uppercase tracking-widest text-[10px]">
-            v2.4.0
-          </Badge>
-        </div>
+    <div className="p-4 md:p-8 space-y-8">
+      {/* Action bar — title is already shown in the AdminTopbar breadcrumb */}
+      <div className="flex items-center justify-end gap-3">
+        <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 px-4 py-1.5 rounded-full font-bold uppercase tracking-widest text-[10px]">
+          System Online
+        </Badge>
+        <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20 px-4 py-1.5 rounded-full font-bold uppercase tracking-widest text-[10px]">
+          v2.4.0
+        </Badge>
       </div>
 
       {/* Stats Grid */}

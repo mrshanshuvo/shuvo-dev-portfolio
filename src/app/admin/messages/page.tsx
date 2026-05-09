@@ -98,7 +98,7 @@ export default function AdminMessagesPage() {
   const unreadCount = messages.filter((m) => m.status === "unread").length;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-10">
+    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8 space-y-6">
       {/* Toast */}
       <AnimatePresence>
         {toast && (
@@ -122,24 +122,18 @@ export default function AdminMessagesPage() {
         )}
       </AnimatePresence>
 
-      <div className="max-w-6xl mx-auto space-y-10">
-        {/* Header */}
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="relative">
-            <div className="absolute -left-4 top-0 w-1 h-12 bg-blue-500 rounded-full blur-sm" />
-            <h1 className="text-4xl font-black text-white tracking-tight mb-2 flex items-center gap-4">
-              Messages
-              {unreadCount > 0 && (
-                <Badge className="bg-blue-600 text-white rounded-lg px-2 py-0.5 text-xs animate-bounce">
-                  {unreadCount} New
-                </Badge>
-              )}
-            </h1>
-            <p className="text-slate-400 font-medium">
-              Manage your inquiries and client messages.
-            </p>
-          </div>
-        </header>
+      <div className="max-w-6xl mx-auto space-y-6">
+        {/* Action bar — title is already shown in the AdminTopbar breadcrumb */}
+        <div className="flex items-center justify-end gap-3">
+          {unreadCount > 0 && (
+            <Badge className="bg-blue-600/10 text-blue-400 border-blue-500/20 rounded-lg px-3 py-1 text-xs font-bold animate-pulse">
+              {unreadCount} New Messages
+            </Badge>
+          )}
+          <Badge className="bg-slate-800/50 text-slate-400 border-white/5 rounded-lg px-3 py-1 text-xs font-bold">
+            {messages.length} Total
+          </Badge>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Message List */}

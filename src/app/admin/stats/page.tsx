@@ -242,7 +242,7 @@ export default function AdminStatsPage() {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8">
+      <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8 space-y-6">
         {/* Toast notification */}
         <AnimatePresence>
           {toast && (
@@ -263,26 +263,23 @@ export default function AdminStatsPage() {
           )}
         </AnimatePresence>
 
-        <div className="max-w-3xl mx-auto">
-          {/* Page Header */}
-          <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-            <div>
-              <h1 className="text-4xl font-bold text-white tracking-tight mb-2">
-                Stats
-              </h1>
-              <p className="text-slate-400">
-                Showcase your growth and achievements in numbers.
-              </p>
-            </div>
+        <div className="max-w-3xl mx-auto space-y-6">
+          {/* Action bar — title is already shown in the AdminTopbar breadcrumb */}
+          <div className="flex items-center justify-end gap-4">
             <Button
               onClick={handleSave}
               disabled={saving}
-              className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold px-8 shadow-lg shadow-emerald-600/20"
+              className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold px-8 h-10 shadow-lg shadow-emerald-600/20 active:scale-95 transition-all group text-xs"
             >
-              <FaSave className={cn("mr-2", saving && "animate-spin")} />
+              <FaSave
+                className={cn(
+                  "mr-2 transition-transform duration-500",
+                  saving ? "animate-spin" : "group-hover:rotate-12",
+                )}
+              />
               {saving ? "Saving..." : "Save Stats"}
             </Button>
-          </header>
+          </div>
 
           <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
             <CardHeader className="pb-4">

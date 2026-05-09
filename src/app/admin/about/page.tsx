@@ -164,7 +164,7 @@ export default function AdminAboutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8">
+    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8 space-y-6">
       {/* Toast Notification */}
       <AnimatePresence>
         {toast && (
@@ -188,21 +188,14 @@ export default function AdminAboutPage() {
         )}
       </AnimatePresence>
 
-      <div className="max-w-5xl mx-auto">
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-          <div>
-            <h1 className="text-4xl font-bold text-white tracking-tight mb-2">
-              About Section
-            </h1>
-            <p className="text-slate-400">
-              Manage your skills, biography, and professional milestones.
-            </p>
-          </div>
+      <div className="max-w-5xl mx-auto space-y-6">
+        {/* Action bar — title is already shown in the AdminTopbar breadcrumb */}
+        <div className="flex items-center justify-end gap-4">
           <Button
             id="save-about-btn"
             onClick={handleSave}
             disabled={saving}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold px-8 shadow-lg shadow-emerald-600/20 active:scale-95 transition-all group"
+            className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold px-8 h-10 shadow-lg shadow-emerald-600/20 active:scale-95 transition-all group text-xs"
           >
             <FaSave
               className={cn(
@@ -212,7 +205,7 @@ export default function AdminAboutPage() {
             />
             {saving ? "Saving Changes..." : "Save Changes"}
           </Button>
-        </header>
+        </div>
 
         <div className="space-y-8">
           {loading ? (

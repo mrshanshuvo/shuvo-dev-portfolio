@@ -3,6 +3,7 @@
 import { useState, ReactNode } from "react";
 import AdminSidebar from "./AdminSidebar";
 import AdminMobileHeader from "./AdminMobileHeader";
+import AdminTopbar from "./AdminTopbar";
 
 export default function AdminShell({ children }: { children: ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -29,6 +30,10 @@ export default function AdminShell({ children }: { children: ReactNode }) {
         className="flex-1 z-10 overflow-auto custom-scrollbar lg:h-screen sticky top-0"
         data-lenis-prevent
       >
+        {/* Desktop breadcrumb topbar — hidden on mobile (uses AdminMobileHeader) */}
+        <div className="hidden lg:block sticky top-0 z-50">
+          <AdminTopbar />
+        </div>
         {children}
       </main>
     </div>

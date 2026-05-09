@@ -14,18 +14,8 @@ async function getSettings() {
 export default async function SettingsPage() {
   const settings = await getSettings();
   return (
-    <div className="p-4 md:p-10 max-w-4xl mx-auto space-y-8">
-      <div className="flex items-center gap-4 mb-8">
-        <div className="w-1.5 h-12 bg-emerald-500 rounded-full" />
-        <div>
-          <h1 className="text-4xl font-black text-white tracking-tight">
-            Portfolio Settings
-          </h1>
-          <p className="text-slate-400">
-            Manage global SEO, communication, and visual DNA.
-          </p>
-        </div>
-      </div>
+    <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
+      {/* Title is already shown in the AdminTopbar breadcrumb */}
 
       <SettingsFormClient initialSettings={settings} />
     </div>

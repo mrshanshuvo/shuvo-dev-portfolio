@@ -365,7 +365,7 @@ export default function AdminProjectsListPage() {
   const isFiltered = searchQuery || filterCategory !== "All";
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8 space-y-6">
       {/* Toast */}
       <AnimatePresence>
         {toast && (
@@ -401,73 +401,69 @@ export default function AdminProjectsListPage() {
         )}
       </AnimatePresence>
 
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-xl border-b border-white/5 px-6 md:px-12 py-5">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 text-emerald-400 text-[10px] font-black uppercase tracking-[0.3em] mb-1">
-              <FaCode size={12} /> Portfolio
+      <div className="w-full space-y-6">
+        {/* Action bar — title is already shown in the AdminTopbar breadcrumb */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-4">
+          <div className="flex items-center gap-4 flex-wrap flex-1">
+            <Badge
+              variant="outline"
+              className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[9px]"
+            >
+              {data.length} {data.length === 1 ? "Project" : "Projects"}
+            </Badge>
+
+            <div className="relative flex-1 min-w-[180px] max-w-xs">
+              <FaSearch
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600"
+                size={12}
+              />
+              <Input
+                className="bg-slate-950 border-white/5 rounded-xl pl-9 h-10 text-xs focus-visible:ring-emerald-500/30"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search projects..."
+              />
             </div>
-            <h1 className="text-2xl font-black text-white tracking-tight">
-              Projects{" "}
-              <span className="text-slate-600 font-medium text-lg">
-                ({data.length})
-              </span>
-            </h1>
-          </div>
-          <div className="flex items-center gap-3 flex-wrap">
+
+            <Select
+              value={filterCategory}
+              onValueChange={(v) => setFilterCategory(v || "All")}
+            >
+              <SelectTrigger className="bg-slate-950 border-white/5 rounded-xl h-10 w-[150px] text-xs">
+                <FaFilter className="mr-2 text-slate-600" size={10} />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-slate-900 border-white/10 text-white">
+                <SelectItem value="All">All Categories</SelectItem>
+                {categories.map((c) => (
+                  <SelectItem key={c.name} value={c.name}>
+                    {c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
             <CategoryManagerDialog onUpdate={refreshCategories} />
+          </div>
+
+          <div className="flex items-center gap-3">
+            {saving && (
+              <div className="flex items-center gap-2 text-slate-500 text-[10px] font-bold uppercase tracking-widest mr-2">
+                <div className="w-2.5 h-2.5 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin" />
+                Syncing...
+              </div>
+            )}
             <Button
               onClick={() => router.push("/admin/projects/new")}
-              className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl h-11 px-6 font-black shadow-lg shadow-emerald-600/20"
+              className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl h-10 px-6 font-black shadow-lg shadow-emerald-600/20 text-xs"
             >
               <FaPlus className="mr-2" size={12} /> Add Project
             </Button>
           </div>
         </div>
 
-        {/* Filters */}
-        <div className="flex gap-3 mt-4 flex-wrap">
-          <div className="relative flex-1 min-w-[180px] max-w-xs">
-            <FaSearch
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600"
-              size={12}
-            />
-            <Input
-              className="bg-slate-900/50 border-white/5 rounded-xl pl-9 h-10 text-sm focus-visible:ring-emerald-500/30"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search projects..."
-            />
-          </div>
-          <Select
-            value={filterCategory}
-            onValueChange={(v) => setFilterCategory(v || "All")}
-          >
-            <SelectTrigger className="bg-slate-900/50 border-white/5 rounded-xl h-10 w-[160px] text-sm">
-              <FaFilter className="mr-2 text-slate-600" size={10} />
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-slate-900 border-white/10 text-white">
-              <SelectItem value="All">All Categories</SelectItem>
-              {categories.map((c) => (
-                <SelectItem key={c.name} value={c.name}>
-                  {c.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {saving && (
-            <div className="flex items-center gap-2 text-slate-500 text-xs font-bold">
-              <div className="w-3 h-3 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin" />
-              Saving order...
-            </div>
-          )}
-        </div>
-      </header>
-
-      {/* Content */}
-      <main className="p-6 md:p-12">
+        <div className="w-full">
+          {/* List Content */}
         {loading ? (
           <div className="space-y-3">
             {Array.from({ length: 4 }).map((_, i) => (
@@ -557,7 +553,8 @@ export default function AdminProjectsListPage() {
             </p>
           </>
         )}
-      </main>
+      </div>
     </div>
+  </div>
   );
 }

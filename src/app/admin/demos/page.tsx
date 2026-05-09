@@ -109,7 +109,7 @@ export default function AdminDemosPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-10 space-y-10">
+    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8 space-y-6">
       <AnimatePresence>
         {toast && (
           <motion.div
@@ -132,38 +132,28 @@ export default function AdminDemosPage() {
         )}
       </AnimatePresence>
 
-      <div className="w-full space-y-8">
-        {/* Unified Header Section */}
-        <header className="sticky top-6 z-40 flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-slate-900/60 backdrop-blur-xl p-6 md:p-8 rounded-[2rem] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
-          <div className="flex items-center gap-6">
-            <div className="relative">
-              <div className="absolute -left-4 top-1/2 -translate-y-1/2 w-1 h-8 bg-purple-500 rounded-full blur-sm" />
-              <h1 className="text-3xl font-black text-white tracking-tight">
-                Interactive <span className="text-purple-400">Playground</span>
-              </h1>
-            </div>
-            <Badge
-              variant="outline"
-              className="hidden md:flex bg-purple-500/10 text-purple-400 border-purple-500/20 px-4 py-1 rounded-full font-bold uppercase tracking-widest text-[10px]"
-            >
-              {data.length} Experiments
-            </Badge>
-          </div>
+      <div className="w-full space-y-6">
+        {/* Action bar — title is already shown in the AdminTopbar breadcrumb */}
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <Badge
+            variant="outline"
+            className="bg-purple-500/10 text-purple-400 border-purple-500/20 px-4 py-1.5 rounded-full font-bold uppercase tracking-widest text-[10px]"
+          >
+            {data.length} {data.length === 1 ? "Experiment" : "Experiments"}
+          </Badge>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-3">
             <Button
               variant="outline"
               onClick={addDemo}
-              className="bg-slate-800 hover:bg-slate-700 text-white border-white/10 rounded-xl h-11 px-5 active:scale-95 transition-all text-xs font-bold"
+              className="bg-slate-800 hover:bg-slate-700 text-white border-white/10 rounded-xl h-10 px-5 active:scale-95 transition-all text-xs font-bold"
             >
-              <FaPlus size={12} className="mr-2 text-purple-400" /> New
-              Experiment
+              <FaPlus size={12} className="mr-2 text-purple-400" /> New Experiment
             </Button>
-            <div className="w-px h-6 bg-white/10 mx-1 hidden sm:block" />
             <Button
               onClick={handleSave}
               disabled={saving}
-              className="bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-bold px-6 h-11 shadow-lg shadow-purple-600/20 active:scale-95 transition-all group text-xs"
+              className="bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-bold px-6 h-10 shadow-lg shadow-purple-600/20 active:scale-95 transition-all group text-xs"
             >
               <FaSave
                 className={cn(
@@ -174,7 +164,7 @@ export default function AdminDemosPage() {
               {saving ? "Syncing..." : "Save Playground"}
             </Button>
           </div>
-        </header>
+        </div>
 
         <Card className="bg-slate-900/20 backdrop-blur-xl overflow-hidden shadow-2xl border border-white/5 rounded-[2.5rem]">
           <CardContent className="p-0">
