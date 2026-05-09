@@ -14,8 +14,20 @@ import Demo from "@/models/Demo";
 
 export async function GET() {
   await connectDB();
-  
-  const [hero, about, socialLinks, skills, stats, testimonials, certifications, blogs, services, workflow, demos] = await Promise.all([
+
+  const [
+    hero,
+    about,
+    socialLinks,
+    skills,
+    stats,
+    testimonials,
+    certifications,
+    blogs,
+    services,
+    workflow,
+    demos,
+  ] = await Promise.all([
     Hero.findOne().lean(),
     About.findOne().lean(),
     SocialLink.find().sort({ order: 1 }).lean(),

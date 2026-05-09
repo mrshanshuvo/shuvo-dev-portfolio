@@ -21,7 +21,11 @@ const DemoSchema = new Schema<IDemo>(
     tech: [{ type: String }],
     media: [
       {
-        type: { type: String, enum: ["image", "video", "embed"], default: "image" },
+        type: {
+          type: String,
+          enum: ["image", "video", "embed"],
+          default: "image",
+        },
         url: { type: String, required: true },
         caption: { type: String },
       },

@@ -52,8 +52,12 @@ export interface Skill {
 }
 
 export interface Stat {
+  _id?: string;
   number: string;
   label: string;
+  createdAt?: string; // ISO date string
+  updatedAt?: string; // ISO date string
+  order?: number; // display order
 }
 
 export interface SocialLink {
