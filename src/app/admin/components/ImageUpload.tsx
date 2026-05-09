@@ -141,7 +141,7 @@ export default function ImageUpload({
   const isPdf = value?.toLowerCase().endsWith(".pdf");
 
   return (
-    <div className="space-y-4 w-full">
+    <div className="space-y-2 w-full">
       {label && (
         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400/80 pl-1">
           {label}
@@ -163,7 +163,7 @@ export default function ImageUpload({
           </button>
         </div>
       ) : loading ? (
-        <div className="p-4 rounded-2xl border border-slate-200 dark:border-white/5 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md shadow-xl dark:shadow-2xl relative overflow-hidden group aspect-square flex flex-col justify-center">
+        <div className="p-3 rounded-2xl border border-slate-200 dark:border-white/5 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md shadow-xl dark:shadow-2xl relative overflow-hidden group aspect-square flex flex-col justify-center">
           {/* Subtle animated background glow */}
           <div className="absolute inset-0 bg-linear-to-r from-indigo-500/5 dark:from-indigo-500/10 via-purple-500/5 dark:via-purple-500/10 to-pink-500/5 dark:to-pink-500/10 animate-pulse" />
 
@@ -297,7 +297,7 @@ export default function ImageUpload({
           onClick={() => fileInputRef.current?.click()}
           className={`
             relative aspect-square rounded-2xl border-2 transition-all duration-500 cursor-pointer overflow-hidden
-            flex flex-col items-center justify-center p-4 group/image
+            flex flex-col items-center justify-center p-2 group/image
             ${
               isDragging
                 ? "border-indigo-400 border-solid bg-indigo-500/10 shadow-[0_0_40px_rgba(99,102,241,0.2)]"
@@ -308,7 +308,7 @@ export default function ImageUpload({
           {/* Subtle background glow effect on hover */}
           <div className="absolute inset-0 bg-linear-to-tr from-indigo-500/0 via-purple-500/0 to-pink-500/0 group-hover/image:from-indigo-500/5 group-hover/image:via-purple-500/5 group-hover/image:to-pink-500/5 transition-all duration-700" />
 
-          <div className="relative z-10 flex flex-col items-center gap-4">
+          <div className="relative z-10 flex flex-col items-center gap-2">
             <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800/80 shadow-[0_10px_30px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-slate-200 dark:border-white/5 flex items-center justify-center group-hover/image:scale-110 group-hover/image:-translate-y-1 transition-all duration-500">
               <FaCloudUploadAlt
                 className="text-indigo-600 dark:text-indigo-400 drop-shadow-[0_0_15px_rgba(99,102,241,0.4)]"

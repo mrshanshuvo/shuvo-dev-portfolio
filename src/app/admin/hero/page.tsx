@@ -130,7 +130,7 @@ function SortableSeqItem({ id, seq, index, onUpdate, onRemove }: SeqRowProps) {
     <div
       ref={setNodeRef}
       style={style}
-      className="flex flex-col md:flex-row gap-4 items-start md:items-center p-4 bg-slate-50 dark:bg-slate-950/30 rounded-2xl border border-slate-200 dark:border-white/5 group transition-all hover:bg-slate-100 dark:hover:bg-slate-950/50 mb-3 shadow-sm dark:shadow-none"
+      className="flex flex-col md:flex-row gap-4 items-start md:items-center p-2 bg-slate-50 dark:bg-slate-950/30 rounded-2xl border border-slate-200 dark:border-white/5 group transition-all hover:bg-slate-100 dark:hover:bg-slate-950/50 mb-2 shadow-sm dark:shadow-none"
     >
       {/* Drag handle */}
       <button
@@ -190,7 +190,7 @@ function SortableSeqItem({ id, seq, index, onUpdate, onRemove }: SeqRowProps) {
 // ─── Drag Overlay ghost card ──────────────────────────────────────────────────
 function SeqOverlay({ seq }: { seq: TypeSequenceItem }) {
   return (
-    <div className="w-full flex items-center gap-4 p-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-2xl border border-purple-500/30 shadow-2xl shadow-purple-500/10 ring-1 ring-purple-400/20">
+    <div className="w-full flex items-center gap-4 p-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-2xl border border-purple-500/30 shadow-2xl shadow-purple-500/10 ring-1 ring-purple-400/20">
       <FaGripLines size={13} className="text-purple-400/70 shrink-0" />
       <span className="w-4" />
       <div className="flex-1 bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-slate-900 dark:text-white text-sm truncate">
@@ -376,24 +376,8 @@ export default function AdminHeroPage() {
           )}
         </AnimatePresence>
 
-        <div className="max-w-7xl mx-auto space-y-6">
-          {/* Action bar — title is already shown in the AdminTopbar breadcrumb */}
-          <div className="flex items-center justify-end gap-4">
-            <Button
-              id="save-hero-btn"
-              onClick={handleSave}
-              disabled={saving}
-              className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold px-8 h-10 shadow-lg shadow-emerald-600/20 active:scale-95 transition-all group text-xs"
-            >
-              <FaSave
-                className={cn(
-                  "mr-2 transition-transform duration-500",
-                  saving ? "animate-spin" : "group-hover:rotate-12",
-                )}
-              />
-              {saving ? "Saving Changes..." : "Save Changes"}
-            </Button>
-          </div>
+        <div className="max-w-350 mx-auto space-y-6">
+          {/* Floating save button will be at the bottom */}
 
           <div className="space-y-8">
             {loading ? (
@@ -425,60 +409,141 @@ export default function AdminHeroPage() {
                 </motion.div>
               ))
             ) : (
-              <div className="space-y-8 animate-in fade-in duration-700">
-                {/* Identity Card */}
-                <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2.5 bg-blue-500/20 text-blue-400 rounded-xl">
-                        <FaUser size={20} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in duration-700">
+                <div className="flex flex-col gap-6">
+                  {/* Identity Card */}
+                  <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
+                    <CardHeader className="p-4 pb-1">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2.5 bg-blue-500/20 text-blue-400 rounded-xl">
+                          <FaUser size={20} />
+                        </div>
+                        <div>
+                          <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
+                            Identity
+                          </CardTitle>
+                          <CardDescription className="text-slate-500 dark:text-slate-400">
+                            Your personal branding and display name.
+                          </CardDescription>
+                        </div>
                       </div>
-                      <div>
-                        <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
-                          Identity
-                        </CardTitle>
-                        <CardDescription className="text-slate-500 dark:text-slate-400">
-                          Your personal branding and display name.
-                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                          First Name
+                        </label>
+                        <Input
+                          className="bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl focus-visible:ring-emerald-500/50 shadow-sm dark:shadow-none"
+                          value={data.name}
+                          onChange={(e) =>
+                            setData((d) => ({ ...d, name: e.target.value }))
+                          }
+                          placeholder="e.g. Shahid Hasan"
+                        />
                       </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
-                        First Name
-                      </label>
-                      <Input
-                        className="bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl focus-visible:ring-emerald-500/50 shadow-sm dark:shadow-none"
-                        value={data.name}
-                        onChange={(e) =>
-                          setData((d) => ({ ...d, name: e.target.value }))
-                        }
-                        placeholder="e.g. Shahid Hasan"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
-                        Last Name{" "}
-                        <span className="text-blue-400 font-normal">
-                          (Highlighted)
-                        </span>
-                      </label>
-                      <Input
-                        className="bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl focus-visible:ring-emerald-500/50 shadow-sm dark:shadow-none"
-                        value={data.lastName}
-                        onChange={(e) =>
-                          setData((d) => ({ ...d, lastName: e.target.value }))
-                        }
-                        placeholder="e.g. Shuvo"
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                          Last Name{" "}
+                          <span className="text-blue-400 font-normal">
+                            (Highlighted)
+                          </span>
+                        </label>
+                        <Input
+                          className="bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl focus-visible:ring-emerald-500/50 shadow-sm dark:shadow-none"
+                          value={data.lastName}
+                          onChange={(e) =>
+                            setData((d) => ({ ...d, lastName: e.target.value }))
+                          }
+                          placeholder="e.g. Shuvo"
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
 
+                  {/* Typing Sequences Card */}
+                  <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
+                    <CardHeader className="p-4 pb-1">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2.5 bg-purple-500/20 text-purple-400 rounded-xl">
+                            <FaInfoCircle size={20} />
+                          </div>
+                          <div>
+                            <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
+                              Typing Sequences
+                            </CardTitle>
+                          </div>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            setData((d) => ({
+                              ...d,
+                              typeSequences: [
+                                ...d.typeSequences,
+                                { text: "", delay: 2000 },
+                              ],
+                            }))
+                          }
+                          className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-white/5 rounded-xl active:scale-95 shadow-sm dark:shadow-none"
+                        >
+                          <FaPlus size={12} className="mr-1" /> Add New
+                        </Button>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="pt-2">
+                      {/* Column labels */}
+                      {data.typeSequences.length > 0 && (
+                        <div className="flex items-center gap-4 px-1 mb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-600">
+                          <span className="w-5" />
+                          <span className="w-4" />
+                          <span className="flex-1">Text</span>
+                          <span className="w-28 text-center">Delay</span>
+                          <span className="w-9" />
+                        </div>
+                      )}
+
+                      {/* Sortable list */}
+                      <SortableContext
+                        items={data.typeSequences.map((_, i) => i.toString())}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        <AnimatePresence mode="popLayout">
+                          {data.typeSequences.map((seq, i) => (
+                            <motion.div
+                              key={`seq-${i}`}
+                              initial={{ opacity: 0, y: 8 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, scale: 0.95 }}
+                              transition={{ duration: 0.16 }}
+                            >
+                              <SortableSeqItem
+                                id={i.toString()}
+                                seq={seq}
+                                index={i}
+                                onUpdate={updateSeq}
+                                onRemove={removeSeq}
+                              />
+                            </motion.div>
+                          ))}
+                        </AnimatePresence>
+                      </SortableContext>
+
+                      {data.typeSequences.length === 0 && (
+                        <div className="text-center py-8 bg-slate-50 dark:bg-slate-950/20 rounded-2xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
+                          <p className="text-slate-500 text-sm italic">
+                            No typing sequences added.
+                          </p>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
                 {/* Assets Card */}
                 <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
-                  <CardHeader className="pb-2">
+                  <CardHeader className="p-4 pb-1">
                     <div className="flex items-center gap-3">
                       <div className="p-2.5 bg-amber-500/20 text-amber-400 rounded-xl">
                         <FaImage size={20} />
@@ -493,8 +558,8 @@ export default function AdminHeroPage() {
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="pt-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <CardContent className="pt-2">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {/* Profile Image UI */}
                       <div className="space-y-4">
                         <ImageUpload
@@ -519,86 +584,6 @@ export default function AdminHeroPage() {
                     </div>
                   </CardContent>
                 </Card>
-
-                {/* Typing Sequences Card */}
-                <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
-                  <CardHeader className="pb-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2.5 bg-purple-500/20 text-purple-400 rounded-xl">
-                          <FaInfoCircle size={20} />
-                        </div>
-                        <div>
-                          <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
-                            Typing Sequences
-                          </CardTitle>
-                        </div>
-                      </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() =>
-                          setData((d) => ({
-                            ...d,
-                            typeSequences: [
-                              ...d.typeSequences,
-                              { text: "", delay: 2000 },
-                            ],
-                          }))
-                        }
-                        className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-white/5 rounded-xl active:scale-95 shadow-sm dark:shadow-none"
-                      >
-                        <FaPlus size={12} className="mr-1" /> Add New
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    {/* Column labels */}
-                    {data.typeSequences.length > 0 && (
-                      <div className="flex items-center gap-4 px-1 mb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-600">
-                        <span className="w-5" />
-                        <span className="w-4" />
-                        <span className="flex-1">Text</span>
-                        <span className="w-28 text-center">Delay</span>
-                        <span className="w-9" />
-                      </div>
-                    )}
-
-                    {/* Sortable list */}
-                    <SortableContext
-                      items={data.typeSequences.map((_, i) => i.toString())}
-                      strategy={verticalListSortingStrategy}
-                    >
-                      <AnimatePresence mode="popLayout">
-                        {data.typeSequences.map((seq, i) => (
-                          <motion.div
-                            key={`seq-${i}`}
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            transition={{ duration: 0.16 }}
-                          >
-                            <SortableSeqItem
-                              id={i.toString()}
-                              seq={seq}
-                              index={i}
-                              onUpdate={updateSeq}
-                              onRemove={removeSeq}
-                            />
-                          </motion.div>
-                        ))}
-                      </AnimatePresence>
-                    </SortableContext>
-
-                    {data.typeSequences.length === 0 && (
-                      <div className="text-center py-8 bg-slate-50 dark:bg-slate-950/20 rounded-2xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
-                        <p className="text-slate-500 text-sm italic">
-                          No typing sequences added.
-                        </p>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
               </div>
             )}
           </div>
@@ -610,6 +595,24 @@ export default function AdminHeroPage() {
       <DragOverlay dropAnimation={null}>
         {activeSeq ? <SeqOverlay seq={activeSeq} /> : null}
       </DragOverlay>
+
+      {/* Floating Save Button */}
+      <div className="fixed bottom-10 right-10 z-50">
+        <Button
+          onClick={handleSave}
+          disabled={saving}
+          className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl p-6 font-black shadow-[0_20px_50px_rgba(16,185,129,0.3)] text-base active:scale-95 transition-all group"
+        >
+          <FaSave
+            className={cn(
+              "mr-1 transition-transform duration-500",
+              saving ? "animate-spin" : "group-hover:rotate-12",
+            )}
+            size={20}
+          />
+          {saving ? "Saving DNA..." : "Apply Changes"}
+        </Button>
+      </div>
     </DndContext>
   );
 }
