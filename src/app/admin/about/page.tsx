@@ -15,7 +15,11 @@ import {
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
-import { AdminField, AdminInput, AdminTextarea } from "../components/AdminFields";
+import {
+  AdminField,
+  AdminInput,
+  AdminTextarea,
+} from "../components/AdminFields";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -93,8 +97,6 @@ export default function AdminAboutPage() {
     }));
     setHighlightInput("");
   }
-
-
 
   function addStat() {
     setData((d) => ({

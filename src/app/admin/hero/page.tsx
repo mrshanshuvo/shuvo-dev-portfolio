@@ -532,9 +532,6 @@ export default function AdminHeroPage() {
                           <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
                             Typing Sequences
                           </CardTitle>
-                          <CardDescription className="text-slate-500 dark:text-slate-400">
-                            Animated roles that appear on your hero section.
-                          </CardDescription>
                         </div>
                       </div>
                       <Button
