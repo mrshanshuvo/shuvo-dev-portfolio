@@ -138,10 +138,21 @@ function SortableProjectCard({
           </h3>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          {project.category && (
-            <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[9px] font-black rounded-lg px-2 py-0.5">
-              {project.category}
-            </Badge>
+          {Array.isArray(project.category) ? (
+            project.category.map((cat) => (
+              <Badge
+                key={cat}
+                className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[9px] font-black rounded-lg px-2 py-0.5"
+              >
+                {cat}
+              </Badge>
+            ))
+          ) : (
+            project.category && (
+              <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[9px] font-black rounded-lg px-2 py-0.5">
+                {project.category}
+              </Badge>
+            )
           )}
           {(project.techNames ?? []).slice(0, 3).map((t) => (
             <span
@@ -248,10 +259,21 @@ function DragOverlayCard({ project }: { project: Project }) {
           </h3>
         </div>
         <div className="flex items-center gap-2">
-          {project.category && (
-            <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[9px] font-black rounded-lg px-2 py-0.5">
-              {project.category}
-            </Badge>
+          {Array.isArray(project.category) ? (
+            project.category.map((cat) => (
+              <Badge
+                key={cat}
+                className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[9px] font-black rounded-lg px-2 py-0.5"
+              >
+                {cat}
+              </Badge>
+            ))
+          ) : (
+            project.category && (
+              <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[9px] font-black rounded-lg px-2 py-0.5">
+                {project.category}
+              </Badge>
+            )
           )}
         </div>
         <div className="flex items-center gap-3 text-[10px] text-slate-500">
@@ -375,7 +397,11 @@ export default function AdminProjectsListPage() {
 
   const filtered = data.filter((p) => {
     const mSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase());
-    const mCat = filterCategory === "All" || p.category === filterCategory;
+    const mCat =
+      filterCategory === "All" ||
+      (Array.isArray(p.category)
+        ? p.category.includes(filterCategory)
+        : p.category === filterCategory);
     return mSearch && mCat;
   });
 

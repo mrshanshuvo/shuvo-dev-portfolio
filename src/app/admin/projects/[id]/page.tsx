@@ -16,6 +16,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import ImageUpload from "../../components/ImageUpload";
 import MediaGalleryManager from "../../components/MediaGalleryManager";
 import MultiLinkManager from "../../components/MultiLinkManager";
+import CategoryCombobox from "../../components/CategoryCombobox";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -23,13 +24,6 @@ import {
   AdminInput,
   AdminTextarea,
 } from "../../components/AdminFields";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import type {
   Project,
@@ -47,7 +41,7 @@ const EMPTY_PROJECT: Omit<Project, "_id"> = {
   github: [],
   live: [],
   featured: false,
-  category: "",
+  category: [],
   improvements: [],
   media: [],
   order: 0,
@@ -79,6 +73,16 @@ export default function ProjectEditPage() {
     setForm((prev) => ({ ...prev, [field]: val }));
   }
 
+  const refreshCategories = async () => {
+    try {
+      const res = await fetch("/api/admin/categories");
+      const data = await res.json();
+      setCategories(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Failed to fetch categories:", err);
+    }
+  };
+
   useEffect(() => {
     const fetches: Promise<any>[] = [
       fetch("/api/admin/categories").then((r) => r.json()),
@@ -96,7 +100,11 @@ export default function ProjectEditPage() {
           slug: project.slug || "",
           description: project.description || "",
           image: project.image || "",
-          category: project.category || "",
+          category: Array.isArray(project.category)
+            ? project.category
+            : project.category
+            ? [project.category]
+            : [],
           techNames: Array.isArray(project.techNames) ? project.techNames : [],
           github: Array.isArray(project.github) ? project.github : [],
           live: Array.isArray(project.live) ? project.live : [],
@@ -268,23 +276,13 @@ export default function ProjectEditPage() {
                 />
               </AdminField>
 
-              <AdminField label="Category" className="w-60">
-                <Select
+              <AdminField label="Category" className="min-w-[280px]">
+                <CategoryCombobox
                   value={form.category ?? ""}
-                  onValueChange={(v) => update("category", v || "")}
-                >
-                  <SelectTrigger className="py-7 bg-slate-950/50 border-white/5 rounded-2xl font-bold">
-                    <SelectValue placeholder="Select Category" />
-                  </SelectTrigger>
-
-                  <SelectContent className="bg-slate-900 border-white/10 text-white rounded-2xl">
-                    {categories.map((c) => (
-                      <SelectItem key={c.name} value={c.name}>
-                        {c.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  onChange={(v) => update("category", v)}
+                  categories={categories}
+                  refreshCategories={refreshCategories}
+                />
               </AdminField>
 
               <Button

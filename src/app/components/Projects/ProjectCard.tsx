@@ -78,8 +78,23 @@ export default function ProjectCard({
               <FaStar className="text-xs" /> Featured
             </div>
           )}
-          <div className="absolute top-4 left-4 px-3 py-1.5 bg-slate-900/80 text-white font-bold text-xs rounded-full backdrop-blur-sm tracking-widest uppercase border border-white/10 shadow-lg">
-            {project.category}
+          <div className="absolute top-4 left-4 flex flex-wrap gap-2 max-w-[calc(100%-100px)]">
+            {Array.isArray(project.category) ? (
+              project.category.map((cat) => (
+                <div
+                  key={cat}
+                  className="px-3 py-1.5 bg-slate-900/80 text-white font-bold text-[10px] rounded-full backdrop-blur-sm tracking-widest uppercase border border-white/10 shadow-lg whitespace-nowrap"
+                >
+                  {cat}
+                </div>
+              ))
+            ) : (
+              project.category && (
+                <div className="px-3 py-1.5 bg-slate-900/80 text-white font-bold text-[10px] rounded-full backdrop-blur-sm tracking-widest uppercase border border-white/10 shadow-lg whitespace-nowrap">
+                  {project.category}
+                </div>
+              )
+            )}
           </div>
         </div>
 

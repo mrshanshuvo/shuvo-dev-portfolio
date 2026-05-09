@@ -37,11 +37,26 @@ export default function ProjectDetailClient({ project }: Props) {
             <h1 className="text-5xl md:text-7xl font-black text-slate-900 dark:text-white mb-6 tracking-tight">
               {project.title}
             </h1>
-            <div className="flex items-center gap-4">
-              <span className="px-4 py-1.5 bg-emerald-500 text-white font-black text-xs rounded-full uppercase tracking-[0.2em]">
-                {project.category}
-              </span>
-              <div className="h-px flex-1 bg-slate-200 dark:bg-white/10" />
+            <div className="flex items-center gap-4 flex-wrap">
+              <div className="flex flex-wrap gap-3">
+                {Array.isArray(project.category) ? (
+                  project.category.map((cat) => (
+                    <span
+                      key={cat}
+                      className="px-4 py-1.5 bg-emerald-500 text-white font-black text-[10px] rounded-full uppercase tracking-[0.2em] shadow-lg shadow-emerald-500/20"
+                    >
+                      {cat}
+                    </span>
+                  ))
+                ) : (
+                  project.category && (
+                    <span className="px-4 py-1.5 bg-emerald-500 text-white font-black text-[10px] rounded-full uppercase tracking-[0.2em] shadow-lg shadow-emerald-500/20">
+                      {project.category}
+                    </span>
+                  )
+                )}
+              </div>
+              <div className="h-px flex-1 bg-slate-200 dark:bg-white/10 min-w-8" />
             </div>
           </div>
 
