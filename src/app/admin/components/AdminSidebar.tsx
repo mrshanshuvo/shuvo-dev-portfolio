@@ -264,23 +264,13 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
         </nav>
 
         {/* Footer */}
-        <div className="p-6 border-t border-white/5 bg-slate-950/20 space-y-3">
-          <Link
-            href="/"
-            target="_blank"
-            className="flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-bold text-slate-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/5 transition-all group"
-          >
-            <div className="p-2 rounded-lg bg-slate-900 group-hover:bg-emerald-500/10 group-hover:text-emerald-400 transition-colors">
-              <FaExternalLinkAlt size={12} />
-            </div>
-            View Portfolio
-          </Link>
+        <div className="p-2 border-t border-white/5 bg-slate-950/20 space-y-3">
           <button
             onClick={() => signOut({ callbackUrl: "/admin/login" })}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-bold text-slate-400 hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/10 transition-all group"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-normal font-bold text-slate-400 hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/10 transition-all group"
           >
             <div className="p-2 rounded-lg bg-slate-900 group-hover:bg-red-500/20 transition-colors">
-              <FaSignOutAlt size={12} />
+              <FaSignOutAlt size={16} />
             </div>
             Sign Out
           </button>

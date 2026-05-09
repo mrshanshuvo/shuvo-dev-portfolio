@@ -20,9 +20,12 @@ import ImageUpload from "../../components/ImageUpload";
 import MediaGalleryManager from "../../components/MediaGalleryManager";
 import MultiLinkManager from "../../components/MultiLinkManager";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import {
+  AdminField,
+  AdminInput,
+  AdminTextarea,
+} from "../../components/AdminFields";
 import {
   Select,
   SelectContent,
@@ -253,78 +256,63 @@ export default function ProjectEditPage() {
       </header>
 
       {/* Form */}
-      <main className="p-6 md:p-12 max-w-7xl mx-auto space-y-10">
+      <main className="p-6 md:p-12 max-w-5xl mx-auto space-y-12 pb-32">
         {/* Row 1: Media + Core Info */}
-        <div className="flex flex-col xl:flex-row gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-10">
           {/* Left: Media Gallery */}
-          <div className="w-full xl:w-140 shrink-0 space-y-6">
+          <div className="space-y-8">
             <MediaGalleryManager
               media={(form.media as MediaItem[]) || []}
               onChange={(m) => update("media", m as any)}
-              label="Project Media Showcase"
+              label="Project Showcase"
             />
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
-                Cover / Thumbnail
-              </label>
+            <AdminField label="Thumbnail / Cover">
               <ImageUpload
                 value={form.image}
                 onChange={(v) => update("image", v)}
               />
-            </div>
+            </AdminField>
           </div>
 
           {/* Right: Core Fields */}
-          <div className="flex-1 space-y-6">
-            {/* Title + Featured */}
+          <div className="space-y-8">
             <div className="flex gap-4 items-start">
-              <div className="flex-1 space-y-1.5">
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
-                  Project Title
-                </label>
-                <Input
-                  className="bg-slate-900/50 border-white/10 text-white rounded-xl h-12 focus-visible:ring-emerald-500/50 font-bold text-base"
+              <AdminField label="Project Title" className="flex-1">
+                <AdminInput
                   value={form.title}
                   onChange={(e) => update("title", e.target.value)}
                   placeholder="e.g. AI-Powered Dashboard"
                 />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
-                  Featured
-                </label>
+              </AdminField>
+              <div className="pt-2">
                 <Button
                   variant="ghost"
                   onClick={() => update("featured", !form.featured)}
                   className={cn(
-                    "h-12 w-12 rounded-xl border transition-all",
+                    "h-14 w-14 rounded-2xl border transition-all",
                     form.featured
                       ? "bg-amber-500/10 border-amber-500/30 text-amber-400"
-                      : "bg-slate-900/50 border-white/10 text-slate-600 hover:text-amber-400",
+                      : "bg-slate-950/50 border-white/5 text-slate-600 hover:text-amber-400",
                   )}
                 >
                   {form.featured ? (
-                    <FaStar size={18} />
+                    <FaStar size={20} />
                   ) : (
-                    <FaRegStar size={18} />
+                    <FaRegStar size={20} />
                   )}
                 </Button>
               </div>
             </div>
 
-            {/* Category */}
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
-                Category
-              </label>
+            <AdminField label="Category">
               <Select
                 value={form.category ?? ""}
                 onValueChange={(v) => update("category", v || "")}
               >
-                <SelectTrigger className="bg-slate-900/50 border-white/10 text-white rounded-xl h-11">
+                <SelectTrigger className="bg-slate-950/50 border-white/5 rounded-2xl h-14 font-bold">
                   <SelectValue placeholder="Select category..." />
                 </SelectTrigger>
-                <SelectContent className="bg-slate-900 border-white/10 text-white">
+                <SelectContent className="bg-slate-900 border-white/10 text-white rounded-2xl">
                   {categories.map((c) => (
                     <SelectItem key={c.name} value={c.name}>
                       {c.name}
@@ -332,34 +320,22 @@ export default function ProjectEditPage() {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+            </AdminField>
 
-            {/* Description */}
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
-                Description
-              </label>
-              <Textarea
-                className="bg-slate-900/50 border-white/10 text-white rounded-xl min-h-[130px] focus-visible:ring-emerald-500/50 font-medium leading-relaxed"
+            <AdminField label="Value Proposition (Description)">
+              <AdminTextarea
+                className="min-h-[160px]"
                 value={form.description}
                 onChange={(e) => update("description", e.target.value)}
-                placeholder="What does this project do? What problem does it solve?"
+                placeholder="What problem does this project solve?"
               />
-            </div>
+            </AdminField>
 
-            {/* Tech Stack */}
-            <div className="space-y-3">
-              <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
-                Tech Stack
-              </label>
-              <div className="flex gap-2">
-                <div className="relative group/input flex-1">
-                  <FaCode
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-emerald-400 transition-colors"
-                    size={12}
-                  />
-                  <Input
-                    className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-10 h-11 focus-visible:ring-emerald-500/50"
+            <AdminField label="Tech Stack">
+              <div className="space-y-4">
+                <div className="flex gap-3">
+                  <AdminInput
+                    icon={FaCode}
                     value={techInput}
                     onChange={(e) => setTechInput(e.target.value)}
                     onKeyDown={(e) =>
@@ -367,133 +343,115 @@ export default function ProjectEditPage() {
                     }
                     placeholder="Add technology..."
                   />
+                  <Button
+                    onClick={addTech}
+                    className="bg-slate-800 hover:bg-slate-700 text-white rounded-2xl h-14 w-14 shrink-0 border border-white/5"
+                  >
+                    <FaPlus size={14} />
+                  </Button>
                 </div>
-                <Button
-                  onClick={addTech}
-                  className="bg-slate-800 hover:bg-slate-700 text-white rounded-xl h-11 w-11 p-0 border border-white/5"
-                >
-                  <FaPlus size={12} />
-                </Button>
+                <div className="flex flex-wrap gap-2">
+                  <AnimatePresence mode="popLayout">
+                    {form.techNames.map((t) => (
+                      <motion.div
+                        key={t}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                      >
+                        <Badge className="bg-slate-900 border-white/5 text-slate-300 flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs group/badge cursor-default">
+                          {t}
+                          <FaTimes
+                            size={9}
+                            className="text-slate-600 group-hover/badge:text-red-400 cursor-pointer transition-colors"
+                            onClick={() =>
+                              update(
+                                "techNames",
+                                form.techNames.filter((x) => x !== t),
+                              )
+                            }
+                          />
+                        </Badge>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
               </div>
-              <div className="flex flex-wrap gap-2">
-                <AnimatePresence mode="popLayout">
-                  {form.techNames.map((t) => (
-                    <motion.div
-                      key={t}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.8 }}
-                    >
-                      <Badge className="bg-slate-800 border-white/5 text-slate-300 flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs group/badge cursor-default">
-                        {t}
-                        <FaTimes
-                          size={9}
-                          className="text-slate-600 group-hover/badge:text-red-400 cursor-pointer transition-colors"
-                          onClick={() =>
-                            update(
-                              "techNames",
-                              form.techNames.filter((x) => x !== t),
-                            )
-                          }
-                        />
-                      </Badge>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </div>
-            </div>
+            </AdminField>
           </div>
         </div>
 
-        {/* Row 2: Links */}
-        <div className="bg-slate-900/20 p-6 rounded-[2rem] border border-white/5 space-y-8">
-          <MultiLinkManager
-            label="Repositories & Codebases"
-            iconType="github"
-            links={(form.github as LinkItem[]) || []}
-            onChange={(l) => update("github", l as any)}
-          />
-          <MultiLinkManager
-            label="Live Deployments & Sites"
-            iconType="live"
-            links={(form.live as LinkItem[]) || []}
-            onChange={(l) => update("live", l as any)}
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="p-8 bg-slate-950/40 rounded-[2.5rem] border border-white/5 space-y-8">
+            <MultiLinkManager
+              label="Repositories"
+              iconType="github"
+              links={(form.github as LinkItem[]) || []}
+              onChange={(l) => update("github", l as any)}
+            />
+          </div>
+          <div className="p-8 bg-slate-950/40 rounded-[2.5rem] border border-white/5 space-y-8">
+            <MultiLinkManager
+              label="Live Deployments"
+              iconType="live"
+              links={(form.live as LinkItem[]) || []}
+              onChange={(l) => update("live", l as any)}
+            />
+          </div>
         </div>
 
-        {/* Row 3: Improvements */}
-        <div className="space-y-4">
-          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
-            Key Improvements & Highlights
-          </label>
-          <div className="flex gap-2">
-            <div className="relative group/input flex-1">
-              <FaInfoCircle
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-emerald-400 transition-colors"
-                size={12}
-              />
-              <Input
-                className="bg-slate-900/50 border-white/10 text-white rounded-xl pl-10 h-11 focus-visible:ring-emerald-500/50"
+        <AdminField label="Key Improvements & Impacts">
+          <div className="space-y-6">
+            <div className="flex gap-3">
+              <AdminInput
+                icon={FaInfoCircle}
                 value={impInput}
                 onChange={(e) => setImpInput(e.target.value)}
                 onKeyDown={(e) =>
                   e.key === "Enter" && (e.preventDefault(), addImprovement())
                 }
-                placeholder="e.g. Reduced load time by 60%..."
+                placeholder="What was the key outcome or technical hurdle you solved?"
               />
+              <Button
+                onClick={addImprovement}
+                className="bg-slate-800 hover:bg-slate-700 text-white rounded-2xl h-14 w-14 shrink-0 border border-white/5"
+              >
+                <FaPlus size={14} />
+              </Button>
             </div>
-            <Button
-              onClick={addImprovement}
-              className="bg-slate-800 hover:bg-slate-700 text-white rounded-xl h-11 w-11 p-0 border border-white/5"
-            >
-              <FaPlus size={12} />
-            </Button>
+            <div className="space-y-3">
+              <AnimatePresence mode="popLayout">
+                {(form.improvements ?? []).map((imp, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 10 }}
+                    className="flex items-center gap-4 bg-slate-950/50 border border-white/5 rounded-2xl px-5 py-4 group/imp"
+                  >
+                    <div className="w-2 h-2 rounded-full bg-emerald-500/40 shrink-0" />
+                    <span className="text-sm text-slate-300 flex-1 font-medium leading-relaxed">
+                      {imp}
+                    </span>
+                    <button
+                      onClick={() =>
+                        update(
+                          "improvements",
+                          (form.improvements ?? []).filter(
+                            (_, idx) => idx !== i,
+                          ),
+                        )
+                      }
+                      className="text-slate-600 hover:text-red-400 transition-colors p-2 hover:bg-red-400/10 rounded-lg"
+                    >
+                      <FaTrash size={12} />
+                    </button>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
           </div>
-          <div className="space-y-2">
-            <AnimatePresence mode="popLayout">
-              {(form.improvements ?? []).map((imp, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 10 }}
-                  className="flex items-center gap-3 bg-slate-900/30 border border-white/5 rounded-xl px-4 py-3 group/imp"
-                >
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-                  <span className="text-sm text-slate-300 flex-1">{imp}</span>
-                  <FaTrash
-                    size={10}
-                    className="text-slate-700 group-hover/imp:text-red-400 cursor-pointer transition-colors shrink-0"
-                    onClick={() =>
-                      update(
-                        "improvements",
-                        (form.improvements ?? []).filter((_, idx) => idx !== i),
-                      )
-                    }
-                  />
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-        </div>
-
-        {/* Bottom Save */}
-        <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
-          <Button
-            variant="ghost"
-            onClick={() => router.push("/admin/projects")}
-            className="text-slate-500 hover:text-white rounded-xl h-12 px-6"
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSave}
-            disabled={saving}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl h-12 px-10 font-black shadow-lg shadow-emerald-600/20"
-          >
-            {saving ? "Saving..." : isNew ? "Create Project" : "Save Changes"}
-          </Button>
-        </div>
+        </AdminField>
       </main>
     </div>
   );
