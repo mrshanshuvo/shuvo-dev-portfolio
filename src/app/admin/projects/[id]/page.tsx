@@ -167,14 +167,14 @@ export default function ProjectEditPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center">
         <div className="w-8 h-8 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       {/* Toast */}
       <AnimatePresence>
         {toast && (
@@ -209,7 +209,7 @@ export default function ProjectEditPage() {
       </AnimatePresence>
 
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-xl border-b border-white/5 px-6 md:px-12 py-4">
+      <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/5 px-6 md:px-12 py-4">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div>
@@ -217,7 +217,7 @@ export default function ProjectEditPage() {
                 {isNew ? "Configuration" : "Editing"}
               </span>
               {!isNew && (
-                <p className="text-sm font-bold text-white truncate max-w-xs">
+                <p className="text-sm font-bold text-slate-900 dark:text-white truncate max-w-xs">
                   {form.title || "Untitled"}
                 </p>
               )}
@@ -285,22 +285,24 @@ export default function ProjectEditPage() {
                 />
               </AdminField>
 
-              <Button
-                variant="ghost"
-                onClick={() => update("featured", !form.featured)}
-                className={cn(
-                  "rounded-2xl border transition-all py-7 px-5",
-                  form.featured
-                    ? "bg-amber-500/10 border-amber-500/30 text-amber-400"
-                    : "bg-slate-950/50 border-white/5 text-slate-600 hover:text-amber-400",
-                )}
-              >
-                {form.featured ? (
-                  <FaStar className="size-6" />
-                ) : (
-                  <FaRegStar className="size-6" />
-                )}
-              </Button>
+              <AdminField label="Featured Project">
+                <Button
+                  variant="ghost"
+                  onClick={() => update("featured", !form.featured)}
+                  className={cn(
+                    "rounded-2xl border transition-all py-7 px-5",
+                    form.featured
+                      ? "bg-amber-500/10 border-amber-500/30 text-amber-500 dark:text-amber-400"
+                      : "bg-white dark:bg-slate-950/50 border-slate-200 dark:border-white/5 text-slate-400 dark:text-slate-600 hover:text-amber-500 dark:hover:text-amber-400",
+                  )}
+                >
+                  {form.featured ? (
+                    <FaStar className="size-6" />
+                  ) : (
+                    <FaRegStar className="size-6" />
+                  )}
+                </Button>
+              </AdminField>
             </div>
 
             <AdminField label="Value Proposition (Description)">
@@ -340,7 +342,7 @@ export default function ProjectEditPage() {
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.8 }}
                       >
-                        <Badge className="bg-slate-900 border-white/5 text-slate-300 flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs group/badge cursor-default">
+                        <Badge className="bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs group/badge cursor-default">
                           {t}
                           <FaTimes
                             size={9}
@@ -361,7 +363,7 @@ export default function ProjectEditPage() {
             </AdminField>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="p-6 bg-slate-950/40 rounded-[2rem] border border-white/5 space-y-6">
+              <div className="p-6 bg-white dark:bg-slate-950/40 rounded-[2rem] border border-slate-200 dark:border-white/5 space-y-6">
                 <MultiLinkManager
                   label="Github Repositories"
                   iconType="github"
@@ -369,7 +371,7 @@ export default function ProjectEditPage() {
                   onChange={(l) => update("github", l as any)}
                 />
               </div>
-              <div className="p-6 bg-slate-950/40 rounded-[2rem] border border-white/5 space-y-6">
+              <div className="p-6 bg-white dark:bg-slate-950/40 rounded-[2rem] border border-slate-200 dark:border-white/5 space-y-6">
                 <MultiLinkManager
                   label="Live Deployments"
                   iconType="live"
@@ -407,10 +409,10 @@ export default function ProjectEditPage() {
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: 10 }}
-                        className="flex items-center gap-4 bg-slate-950/50 border border-white/5 rounded-2xl px-5 py-4 group/imp"
+                        className="flex items-center gap-4 bg-white dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 rounded-2xl px-5 py-4 group/imp shadow-sm dark:shadow-none"
                       >
                         <div className="w-2 h-2 rounded-full bg-emerald-500/40 shrink-0" />
-                        <span className="text-sm text-slate-300 flex-1 font-medium leading-relaxed">
+                        <span className="text-sm text-slate-600 dark:text-slate-300 flex-1 font-medium leading-relaxed">
                           {imp}
                         </span>
                         <button

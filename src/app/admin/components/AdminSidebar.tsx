@@ -180,7 +180,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-72 bg-slate-950 border-r border-white/5 flex flex-col h-screen transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto lg:z-auto",
+          "fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-white/5 flex flex-col h-screen transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto lg:z-auto",
           isOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
@@ -189,14 +189,14 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
           <div className="flex items-center gap-4">
             <div className="relative group">
               <div className="absolute -inset-1.5 bg-linear-to-tr from-emerald-600 to-blue-600 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-              <div className="relative w-11 h-11 bg-slate-900 border border-white/10 rounded-xl flex items-center justify-center">
-                <span className="text-white font-black text-lg tracking-tighter">
+              <div className="relative w-11 h-11 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl flex items-center justify-center">
+                <span className="text-slate-900 dark:text-white font-black text-lg tracking-tighter">
                   A
                 </span>
               </div>
             </div>
             <div>
-              <p className="text-white font-bold text-base tracking-tight">
+              <p className="text-slate-900 dark:text-white font-bold text-base tracking-tight">
                 Admin <span className="text-emerald-400">Panel</span>
               </p>
               <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">
@@ -212,7 +212,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
           data-lenis-prevent
         >
           <div className="px-4 mb-4">
-            <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em]">
+            <p className="text-[10px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em]">
               Management
             </p>
           </div>
@@ -238,8 +238,8 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                 className={cn(
                   "group relative flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all duration-300",
                   isActive
-                    ? "bg-white/5 text-white shadow-[0_0_20px_rgba(255,255,255,0.02)] border border-white/10"
-                    : "text-slate-500 hover:text-slate-200 hover:bg-white/2",
+                    ? "bg-slate-100 dark:bg-white/5 text-emerald-600 dark:text-white shadow-sm dark:shadow-[0_0_20px_rgba(255,255,255,0.02)] border border-slate-200 dark:border-white/10"
+                    : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5",
                 )}
               >
                 {isActive && (

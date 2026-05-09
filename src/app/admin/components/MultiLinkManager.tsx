@@ -68,7 +68,7 @@ export default function MultiLinkManager({
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="group relative bg-slate-900/50 border border-white/5 p-3 rounded-2xl space-y-2 hover:border-white/10 transition-all"
+              className="group relative bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/5 p-3 rounded-2xl space-y-2 hover:border-slate-300 dark:hover:border-white/10 transition-all"
             >
               <div className="flex items-center gap-2">
                 <Icon
@@ -80,7 +80,7 @@ export default function MultiLinkManager({
                   size={12}
                 />
                 <Input
-                  className="bg-transparent border-none p-0 h-6 text-[11px] font-bold text-white focus-visible:ring-0 flex-1 min-w-0"
+                  className="bg-transparent border-none p-0 h-6 text-[11px] font-bold text-slate-900 dark:text-white focus-visible:ring-0 flex-1 min-w-0"
                   value={link.label}
                   onChange={(e) => updateLink(i, "label", e.target.value)}
                   placeholder="Label"
@@ -95,7 +95,7 @@ export default function MultiLinkManager({
                 </Button>
               </div>
               <Input
-                className="bg-slate-950/50 border-white/5 h-8 text-[10px] text-slate-400 rounded-lg focus-visible:ring-white/10"
+                className="bg-white dark:bg-slate-950/50 border-slate-200 dark:border-white/5 h-8 text-[10px] text-slate-500 dark:text-slate-400 rounded-lg focus-visible:ring-emerald-500/20"
                 value={link.url}
                 onChange={(e) => updateLink(i, "url", e.target.value)}
                 placeholder="URL"
@@ -104,33 +104,27 @@ export default function MultiLinkManager({
           ))}
         </AnimatePresence>
 
-        <div className="bg-slate-950/20 border-2 border-dashed border-white/5 p-3 rounded-2xl space-y-2">
-          <div className="flex items-center gap-2">
-            <FaPlus className="text-slate-600" size={10} />
+        <div className="flex gap-2 p-3 bg-slate-50 dark:bg-slate-900/50 border border-dashed border-slate-300 dark:border-white/10 rounded-2xl">
+          <div className="flex-1 space-y-2">
             <Input
-              className="bg-transparent border-none pl-3 h-8 text-[11px] font-bold text-slate-400 focus-visible:ring-0"
+              className="bg-transparent border-none p-0 h-6 text-[11px] font-bold text-slate-900 dark:text-white focus-visible:ring-0"
               value={newLabel}
               onChange={(e) => setNewLabel(e.target.value)}
-              placeholder="Add Label"
-              onKeyDown={(e) => e.key === "Enter" && addLink()}
+              placeholder="Title (e.g. Frontend Repo)"
             />
-          </div>
-          <div className="flex gap-2">
             <Input
-              className="bg-slate-950/50 border-white/5 h-8 text-[10px] text-slate-400 rounded-lg focus-visible:ring-white/10"
+              className="bg-transparent border-none p-0 h-6 text-[10px] text-slate-500 dark:text-slate-400 focus-visible:ring-0"
               value={newUrl}
               onChange={(e) => setNewUrl(e.target.value)}
-              placeholder="Add URL"
-              onKeyDown={(e) => e.key === "Enter" && addLink()}
+              placeholder="URL (https://...)"
             />
-            <Button
-              onClick={addLink}
-              variant="outline"
-              className="h-8 w-8 p-0 border-white/10 rounded-lg"
-            >
-              +
-            </Button>
           </div>
+          <Button
+            onClick={addLink}
+            className="h-12 w-12 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-xl transition-all"
+          >
+            <FaPlus size={14} />
+          </Button>
         </div>
       </div>
     </div>

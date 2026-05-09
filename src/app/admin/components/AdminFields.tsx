@@ -52,7 +52,7 @@ export function AdminInput({
       )}
       <Input
         className={cn(
-          "bg-slate-950/40 border-white/5 rounded-xl h-12 focus:border-emerald-500/30 focus:ring-4 focus:ring-emerald-500/5 transition-all duration-300 font-bold text-sm text-slate-200 placeholder:text-slate-600 shadow-inner shadow-black/20",
+          "bg-white dark:bg-slate-950/40 border-slate-200 dark:border-white/5 rounded-xl h-12 focus:border-emerald-500/30 focus:ring-4 focus:ring-emerald-500/5 transition-all duration-300 font-bold text-sm text-slate-900 dark:text-slate-200 placeholder:text-slate-500 dark:placeholder:text-slate-600 shadow-inner dark:shadow-black/20",
           Icon && "pl-11",
           className,
         )}
@@ -80,7 +80,7 @@ export function AdminTextarea({
       )}
       <Textarea
         className={cn(
-          "bg-slate-950/40 border-white/5 rounded-xl min-h-[100px] focus:border-emerald-500/30 focus:ring-4 focus:ring-emerald-500/5 transition-all duration-300 p-4 leading-relaxed text-sm text-slate-200 placeholder:text-slate-600 shadow-inner shadow-black/20",
+          "bg-white dark:bg-slate-950/40 border-slate-200 dark:border-white/5 rounded-xl min-h-[100px] focus:border-emerald-500/30 focus:ring-4 focus:ring-emerald-500/5 transition-all duration-300 p-4 leading-relaxed text-sm text-slate-900 dark:text-slate-200 placeholder:text-slate-500 dark:placeholder:text-slate-600 shadow-inner dark:shadow-black/20",
           Icon && "pl-11",
           className,
         )}

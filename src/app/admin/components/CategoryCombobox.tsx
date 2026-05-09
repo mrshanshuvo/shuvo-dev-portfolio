@@ -84,10 +84,10 @@ export default function CategoryCombobox({
       <div
         onClick={() => setOpen(!open)}
         className={cn(
-          "w-full flex flex-wrap gap-2 p-2 min-h-[56px] bg-slate-950/50 border rounded-2xl transition-all cursor-pointer outline-none",
+          "w-full flex flex-wrap gap-2 p-2 min-h-[56px] bg-white dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 rounded-2xl transition-all cursor-pointer outline-none",
           open
             ? "border-emerald-500/50 ring-2 ring-emerald-500/20"
-            : "border-white/5 hover:border-white/10"
+            : "border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10"
         )}
       >
         {value.length === 0 && (
@@ -129,8 +129,8 @@ export default function CategoryCombobox({
       </div>
 
       {open && (
-        <div className="absolute top-full left-0 mt-2 w-full bg-slate-900 border border-white/10 rounded-[1.5rem] shadow-2xl z-50 overflow-hidden flex flex-col p-2 animate-in fade-in zoom-in-95 duration-200">
-          <div className="flex items-center bg-slate-950/50 border border-white/5 rounded-xl px-3 py-2.5 mb-2 focus-within:border-white/20 transition-colors">
+        <div className="absolute top-full left-0 mt-2 w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-[1.5rem] shadow-2xl z-50 overflow-hidden flex flex-col p-2 animate-in fade-in zoom-in-95 duration-200">
+          <div className="flex items-center bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 rounded-xl px-3 py-2.5 mb-2 focus-within:border-emerald-500/50 transition-colors">
             <FaSearch className="text-slate-500 mr-2 shrink-0" size={12} />
             <input
               autoFocus

@@ -98,7 +98,7 @@ function SortableProjectCard({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.97 }}
-      className="group relative flex items-center gap-4 bg-slate-900/40 backdrop-blur-xl border border-white/5 hover:border-white/10 rounded-[1.5rem] p-4 transition-all duration-300"
+      className="group relative flex items-center gap-4 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10 rounded-[1.5rem] p-4 transition-all duration-300 shadow-sm dark:shadow-none"
     >
       {/* Drag handle */}
       <div
@@ -110,7 +110,7 @@ function SortableProjectCard({
       </div>
 
       {/* Thumbnail */}
-      <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-800 shrink-0 border border-white/5">
+      <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0 border border-slate-200 dark:border-white/5">
         {thumb ? (
           <div className="relative w-full h-full">
             <Image
@@ -133,7 +133,7 @@ function SortableProjectCard({
           {project.featured && (
             <FaStar className="text-amber-400 shrink-0" size={11} />
           )}
-          <h3 className="font-bold text-white text-sm truncate">
+          <h3 className="font-bold text-slate-900 dark:text-white text-sm truncate">
             {project.title}
           </h3>
         </div>
@@ -408,7 +408,7 @@ export default function AdminProjectsListPage() {
   const isFiltered = searchQuery || filterCategory !== "All";
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8 space-y-6">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-200 p-4 md:p-8 space-y-6">
       {/* Toast */}
       <AnimatePresence>
         {toast && (
@@ -446,7 +446,7 @@ export default function AdminProjectsListPage() {
 
       <div className="w-full space-y-6">
         {/* Action bar — title is already shown in the AdminTopbar breadcrumb */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-2xl p-4 shadow-sm dark:shadow-none">
           <div className="flex items-center gap-4 flex-wrap flex-1">
             <Badge
               variant="outline"
@@ -461,7 +461,7 @@ export default function AdminProjectsListPage() {
                 size={12}
               />
               <Input
-                className="bg-slate-950 border-white/5 rounded-xl pl-9 h-10 text-xs focus-visible:ring-emerald-500/30"
+                className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-white/5 rounded-xl pl-9 h-10 text-xs focus-visible:ring-emerald-500/30 text-slate-900 dark:text-white"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search projects..."
@@ -472,7 +472,7 @@ export default function AdminProjectsListPage() {
               value={filterCategory}
               onValueChange={(v) => setFilterCategory(v || "All")}
             >
-              <SelectTrigger className="bg-slate-950 border-white/5 rounded-xl h-10 w-[150px] text-xs">
+              <SelectTrigger className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-white/5 rounded-xl h-10 w-[150px] text-xs text-slate-900 dark:text-white">
                 <FaFilter className="mr-2 text-slate-600" size={10} />
                 <SelectValue />
               </SelectTrigger>
