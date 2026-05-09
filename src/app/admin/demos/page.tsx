@@ -110,13 +110,13 @@ function SortableDemoRow({
               {item.tech.slice(0, 3).map((t, i) => (
                 <span
                   key={i}
-                  className="text-[9px] text-slate-500 font-medium px-1.5 py-0.5 bg-white/5 rounded border border-white/5"
+                  className="text-[10px] text-slate-500 font-medium px-1.5 py-0.5 bg-white/5 rounded border border-white/5"
                 >
                   {t}
                 </span>
               ))}
               {item.tech.length > 3 && (
-                <span className="text-[9px] text-slate-600">
+                <span className="text-[10px] text-slate-600">
                   +{item.tech.length - 3}
                 </span>
               )}
@@ -308,7 +308,7 @@ export default function AdminDemosPage() {
           <div className="flex items-center gap-3">
             <Badge
               variant="outline"
-              className="bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[9px]"
+              className="bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[10px]"
             >
               {data.length} Playground Projects
             </Badge>

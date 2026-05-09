@@ -142,26 +142,26 @@ function SortableProjectCard({
             ? project.category.map((cat) => (
                 <Badge
                   key={cat}
-                  className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-[9px] font-black rounded-lg px-2 py-0.5 shadow-sm dark:shadow-none"
+                  className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-[10px] font-black rounded-lg px-2 py-0.5 shadow-sm dark:shadow-none"
                 >
                   {cat}
                 </Badge>
               ))
             : project.category && (
-                <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[9px] font-black rounded-lg px-2 py-0.5">
+                <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px] font-black rounded-lg px-2 py-0.5">
                   {project.category}
                 </Badge>
               )}
           {(project.techNames ?? []).slice(0, 3).map((t) => (
             <span
               key={t}
-              className="text-[9px] text-slate-500 bg-slate-800/50 px-1.5 py-0.5 rounded-md font-medium"
+              className="text-[10px] text-slate-500 bg-slate-800/50 px-1.5 py-0.5 rounded-md font-medium"
             >
               {t}
             </span>
           ))}
           {(project.techNames?.length ?? 0) > 3 && (
-            <span className="text-[9px] text-slate-600">
+            <span className="text-[10px] text-slate-600">
               +{(project.techNames?.length ?? 0) - 3}
             </span>
           )}
@@ -261,13 +261,13 @@ function DragOverlayCard({ project }: { project: Project }) {
             ? project.category.map((cat) => (
                 <Badge
                   key={cat}
-                  className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[9px] font-black rounded-lg px-2 py-0.5"
+                  className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px] font-black rounded-lg px-2 py-0.5"
                 >
                   {cat}
                 </Badge>
               ))
             : project.category && (
-                <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[9px] font-black rounded-lg px-2 py-0.5">
+                <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px] font-black rounded-lg px-2 py-0.5">
                   {project.category}
                 </Badge>
               )}
@@ -446,7 +446,7 @@ export default function AdminProjectsListPage() {
           <div className="flex items-center gap-4 flex-wrap flex-1">
             <Badge
               variant="outline"
-              className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[9px]"
+              className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[10px]"
             >
               {data.length} {data.length === 1 ? "Project" : "Projects"}
             </Badge>

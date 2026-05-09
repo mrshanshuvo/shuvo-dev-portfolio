@@ -180,7 +180,7 @@ export default function ImageUpload({
                   <h4 className="font-bold text-slate-900 dark:text-slate-200 tracking-wide text-[10px] uppercase">
                     Processing
                   </h4>
-                  <span className="text-indigo-600/40 dark:text-indigo-300/60 font-medium truncate text-[9px] max-w-[80px] block mt-0.5">
+                  <span className="text-indigo-600/40 dark:text-indigo-300/60 font-medium truncate text-[10px] max-w-[80px] block mt-0.5">
                     {fileName}
                   </span>
                 </div>
@@ -319,16 +319,22 @@ export default function ImageUpload({
               <h3 className="text-[11px] font-black tracking-widest bg-linear-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent uppercase">
                 Drop
               </h3>
-              <p className="text-[8px] text-slate-500 font-bold uppercase tracking-tighter">
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">
                 or click
               </p>
             </div>
             <div className="flex items-center gap-1.5 text-[7px] uppercase tracking-[0.2em] font-black text-slate-500 dark:text-slate-600 bg-slate-50 dark:bg-slate-950/50 px-3 py-1 rounded-full border border-slate-200 dark:border-white/5">
-              <span className="text-indigo-500 dark:text-indigo-400/50">IMG</span>
+              <span className="text-indigo-500 dark:text-indigo-400/50">
+                IMG
+              </span>
               <span className="w-1 h-1 rounded-full bg-slate-200 dark:bg-slate-800" />
-              <span className="text-purple-500 dark:text-purple-400/50">VID</span>
+              <span className="text-purple-500 dark:text-purple-400/50">
+                VID
+              </span>
               <span className="w-1 h-1 rounded-full bg-slate-200 dark:bg-slate-800" />
-              <span className="text-fuchsia-500 dark:text-fuchsia-400/50">PDF</span>
+              <span className="text-fuchsia-500 dark:text-fuchsia-400/50">
+                PDF
+              </span>
             </div>
           </div>
         </div>
@@ -415,7 +421,7 @@ export default function ImageUpload({
 
               {/* Subtle Footer info */}
               <div className="px-6 py-3 border-t border-white/5 bg-slate-950/20 flex justify-center">
-                <p className="text-[9px] font-bold text-slate-500 tracking-widest uppercase">
+                <p className="text-[10px] font-bold text-slate-500 tracking-widest uppercase">
                   End of Preview
                 </p>
               </div>

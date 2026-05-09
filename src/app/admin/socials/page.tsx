@@ -3,11 +3,13 @@ import { useState, useEffect } from "react";
 import {
   DndContext,
   closestCenter,
-  KeyboardSensor,
-  PointerSensor,
+  DragOverlay,
   useSensor,
   useSensors,
-  DragOverlay,
+  PointerSensor,
+  KeyboardSensor,
+  type DragStartEvent,
+  type DragEndEvent,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -45,13 +47,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
 import { AdminDialogShell } from "../components/AdminDialogShell";
@@ -98,6 +93,27 @@ const platformIcons: Record<string, React.ReactNode> = {
   Other: <FaLink size={16} />,
 };
 
+// ─── Drag Overlay ghost card ──────────────────────────────────────────────────
+function SocialOverlay({ item }: { item: SocialLink }) {
+  const Icon = platformIconMap[item.platform] || FaLink;
+  return (
+    <div className="flex items-center gap-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-cyan-500/30 rounded-2xl p-4 shadow-2xl opacity-90 scale-105 ring-1 ring-cyan-400/20 min-w-[320px]">
+      <FaGripVertical className="text-cyan-500" size={14} />
+      <div className="p-2 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 rounded-lg">
+        <Icon size={14} />
+      </div>
+      <div className="flex-1 min-w-0">
+        <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
+          {item.label}
+        </h3>
+        <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+          {item.href}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function SortableSocialRow({
   item,
   onEdit,
@@ -121,7 +137,7 @@ function SortableSocialRow({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0.35 : 1,
   };
 
   const Icon = platformIconMap[item.platform] || FaLink;
@@ -152,19 +168,19 @@ function SortableSocialRow({
             <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
               {item.label}
             </h3>
-            <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+            <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate font-medium">
               {item.href}
             </p>
           </div>
         </div>
       </div>
 
-      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="flex items-center gap-1">
         <Button
           variant="ghost"
           size="icon"
           onClick={onEdit}
-          className="h-8 w-8 rounded-lg text-slate-400 hover:text-cyan-400 hover:bg-cyan-400/10"
+          className="h-8 w-8 rounded-lg text-slate-400 hover:text-cyan-500 hover:bg-cyan-500/10"
         >
           <FaEdit size={12} />
         </Button>
@@ -238,6 +254,28 @@ export default function AdminSocialsPage() {
     }
   }
 
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  };
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    setActiveId(null);
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = data.findIndex((s) => s._id === active.id);
+    const newIndex = data.findIndex((s) => s._id === over.id);
+
+    const newData = arrayMove(data, oldIndex, newIndex);
+    setData(newData);
+
+    await fetch("/api/admin/socials", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newData),
+    });
+  };
+
   async function handleAddOrUpdate() {
     if (!currentSocial?.label || !currentSocial?.href) return;
     setSaving(true);
@@ -264,128 +302,108 @@ export default function AdminSocialsPage() {
     }
   }
 
-  function openEdit(item: SocialLink) {
-    setCurrentSocial({ ...item });
-    setIsDialogOpen(true);
-  }
-
-  function openNew() {
-    setCurrentSocial({
-      platform: "GitHub",
-      href: "",
-      label: "",
-      order: data.length,
-    });
-    setIsDialogOpen(true);
-  }
-
-  function handleDragEnd(event: any) {
-    const { active, over } = event;
-    if (active && over && active.id !== over.id) {
-      const oldIndex = data.findIndex((i) => i._id === active.id);
-      const newIndex = data.findIndex((i) => i._id === over.id);
-      const newData = arrayMove(data, oldIndex, newIndex);
-      setData(newData);
-      // Auto save order using PATCH
-      setTimeout(() => {
-        fetch("/api/admin/socials", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newData),
-        });
-      }, 0);
+  function openEdit(item?: SocialLink) {
+    if (item) {
+      setCurrentSocial({ ...item });
+    } else {
+      setCurrentSocial({
+        platform: "GitHub",
+        href: "",
+        label: "",
+        order: data.length,
+      });
     }
-    setActiveId(null);
+    setIsDialogOpen(true);
   }
 
   return (
-    <div className="p-4 md:p-8 space-y-6 font-sans">
-      <AnimatePresence>
-        {toast && (
-          <motion.div
-            initial={{ opacity: 0, y: -20, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: -20, x: "-50%" }}
-            className={cn(
-              "fixed top-8 left-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-2xl border backdrop-blur-xl shadow-2xl",
-              toast.type === "success"
-                ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
-                : "bg-red-500/20 border-red-500/50 text-red-400",
-            )}
-          >
-            <div
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="p-4 md:p-8 space-y-6 font-sans">
+        <AnimatePresence>
+          {toast && (
+            <motion.div
+              initial={{ opacity: 0, y: -20, x: "-50%" }}
+              animate={{ opacity: 1, y: 0, x: "-50%" }}
+              exit={{ opacity: 0, y: -20, x: "-50%" }}
               className={cn(
-                "p-1.5 rounded-full",
+                "fixed top-8 left-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-2xl border backdrop-blur-xl shadow-2xl",
                 toast.type === "success"
-                  ? "bg-emerald-500/20"
-                  : "bg-red-500/20",
+                  ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
+                  : "bg-red-500/20 border-red-500/50 text-red-400",
               )}
             >
-              {toast.type === "success" ? (
-                <FaCheck size={10} />
-              ) : (
-                <FaTimes size={10} />
-              )}
-            </div>
-            <span className="font-bold text-sm tracking-tight">
-              {toast.msg}
-            </span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex items-center justify-between bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-2xl p-4 shadow-sm dark:shadow-none">
-          <div className="flex items-center gap-3">
-            <Badge
-              variant="outline"
-              className="bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[9px]"
-            >
-              {data.length} Social Links
-            </Badge>
-          </div>
-          <Button
-            onClick={openNew}
-            className="bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl font-bold px-6 h-10 shadow-lg shadow-cyan-600/20 active:scale-95 transition-all group text-xs"
-          >
-            <FaPlus className="mr-2 group-hover:rotate-90 transition-transform duration-300" />
-            Add Link
-          </Button>
-        </div>
-
-        <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
-              Social Connection
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <div className="space-y-3">
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="h-16 bg-slate-800/20 rounded-2xl animate-pulse"
-                  />
-                ))}
-              </div>
-            ) : data.length === 0 ? (
-              <div className="text-center py-20 bg-white dark:bg-slate-950/20 rounded-3xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
-                <FaLink
-                  className="mx-auto text-slate-200 dark:text-slate-800 mb-4"
-                  size={40}
-                />
-                <p className="text-slate-400 dark:text-slate-500 font-medium">
-                  No social links found. Add your profiles above.
-                </p>
-              </div>
-            ) : (
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragStart={(e) => setActiveId(e.active.id as string)}
-                onDragEnd={handleDragEnd}
+              <div
+                className={cn(
+                  "p-1.5 rounded-full",
+                  toast.type === "success"
+                    ? "bg-emerald-500/20"
+                    : "bg-red-500/20",
+                )}
               >
+                {toast.type === "success" ? (
+                  <FaCheck size={10} />
+                ) : (
+                  <FaTimes size={10} />
+                )}
+              </div>
+              <span className="font-bold text-sm tracking-tight">
+                {toast.msg}
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="max-w-4xl mx-auto space-y-6">
+          <div className="flex items-center justify-between bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-2xl p-4 shadow-sm dark:shadow-none">
+            <div className="flex items-center gap-3">
+              <Badge
+                variant="outline"
+                className="bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[10px]"
+              >
+                {data.length} Social Links
+              </Badge>
+            </div>
+            <Button
+              onClick={() => openEdit()}
+              className="bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl font-bold px-6 h-10 shadow-lg shadow-cyan-600/20 active:scale-95 transition-all group text-xs"
+            >
+              <FaPlus className="mr-2 group-hover:rotate-90 transition-transform duration-300" />
+              Add Link
+            </Button>
+          </div>
+
+          <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
+                Social Connection
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {loading ? (
+                <div className="space-y-3">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="h-16 bg-slate-800/20 rounded-2xl animate-pulse"
+                    />
+                  ))}
+                </div>
+              ) : data.length === 0 ? (
+                <div className="text-center py-20 bg-white dark:bg-slate-950/20 rounded-3xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
+                  <FaLink
+                    className="mx-auto text-slate-200 dark:text-slate-800 mb-4"
+                    size={40}
+                  />
+                  <p className="text-slate-400 dark:text-slate-500 font-medium">
+                    No social links found. Add your profiles above.
+                  </p>
+                </div>
+              ) : (
                 <SortableContext
                   items={data.map((s) => s._id!)}
                   strategy={verticalListSortingStrategy}
@@ -404,115 +422,108 @@ export default function AdminSocialsPage() {
                     </AnimatePresence>
                   </div>
                 </SortableContext>
+              )}
 
-                <DragOverlay dropAnimation={null}>
-                  {activeId ? (
-                    <div className="flex items-center gap-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-cyan-500/30 rounded-2xl p-4 shadow-2xl opacity-90 scale-105">
-                      <FaGripVertical className="text-cyan-500" size={14} />
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
-                          {data.find((s) => s._id === activeId)?.label}
-                        </h3>
-                      </div>
-                    </div>
-                  ) : null}
-                </DragOverlay>
-              </DndContext>
-            )}
+              {!loading && data.length > 0 && (
+                <p className="text-center text-[10px] text-slate-400 dark:text-slate-700 mt-8 font-bold uppercase tracking-widest">
+                  Drag rows to reorder • Changes save automatically
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
-            {!loading && data.length > 0 && (
-              <p className="text-center text-[10px] text-slate-400 dark:text-slate-700 mt-8 font-bold uppercase tracking-widest">
-                Drag rows to reorder • Changes save automatically
-              </p>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+        <DragOverlay dropAnimation={null}>
+          {activeId ? (
+            <SocialOverlay item={data.find((s) => s._id === activeId)!} />
+          ) : null}
+        </DragOverlay>
 
-      <AdminDialogShell
-        open={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        title={currentSocial?._id ? "Update Link" : "Add Digital Node"}
-        subtitle=""
-        icon={FaLink}
-        iconColor="text-cyan-400"
-        accentColor="from-cyan-500/5 to-blue-500/5"
-        onSave={handleAddOrUpdate}
-        saving={saving}
-        saveLabel={currentSocial?._id ? "Update Link" : "Add Link"}
-        savingLabel="Propagating..."
-      >
-        {currentSocial && (
-          <div className="space-y-8">
-            <div className="grid grid-cols-2 gap-6">
-              <AdminField label="Network">
-                <Select
-                  value={currentSocial.platform}
-                  onValueChange={(val) => {
-                    if (val) {
-                      setCurrentSocial((prev) =>
-                        prev
-                          ? {
-                              ...prev,
-                              platform: val,
-                              label: prev.label || val,
-                            }
-                          : null,
-                      );
-                    }
-                  }}
-                >
-                  <SelectTrigger className="bg-white dark:bg-slate-950/40 border-slate-200 dark:border-white/5 rounded-2xl h-14 font-bold text-base text-slate-900 dark:text-slate-200 shadow-inner dark:shadow-black/20 focus:ring-4 focus:ring-cyan-500/5 transition-all">
-                    <SelectValue placeholder="Select platform" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-slate-900 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-2xl shadow-2xl backdrop-blur-xl">
-                    {PLATFORM_OPTIONS.map((p) => (
-                      <SelectItem
-                        key={p}
-                        value={p}
-                        className="rounded-xl py-3 focus:bg-cyan-500/10 focus:text-cyan-400"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center">
-                            {platformIcons[p] || <FaLink size={12} />}
+        <AdminDialogShell
+          open={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+          title={currentSocial?._id ? "Update Link" : "Add Digital Node"}
+          subtitle=""
+          icon={FaLink}
+          iconColor="text-cyan-400"
+          accentColor="from-cyan-500/5 to-blue-500/5"
+          onSave={handleAddOrUpdate}
+          saving={saving}
+          saveLabel={currentSocial?._id ? "Update Link" : "Add Link"}
+          savingLabel="Propagating..."
+        >
+          {currentSocial && (
+            <div className="space-y-8">
+              <div className="grid grid-cols-2 gap-6">
+                <AdminField label="Network">
+                  <Select
+                    value={currentSocial.platform}
+                    onValueChange={(val) => {
+                      if (val) {
+                        setCurrentSocial((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                platform: val,
+                                label: prev.label || val,
+                              }
+                            : null,
+                        );
+                      }
+                    }}
+                  >
+                    <SelectTrigger className="bg-white dark:bg-slate-950/40 border-slate-200 dark:border-white/5 rounded-2xl h-14 font-bold text-base text-slate-900 dark:text-slate-200 shadow-inner dark:shadow-black/20 focus:ring-4 focus:ring-cyan-500/5 transition-all">
+                      <SelectValue placeholder="Select platform" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white dark:bg-slate-900 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-2xl shadow-2xl backdrop-blur-xl">
+                      {PLATFORM_OPTIONS.map((p) => (
+                        <SelectItem
+                          key={p}
+                          value={p}
+                          className="rounded-xl py-3 focus:bg-cyan-500/10 focus:text-cyan-400"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center">
+                              {platformIcons[p] || <FaLink size={12} />}
+                            </div>
+                            {p}
                           </div>
-                          {p}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </AdminField>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </AdminField>
 
-              <AdminField label="Display Label">
+                <AdminField label="Display Label">
+                  <AdminInput
+                    value={currentSocial.label}
+                    onChange={(e) =>
+                      setCurrentSocial((prev) =>
+                        prev ? { ...prev, label: e.target.value } : null,
+                      )
+                    }
+                    placeholder="e.g. GitHub Profile"
+                  />
+                </AdminField>
+              </div>
+
+              <AdminField label="Destination URL">
                 <AdminInput
-                  value={currentSocial.label}
+                  icon={FaLink}
+                  className="font-medium text-sm"
+                  value={currentSocial.href}
                   onChange={(e) =>
                     setCurrentSocial((prev) =>
-                      prev ? { ...prev, label: e.target.value } : null,
+                      prev ? { ...prev, href: e.target.value } : null,
                     )
                   }
-                  placeholder="e.g. GitHub Profile"
+                  placeholder="https://social.network/profile"
                 />
               </AdminField>
             </div>
-
-            <AdminField label="Destination URL">
-              <AdminInput
-                icon={FaLink}
-                className="font-medium text-sm"
-                value={currentSocial.href}
-                onChange={(e) =>
-                  setCurrentSocial((prev) =>
-                    prev ? { ...prev, href: e.target.value } : null,
-                  )
-                }
-                placeholder="https://social.network/profile"
-              />
-            </AdminField>
-          </div>
-        )}
-      </AdminDialogShell>
-    </div>
+          )}
+        </AdminDialogShell>
+      </div>
+    </DndContext>
   );
 }

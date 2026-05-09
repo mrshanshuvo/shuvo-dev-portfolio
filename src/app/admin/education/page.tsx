@@ -319,7 +319,7 @@ export default function AdminEducationPage() {
           <div className="flex items-center gap-3">
             <Badge
               variant="outline"
-              className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[9px]"
+              className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[10px]"
             >
               {data.length} Records
             </Badge>

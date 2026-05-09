@@ -125,13 +125,13 @@ function SortableBlogRow({
                   <Badge
                     key={i}
                     variant="secondary"
-                    className="bg-white/5 text-[8px] text-slate-400 h-4 px-1.5 border-white/5 uppercase tracking-tighter"
+                    className="bg-white/5 text-[10px] text-slate-400 h-4 px-1.5 border-white/5 uppercase tracking-tighter"
                   >
                     {tag}
                   </Badge>
                 ))}
                 {item.tags.length > 2 && (
-                  <span className="text-[8px] text-slate-600">
+                  <span className="text-[10px] text-slate-600">
                     +{item.tags.length - 2}
                   </span>
                 )}
@@ -329,7 +329,7 @@ export default function AdminBlogsPage() {
           <div className="flex items-center gap-3">
             <Badge
               variant="outline"
-              className="bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[9px]"
+              className="bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[10px]"
             >
               {data.length} Blog Posts
             </Badge>

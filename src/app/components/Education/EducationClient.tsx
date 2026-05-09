@@ -87,7 +87,7 @@ export default function EducationClient({ education }: Props) {
                         {/* Institution Badge */}
                         <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-500/5 dark:bg-blue-500/10 border border-blue-500/10 rounded-full">
                           <div className="w-1 h-1 bg-blue-500 rounded-full animate-pulse" />
-                          <span className="text-[9px] font-black uppercase tracking-[0.15em] text-blue-600 dark:text-blue-400">
+                          <span className="text-[10px] font-black uppercase tracking-[0.15em] text-blue-600 dark:text-blue-400">
                             {edu.institution}
                           </span>
                         </div>
@@ -131,7 +131,7 @@ export default function EducationClient({ education }: Props) {
                         </div>
                       )}
                       {edu.gpa && (
-                        <Badge className="bg-blue-500 text-white border-none font-black px-1.5 py-0.5 text-[9px] rounded shadow-md shadow-blue-500/10">
+                        <Badge className="bg-blue-500 text-white border-none font-black px-1.5 py-0.5 text-[10px] rounded shadow-md shadow-blue-500/10">
                           GPA {edu.gpa}
                         </Badge>
                       )}

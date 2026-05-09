@@ -180,7 +180,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-white/5 flex flex-col h-screen transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto lg:z-auto",
+          "fixed inset-y-0 left-0 z-50 w-65 pl-2 bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-white/5 flex flex-col h-screen transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto lg:z-auto",
           isOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
@@ -264,15 +264,15 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
         </nav>
 
         {/* Footer */}
-        <div className="p-2 border-t border-white/5 bg-slate-950/20 space-y-3">
+        <div className="p-2 border-t border-white/5 space-y-3">
           <button
             onClick={() => signOut({ callbackUrl: "/admin/login" })}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-normal font-bold text-slate-400 hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/10 transition-all group"
+            className="w-full flex items-center gap-3 px-4 py-2 rounded-2xl text-normal font-semibold text-slate-900 hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/10 transition-all group"
           >
-            <div className="p-2 rounded-lg bg-slate-900 group-hover:bg-red-500/20 transition-colors">
+            <div className="p-2 rounded-lg bg-slate-200 group-hover:bg-red-500/20 transition-colors">
               <FaSignOutAlt size={16} />
             </div>
-            Sign Out
+            <span className="text-slate-900">Sign Out</span>
           </button>
         </div>
       </aside>

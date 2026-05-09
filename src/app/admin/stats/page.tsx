@@ -280,7 +280,7 @@ export default function AdminStatsPage() {
           <div className="flex items-center gap-3">
             <Badge
               variant="outline"
-              className="bg-rose-500/10 text-rose-400 border-rose-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[9px]"
+              className="bg-rose-500/10 text-rose-400 border-rose-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[10px]"
             >
               {data.length} Portfolio Stats
             </Badge>

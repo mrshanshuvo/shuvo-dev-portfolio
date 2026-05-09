@@ -382,7 +382,7 @@ export default function AdminSkillsPage() {
           <div className="flex items-center gap-3">
             <Badge
               variant="outline"
-              className="bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[9px]"
+              className="bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[10px]"
             >
               {skills.length} Expertise Areas
             </Badge>
@@ -636,7 +636,7 @@ export default function AdminSkillsPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-4">
                   <div className="p-4 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-white/5 rounded-2xl flex flex-col gap-1 shadow-sm dark:shadow-none">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
                       Mastery Status
                     </span>
                     <span className="text-sm font-bold text-slate-900 dark:text-white">
@@ -648,7 +648,7 @@ export default function AdminSkillsPage() {
                     </span>
                   </div>
                   <div className="p-4 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-white/5 rounded-2xl flex flex-col gap-1 shadow-sm dark:shadow-none">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
                       Last Calibrated
                     </span>
                     <span className="text-sm font-bold text-slate-900 dark:text-white">
