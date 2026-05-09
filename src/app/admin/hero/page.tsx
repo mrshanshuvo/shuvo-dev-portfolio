@@ -130,7 +130,7 @@ function SortableSeqItem({ id, seq, index, onUpdate, onRemove }: SeqRowProps) {
     <div
       ref={setNodeRef}
       style={style}
-      className="flex flex-col md:flex-row gap-4 items-start md:items-center p-4 bg-slate-950/30 rounded-2xl border border-white/5 group transition-all hover:bg-slate-950/50 mb-3"
+      className="flex flex-col md:flex-row gap-4 items-start md:items-center p-4 bg-slate-50 dark:bg-slate-950/30 rounded-2xl border border-slate-200 dark:border-white/5 group transition-all hover:bg-slate-100 dark:hover:bg-slate-950/50 mb-3 shadow-sm dark:shadow-none"
     >
       {/* Drag handle */}
       <button
@@ -151,7 +151,7 @@ function SortableSeqItem({ id, seq, index, onUpdate, onRemove }: SeqRowProps) {
       {/* Text input */}
       <div className="flex-1 w-full">
         <Input
-          className="bg-transparent border-white/10 text-white rounded-xl focus-visible:ring-purple-500/50 h-10"
+          className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl focus-visible:ring-purple-500/50 h-10 shadow-sm dark:shadow-none"
           value={seq.text}
           onChange={(e) => onUpdate(index, "text", e.target.value)}
           placeholder="e.g. Full-Stack Developer"
@@ -165,7 +165,7 @@ function SortableSeqItem({ id, seq, index, onUpdate, onRemove }: SeqRowProps) {
             type="text"
             inputMode="numeric"
             pattern="[0-9]*"
-            className="bg-transparent border-white/10 text-white rounded-xl focus-visible:ring-purple-500/50 w-28 pr-10 h-10"
+            className="bg-white dark:bg-transparent border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl focus-visible:ring-purple-500/50 w-28 pr-10 h-10 shadow-sm dark:shadow-none"
             value={seq.delay}
             onChange={(e) => onUpdate(index, "delay", +e.target.value || 0)}
           />
@@ -190,13 +190,13 @@ function SortableSeqItem({ id, seq, index, onUpdate, onRemove }: SeqRowProps) {
 // ─── Drag Overlay ghost card ──────────────────────────────────────────────────
 function SeqOverlay({ seq }: { seq: TypeSequenceItem }) {
   return (
-    <div className="w-full flex items-center gap-4 p-4 bg-slate-800/90 backdrop-blur-xl rounded-2xl border border-purple-500/30 shadow-2xl shadow-purple-500/10 ring-1 ring-purple-400/20">
+    <div className="w-full flex items-center gap-4 p-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-2xl border border-purple-500/30 shadow-2xl shadow-purple-500/10 ring-1 ring-purple-400/20">
       <FaGripLines size={13} className="text-purple-400/70 shrink-0" />
       <span className="w-4" />
-      <div className="flex-1 bg-slate-900/80 border border-white/10 rounded-xl px-3 py-2 text-white text-sm truncate">
+      <div className="flex-1 bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-slate-900 dark:text-white text-sm truncate">
         {seq.text || <span className="text-slate-500 italic">empty</span>}
       </div>
-      <div className="w-28 bg-slate-900/80 border border-white/10 rounded-xl px-3 py-2 text-white text-sm text-right">
+      <div className="w-28 bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-slate-900 dark:text-white text-sm text-right">
         {seq.delay} <span className="text-slate-500 text-[10px]">ms</span>
       </div>
     </div>
@@ -352,7 +352,7 @@ export default function AdminHeroPage() {
       onDragStart={handleSeqDragStart}
       onDragEnd={handleSeqDragEnd}
     >
-      <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8 space-y-6">
+      <div className="p-4 md:p-8 space-y-6">
         {/* Toast Notification */}
         <AnimatePresence>
           {toast && (
@@ -405,12 +405,12 @@ export default function AdminHeroPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
                 >
-                  <Card className="rounded-3xl border border-white/5 bg-slate-900/20 backdrop-blur-sm overflow-hidden">
+                  <Card className="rounded-3xl border border-slate-200 dark:border-white/5 bg-white dark:bg-slate-900/20 backdrop-blur-sm overflow-hidden shadow-sm dark:shadow-none">
                     <CardHeader className="pb-2">
                       <div className="flex items-center gap-3">
-                        <div className="p-2.5 bg-slate-800/40 rounded-xl w-10 h-10 animate-pulse" />
+                        <div className="p-2.5 bg-slate-100 dark:bg-slate-800/40 rounded-xl w-10 h-10 animate-pulse" />
                         <div className="space-y-2">
-                          <div className="h-5 w-32 bg-slate-800/60 rounded-lg animate-pulse" />
+                          <div className="h-5 w-32 bg-slate-100 dark:bg-slate-800/60 rounded-lg animate-pulse" />
                           <div className="h-3 w-48 bg-slate-800/30 rounded-lg animate-pulse" />
                         </div>
                       </div>
@@ -427,17 +427,17 @@ export default function AdminHeroPage() {
             ) : (
               <div className="space-y-8 animate-in fade-in duration-700">
                 {/* Identity Card */}
-                <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
+                <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
                   <CardHeader className="pb-2">
                     <div className="flex items-center gap-3">
                       <div className="p-2.5 bg-blue-500/20 text-blue-400 rounded-xl">
                         <FaUser size={20} />
                       </div>
                       <div>
-                        <CardTitle className="text-xl font-bold text-white">
+                        <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
                           Identity
                         </CardTitle>
-                        <CardDescription className="text-slate-400">
+                        <CardDescription className="text-slate-500 dark:text-slate-400">
                           Your personal branding and display name.
                         </CardDescription>
                       </div>
@@ -449,7 +449,7 @@ export default function AdminHeroPage() {
                         First Name
                       </label>
                       <Input
-                        className="bg-slate-950/50 border-white/10 text-white rounded-xl focus-visible:ring-emerald-500/50"
+                        className="bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl focus-visible:ring-emerald-500/50 shadow-sm dark:shadow-none"
                         value={data.name}
                         onChange={(e) =>
                           setData((d) => ({ ...d, name: e.target.value }))
@@ -465,7 +465,7 @@ export default function AdminHeroPage() {
                         </span>
                       </label>
                       <Input
-                        className="bg-slate-950/50 border-white/10 text-white rounded-xl focus-visible:ring-emerald-500/50"
+                        className="bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl focus-visible:ring-emerald-500/50 shadow-sm dark:shadow-none"
                         value={data.lastName}
                         onChange={(e) =>
                           setData((d) => ({ ...d, lastName: e.target.value }))
@@ -477,17 +477,17 @@ export default function AdminHeroPage() {
                 </Card>
 
                 {/* Assets Card */}
-                <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
+                <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
                   <CardHeader className="pb-2">
                     <div className="flex items-center gap-3">
                       <div className="p-2.5 bg-amber-500/20 text-amber-400 rounded-xl">
                         <FaImage size={20} />
                       </div>
                       <div>
-                        <CardTitle className="text-xl font-bold text-white">
+                        <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
                           Assets
                         </CardTitle>
-                        <CardDescription className="text-slate-400">
+                        <CardDescription className="text-slate-500 dark:text-slate-400">
                           Profile picture and resume document.
                         </CardDescription>
                       </div>
@@ -521,7 +521,7 @@ export default function AdminHeroPage() {
                 </Card>
 
                 {/* Typing Sequences Card */}
-                <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
+                <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
                   <CardHeader className="pb-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
@@ -529,10 +529,10 @@ export default function AdminHeroPage() {
                           <FaInfoCircle size={20} />
                         </div>
                         <div>
-                          <CardTitle className="text-xl font-bold text-white">
+                          <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
                             Typing Sequences
                           </CardTitle>
-                          <CardDescription className="text-slate-400">
+                          <CardDescription className="text-slate-500 dark:text-slate-400">
                             Animated roles that appear on your hero section.
                           </CardDescription>
                         </div>
@@ -549,7 +549,7 @@ export default function AdminHeroPage() {
                             ],
                           }))
                         }
-                        className="bg-slate-800 hover:bg-slate-700 text-slate-200 border-white/5 rounded-xl active:scale-95"
+                        className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-white/5 rounded-xl active:scale-95 shadow-sm dark:shadow-none"
                       >
                         <FaPlus size={12} className="mr-1" /> Add New
                       </Button>
@@ -594,7 +594,7 @@ export default function AdminHeroPage() {
                     </SortableContext>
 
                     {data.typeSequences.length === 0 && (
-                      <div className="text-center py-8 bg-slate-950/20 rounded-2xl border border-dashed border-white/5">
+                      <div className="text-center py-8 bg-slate-50 dark:bg-slate-950/20 rounded-2xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
                         <p className="text-slate-500 text-sm italic">
                           No typing sequences added.
                         </p>

@@ -98,7 +98,7 @@ export default function AdminMessagesPage() {
   const unreadCount = messages.filter((m) => m.status === "unread").length;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8 space-y-6">
+    <div className="p-4 md:p-8 space-y-6">
       {/* Toast */}
       <AnimatePresence>
         {toast && (
@@ -126,11 +126,11 @@ export default function AdminMessagesPage() {
         {/* Action bar — title is already shown in the AdminTopbar breadcrumb */}
         <div className="flex items-center justify-end gap-3">
           {unreadCount > 0 && (
-            <Badge className="bg-blue-600/10 text-blue-400 border-blue-500/20 rounded-lg px-3 py-1 text-xs font-bold animate-pulse">
+            <Badge className="bg-blue-600/10 text-blue-600 dark:text-blue-400 border-blue-500/20 rounded-lg px-3 py-1 text-xs font-bold animate-pulse">
               {unreadCount} New Messages
             </Badge>
           )}
-          <Badge className="bg-slate-800/50 text-slate-400 border-white/5 rounded-lg px-3 py-1 text-xs font-bold">
+          <Badge className="bg-slate-100 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-white/5 rounded-lg px-3 py-1 text-xs font-bold shadow-sm dark:shadow-none">
             {messages.length} Total
           </Badge>
         </div>
@@ -143,19 +143,22 @@ export default function AdminMessagesPage() {
               Array.from({ length: 6 }).map((_, i) => (
                 <div
                   key={`skeleton-${i}`}
-                  className="p-5 bg-slate-900/20 rounded-3xl border border-white/5 space-y-3 animate-pulse"
+                  className="p-5 bg-white dark:bg-slate-900/20 rounded-3xl border border-slate-200 dark:border-white/5 space-y-3 animate-pulse shadow-sm dark:shadow-none"
                 >
                   <div className="flex justify-between items-start">
-                    <div className="h-4 w-24 bg-slate-800/60 rounded" />
-                    <div className="h-3 w-12 bg-slate-800/30 rounded" />
+                    <div className="h-4 w-24 bg-slate-100 dark:bg-slate-800/60 rounded" />
+                    <div className="h-3 w-12 bg-slate-100 dark:bg-slate-800/30 rounded" />
                   </div>
-                  <div className="h-3 w-full bg-slate-800/20 rounded" />
+                  <div className="h-3 w-full bg-slate-50 dark:bg-slate-800/20 rounded" />
                 </div>
               ))
             ) : messages.length === 0 ? (
-              <div className="text-center py-20 bg-slate-900/20 rounded-3xl border border-dashed border-white/5">
-                <FaInbox size={40} className="mx-auto text-slate-800 mb-4" />
-                <p className="text-slate-500 font-medium tracking-tight">
+              <div className="text-center py-20 bg-white dark:bg-slate-900/20 rounded-3xl border border-dashed border-slate-300 dark:border-white/5 shadow-sm dark:shadow-none">
+                <FaInbox
+                  size={40}
+                  className="mx-auto text-slate-200 dark:text-slate-800 mb-4"
+                />
+                <p className="text-slate-400 dark:text-slate-500 font-medium tracking-tight">
                   Your inbox is empty.
                 </p>
               </div>
@@ -172,10 +175,10 @@ export default function AdminMessagesPage() {
                 >
                   <Card
                     className={cn(
-                      "rounded-3xl border transition-all cursor-pointer group overflow-hidden relative",
+                      "rounded-3xl border transition-all cursor-pointer group overflow-hidden relative shadow-sm dark:shadow-none",
                       selectedMessage?._id === m._id
-                        ? "bg-blue-600/10 border-blue-500/40 shadow-lg shadow-blue-500/5"
-                        : "bg-slate-900/40 border-white/5 hover:border-white/10",
+                        ? "bg-blue-500/5 dark:bg-blue-600/10 border-blue-500/40 shadow-lg shadow-blue-500/5"
+                        : "bg-white dark:bg-slate-900/40 border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10",
                       m.status === "unread" &&
                         "before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1.5 before:bg-blue-500",
                     )}
@@ -186,8 +189,8 @@ export default function AdminMessagesPage() {
                           className={cn(
                             "font-bold truncate max-w-[150px]",
                             m.status === "unread"
-                              ? "text-white"
-                              : "text-slate-400",
+                              ? "text-slate-900 dark:text-white"
+                              : "text-slate-500 dark:text-slate-400",
                           )}
                         >
                           {m.name}
@@ -203,8 +206,8 @@ export default function AdminMessagesPage() {
                         className={cn(
                           "text-xs line-clamp-1",
                           m.status === "unread"
-                            ? "text-slate-300"
-                            : "text-slate-500",
+                            ? "text-slate-600 dark:text-slate-300"
+                            : "text-slate-400 dark:text-slate-500",
                         )}
                       >
                         {m.message}
@@ -227,16 +230,16 @@ export default function AdminMessagesPage() {
                   exit={{ opacity: 0, y: -10 }}
                   className="space-y-6"
                 >
-                  <Card className="rounded-[2.5rem] border border-white/10 bg-slate-900/60 backdrop-blur-xl overflow-hidden shadow-2xl">
+                  <Card className="rounded-[2.5rem] border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/60 backdrop-blur-xl overflow-hidden shadow-2xl dark:shadow-none">
                     <CardContent className="p-8 md:p-12 space-y-8">
                       {/* Meta */}
-                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/5 pb-8">
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-100 dark:border-white/5 pb-8">
                         <div className="flex items-center gap-5">
                           <div className="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
                             <FaUser size={28} />
                           </div>
                           <div>
-                            <h2 className="text-2xl font-black text-white tracking-tight">
+                            <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
                               {selectedMessage.name}
                             </h2>
                             <p className="text-blue-400 font-bold text-sm tracking-wide">
@@ -244,7 +247,7 @@ export default function AdminMessagesPage() {
                             </p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-3 text-slate-500 text-xs font-bold uppercase tracking-widest bg-slate-950/50 px-4 py-2 rounded-full border border-white/5">
+                        <div className="flex items-center gap-3 text-slate-500 dark:text-slate-500 text-xs font-bold uppercase tracking-widest bg-slate-50 dark:bg-slate-950/50 px-4 py-2 rounded-full border border-slate-200 dark:border-white/5">
                           <FaCalendarAlt className="text-blue-500" />
                           {new Date(selectedMessage.createdAt).toLocaleString()}
                         </div>
@@ -256,13 +259,13 @@ export default function AdminMessagesPage() {
                           <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />{" "}
                           Message Body
                         </h4>
-                        <div className="text-slate-300 leading-relaxed text-lg whitespace-pre-wrap font-medium">
+                        <div className="text-slate-600 dark:text-slate-300 leading-relaxed text-lg whitespace-pre-wrap font-medium">
                           {selectedMessage.message}
                         </div>
                       </div>
 
                       {/* Footer Actions */}
-                      <div className="flex items-center justify-between pt-8 border-t border-white/5">
+                      <div className="flex items-center justify-between pt-8 border-t border-slate-100 dark:border-white/5">
                         <a
                           href={`mailto:${selectedMessage.email}`}
                           className="group"
@@ -283,11 +286,11 @@ export default function AdminMessagesPage() {
                   </Card>
                 </motion.div>
               ) : (
-                <div className="h-[500px] flex flex-col items-center justify-center text-center space-y-4 bg-slate-900/20 rounded-[3rem] border border-dashed border-white/5">
-                  <div className="w-20 h-20 rounded-3xl bg-slate-900 flex items-center justify-center text-slate-700">
+                <div className="h-[500px] flex flex-col items-center justify-center text-center space-y-4 bg-white dark:bg-slate-900/20 rounded-[3rem] border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
+                  <div className="w-20 h-20 rounded-3xl bg-slate-50 dark:bg-slate-900 flex items-center justify-center text-slate-300 dark:text-slate-700">
                     <FaEnvelopeOpen size={40} />
                   </div>
-                  <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">
+                  <p className="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest text-xs">
                     Select a message to read
                   </p>
                 </div>

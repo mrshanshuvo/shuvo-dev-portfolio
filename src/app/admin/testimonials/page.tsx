@@ -36,7 +36,11 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import ImageUpload from "../components/ImageUpload";
 import { AdminDialogShell } from "../components/AdminDialogShell";
-import { AdminField, AdminInput, AdminTextarea } from "../components/AdminFields";
+import {
+  AdminField,
+  AdminInput,
+  AdminTextarea,
+} from "../components/AdminFields";
 
 interface Testimonial {
   _id?: string;
@@ -79,14 +83,14 @@ function SortableTestimonialRow({
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group flex items-center gap-4 bg-slate-900/40 backdrop-blur-xl border border-white/5 hover:border-white/10 rounded-2xl p-4 transition-all duration-300",
+        "group flex items-center gap-4 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10 rounded-2xl p-4 transition-all duration-300 shadow-sm dark:shadow-none",
         isDragging && "z-50 border-amber-500/50 shadow-2xl shadow-amber-500/10",
       )}
     >
       <div
         {...attributes}
         {...listeners}
-        className="cursor-grab active:cursor-grabbing text-slate-600 hover:text-amber-400 transition-colors"
+        className="cursor-grab active:cursor-grabbing text-slate-300 dark:text-slate-600 hover:text-amber-500 transition-colors"
       >
         <FaGripVertical size={14} />
       </div>
@@ -105,7 +109,7 @@ function SortableTestimonialRow({
             </div>
           )}
           <div className="min-w-0">
-            <h3 className="font-bold text-white truncate text-sm">
+            <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
               {item.name}
             </h3>
             <p className="text-[10px] text-slate-500 truncate uppercase tracking-widest">
@@ -258,7 +262,7 @@ export default function AdminTestimonialsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8 space-y-6 font-sans">
+    <div className="p-4 md:p-8 space-y-6 font-sans">
       <AnimatePresence>
         {toast && (
           <motion.div
@@ -294,11 +298,11 @@ export default function AdminTestimonialsPage() {
       </AnimatePresence>
 
       <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex items-center justify-between bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-4">
+        <div className="flex items-center justify-between bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-2xl p-4 shadow-sm dark:shadow-none">
           <div className="flex items-center gap-3">
             <Badge
               variant="outline"
-              className="bg-amber-500/10 text-amber-400 border-amber-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[9px]"
+              className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[9px]"
             >
               {data.length} Testimonials
             </Badge>
@@ -312,9 +316,9 @@ export default function AdminTestimonialsPage() {
           </Button>
         </div>
 
-        <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-2xl shadow-black/40">
+        <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
           <CardHeader className="pb-4">
-            <CardTitle className="text-xl font-black text-white tracking-tight">
+            <CardTitle className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
               Client Feedback
             </CardTitle>
           </CardHeader>
@@ -324,17 +328,17 @@ export default function AdminTestimonialsPage() {
                 {Array.from({ length: 3 }).map((_, i) => (
                   <div
                     key={i}
-                    className="h-16 bg-slate-800/20 rounded-2xl animate-pulse"
+                    className="h-16 bg-slate-100 dark:bg-slate-800/20 rounded-2xl animate-pulse"
                   />
                 ))}
               </div>
             ) : data.length === 0 ? (
-              <div className="text-center py-20 bg-slate-950/20 rounded-3xl border border-dashed border-white/5">
+              <div className="text-center py-20 bg-white dark:bg-slate-950/20 rounded-3xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
                 <FaQuoteLeft
-                  className="mx-auto text-slate-800 mb-4"
+                  className="mx-auto text-slate-200 dark:text-slate-800 mb-4"
                   size={40}
                 />
-                <p className="text-slate-500 font-medium">
+                <p className="text-slate-400 dark:text-slate-500 font-medium">
                   No testimonials yet. Add your first client feedback above.
                 </p>
               </div>
@@ -366,10 +370,10 @@ export default function AdminTestimonialsPage() {
 
                 <DragOverlay dropAnimation={null}>
                   {activeId ? (
-                    <div className="flex items-center gap-4 bg-slate-800/90 backdrop-blur-xl border border-amber-500/30 rounded-2xl p-4 shadow-2xl opacity-90 scale-105">
-                      <FaGripVertical className="text-amber-400" size={14} />
+                    <div className="flex items-center gap-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-amber-500/30 rounded-2xl p-4 shadow-2xl opacity-90 scale-105">
+                      <FaGripVertical className="text-amber-500" size={14} />
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-white truncate text-sm">
+                        <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
                           {data.find((s) => s._id === activeId)?.name}
                         </h3>
                       </div>
@@ -380,7 +384,7 @@ export default function AdminTestimonialsPage() {
             )}
 
             {!loading && data.length > 0 && (
-              <p className="text-center text-[10px] text-slate-700 mt-8 font-bold uppercase tracking-widest">
+              <p className="text-center text-[10px] text-slate-400 dark:text-slate-700 mt-8 font-bold uppercase tracking-widest">
                 Drag rows to reorder • Changes save automatically
               </p>
             )}
@@ -391,7 +395,9 @@ export default function AdminTestimonialsPage() {
       <AdminDialogShell
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
-        title={currentTestimonial?._id ? "Refine Feedback" : "Add Client Praise"}
+        title={
+          currentTestimonial?._id ? "Refine Feedback" : "Add Client Praise"
+        }
         subtitle="Capture and showcase client satisfaction"
         icon={FaQuoteLeft}
         iconColor="text-amber-400"
@@ -420,13 +426,18 @@ export default function AdminTestimonialsPage() {
                 </AdminField>
 
                 <div className="p-6 bg-amber-500/5 border border-amber-500/10 rounded-3xl flex items-start gap-4">
-                  <FaQuoteLeft className="text-amber-400 shrink-0 mt-1" size={16} />
+                  <FaQuoteLeft
+                    className="text-amber-400 shrink-0 mt-1"
+                    size={16}
+                  />
                   <div className="space-y-1">
                     <p className="text-[10px] font-black uppercase tracking-wider text-amber-400/90">
                       Client Feedback
                     </p>
                     <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
-                      Adding a client photo increases the authenticity and trust of the feedback. Use professional headshots for best results.
+                      Adding a client photo increases the authenticity and trust
+                      of the feedback. Use professional headshots for best
+                      results.
                     </p>
                   </div>
                 </div>

@@ -103,8 +103,8 @@ export default function ProjectEditPage() {
           category: Array.isArray(project.category)
             ? project.category
             : project.category
-            ? [project.category]
-            : [],
+              ? [project.category]
+              : [],
           techNames: Array.isArray(project.techNames) ? project.techNames : [],
           github: Array.isArray(project.github) ? project.github : [],
           live: Array.isArray(project.live) ? project.live : [],
@@ -174,7 +174,7 @@ export default function ProjectEditPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="p-4 md:p-8 space-y-6">
       {/* Toast */}
       <AnimatePresence>
         {toast && (

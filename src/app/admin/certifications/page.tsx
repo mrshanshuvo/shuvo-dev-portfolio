@@ -83,15 +83,14 @@ function SortableCertRow({
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group flex items-center gap-4 bg-slate-900/40 backdrop-blur-xl border border-white/5 hover:border-white/10 rounded-2xl p-4 transition-all duration-300",
-        isDragging &&
-          "z-50 border-yellow-500/50 shadow-2xl shadow-yellow-500/10",
+        "group flex items-center gap-4 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10 rounded-2xl p-4 transition-all duration-300 shadow-sm dark:shadow-none",
+        isDragging && "z-50 border-amber-500/50 shadow-2xl shadow-amber-500/10",
       )}
     >
       <div
         {...attributes}
         {...listeners}
-        className="cursor-grab active:cursor-grabbing text-slate-600 hover:text-yellow-400 transition-colors"
+        className="cursor-grab active:cursor-grabbing text-slate-300 dark:text-slate-600 hover:text-amber-500 dark:hover:text-amber-400 transition-colors"
       >
         <FaGripVertical size={14} />
       </div>
@@ -110,10 +109,12 @@ function SortableCertRow({
             </div>
           )}
           <div className="min-w-0">
-            <h3 className="font-bold text-white truncate text-sm">
+            <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
               {item.title}
             </h3>
-            <p className="text-xs text-slate-400 truncate">{item.issuer}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+              {item.issuer}
+            </p>
           </div>
         </div>
       </div>
@@ -138,7 +139,7 @@ function SortableCertRow({
             size="icon"
             onClick={onDelete}
             disabled={isDeleting}
-            className="h-8 w-8 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-400/10"
+            className="h-8 w-8 rounded-lg text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-500/10"
           >
             {isDeleting ? (
               <div className="h-3 w-3 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
@@ -272,7 +273,7 @@ export default function AdminCertificationsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8 space-y-6 font-sans">
+    <div className="p-4 md:p-8 space-y-6 font-sans">
       <AnimatePresence>
         {toast && (
           <motion.div
@@ -308,11 +309,11 @@ export default function AdminCertificationsPage() {
       </AnimatePresence>
 
       <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex items-center justify-between bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-4">
+        <div className="flex items-center justify-between bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-2xl p-4 shadow-sm dark:shadow-none">
           <div className="flex items-center gap-3">
             <Badge
               variant="outline"
-              className="bg-yellow-500/10 text-yellow-400 border-yellow-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[9px]"
+              className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[9px]"
             >
               {data.length} Certifications
             </Badge>
@@ -326,9 +327,9 @@ export default function AdminCertificationsPage() {
           </Button>
         </div>
 
-        <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-2xl shadow-black/40">
+        <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
           <CardHeader className="pb-4">
-            <CardTitle className="text-xl font-black text-white tracking-tight">
+            <CardTitle className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
               Professional Credentials
             </CardTitle>
           </CardHeader>
@@ -338,14 +339,17 @@ export default function AdminCertificationsPage() {
                 {Array.from({ length: 3 }).map((_, i) => (
                   <div
                     key={i}
-                    className="h-16 bg-slate-800/20 rounded-2xl animate-pulse"
+                    className="h-16 bg-slate-100 dark:bg-slate-800/20 rounded-2xl animate-pulse"
                   />
                 ))}
               </div>
             ) : data.length === 0 ? (
-              <div className="text-center py-20 bg-slate-950/20 rounded-3xl border border-dashed border-white/5">
-                <FaAward className="mx-auto text-slate-800 mb-4" size={40} />
-                <p className="text-slate-500 font-medium">
+              <div className="text-center py-20 bg-white dark:bg-slate-950/20 rounded-3xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
+                <FaAward
+                  className="mx-auto text-slate-200 dark:text-slate-800 mb-4"
+                  size={40}
+                />
+                <p className="text-slate-400 dark:text-slate-500 font-medium">
                   No certifications found. Add your achievements above.
                 </p>
               </div>
@@ -377,10 +381,10 @@ export default function AdminCertificationsPage() {
 
                 <DragOverlay dropAnimation={null}>
                   {activeId ? (
-                    <div className="flex items-center gap-4 bg-slate-800/90 backdrop-blur-xl border border-yellow-500/30 rounded-2xl p-4 shadow-2xl opacity-90 scale-105">
-                      <FaGripVertical className="text-yellow-400" size={14} />
+                    <div className="flex items-center gap-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-amber-500/30 rounded-2xl p-4 shadow-2xl opacity-90 scale-105">
+                      <FaGripVertical className="text-amber-500" size={14} />
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-white truncate text-sm">
+                        <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
                           {data.find((s) => s._id === activeId)?.title}
                         </h3>
                       </div>
@@ -391,7 +395,7 @@ export default function AdminCertificationsPage() {
             )}
 
             {!loading && data.length > 0 && (
-              <p className="text-center text-[10px] text-slate-700 mt-8 font-bold uppercase tracking-widest">
+              <p className="text-center text-[10px] text-slate-400 dark:text-slate-700 mt-8 font-bold uppercase tracking-widest">
                 Drag rows to reorder • Changes save automatically
               </p>
             )}

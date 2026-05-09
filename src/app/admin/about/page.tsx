@@ -153,7 +153,7 @@ export default function AdminAboutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8 space-y-6">
+    <div className="p-4 md:p-8 space-y-6">
       {/* Toast Notification */}
       <AnimatePresence>
         {toast && (
@@ -206,10 +206,10 @@ export default function AdminAboutPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
               >
-                <Card className="rounded-3xl border border-white/5 bg-slate-900/20 backdrop-blur-sm overflow-hidden">
+                <Card className="rounded-3xl border border-slate-200 dark:border-white/5 bg-white dark:bg-slate-900/20 backdrop-blur-sm overflow-hidden shadow-sm dark:shadow-none">
                   <CardHeader className="pb-2">
                     <div className="flex items-center gap-3">
-                      <div className="p-2.5 bg-slate-800/40 rounded-xl w-10 h-10 animate-pulse" />
+                      <div className="p-2.5 bg-slate-100 dark:bg-slate-800/40 rounded-xl w-10 h-10 animate-pulse" />
                       <div className="space-y-2">
                         <div className="h-5 w-32 bg-slate-800/60 rounded-lg animate-pulse" />
                         <div className="h-3 w-48 bg-slate-800/30 rounded-lg animate-pulse" />
@@ -217,8 +217,8 @@ export default function AdminAboutPage() {
                     </div>
                   </CardHeader>
                   <CardContent className="pt-6 space-y-4">
-                    <div className="h-24 bg-slate-800/20 rounded-2xl animate-pulse" />
-                    <div className="h-24 bg-slate-800/20 rounded-2xl animate-pulse" />
+                    <div className="h-24 bg-slate-50 dark:bg-slate-800/20 rounded-2xl animate-pulse" />
+                    <div className="h-24 bg-slate-50 dark:bg-slate-800/20 rounded-2xl animate-pulse" />
                   </CardContent>
                 </Card>
               </motion.div>
@@ -226,17 +226,17 @@ export default function AdminAboutPage() {
           ) : (
             <div className="space-y-8 animate-in fade-in duration-700">
               <div className="grid grid-cols-1 gap-8">
-                <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
+                <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
                   <CardHeader>
                     <div className="flex items-center gap-3">
                       <div className="p-2.5 bg-blue-500/20 text-blue-400 rounded-xl">
                         <FaUser size={20} />
                       </div>
                       <div>
-                        <CardTitle className="text-white">
+                        <CardTitle className="text-slate-900 dark:text-white">
                           Professional Bio
                         </CardTitle>
-                        <CardDescription>
+                        <CardDescription className="text-slate-500 dark:text-slate-400">
                           Two paragraphs that tell your story.
                         </CardDescription>
                       </div>
@@ -273,17 +273,17 @@ export default function AdminAboutPage() {
                   </CardContent>
                 </Card>
 
-                <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
+                <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
                   <CardHeader>
                     <div className="flex items-center gap-3">
                       <div className="p-2.5 bg-pink-500/20 text-pink-400 rounded-xl">
                         <FaLightbulb size={20} />
                       </div>
                       <div>
-                        <CardTitle className="text-white">
+                        <CardTitle className="text-slate-900 dark:text-white">
                           Key Highlights
                         </CardTitle>
-                        <CardDescription>
+                        <CardDescription className="text-slate-500 dark:text-slate-400">
                           Short bullet points of what you bring to the table.
                         </CardDescription>
                       </div>
@@ -303,7 +303,7 @@ export default function AdminAboutPage() {
                               >
                                 <Badge
                                   variant="secondary"
-                                  className="pl-3 pr-1 py-1 gap-1 bg-slate-800 text-slate-200 border-white/5 rounded-full"
+                                  className="pl-3 pr-1 py-1 gap-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-white/5 rounded-full shadow-sm dark:shadow-none"
                                 >
                                   {h}
                                   <Button
@@ -339,7 +339,7 @@ export default function AdminAboutPage() {
                           <Button
                             onClick={addHighlight}
                             size="icon"
-                            className="bg-slate-800 hover:bg-slate-700 text-white rounded-xl shrink-0 h-14 w-14"
+                            className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl shrink-0 h-14 w-14 border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none"
                           >
                             <FaPlus size={14} />
                           </Button>

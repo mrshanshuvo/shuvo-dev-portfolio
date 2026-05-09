@@ -50,7 +50,7 @@ export default function AdminTopbar() {
         {/* Admin root */}
         <Link
           href="/admin"
-          className="flex items-center gap-1.5 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors shrink-0 font-medium"
+          className="flex items-center gap-1.5 text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-300 transition-colors shrink-0 font-medium"
         >
           <MdDashboard size={14} />
           <span className="hidden sm:inline">Admin</span>
@@ -66,7 +66,7 @@ export default function AdminTopbar() {
               href={matched}
               className={`tracking-tight truncate ${
                 subRoute.length > 0
-                  ? "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 font-medium transition-colors"
+                  ? "text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-300 font-medium transition-colors"
                   : "text-slate-900 dark:text-white font-bold text-base"
               }`}
             >

@@ -131,14 +131,14 @@ function SortableSocialRow({
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group flex items-center gap-4 bg-slate-900/40 backdrop-blur-xl border border-white/5 hover:border-white/10 rounded-2xl p-4 transition-all duration-300",
+        "group flex items-center gap-4 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10 rounded-2xl p-4 transition-all duration-300 shadow-sm dark:shadow-none",
         isDragging && "z-50 border-cyan-500/50 shadow-2xl shadow-cyan-500/10",
       )}
     >
       <div
         {...attributes}
         {...listeners}
-        className="cursor-grab active:cursor-grabbing text-slate-600 hover:text-cyan-400 transition-colors"
+        className="cursor-grab active:cursor-grabbing text-slate-300 dark:text-slate-600 hover:text-cyan-500 transition-colors"
       >
         <FaGripVertical size={14} />
       </div>
@@ -149,10 +149,10 @@ function SortableSocialRow({
             <Icon size={14} />
           </div>
           <div className="min-w-0">
-            <h3 className="font-bold text-white truncate text-sm">
+            <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
               {item.label}
             </h3>
-            <p className="text-[10px] text-slate-500 truncate">{item.href}</p>
+            <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{item.href}</p>
           </div>
         </div>
       </div>
@@ -297,7 +297,7 @@ export default function AdminSocialsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8 space-y-6 font-sans">
+    <div className="p-4 md:p-8 space-y-6 font-sans">
       <AnimatePresence>
         {toast && (
           <motion.div
@@ -333,11 +333,11 @@ export default function AdminSocialsPage() {
       </AnimatePresence>
 
       <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex items-center justify-between bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-4">
+        <div className="flex items-center justify-between bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-2xl p-4 shadow-sm dark:shadow-none">
           <div className="flex items-center gap-3">
             <Badge
               variant="outline"
-              className="bg-cyan-500/10 text-cyan-400 border-cyan-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[9px]"
+              className="bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[9px]"
             >
               {data.length} Social Links
             </Badge>
@@ -351,9 +351,9 @@ export default function AdminSocialsPage() {
           </Button>
         </div>
 
-        <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-2xl shadow-black/40">
+        <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
           <CardHeader className="pb-4">
-            <CardTitle className="text-xl font-black text-white tracking-tight">
+            <CardTitle className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
               Online Presence
             </CardTitle>
           </CardHeader>
@@ -368,9 +368,9 @@ export default function AdminSocialsPage() {
                 ))}
               </div>
             ) : data.length === 0 ? (
-              <div className="text-center py-20 bg-slate-950/20 rounded-3xl border border-dashed border-white/5">
-                <FaLink className="mx-auto text-slate-800 mb-4" size={40} />
-                <p className="text-slate-500 font-medium">
+              <div className="text-center py-20 bg-white dark:bg-slate-950/20 rounded-3xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
+                <FaLink className="mx-auto text-slate-200 dark:text-slate-800 mb-4" size={40} />
+                <p className="text-slate-400 dark:text-slate-500 font-medium">
                   No social links found. Add your profiles above.
                 </p>
               </div>
@@ -402,10 +402,10 @@ export default function AdminSocialsPage() {
 
                 <DragOverlay dropAnimation={null}>
                   {activeId ? (
-                    <div className="flex items-center gap-4 bg-slate-800/90 backdrop-blur-xl border border-cyan-500/30 rounded-2xl p-4 shadow-2xl opacity-90 scale-105">
-                      <FaGripVertical className="text-cyan-400" size={14} />
+                    <div className="flex items-center gap-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-cyan-500/30 rounded-2xl p-4 shadow-2xl opacity-90 scale-105">
+                      <FaGripVertical className="text-cyan-500" size={14} />
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-white truncate text-sm">
+                        <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
                           {data.find((s) => s._id === activeId)?.label}
                         </h3>
                       </div>
@@ -416,7 +416,7 @@ export default function AdminSocialsPage() {
             )}
 
             {!loading && data.length > 0 && (
-              <p className="text-center text-[10px] text-slate-700 mt-8 font-bold uppercase tracking-widest">
+              <p className="text-center text-[10px] text-slate-400 dark:text-slate-700 mt-8 font-bold uppercase tracking-widest">
                 Drag rows to reorder • Changes save automatically
               </p>
             )}

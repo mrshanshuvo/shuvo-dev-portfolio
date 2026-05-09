@@ -54,13 +54,13 @@ export default function SettingsForm({
       )}
 
       {/* SEO & Brand */}
-      <Card className="bg-slate-900/40 border-white/5 backdrop-blur-xl rounded-[2.5rem] overflow-hidden">
-        <CardHeader className="p-8 border-b border-white/5 bg-slate-950/20">
+      <Card className="bg-white dark:bg-slate-900/40 border-slate-200 dark:border-white/5 backdrop-blur-xl rounded-[2.5rem] overflow-hidden shadow-sm dark:shadow-none">
+        <CardHeader className="p-8 border-b border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-slate-950/20">
           <div className="flex items-center gap-4">
             <div className="p-3 rounded-2xl bg-blue-500/10 text-blue-400">
               <FaGlobe size={24} />
             </div>
-            <CardTitle className="text-xl font-bold text-white">
+            <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
               SEO & Branding
             </CardTitle>
           </div>
@@ -76,7 +76,7 @@ export default function SettingsForm({
                 onChange={(e) =>
                   setSettings({ ...settings, siteName: e.target.value })
                 }
-                className="bg-slate-950 border-white/10 rounded-xl"
+                className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white"
               />
             </div>
             <div className="space-y-2">
@@ -96,20 +96,20 @@ export default function SettingsForm({
               onChange={(e) =>
                 setSettings({ ...settings, siteDescription: e.target.value })
               }
-              className="bg-slate-950 border-white/10 rounded-xl h-24"
+              className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-white/10 rounded-xl h-24 text-slate-900 dark:text-white"
             />
           </div>
         </CardContent>
       </Card>
 
       {/* Communication */}
-      <Card className="bg-slate-900/40 border-white/5 backdrop-blur-xl rounded-[2.5rem] overflow-hidden">
-        <CardHeader className="p-8 border-b border-white/5 bg-slate-950/20">
+      <Card className="bg-white dark:bg-slate-900/40 border-slate-200 dark:border-white/5 backdrop-blur-xl rounded-[2.5rem] overflow-hidden shadow-sm dark:shadow-none">
+        <CardHeader className="p-8 border-b border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-slate-950/20">
           <div className="flex items-center gap-4">
             <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-400">
               <FaEnvelope size={24} />
             </div>
-            <CardTitle className="text-xl font-bold text-white">
+            <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
               Communication
             </CardTitle>
           </div>
@@ -125,7 +125,7 @@ export default function SettingsForm({
               onChange={(e) =>
                 setSettings({ ...settings, contactEmail: e.target.value })
               }
-              className="bg-slate-950 border-white/10 rounded-xl"
+              className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white"
               placeholder="you@example.com"
             />
           </div>
@@ -139,7 +139,7 @@ export default function SettingsForm({
                 onChange={(e) =>
                   setSettings({ ...settings, contactPhone: e.target.value })
                 }
-                className="bg-slate-950 border-white/10 rounded-xl"
+                className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white"
                 placeholder="+880123456789"
               />
             </div>
@@ -152,14 +152,16 @@ export default function SettingsForm({
                 onChange={(e) =>
                   setSettings({ ...settings, contactLocation: e.target.value })
                 }
-                className="bg-slate-950 border-white/10 rounded-xl"
+                className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-white/10 rounded-xl text-slate-900 dark:text-white"
                 placeholder="Dhaka, Bangladesh"
               />
             </div>
           </div>
-          <div className="flex items-center justify-between p-6 rounded-2xl bg-slate-950 border border-white/5">
+          <div className="flex items-center justify-between p-6 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/5">
             <div>
-              <p className="text-white font-bold text-sm">Open for Hiring</p>
+              <p className="text-slate-900 dark:text-white font-bold text-sm">
+                Open for Hiring
+              </p>
               <p className="text-slate-500 text-[10px] uppercase tracking-wider font-bold">
                 Toggle &quot;Hire Me&quot; badges across the site.
               </p>
@@ -168,7 +170,7 @@ export default function SettingsForm({
               onClick={() =>
                 setSettings({ ...settings, isHireable: !settings.isHireable })
               }
-              className={`w-12 h-6 rounded-full transition-colors relative ${settings.isHireable ? "bg-emerald-500" : "bg-slate-800"}`}
+              className={`w-12 h-6 rounded-full transition-colors relative ${settings.isHireable ? "bg-emerald-500" : "bg-slate-200 dark:bg-slate-800"}`}
             >
               <div
                 className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${settings.isHireable ? "left-7" : "left-1"}`}
@@ -179,13 +181,13 @@ export default function SettingsForm({
       </Card>
 
       {/* Visuals & DNA */}
-      <Card className="bg-slate-900/40 border-white/5 backdrop-blur-xl rounded-[2.5rem] overflow-hidden">
-        <CardHeader className="p-8 border-b border-white/5 bg-slate-950/20">
+      <Card className="bg-white dark:bg-slate-900/40 border-slate-200 dark:border-white/5 backdrop-blur-xl rounded-[2.5rem] overflow-hidden shadow-sm dark:shadow-none">
+        <CardHeader className="p-8 border-b border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-slate-950/20">
           <div className="flex items-center gap-4">
             <div className="p-3 rounded-2xl bg-purple-500/10 text-purple-400">
               <FaPalette size={24} />
             </div>
-            <CardTitle className="text-xl font-bold text-white">
+            <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
               Visual DNA
             </CardTitle>
           </div>
@@ -205,7 +207,7 @@ export default function SettingsForm({
                   }
                   className={`w-12 h-12 rounded-xl border-4 transition-all ${
                     settings.accentColor === color
-                      ? "border-white scale-110 shadow-lg"
+                      ? "border-emerald-500 scale-110 shadow-lg"
                       : "border-transparent opacity-50 hover:opacity-100"
                   } bg-${color === "rose" ? "pink" : color === "emerald" ? "emerald" : color === "blue" ? "blue" : color === "purple" ? "purple" : "amber"}-500`}
                 />
@@ -216,21 +218,23 @@ export default function SettingsForm({
       </Card>
 
       {/* System */}
-      <Card className="bg-slate-900/40 border-red-500/10 backdrop-blur-xl rounded-[2.5rem] overflow-hidden">
-        <CardHeader className="p-8 border-b border-white/5 bg-slate-950/20">
+      <Card className="bg-white dark:bg-slate-900/40 border-rose-200 dark:border-red-500/10 backdrop-blur-xl rounded-[2.5rem] overflow-hidden shadow-sm dark:shadow-none">
+        <CardHeader className="p-8 border-b border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-slate-950/20">
           <div className="flex items-center gap-4">
             <div className="p-3 rounded-2xl bg-red-500/10 text-red-400">
               <FaShieldAlt size={24} />
             </div>
-            <CardTitle className="text-xl font-bold text-white">
+            <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
               Advanced System Controls
             </CardTitle>
           </div>
         </CardHeader>
         <CardContent className="p-8 space-y-6">
-          <div className="flex items-center justify-between p-6 rounded-2xl bg-red-500/5 border border-red-500/10">
+          <div className="flex items-center justify-between p-6 rounded-2xl bg-rose-50 dark:bg-red-500/5 border border-rose-200 dark:border-red-500/10">
             <div>
-              <p className="text-white font-bold text-sm">Maintenance Mode</p>
+              <p className="text-slate-900 dark:text-white font-bold text-sm">
+                Maintenance Mode
+              </p>
               <p className="text-slate-500 text-[10px] uppercase tracking-wider font-bold">
                 Temporarily disable public access.
               </p>
@@ -242,7 +246,7 @@ export default function SettingsForm({
                   maintenanceMode: !settings.maintenanceMode,
                 })
               }
-              className={`w-12 h-6 rounded-full transition-colors relative ${settings.maintenanceMode ? "bg-red-500" : "bg-slate-800"}`}
+              className={`w-12 h-6 rounded-full transition-colors relative ${settings.maintenanceMode ? "bg-red-500" : "bg-slate-200 dark:bg-slate-800"}`}
             >
               <div
                 className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${settings.maintenanceMode ? "left-7" : "left-1"}`}

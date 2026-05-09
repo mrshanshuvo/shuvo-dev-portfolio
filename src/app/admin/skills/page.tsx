@@ -342,7 +342,7 @@ export default function AdminSkillsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8 space-y-6">
+    <div className="p-4 md:p-8 space-y-6">
       <AnimatePresence>
         {toast && (
           <motion.div
@@ -396,9 +396,9 @@ export default function AdminSkillsPage() {
           </Button>
         </div>
 
-        <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
+        <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
           <CardHeader className="pb-4">
-            <CardTitle className="text-xl font-bold text-white">
+            <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
               Skill Expertise
             </CardTitle>
           </CardHeader>
@@ -408,17 +408,17 @@ export default function AdminSkillsPage() {
                 {Array.from({ length: 4 }).map((_, i) => (
                   <div
                     key={i}
-                    className="h-16 bg-slate-800/20 rounded-2xl animate-pulse"
+                    className="h-16 bg-slate-100 dark:bg-slate-800/20 rounded-2xl animate-pulse"
                   />
                 ))}
               </div>
             ) : skills.length === 0 ? (
-              <div className="text-center py-20 bg-slate-950/20 rounded-3xl border border-dashed border-white/5">
+              <div className="text-center py-20 bg-white dark:bg-slate-950/20 rounded-3xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
                 <FaLaptopCode
-                  className="mx-auto text-slate-800 mb-4"
+                  className="mx-auto text-slate-200 dark:text-slate-800 mb-4"
                   size={40}
                 />
-                <p className="text-slate-500 font-medium">
+                <p className="text-slate-400 dark:text-slate-500 font-medium">
                   No skills found. Add your expertise above.
                 </p>
               </div>
