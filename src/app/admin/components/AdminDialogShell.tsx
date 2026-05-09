@@ -61,19 +61,19 @@ export function AdminDialogShell({
       <DialogContent
         showCloseButton={false}
         className={cn(
-          "bg-slate-900/98 border-white/10 text-white rounded-3xl backdrop-blur-3xl shadow-[0_0_80px_rgba(0,0,0,0.6)] overflow-hidden p-0 gap-0",
+          "bg-slate-900 border-white/10 text-white rounded-3xl shadow-[0_0_80px_rgba(0,0,0,0.6)] overflow-hidden p-0 gap-0 flex flex-col max-h-[95vh] outline-none",
           widthClasses[maxWidth],
         )}
       >
-        <div
-          className={cn(
-            "absolute inset-0 bg-linear-to-br via-transparent pointer-events-none",
-            accentColor,
-          )}
-        />
-
-        <DialogHeader className="p-8 pb-4 relative z-10 border-b border-white/5">
-          <div className="flex items-center justify-between">
+        <DialogHeader className="p-8 pb-4 relative z-20 border-b border-white/5 shrink-0 bg-slate-900/60 backdrop-blur-xl">
+          {/* Subtle accent glow in header */}
+          <div
+            className={cn(
+              "absolute inset-0 bg-linear-to-br via-transparent pointer-events-none opacity-30",
+              accentColor,
+            )}
+          />
+          <div className="flex items-center justify-between relative z-10">
             <div className="flex items-center gap-5">
               <div
                 className={cn(
@@ -113,7 +113,11 @@ export function AdminDialogShell({
           </div>
         </DialogHeader>
 
-        <div className="p-8 pt-6 relative z-10 max-h-[80vh] overflow-y-auto custom-scrollbar">
+        <div
+          className="p-8 pt-6 relative z-10 flex-1 overflow-y-auto custom-scrollbar outline-none min-h-0"
+          tabIndex={0}
+          onWheel={(e) => e.stopPropagation()}
+        >
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}

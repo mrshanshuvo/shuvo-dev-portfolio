@@ -419,79 +419,103 @@ export default function AdminEducationPage() {
           currentEdu?._id ? "Update Academic File" : "Finalize Admission"
         }
         savingLabel="Recording..."
-        maxWidth="3xl"
+        maxWidth="5xl"
       >
         {currentEdu && (
-          <div className="space-y-8 max-h-[60vh] overflow-y-auto px-1 custom-scrollbar">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <AdminField label="Degree / Course">
-                <AdminInput
-                  icon={FaGraduationCap}
-                  value={currentEdu.degree}
-                  onChange={(e) =>
-                    setCurrentEdu({ ...currentEdu, degree: e.target.value })
-                  }
-                  placeholder="e.g. B.Sc in Computer Science"
-                />
-              </AdminField>
-              <AdminField label="Institution">
-                <AdminInput
-                  icon={FaUniversity}
-                  value={currentEdu.institution}
-                  onChange={(e) =>
-                    setCurrentEdu({
-                      ...currentEdu,
-                      institution: e.target.value,
-                    })
-                  }
-                  placeholder="e.g. Stanford University"
-                />
-              </AdminField>
-            </div>
+          <div className="px-1">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-10">
+              {/* Left Column: Branding */}
+              <div className="space-y-6">
+                <AdminField label="Institution Logo">
+                  <ImageUpload
+                    value={currentEdu.logo}
+                    onChange={(url) =>
+                      setCurrentEdu({ ...currentEdu, logo: url })
+                    }
+                  />
+                </AdminField>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <AdminField label="Location">
-                <AdminInput
-                  icon={FaMapMarkerAlt}
-                  value={currentEdu.location}
-                  onChange={(e) =>
-                    setCurrentEdu({ ...currentEdu, location: e.target.value })
-                  }
-                  placeholder="e.g. California, USA"
-                />
-              </AdminField>
-              <AdminField label="Period">
-                <AdminInput
-                  icon={FaCalendarAlt}
-                  value={currentEdu.period}
-                  onChange={(e) =>
-                    setCurrentEdu({ ...currentEdu, period: e.target.value })
-                  }
-                  placeholder="e.g. 2020 - 2024"
-                />
-              </AdminField>
-              <AdminField label="Grade / GPA">
-                <AdminInput
-                  icon={FaAward}
-                  value={currentEdu.gpa}
-                  onChange={(e) =>
-                    setCurrentEdu({ ...currentEdu, gpa: e.target.value })
-                  }
-                  placeholder="e.g. 3.9 / 4.0"
-                />
-              </AdminField>
-            </div>
+                <div className="p-6 bg-blue-500/5 border border-blue-500/10 rounded-3xl flex items-start gap-4">
+                  <FaInfoCircle
+                    className="text-blue-400 shrink-0 mt-1"
+                    size={16}
+                  />
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black uppercase tracking-wider text-blue-400/90">
+                      Academic Credibility
+                    </p>
+                    <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
+                      Connecting your academic background with official
+                      institutions adds credibility to your profile.
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <AdminField label="Institution Logo">
-                <ImageUpload
-                  value={currentEdu.logo}
-                  onChange={(url) =>
-                    setCurrentEdu({ ...currentEdu, logo: url })
-                  }
-                />
-              </AdminField>
-              <div className="space-y-8">
+              {/* Right Column: Academic Details */}
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <AdminField label="Degree / Course">
+                    <AdminInput
+                      icon={FaGraduationCap}
+                      value={currentEdu.degree}
+                      onChange={(e) =>
+                        setCurrentEdu({ ...currentEdu, degree: e.target.value })
+                      }
+                      placeholder="e.g. B.Sc in Computer Science"
+                    />
+                  </AdminField>
+                  <AdminField label="Institution">
+                    <AdminInput
+                      icon={FaUniversity}
+                      value={currentEdu.institution}
+                      onChange={(e) =>
+                        setCurrentEdu({
+                          ...currentEdu,
+                          institution: e.target.value,
+                        })
+                      }
+                      placeholder="e.g. Stanford University"
+                    />
+                  </AdminField>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                  <AdminField label="Location">
+                    <AdminInput
+                      icon={FaMapMarkerAlt}
+                      value={currentEdu.location}
+                      onChange={(e) =>
+                        setCurrentEdu({
+                          ...currentEdu,
+                          location: e.target.value,
+                        })
+                      }
+                      placeholder="e.g. California, USA"
+                    />
+                  </AdminField>
+                  <AdminField label="Period">
+                    <AdminInput
+                      icon={FaCalendarAlt}
+                      value={currentEdu.period}
+                      onChange={(e) =>
+                        setCurrentEdu({ ...currentEdu, period: e.target.value })
+                      }
+                      placeholder="e.g. 2020 - 2024"
+                    />
+                  </AdminField>
+                  <AdminField label="Grade / GPA">
+                    <AdminInput
+                      icon={FaAward}
+                      value={currentEdu.gpa}
+                      onChange={(e) =>
+                        setCurrentEdu({ ...currentEdu, gpa: e.target.value })
+                      }
+                      placeholder="e.g. 3.9 / 4.0"
+                    />
+                  </AdminField>
+                </div>
+
                 <AdminField label="Official Website">
                   <AdminInput
                     icon={FaLink}
@@ -502,92 +526,85 @@ export default function AdminEducationPage() {
                     placeholder="https://university.edu"
                   />
                 </AdminField>
-                <div className="p-5 bg-blue-500/5 border border-blue-500/10 rounded-3xl flex items-start gap-4">
-                  <FaInfoCircle
-                    className="text-blue-400 shrink-0 mt-1"
-                    size={16}
-                  />
-                  <p className="text-xs text-slate-400 leading-relaxed font-medium">
-                    Connecting your academic background with official
-                    institutions adds credibility to your profile.
-                  </p>
-                </div>
-              </div>
-            </div>
 
-            <AdminField label="Academic Highlights">
-              <div className="space-y-4">
-                <div className="flex gap-3">
-                  <AdminInput
-                    icon={FaInfoCircle}
-                    value={detailInput}
-                    onChange={(e) => setDetailInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        if (detailInput.trim()) {
-                          setCurrentEdu({
-                            ...currentEdu,
-                            details: [
-                              ...currentEdu.details,
-                              detailInput.trim(),
-                            ],
-                          });
-                          setDetailInput("");
-                        }
-                      }
-                    }}
-                    placeholder="e.g. Dean's List, Research in AI, etc."
-                    className="h-14"
-                  />
-                  <Button
-                    onClick={() => {
-                      if (detailInput.trim()) {
-                        setCurrentEdu({
-                          ...currentEdu,
-                          details: [...currentEdu.details, detailInput.trim()],
-                        });
-                        setDetailInput("");
-                      }
-                    }}
-                    className="bg-slate-800 hover:bg-slate-700 text-white rounded-2xl h-14 px-6 border border-white/5 font-bold"
-                  >
-                    Add
-                  </Button>
-                </div>
-                <div className="grid grid-cols-1 gap-3">
-                  <AnimatePresence mode="popLayout">
-                    {currentEdu.details.map((detail, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, x: 20 }}
-                        className="flex items-center gap-4 p-4 bg-slate-950/50 border border-white/5 rounded-2xl group/item"
-                      >
-                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500/50 shrink-0 group-hover/item:scale-150 transition-transform" />
-                        <span className="text-sm text-slate-300 flex-1 font-medium">
-                          {detail}
-                        </span>
-                        <button
-                          onClick={() =>
+                <AdminField label="Academic Highlights">
+                  <div className="space-y-6">
+                    <div className="flex gap-3">
+                      <AdminInput
+                        icon={FaInfoCircle}
+                        value={detailInput}
+                        onChange={(e) => setDetailInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            if (detailInput.trim()) {
+                              setCurrentEdu({
+                                ...currentEdu,
+                                details: [
+                                  ...currentEdu.details,
+                                  detailInput.trim(),
+                                ],
+                              });
+                              setDetailInput("");
+                            }
+                          }
+                        }}
+                        placeholder="e.g. Dean's List, Research in AI, etc."
+                        className="h-12"
+                      />
+                      <Button
+                        onClick={() => {
+                          if (detailInput.trim()) {
                             setCurrentEdu({
                               ...currentEdu,
-                              details: currentEdu.details.filter(
-                                (_, idx) => idx !== i,
-                              ),
-                            })
+                              details: [
+                                ...currentEdu.details,
+                                detailInput.trim(),
+                              ],
+                            });
+                            setDetailInput("");
                           }
-                          className="text-slate-600 hover:text-red-400 transition-colors p-2 hover:bg-red-400/10 rounded-lg"
-                        >
-                          <FaTimes size={14} />
-                        </button>
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                </div>
+                        }}
+                        className="bg-slate-800 hover:bg-slate-700 text-white rounded-xl h-12 px-6 border border-white/5 font-bold"
+                      >
+                        Add
+                      </Button>
+                    </div>
+                    <div className="grid grid-cols-1 gap-3">
+                      <AnimatePresence mode="popLayout">
+                        {currentEdu.details.map((detail, i) => (
+                          <motion.div
+                            key={i}
+                            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, x: 20 }}
+                            className="flex items-center gap-4 p-4 bg-slate-950/40 border border-white/5 rounded-2xl group/item shadow-inner shadow-black/10"
+                          >
+                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500/50 shrink-0 group-hover/item:scale-150 transition-transform" />
+                            <span className="text-sm text-slate-300 flex-1 font-medium">
+                              {detail}
+                            </span>
+                            <button
+                              onClick={() =>
+                                setCurrentEdu({
+                                  ...currentEdu,
+                                  details: currentEdu.details.filter(
+                                    (_, idx) => idx !== i,
+                                  ),
+                                })
+                              }
+                              className="text-slate-600 hover:text-red-400 transition-colors p-2 hover:bg-red-400/10 rounded-lg"
+                            >
+                              <FaTimes size={14} />
+                            </button>
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
+                    </div>
+                  </div>
+                </AdminField>
               </div>
-            </AdminField>
+            </div>
           </div>
         )}
       </AdminDialogShell>

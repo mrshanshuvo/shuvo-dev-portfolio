@@ -400,75 +400,98 @@ export default function AdminTestimonialsPage() {
         saving={saving}
         saveLabel={currentTestimonial?._id ? "Update Feedback" : "Add Praise"}
         savingLabel="Processing..."
-        maxWidth="lg"
+        maxWidth="5xl"
       >
         {currentTestimonial && (
-          <div className="space-y-6 max-h-[60vh] overflow-y-auto px-1 custom-scrollbar">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <AdminField label="Client Name">
-                <AdminInput
-                  icon={FaUser}
-                  value={currentTestimonial.name}
-                  onChange={(e) =>
-                    setCurrentTestimonial({
-                      ...currentTestimonial,
-                      name: e.target.value,
-                    })
-                  }
-                  placeholder="e.g. John Doe"
-                />
-              </AdminField>
-              <AdminField label="Job Role">
-                <AdminInput
-                  icon={FaBriefcase}
-                  value={currentTestimonial.role}
-                  onChange={(e) =>
-                    setCurrentTestimonial({
-                      ...currentTestimonial,
-                      role: e.target.value,
-                    })
-                  }
-                  placeholder="e.g. CEO"
-                />
-              </AdminField>
+          <div className="px-1">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-10">
+              {/* Left Column: Client Identity */}
+              <div className="space-y-6">
+                <AdminField label="Client Avatar">
+                  <ImageUpload
+                    value={currentTestimonial.avatar}
+                    onChange={(url) =>
+                      setCurrentTestimonial({
+                        ...currentTestimonial,
+                        avatar: url,
+                      })
+                    }
+                  />
+                </AdminField>
+
+                <div className="p-6 bg-amber-500/5 border border-amber-500/10 rounded-3xl flex items-start gap-4">
+                  <FaQuoteLeft className="text-amber-400 shrink-0 mt-1" size={16} />
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black uppercase tracking-wider text-amber-400/90">
+                      Client Feedback
+                    </p>
+                    <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
+                      Adding a client photo increases the authenticity and trust of the feedback. Use professional headshots for best results.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Testimony Details */}
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <AdminField label="Client Name">
+                    <AdminInput
+                      icon={FaUser}
+                      value={currentTestimonial.name}
+                      onChange={(e) =>
+                        setCurrentTestimonial({
+                          ...currentTestimonial,
+                          name: e.target.value,
+                        })
+                      }
+                      placeholder="e.g. John Doe"
+                    />
+                  </AdminField>
+                  <AdminField label="Job Role">
+                    <AdminInput
+                      icon={FaBriefcase}
+                      value={currentTestimonial.role}
+                      onChange={(e) =>
+                        setCurrentTestimonial({
+                          ...currentTestimonial,
+                          role: e.target.value,
+                        })
+                      }
+                      placeholder="e.g. CEO"
+                    />
+                  </AdminField>
+                </div>
+
+                <AdminField label="Company / Organization">
+                  <AdminInput
+                    icon={FaBuilding}
+                    value={currentTestimonial.company}
+                    onChange={(e) =>
+                      setCurrentTestimonial({
+                        ...currentTestimonial,
+                        company: e.target.value,
+                      })
+                    }
+                    placeholder="e.g. Future Labs Inc."
+                  />
+                </AdminField>
+
+                <AdminField label="Testimonial Narrative">
+                  <AdminTextarea
+                    value={currentTestimonial.content}
+                    onChange={(e) =>
+                      setCurrentTestimonial({
+                        ...currentTestimonial,
+                        content: e.target.value,
+                      })
+                    }
+                    placeholder="What they said about your work..."
+                    className="min-h-[160px]"
+                  />
+                </AdminField>
+              </div>
             </div>
-
-            <AdminField label="Company / Organization">
-              <AdminInput
-                icon={FaBuilding}
-                value={currentTestimonial.company}
-                onChange={(e) =>
-                  setCurrentTestimonial({
-                    ...currentTestimonial,
-                    company: e.target.value,
-                  })
-                }
-                placeholder="e.g. Future Labs Inc."
-              />
-            </AdminField>
-
-            <AdminField label="Testimonial Narrative">
-              <AdminTextarea
-                value={currentTestimonial.content}
-                onChange={(e) =>
-                  setCurrentTestimonial({
-                    ...currentTestimonial,
-                    content: e.target.value,
-                  })
-                }
-                placeholder="What they said about your work..."
-                className="min-h-[120px]"
-              />
-            </AdminField>
-
-            <AdminField label="Client Avatar">
-              <ImageUpload
-                value={currentTestimonial.avatar}
-                onChange={(url) =>
-                  setCurrentTestimonial({ ...currentTestimonial, avatar: url })
-                }
-              />
-            </AdminField>
           </div>
         )}
       </AdminDialogShell>

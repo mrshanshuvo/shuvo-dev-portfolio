@@ -29,6 +29,7 @@ import {
   FaLink,
   FaTag,
   FaBookOpen,
+  FaInfoCircle,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -430,76 +431,113 @@ export default function AdminBlogsPage() {
         saving={saving}
         saveLabel={currentBlog?._id ? "Update Article" : "Publish Insight"}
         savingLabel="Publishing..."
-        maxWidth="3xl"
+        maxWidth="5xl"
       >
         {currentBlog && (
-          <div className="space-y-8 max-h-[60vh] overflow-y-auto px-1 custom-scrollbar">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <AdminField label="Article Title">
-                <AdminInput
-                  icon={FaBookOpen}
-                  value={currentBlog.title}
-                  onChange={(e) =>
-                    setCurrentBlog({ ...currentBlog, title: e.target.value })
-                  }
-                  placeholder="e.g. Master Next.js 14 Server Actions"
-                />
-              </AdminField>
-              <AdminField label="Publish Date">
-                <AdminInput
-                  icon={FaCalendarAlt}
-                  value={currentBlog.date}
-                  onChange={(e) =>
-                    setCurrentBlog({ ...currentBlog, date: e.target.value })
-                  }
-                  placeholder="e.g. May 15, 2024"
-                />
-              </AdminField>
-            </div>
+          <div className="px-1">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-10">
+              {/* Left Column: Visuals & Branding */}
+              <div className="space-y-6">
+                <AdminField label="Cover Narrative Image">
+                  <ImageUpload
+                    value={currentBlog.image}
+                    onChange={(url) =>
+                      setCurrentBlog({ ...currentBlog, image: url })
+                    }
+                  />
+                </AdminField>
 
-            <AdminField label="Article Source URL">
-              <AdminInput
-                icon={FaLink}
-                value={currentBlog.link}
-                onChange={(e) =>
-                  setCurrentBlog({ ...currentBlog, link: e.target.value })
-                }
-                placeholder="https://medium.com/your-article"
-              />
-            </AdminField>
+                <div className="p-6 bg-orange-500/5 border border-orange-500/10 rounded-3xl flex items-start gap-4">
+                  <FaInfoCircle
+                    className="text-orange-400 shrink-0 mt-1"
+                    size={16}
+                  />
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black uppercase tracking-wider text-orange-400/90">
+                      Visual Engagement
+                    </p>
+                    <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
+                      A high-quality cover image significantly increases click-through rates. Choose an image that visually summarizes your article's core topic.
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-            <AdminField label="Synopsis">
-              <AdminTextarea
-                value={currentBlog.description}
-                onChange={(e) =>
-                  setCurrentBlog({
-                    ...currentBlog,
-                    description: e.target.value,
-                  })
-                }
-                placeholder="A compelling summary of the article..."
-              />
-            </AdminField>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              <AdminField label="Cover Narrative Image">
-                <ImageUpload
-                  value={currentBlog.image}
-                  onChange={(url) =>
-                    setCurrentBlog({ ...currentBlog, image: url })
-                  }
-                />
-              </AdminField>
-              <AdminField label="Taxonomy / Tags">
-                <div className="space-y-3">
-                  <div className="flex gap-2">
+              {/* Right Column: Article Details */}
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <AdminField label="Article Title">
                     <AdminInput
-                      icon={FaTag}
-                      value={tagInput}
-                      onChange={(e) => setTagInput(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
+                      icon={FaBookOpen}
+                      value={currentBlog.title}
+                      onChange={(e) =>
+                        setCurrentBlog({ ...currentBlog, title: e.target.value })
+                      }
+                      placeholder="e.g. Master Next.js 14 Server Actions"
+                    />
+                  </AdminField>
+                  <AdminField label="Publish Date">
+                    <AdminInput
+                      icon={FaCalendarAlt}
+                      value={currentBlog.date}
+                      onChange={(e) =>
+                        setCurrentBlog({ ...currentBlog, date: e.target.value })
+                      }
+                      placeholder="e.g. May 15, 2024"
+                    />
+                  </AdminField>
+                </div>
+
+                <AdminField label="Article Source URL">
+                  <AdminInput
+                    icon={FaLink}
+                    value={currentBlog.link}
+                    onChange={(e) =>
+                      setCurrentBlog({ ...currentBlog, link: e.target.value })
+                    }
+                    placeholder="https://medium.com/your-article"
+                  />
+                </AdminField>
+
+                <AdminField label="Synopsis">
+                  <AdminTextarea
+                    value={currentBlog.description}
+                    onChange={(e) =>
+                      setCurrentBlog({
+                        ...currentBlog,
+                        description: e.target.value,
+                      })
+                    }
+                    placeholder="A compelling summary of the article..."
+                    className="min-h-[120px]"
+                  />
+                </AdminField>
+
+                <AdminField label="Taxonomy / Tags">
+                  <div className="space-y-4">
+                    <div className="flex gap-3">
+                      <AdminInput
+                        icon={FaTag}
+                        value={tagInput}
+                        onChange={(e) => setTagInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            if (tagInput.trim()) {
+                              setCurrentBlog({
+                                ...currentBlog,
+                                tags: [...currentBlog.tags, tagInput.trim()],
+                              });
+                              setTagInput("");
+                            }
+                          }
+                        }}
+                        placeholder="e.g. Next.js"
+                        className="h-12 text-sm"
+                      />
+                      <Button
+                        type="button"
+                        onClick={() => {
                           if (tagInput.trim()) {
                             setCurrentBlog({
                               ...currentBlog,
@@ -507,53 +545,47 @@ export default function AdminBlogsPage() {
                             });
                             setTagInput("");
                           }
-                        }
-                      }}
-                      placeholder="e.g. Next.js"
-                      className="h-11 text-sm"
-                    />
-                    <Button
-                      type="button"
-                      onClick={() => {
-                        if (tagInput.trim()) {
-                          setCurrentBlog({
-                            ...currentBlog,
-                            tags: [...currentBlog.tags, tagInput.trim()],
-                          });
-                          setTagInput("");
-                        }
-                      }}
-                      className="h-11 px-4 bg-white/5 hover:bg-white/10 text-white rounded-xl font-bold"
-                    >
-                      <FaPlus size={12} />
-                    </Button>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {currentBlog.tags.map((tag, i) => (
-                      <Badge
-                        key={i}
-                        variant="secondary"
-                        className="bg-orange-500/10 text-orange-400 border-orange-500/20 px-3 py-1.5 gap-2 rounded-xl group transition-all"
+                        }}
+                        className="h-12 px-6 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-bold border border-white/5 shadow-inner shadow-black/20"
                       >
-                        <span className="text-xs">{tag}</span>
-                        <button
-                          onClick={() =>
-                            setCurrentBlog({
-                              ...currentBlog,
-                              tags: currentBlog.tags.filter(
-                                (_, idx) => idx !== i,
-                              ),
-                            })
-                          }
-                          className="hover:text-red-400 transition-colors"
-                        >
-                          <FaTimes size={10} />
-                        </button>
-                      </Badge>
-                    ))}
+                        <FaPlus size={14} />
+                      </Button>
+                    </div>
+                    <div className="flex flex-wrap gap-2 pt-2">
+                      <AnimatePresence>
+                        {currentBlog.tags.map((tag, i) => (
+                          <motion.div
+                            key={i}
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
+                          >
+                            <Badge
+                              variant="secondary"
+                              className="bg-slate-950/40 text-orange-400 border-white/5 shadow-inner shadow-black/10 px-3 py-2 gap-2 rounded-xl group transition-all"
+                            >
+                              <span className="text-xs font-bold">{tag}</span>
+                              <button
+                                onClick={() =>
+                                  setCurrentBlog({
+                                    ...currentBlog,
+                                    tags: currentBlog.tags.filter(
+                                      (_, idx) => idx !== i,
+                                    ),
+                                  })
+                                }
+                                className="text-slate-500 hover:text-red-400 transition-colors p-1"
+                              >
+                                <FaTimes size={10} />
+                              </button>
+                            </Badge>
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
+                    </div>
                   </div>
-                </div>
-              </AdminField>
+                </AdminField>
+              </div>
             </div>
           </div>
         )}

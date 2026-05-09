@@ -429,7 +429,7 @@ export default function AdminExperiencePage() {
         maxWidth="5xl"
       >
         {currentExp && (
-          <div className="max-h-[80vh] overflow-y-auto px-1 custom-scrollbar">
+          <div className="px-1">
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-10">
               {/* Left Column: Branding */}
               <div className="space-y-6">

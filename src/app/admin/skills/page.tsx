@@ -27,6 +27,7 @@ import {
   FaEdit,
   FaTrash,
   FaLaptopCode,
+  FaInfoCircle,
 } from "react-icons/fa";
 import { SiReact, SiNodedotjs, SiTensorflow } from "react-icons/si";
 import { motion, AnimatePresence } from "framer-motion";
@@ -539,90 +540,133 @@ export default function AdminSkillsPage() {
         saving={saving}
         saveLabel={currentSkill?._id ? "Update Skill" : "Enshrine Expertise"}
         savingLabel="Processing..."
+        maxWidth="5xl"
       >
         {currentSkill && (
-          <div className="space-y-8">
-            <div className="grid grid-cols-1 gap-6">
-              <AdminField label="Expertise Title">
-                <AdminInput
-                  icon={FaLaptopCode}
-                  value={currentSkill.name}
-                  onChange={(e) =>
-                    setCurrentSkill({
-                      ...currentSkill,
-                      name: e.target.value,
-                    })
-                  }
-                  placeholder="e.g. Full Stack Development"
-                />
-              </AdminField>
-
-              <AdminField label="Stack / Technologies">
-                <AdminInput
-                  icon={FaCode}
-                  className="font-medium text-sm"
-                  value={currentSkill.tech}
-                  onChange={(e) =>
-                    setCurrentSkill({
-                      ...currentSkill,
-                      tech: e.target.value,
-                    })
-                  }
-                  placeholder="e.g. React, Next.js, TypeScript"
-                />
-              </AdminField>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <AdminField label="Visual Icon">
-                <Select
-                  value={currentSkill.iconName}
-                  onValueChange={(val) => {
-                    if (val) {
-                      setCurrentSkill((prev) =>
-                        prev ? { ...prev, iconName: val } : null,
-                      );
-                    }
-                  }}
-                >
-                  <SelectTrigger className="bg-slate-950/50 border-white/5 rounded-2xl h-14 font-bold text-base">
-                    <SelectValue placeholder="Select icon" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-slate-900 border-white/10 text-white rounded-2xl shadow-2xl backdrop-blur-xl">
-                    {ICON_OPTIONS.map((p) => (
-                      <SelectItem
-                        key={p}
-                        value={p}
-                        className="rounded-xl py-3 focus:bg-purple-500/10 focus:text-purple-400"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center">
-                            {iconOptionsMap[p] || <FaCode size={12} />}
-                          </div>
-                          {p}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </AdminField>
-
-              <AdminField label={`Expertise Level: ${currentSkill.level}%`}>
-                <div className="pt-4 px-2">
-                  <Slider
-                    value={[currentSkill.level]}
-                    max={100}
-                    step={1}
-                    onValueChange={(val: number | readonly number[]) => {
-                      const level = Array.isArray(val) ? val[0] : val;
-                      setCurrentSkill((prev) =>
-                        prev ? { ...prev, level } : null,
-                      );
+          <div className="px-1">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-10">
+              {/* Left Column: Visuals & Mastery */}
+              <div className="space-y-8">
+                <AdminField label="Visual Icon">
+                  <Select
+                    value={currentSkill.iconName}
+                    onValueChange={(val) => {
+                      if (val) {
+                        setCurrentSkill((prev) =>
+                          prev ? { ...prev, iconName: val } : null,
+                        );
+                      }
                     }}
-                    className="cursor-pointer"
+                  >
+                    <SelectTrigger className="bg-slate-950/40 border-white/5 rounded-xl h-12 font-bold shadow-inner shadow-black/20 focus:ring-4 focus:ring-emerald-500/5 transition-all">
+                      <SelectValue placeholder="Select icon" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-slate-900 border-white/10 text-white rounded-xl shadow-2xl">
+                      {ICON_OPTIONS.map((p) => (
+                        <SelectItem
+                          key={p}
+                          value={p}
+                          className="rounded-lg py-2.5 focus:bg-purple-500/10 focus:text-purple-400"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-5 h-5 rounded bg-white/5 flex items-center justify-center">
+                              {iconOptionsMap[p] || <FaCode size={10} />}
+                            </div>
+                            <span className="text-xs">{p}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </AdminField>
+
+                <AdminField label={`Expertise Mastery: ${currentSkill.level}%`}>
+                  <div className="pt-4 px-2">
+                    <Slider
+                      value={[currentSkill.level]}
+                      max={100}
+                      step={1}
+                      onValueChange={(val: number | readonly number[]) => {
+                        const level = Array.isArray(val) ? val[0] : val;
+                        setCurrentSkill((prev) =>
+                          prev ? { ...prev, level } : null,
+                        );
+                      }}
+                      className="cursor-pointer"
+                    />
+                  </div>
+                </AdminField>
+
+                <div className="p-6 bg-purple-500/5 border border-purple-500/10 rounded-3xl flex items-start gap-4">
+                  <FaInfoCircle
+                    className="text-purple-400 shrink-0 mt-1"
+                    size={16}
                   />
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black uppercase tracking-wider text-purple-400/90">
+                      Technical Branding
+                    </p>
+                    <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
+                      Select an icon that best represents this technology.
+                      Mastery levels help visitors understand your depth of
+                      knowledge.
+                    </p>
+                  </div>
                 </div>
-              </AdminField>
+              </div>
+
+              {/* Right Column: Skill Identity */}
+              <div className="space-y-6">
+                <AdminField label="Expertise Title">
+                  <AdminInput
+                    icon={FaLaptopCode}
+                    value={currentSkill.name}
+                    onChange={(e) =>
+                      setCurrentSkill({
+                        ...currentSkill,
+                        name: e.target.value,
+                      })
+                    }
+                    placeholder="e.g. Full Stack Development"
+                  />
+                </AdminField>
+
+                <AdminField label="Stack / Technologies">
+                  <AdminInput
+                    icon={FaCode}
+                    className="font-medium text-sm"
+                    value={currentSkill.tech}
+                    onChange={(e) =>
+                      setCurrentSkill({
+                        ...currentSkill,
+                        tech: e.target.value,
+                      })
+                    }
+                    placeholder="e.g. React, Next.js, TypeScript"
+                  />
+                </AdminField>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-4">
+                  <div className="p-4 bg-slate-950/40 border border-white/5 rounded-2xl flex flex-col gap-1">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">
+                      Mastery Status
+                    </span>
+                    <span className="text-sm font-bold text-white">
+                      {currentSkill.level >= 80
+                        ? "Specialist"
+                        : currentSkill.level >= 50
+                          ? "Advanced"
+                          : "Proficient"}
+                    </span>
+                  </div>
+                  <div className="p-4 bg-slate-950/40 border border-white/5 rounded-2xl flex flex-col gap-1">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">
+                      Last Calibrated
+                    </span>
+                    <span className="text-sm font-bold text-white">Today</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
