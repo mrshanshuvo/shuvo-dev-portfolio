@@ -149,7 +149,7 @@ export default function ImageUpload({
       )}
 
       {error ? (
-        <div className="p-6 rounded-[2rem] border border-rose-500/20 bg-linear-to-br from-rose-500/10 to-rose-900/10 text-rose-400 relative backdrop-blur-md shadow-[0_8px_32px_0_rgba(244,63,94,0.1)]">
+        <div className="p-6 rounded-2xl border border-rose-500/20 bg-linear-to-br from-rose-500/10 to-rose-900/10 text-rose-400 relative backdrop-blur-md shadow-[0_8px_32px_0_rgba(244,63,94,0.1)]">
           <h3 className="font-bold text-lg mb-2 text-rose-400 flex items-center gap-3">
             <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse shadow-[0_0_10px_rgba(244,63,94,0.6)]" />
             Upload Failed
@@ -163,7 +163,7 @@ export default function ImageUpload({
           </button>
         </div>
       ) : loading ? (
-        <div className="p-4 rounded-[2rem] border border-white/5 bg-slate-900/50 backdrop-blur-md shadow-2xl relative overflow-hidden group aspect-square flex flex-col justify-center">
+        <div className="p-4 rounded-2xl border border-white/5 bg-slate-900/50 backdrop-blur-md shadow-2xl relative overflow-hidden group aspect-square flex flex-col justify-center">
           {/* Subtle animated background glow */}
           <div className="absolute inset-0 bg-linear-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 animate-pulse" />
 
@@ -203,7 +203,7 @@ export default function ImageUpload({
           </div>
         </div>
       ) : value ? (
-        <div className="relative group/image rounded-[2rem] overflow-hidden border border-white/10 aspect-square bg-slate-950 flex flex-col items-center justify-center shadow-2xl transition-all duration-500 hover:shadow-[0_10px_40px_rgba(99,102,241,0.15)] hover:border-indigo-500/30">
+        <div className="relative group/image rounded-2xl overflow-hidden border border-white/10 aspect-square bg-slate-950 flex flex-col items-center justify-center shadow-2xl transition-all duration-500 hover:shadow-[0_10px_40px_rgba(99,102,241,0.15)] hover:border-indigo-500/30">
           {value &&
           (value.includes("/video/upload/") ||
             value.toLowerCase().endsWith(".mp4") ||
@@ -296,7 +296,7 @@ export default function ImageUpload({
           onDrop={onDrop}
           onClick={() => fileInputRef.current?.click()}
           className={`
-            relative aspect-square rounded-[2rem] border-2 transition-all duration-500 cursor-pointer overflow-hidden
+            relative aspect-square rounded-2xl border-2 transition-all duration-500 cursor-pointer overflow-hidden
             flex flex-col items-center justify-center p-4 group/image
             ${
               isDragging
@@ -355,7 +355,7 @@ export default function ImageUpload({
             }}
           >
             <div
-              className={`relative w-full ${isPdf ? "max-w-5xl h-[85vh]" : "max-w-4xl"} bg-slate-900/90 backdrop-blur-3xl rounded-[2rem] overflow-hidden border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col transition-all duration-500 scale-100`}
+              className={`relative w-full ${isPdf ? "max-w-5xl h-[85vh]" : "max-w-4xl"} bg-slate-900/90 backdrop-blur-3xl rounded-2xl overflow-hidden border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col transition-all duration-500 scale-100`}
               onClick={(e) => e.stopPropagation()}
             >
               {/* Refined Header */}

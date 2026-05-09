@@ -20,15 +20,15 @@ export function AdminField({
   className,
 }: AdminFieldProps) {
   return (
-    <div className={cn("space-y-2.5", className)}>
-      <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 opacity-80 group-focus-within:text-white transition-colors">
+    <div className={cn("space-y-1.5", className)}>
+      <label className="text-[11px] font-black text-slate-400/80 uppercase tracking-[0.2em] ml-1.5 group-focus-within:text-emerald-400 transition-all duration-300">
         {label}
       </label>
-      <div className="relative group">
-        {children}
-      </div>
+      <div className="relative group mt-2">{children}</div>
       {error && (
-        <p className="text-[10px] text-red-500 font-bold ml-1 animate-in slide-in-from-top-1">{error}</p>
+        <p className="text-[10px] text-red-500 font-bold ml-1 animate-in slide-in-from-top-1">
+          {error}
+        </p>
       )}
     </div>
   );
@@ -52,8 +52,8 @@ export function AdminInput({
       )}
       <Input
         className={cn(
-          "bg-slate-950/50 border-white/5 rounded-2xl h-14 focus:border-white/20 focus:ring-white/5 transition-all font-bold text-base",
-          Icon && "pl-12",
+          "bg-slate-950/40 border-white/5 rounded-xl h-12 focus:border-emerald-500/30 focus:ring-4 focus:ring-emerald-500/5 transition-all duration-300 font-bold text-sm text-slate-200 placeholder:text-slate-600 shadow-inner shadow-black/20",
+          Icon && "pl-11",
           className,
         )}
         {...props}
@@ -62,12 +62,15 @@ export function AdminInput({
   );
 }
 
-interface AdminTextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface AdminTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   icon?: IconType;
 }
 
-export function AdminTextarea({ icon: Icon, className, ...props }: AdminTextareaProps) {
+export function AdminTextarea({
+  icon: Icon,
+  className,
+  ...props
+}: AdminTextareaProps) {
   return (
     <div className="relative group/input w-full">
       {Icon && (
@@ -77,8 +80,8 @@ export function AdminTextarea({ icon: Icon, className, ...props }: AdminTextarea
       )}
       <Textarea
         className={cn(
-          "bg-slate-950/50 border-white/5 rounded-2xl min-h-[120px] focus:border-white/20 focus:ring-white/5 transition-all p-4 leading-relaxed",
-          Icon && "pl-12",
+          "bg-slate-950/40 border-white/5 rounded-xl min-h-[100px] focus:border-emerald-500/30 focus:ring-4 focus:ring-emerald-500/5 transition-all duration-300 p-4 leading-relaxed text-sm text-slate-200 placeholder:text-slate-600 shadow-inner shadow-black/20",
+          Icon && "pl-11",
           className,
         )}
         {...props}

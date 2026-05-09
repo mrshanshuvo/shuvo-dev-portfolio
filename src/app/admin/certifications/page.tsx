@@ -413,76 +413,105 @@ export default function AdminCertificationsPage() {
         saving={saving}
         saveLabel={currentCert?._id ? "Update Credential" : "Establish Honor"}
         savingLabel="Processing..."
-        maxWidth="3xl"
+        maxWidth="5xl"
       >
         {currentCert && (
-          <div className="space-y-8 max-h-[60vh] overflow-y-auto px-1 custom-scrollbar">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <AdminField label="Certification Title">
-                <AdminInput
-                  icon={FaCertificate}
-                  value={currentCert.title}
-                  onChange={(e) =>
-                    setCurrentCert({ ...currentCert, title: e.target.value })
-                  }
-                  placeholder="e.g. AWS Solutions Architect"
-                />
-              </AdminField>
-              <AdminField label="Issuing Authority">
-                <AdminInput
-                  icon={FaUniversity}
-                  value={currentCert.issuer}
-                  onChange={(e) =>
-                    setCurrentCert({ ...currentCert, issuer: e.target.value })
-                  }
-                  placeholder="e.g. Amazon Web Services"
-                />
-              </AdminField>
-            </div>
+          <div className="max-h-[80vh] overflow-y-auto px-1 custom-scrollbar">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-10">
+              {/* Left Column: Image/Badge */}
+              <div className="space-y-6">
+                <AdminField label="Certificate Badge">
+                  <ImageUpload
+                    value={currentCert.image || ""}
+                    onChange={(url) =>
+                      setCurrentCert({ ...currentCert, image: url })
+                    }
+                  />
+                </AdminField>
+              </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <AdminField label="Date Issued">
-                <AdminInput
-                  icon={FaCalendarAlt}
-                  value={currentCert.date}
-                  onChange={(e) =>
-                    setCurrentCert({ ...currentCert, date: e.target.value })
-                  }
-                  placeholder="e.g. June 2023"
-                />
-              </AdminField>
-              <AdminField label="Credential URL">
-                <AdminInput
-                  icon={FaLink}
-                  value={currentCert.link}
-                  onChange={(e) =>
-                    setCurrentCert({ ...currentCert, link: e.target.value })
-                  }
-                  placeholder="https://verify.certification.com"
-                />
-              </AdminField>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              <AdminField label="Certificate Badge">
-                <ImageUpload
-                  value={currentCert.image || ""}
-                  onChange={(url) =>
-                    setCurrentCert({ ...currentCert, image: url })
-                  }
-                />
-              </AdminField>
-
-              <AdminField label="Key Skills & Competencies">
-                <div className="space-y-3">
-                  <div className="flex gap-2">
+              {/* Right Column: Information Fields */}
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <AdminField label="Certification Title">
                     <AdminInput
-                      icon={FaInfoCircle}
-                      value={skillInput}
-                      onChange={(e) => setSkillInput(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
+                      icon={FaCertificate}
+                      value={currentCert.title}
+                      onChange={(e) =>
+                        setCurrentCert({
+                          ...currentCert,
+                          title: e.target.value,
+                        })
+                      }
+                      placeholder="e.g. AWS Solutions Architect"
+                    />
+                  </AdminField>
+                  <AdminField label="Issuing Authority">
+                    <AdminInput
+                      icon={FaUniversity}
+                      value={currentCert.issuer}
+                      onChange={(e) =>
+                        setCurrentCert({
+                          ...currentCert,
+                          issuer: e.target.value,
+                        })
+                      }
+                      placeholder="e.g. Amazon Web Services"
+                    />
+                  </AdminField>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <AdminField label="Date Issued">
+                    <AdminInput
+                      icon={FaCalendarAlt}
+                      value={currentCert.date}
+                      onChange={(e) =>
+                        setCurrentCert({ ...currentCert, date: e.target.value })
+                      }
+                      placeholder="e.g. June 2023"
+                    />
+                  </AdminField>
+                  <AdminField label="Credential URL">
+                    <AdminInput
+                      icon={FaLink}
+                      value={currentCert.link}
+                      onChange={(e) =>
+                        setCurrentCert({ ...currentCert, link: e.target.value })
+                      }
+                      placeholder="https://verify.certification.com"
+                    />
+                  </AdminField>
+                </div>
+
+                <AdminField label="Key Skills & Competencies">
+                  <div className="space-y-3">
+                    <div className="flex gap-2">
+                      <AdminInput
+                        icon={FaInfoCircle}
+                        value={skillInput}
+                        onChange={(e) => setSkillInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            if (skillInput.trim()) {
+                              setCurrentCert({
+                                ...currentCert,
+                                details: [
+                                  ...currentCert.details,
+                                  skillInput.trim(),
+                                ],
+                              });
+                              setSkillInput("");
+                            }
+                          }
+                        }}
+                        placeholder="e.g. Cloud Computing..."
+                        className="h-11 text-sm"
+                      />
+                      <Button
+                        type="button"
+                        onClick={() => {
                           if (skillInput.trim()) {
                             setCurrentCert({
                               ...currentCert,
@@ -493,56 +522,39 @@ export default function AdminCertificationsPage() {
                             });
                             setSkillInput("");
                           }
-                        }
-                      }}
-                      placeholder="e.g. Cloud Computing..."
-                      className="h-11 text-sm"
-                    />
-                    <Button
-                      type="button"
-                      onClick={() => {
-                        if (skillInput.trim()) {
-                          setCurrentCert({
-                            ...currentCert,
-                            details: [
-                              ...currentCert.details,
-                              skillInput.trim(),
-                            ],
-                          });
-                          setSkillInput("");
-                        }
-                      }}
-                      className="h-11 px-4 bg-white/5 hover:bg-white/10 text-white rounded-xl font-bold"
-                    >
-                      <FaPlus size={12} />
-                    </Button>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {(currentCert.details || []).map((detail, i) => (
-                      <Badge
-                        key={i}
-                        variant="secondary"
-                        className="bg-yellow-500/10 text-yellow-400 border-yellow-500/20 px-3 py-1.5 gap-2 rounded-xl group transition-all"
+                        }}
+                        className="h-12 px-4 bg-white/5 hover:bg-white/10 text-white rounded-xl font-bold"
                       >
-                        <span className="text-xs">{detail}</span>
-                        <button
-                          onClick={() =>
-                            setCurrentCert({
-                              ...currentCert,
-                              details: currentCert.details.filter(
-                                (_, idx) => idx !== i,
-                              ),
-                            })
-                          }
-                          className="hover:text-red-400 transition-colors"
+                        <FaPlus size={12} />
+                      </Button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {(currentCert.details || []).map((detail, i) => (
+                        <Badge
+                          key={i}
+                          variant="secondary"
+                          className="bg-yellow-500/10 text-yellow-400 border-yellow-500/20 px-3 py-1.5 gap-2 rounded-xl group transition-all"
                         >
-                          <FaTimes size={10} />
-                        </button>
-                      </Badge>
-                    ))}
+                          <span className="text-xs">{detail}</span>
+                          <button
+                            onClick={() =>
+                              setCurrentCert({
+                                ...currentCert,
+                                details: currentCert.details.filter(
+                                  (_, idx) => idx !== i,
+                                ),
+                              })
+                            }
+                            className="hover:text-red-400 transition-colors"
+                          >
+                            <FaTimes size={10} />
+                          </button>
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </AdminField>
+                </AdminField>
+              </div>
             </div>
           </div>
         )}

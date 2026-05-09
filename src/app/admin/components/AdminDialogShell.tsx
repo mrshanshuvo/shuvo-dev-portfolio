@@ -6,11 +6,9 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { IconType } from "react-icons";
-import { FaTimes } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -45,17 +43,17 @@ export function AdminDialogShell({
   saveLabel = "Save Changes",
   savingLabel = "Saving...",
   cancelLabel = "Cancel",
-  maxWidth = "lg",
+  maxWidth = "xl",
 }: AdminDialogShellProps) {
   const widthClasses = {
-    sm: "max-w-sm",
-    md: "max-w-md",
-    lg: "max-w-lg",
-    xl: "max-w-xl",
-    "2xl": "max-w-2xl",
-    "3xl": "max-w-3xl",
-    "4xl": "max-w-4xl",
-    "5xl": "max-w-5xl",
+    sm: "sm:max-w-sm",
+    md: "sm:max-w-md",
+    lg: "sm:max-w-lg",
+    xl: "sm:max-w-xl",
+    "2xl": "sm:max-w-2xl",
+    "3xl": "sm:max-w-3xl",
+    "4xl": "sm:max-w-4xl",
+    "5xl": "sm:max-w-5xl",
   };
 
   return (
@@ -63,7 +61,7 @@ export function AdminDialogShell({
       <DialogContent
         showCloseButton={false}
         className={cn(
-          "bg-slate-900/98 border-white/10 text-white rounded-[2.5rem] backdrop-blur-3xl shadow-[0_0_80px_rgba(0,0,0,0.6)] overflow-hidden p-0 gap-0",
+          "bg-slate-900/98 border-white/10 text-white rounded-3xl backdrop-blur-3xl shadow-[0_0_80px_rgba(0,0,0,0.6)] overflow-hidden p-0 gap-0",
           widthClasses[maxWidth],
         )}
       >
@@ -74,12 +72,12 @@ export function AdminDialogShell({
           )}
         />
 
-        <DialogHeader className="p-10 pb-6 relative z-10 border-b border-white/5">
+        <DialogHeader className="p-8 pb-4 relative z-10 border-b border-white/5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-5">
               <div
                 className={cn(
-                  "w-14 h-14 rounded-[1.25rem] bg-white/5 flex items-center justify-center border border-white/10 shadow-xl shadow-black/20",
+                  "w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 shadow-xl shadow-black/20",
                   iconColor,
                 )}
               >
@@ -96,18 +94,26 @@ export function AdminDialogShell({
                 )}
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => onOpenChange(false)}
-              className="rounded-2xl h-12 w-12 text-slate-500 hover:text-white hover:bg-white/5 transition-all"
-            >
-              <FaTimes size={20} />
-            </Button>
+            <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                onClick={() => onOpenChange(false)}
+                className="rounded-xl h-10 px-5 font-bold text-slate-500 hover:text-white hover:bg-white/5 transition-all text-[10px] uppercase tracking-[0.15em] border border-transparent hover:border-white/10"
+              >
+                {cancelLabel}
+              </Button>
+              <Button
+                onClick={onSave}
+                disabled={saving}
+                className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl px-8 h-10 font-black shadow-[0_0_20px_rgba(16,185,129,0.2)] hover:shadow-[0_0_30px_rgba(16,185,129,0.3)] active:scale-[0.98] transition-all disabled:opacity-50 text-[10px] uppercase tracking-[0.15em] border border-emerald-400/20"
+              >
+                {saving ? savingLabel : saveLabel}
+              </Button>
+            </div>
           </div>
         </DialogHeader>
 
-        <div className="p-10 pt-8 relative z-10 max-h-[65vh] overflow-y-auto custom-scrollbar">
+        <div className="p-8 pt-6 relative z-10 max-h-[80vh] overflow-y-auto custom-scrollbar">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -116,23 +122,6 @@ export function AdminDialogShell({
             {children}
           </motion.div>
         </div>
-
-        <DialogFooter className="p-10 bg-slate-950/50 border-t border-white/5 backdrop-blur-xl gap-4">
-          <Button
-            variant="ghost"
-            onClick={() => onOpenChange(false)}
-            className="rounded-[1.25rem] h-14 px-8 font-bold text-slate-500 hover:text-white hover:bg-white/5"
-          >
-            {cancelLabel}
-          </Button>
-          <Button
-            onClick={onSave}
-            disabled={saving}
-            className="bg-white text-black hover:bg-slate-200 rounded-[1.25rem] px-12 h-14 font-black shadow-xl shadow-white/5 active:scale-[0.98] transition-all disabled:opacity-50"
-          >
-            {saving ? savingLabel : saveLabel}
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
