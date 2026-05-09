@@ -88,14 +88,14 @@ function SortableStatRow({
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-rose-500/10 text-rose-400 rounded-lg">
+          <div className="p-2 bg-rose-500/10 text-rose-600 dark:text-rose-400 rounded-lg">
             <FaHashtag size={14} />
           </div>
           <div className="min-w-0">
             <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
               {item.label}
             </h3>
-            <p className="text-xs text-rose-400 font-bold tracking-tight">
+            <p className="text-xs text-rose-600 dark:text-rose-400 font-bold tracking-tight">
               {item.number}
             </p>
           </div>
@@ -296,8 +296,8 @@ export default function AdminStatsPage() {
 
         <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
           <CardHeader className="pb-4">
-            <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
-              Portfolio Statistics
+            <CardTitle className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
+              Platform Metrics
             </CardTitle>
           </CardHeader>
           <CardContent>

@@ -145,7 +145,7 @@ function SortableSocialRow({
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-cyan-500/10 text-cyan-400 rounded-lg">
+          <div className="p-2 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 rounded-lg">
             <Icon size={14} />
           </div>
           <div className="min-w-0">
@@ -354,7 +354,7 @@ export default function AdminSocialsPage() {
         <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
           <CardHeader className="pb-4">
             <CardTitle className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
-              Online Presence
+              Social Connection
             </CardTitle>
           </CardHeader>
           <CardContent>

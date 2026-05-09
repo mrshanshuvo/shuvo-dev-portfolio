@@ -133,7 +133,7 @@ function SortableSkillRow({
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group flex items-center gap-4 bg-slate-900/40 backdrop-blur-xl border border-white/5 hover:border-white/10 rounded-2xl p-4 transition-all duration-300",
+        "group flex items-center gap-4 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10 rounded-2xl p-4 transition-all duration-300 shadow-sm dark:shadow-none",
         isDragging &&
           "z-50 border-purple-500/50 shadow-2xl shadow-purple-500/10",
       )}
@@ -141,21 +141,21 @@ function SortableSkillRow({
       <div
         {...attributes}
         {...listeners}
-        className="cursor-grab active:cursor-grabbing text-slate-600 hover:text-purple-400 transition-colors"
+        className="cursor-grab active:cursor-grabbing text-slate-300 dark:text-slate-600 hover:text-purple-500 transition-colors"
       >
         <FaGripVertical size={14} />
       </div>
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-purple-500/10 text-purple-400 rounded-lg">
+          <div className="p-2 bg-purple-500/10 text-purple-600 dark:text-purple-400 rounded-lg">
             <Icon size={14} />
           </div>
           <div className="min-w-0">
-            <h3 className="font-bold text-white truncate text-sm">
+            <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
               {skill.name}
             </h3>
-            <p className="text-[10px] text-slate-500 uppercase tracking-widest font-medium">
+            <p className="text-[10px] text-slate-500 dark:text-slate-500 uppercase tracking-widest font-medium">
               {skill.tech}
             </p>
           </div>
@@ -164,10 +164,10 @@ function SortableSkillRow({
 
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2 min-w-[120px] justify-end">
-          <span className="text-xs font-bold text-slate-400">
+          <span className="text-xs font-bold text-slate-400 dark:text-slate-500">
             {skill.level}%
           </span>
-          <div className="w-16 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+          <div className="w-16 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
             <div
               className="h-full bg-purple-500 rounded-full"
               style={{ width: `${skill.level}%` }}
@@ -378,11 +378,11 @@ export default function AdminSkillsPage() {
       </AnimatePresence>
 
       <div className="max-w-4xl mx-auto space-y-8">
-        <div className="flex items-center justify-between bg-slate-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-4">
+        <div className="flex items-center justify-between bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-2xl p-4 shadow-sm dark:shadow-none">
           <div className="flex items-center gap-3">
             <Badge
               variant="outline"
-              className="bg-purple-500/10 text-purple-400 border-purple-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[9px]"
+              className="bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[9px]"
             >
               {skills.length} Expertise Areas
             </Badge>
@@ -450,10 +450,10 @@ export default function AdminSkillsPage() {
 
                 <DragOverlay dropAnimation={null}>
                   {activeId ? (
-                    <div className="flex items-center gap-4 bg-slate-800/90 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-4 shadow-2xl opacity-90 scale-105">
-                      <FaGripVertical className="text-purple-400" size={14} />
+                    <div className="flex items-center gap-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-4 shadow-2xl opacity-90 scale-105">
+                      <FaGripVertical className="text-purple-500" size={14} />
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-white truncate text-sm">
+                        <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
                           {skills.find((s) => s._id === activeId)?.name}
                         </h3>
                       </div>
@@ -464,39 +464,41 @@ export default function AdminSkillsPage() {
             )}
 
             {!loading && skills.length > 0 && (
-              <p className="text-center text-[10px] text-slate-700 mt-8 font-bold uppercase tracking-widest">
+              <p className="text-center text-[10px] text-slate-400 dark:text-slate-700 mt-8 font-bold uppercase tracking-widest">
                 Drag rows to reorder • Changes save automatically
               </p>
             )}
           </CardContent>
         </Card>
 
-        <Card className="rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-xl overflow-hidden">
+        <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-blue-500/20 text-blue-400 rounded-xl">
+              <div className="p-2.5 bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 rounded-xl">
                 <FaCode size={20} />
               </div>
               <div>
-                <CardTitle className="text-white">Tech Stack List</CardTitle>
-                <CardDescription className="text-slate-500">
+                <CardTitle className="text-slate-900 dark:text-white">
+                  Tech Stack List
+                </CardTitle>
+                <CardDescription className="text-slate-500 dark:text-slate-500">
                   Technologies displayed in the scrolling banner.
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="flex flex-wrap gap-2 min-h-[40px] p-3 bg-slate-950/20 rounded-2xl border border-white/5">
+            <div className="flex flex-wrap gap-2 min-h-[40px] p-3 bg-slate-50 dark:bg-slate-950/20 rounded-2xl border border-slate-200 dark:border-white/5">
               {techList.map((t, i) => (
                 <Badge
                   key={i}
                   variant="outline"
-                  className="pl-3 pr-1 py-1 gap-1 bg-slate-950 border-white/5 text-slate-300 rounded-lg group"
+                  className="pl-3 pr-1 py-1 gap-1 bg-white dark:bg-slate-950 border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 rounded-lg group shadow-sm dark:shadow-none"
                 >
                   {t}
                   <button
                     onClick={() => removeTech(i)}
-                    className="h-5 w-5 rounded-full hover:bg-red-500/20 hover:text-red-400 flex items-center justify-center transition-colors"
+                    className="h-5 w-5 rounded-full hover:bg-red-500/10 dark:hover:bg-red-500/20 hover:text-red-500 dark:hover:text-red-400 flex items-center justify-center transition-colors"
                   >
                     <FaTimes size={10} />
                   </button>
@@ -511,7 +513,7 @@ export default function AdminSkillsPage() {
 
             <div className="flex gap-2">
               <Input
-                className="bg-slate-950 border-white/5 rounded-xl focus-visible:ring-blue-500/30 h-11"
+                className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-white/5 rounded-xl focus-visible:ring-purple-500/30 h-11 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
                 value={techInput}
                 onChange={(e) => setTechInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && addTech()}
@@ -519,7 +521,7 @@ export default function AdminSkillsPage() {
               />
               <Button
                 onClick={addTech}
-                className="bg-slate-800 hover:bg-slate-700 text-white rounded-xl px-6 h-11 font-bold shrink-0"
+                className="bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white rounded-xl px-6 h-11 font-bold shrink-0 transition-all active:scale-95"
               >
                 Add
               </Button>

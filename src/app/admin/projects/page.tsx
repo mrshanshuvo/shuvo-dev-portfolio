@@ -142,7 +142,7 @@ function SortableProjectCard({
             ? project.category.map((cat) => (
                 <Badge
                   key={cat}
-                  className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[9px] font-black rounded-lg px-2 py-0.5"
+                  className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-[9px] font-black rounded-lg px-2 py-0.5 shadow-sm dark:shadow-none"
                 >
                   {cat}
                 </Badge>

@@ -108,7 +108,7 @@ function SortableBlogRow({
               className="w-12 h-8 rounded-lg object-cover border border-white/10"
             />
           ) : (
-            <div className="p-2 bg-orange-500/10 text-orange-400 rounded-lg">
+            <div className="p-2 bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-lg">
               <FaNewspaper size={14} />
             </div>
           )}
@@ -346,7 +346,7 @@ export default function AdminBlogsPage() {
         <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
           <CardHeader className="pb-4">
             <CardTitle className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
-              Blog Management
+              Article Management
             </CardTitle>
           </CardHeader>
           <CardContent>

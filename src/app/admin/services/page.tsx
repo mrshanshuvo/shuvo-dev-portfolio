@@ -95,12 +95,14 @@ function SortableServiceRow({
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-emerald-500/10 text-emerald-400 rounded-lg">
+          <div className="p-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg">
             <FaServicestack size={14} />
           </div>
-          <h3 className="font-bold text-slate-900 dark:text-white truncate">
-            {service.title}
-          </h3>
+          <div className="min-w-0">
+            <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
+              {service.title}
+            </h3>
+          </div>
           <Badge
             variant="secondary"
             className="bg-slate-100 dark:bg-white/5 text-[10px] text-slate-500 dark:text-slate-400 border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none"
@@ -310,8 +312,8 @@ export default function AdminServicesPage() {
 
         <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
           <CardHeader className="pb-4">
-            <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
-              Service Management
+            <CardTitle className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
+              Service Portfolio
             </CardTitle>
           </CardHeader>
           <CardContent>

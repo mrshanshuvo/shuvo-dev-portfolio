@@ -93,7 +93,7 @@ function SortableStepRow({
         <FaGripVertical size={14} />
       </div>
 
-      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500/10 text-emerald-400 font-bold text-xs shrink-0 border border-emerald-500/20">
+      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-xs shrink-0 border border-emerald-500/20">
         {index + 1}
       </div>
 
@@ -303,7 +303,7 @@ export default function AdminWorkflowPage() {
         <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
           <CardHeader className="pb-4">
             <CardTitle className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
-              Process Workflow
+              Process Methodology
             </CardTitle>
           </CardHeader>
           <CardContent>

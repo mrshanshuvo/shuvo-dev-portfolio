@@ -104,7 +104,7 @@ function SortableTestimonialRow({
               className="w-8 h-8 rounded-full object-cover border border-white/10"
             />
           ) : (
-            <div className="p-2 bg-amber-500/10 text-amber-400 rounded-full">
+            <div className="p-2 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full">
               <FaUser size={12} />
             </div>
           )}
