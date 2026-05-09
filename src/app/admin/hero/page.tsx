@@ -130,7 +130,7 @@ function SortableSeqItem({ id, seq, index, onUpdate, onRemove }: SeqRowProps) {
     <div
       ref={setNodeRef}
       style={style}
-      className="flex flex-col md:flex-row gap-4 items-start md:items-center p-2 bg-slate-50 dark:bg-slate-950/30 rounded-2xl border border-slate-200 dark:border-white/5 group transition-all hover:bg-slate-100 dark:hover:bg-slate-950/50 mb-2 shadow-sm dark:shadow-none"
+      className="flex flex-col md:flex-row gap-4 items-start md:items-center p-1.5 bg-slate-50 dark:bg-slate-950/30 rounded-2xl border border-slate-200 dark:border-white/5 group transition-all hover:bg-slate-100 dark:hover:bg-slate-950/50 mb-2 shadow-sm dark:shadow-none"
     >
       {/* Drag handle */}
       <button
@@ -357,21 +357,33 @@ export default function AdminHeroPage() {
         <AnimatePresence>
           {toast && (
             <motion.div
-              initial={{ opacity: 0, y: -20, x: 20 }}
-              animate={{ opacity: 1, y: 0, x: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className={`fixed top-6 right-6 z-50 px-6 py-4 rounded-2xl shadow-2xl backdrop-blur-xl border flex items-center gap-3 ${
+              initial={{ opacity: 0, y: -20, x: "-50%" }}
+              animate={{ opacity: 1, y: 0, x: "-50%" }}
+              exit={{ opacity: 0, y: -20, x: "-50%" }}
+              className={cn(
+                "fixed top-8 left-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-2xl border backdrop-blur-xl shadow-2xl",
                 toast.type === "success"
                   ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
-                  : "bg-red-500/20 border-red-500/50 text-red-400"
-              }`}
+                  : "bg-red-500/20 border-red-500/50 text-red-400",
+              )}
             >
               <div
-                className={`p-2 rounded-full ${toast.type === "success" ? "bg-emerald-500/20" : "bg-red-500/20"}`}
+                className={cn(
+                  "p-1.5 rounded-full",
+                  toast.type === "success"
+                    ? "bg-emerald-500/20"
+                    : "bg-red-500/20",
+                )}
               >
-                {toast.type === "success" ? <FaCheck /> : <FaTimes />}
+                {toast.type === "success" ? (
+                  <FaCheck size={10} />
+                ) : (
+                  <FaTimes size={10} />
+                )}
               </div>
-              <span className="font-semibold">{toast.msg}</span>
+              <span className="font-bold text-sm tracking-tight">
+                {toast.msg}
+              </span>
             </motion.div>
           )}
         </AnimatePresence>

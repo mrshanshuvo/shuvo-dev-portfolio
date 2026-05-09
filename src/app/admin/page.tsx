@@ -378,7 +378,7 @@ export default async function AdminDashboard() {
             key={s.label}
             className="bg-white dark:bg-slate-900/40 border-slate-200 dark:border-white/5 backdrop-blur-xl rounded-3xl overflow-hidden group hover:border-emerald-500/20 dark:hover:border-white/10 transition-all shadow-sm dark:shadow-none"
           >
-            <CardContent className="p-6">
+            <CardContent className="p-4">
               <div className="flex items-center justify-between mb-4">
                 <div className={`p-3 rounded-2xl ${s.bg} ${s.color}`}>
                   <s.icon size={20} />
@@ -420,7 +420,7 @@ export default async function AdminDashboard() {
                     className="group"
                   >
                     <Card className="h-full bg-white dark:bg-slate-900/40 border-slate-200 dark:border-white/5 backdrop-blur-xl rounded-3xl overflow-hidden hover:border-emerald-500/20 dark:hover:border-white/20 transition-all duration-500 shadow-sm dark:shadow-none">
-                      <CardContent className="p-6 flex items-start gap-5">
+                      <CardContent className="p-4 flex items-start gap-5">
                         <div
                           className={`p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-white/5 ${section.iconColor} group-hover:scale-110 group-hover:rotate-3 transition-all duration-500`}
                         >
@@ -456,7 +456,7 @@ export default async function AdminDashboard() {
               Recent Activity
             </h2>
             <Card className="bg-white dark:bg-slate-900/40 border-slate-200 dark:border-white/5 backdrop-blur-xl rounded-3xl overflow-hidden shadow-sm dark:shadow-none">
-              <CardContent className="p-6 space-y-6">
+              <CardContent className="p-4 space-y-6">
                 {activities.length > 0 ? (
                   activities.map((act: any, idx: number) => (
                     <div key={idx} className="flex gap-4 group">

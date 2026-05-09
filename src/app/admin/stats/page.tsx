@@ -74,7 +74,7 @@ function SortableStatRow({
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group flex items-center gap-4 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10 rounded-2xl p-4 transition-all duration-300 shadow-sm dark:shadow-none",
+        "group flex items-center gap-4 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10 rounded-2xl p-2 transition-all duration-300 shadow-sm dark:shadow-none",
         isDragging && "z-50 border-rose-500/50 shadow-2xl shadow-rose-500/10",
       )}
     >
@@ -295,12 +295,12 @@ export default function AdminStatsPage() {
         </div>
 
         <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
-          <CardHeader className="pb-4">
+          <CardHeader className="p-4 pb-1">
             <CardTitle className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
               Platform Metrics
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-2">
             {loading ? (
               <div className="space-y-3">
                 {Array.from({ length: 4 }).map((_, i) => (

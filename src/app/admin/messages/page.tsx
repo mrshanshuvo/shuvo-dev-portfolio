@@ -103,21 +103,33 @@ export default function AdminMessagesPage() {
       <AnimatePresence>
         {toast && (
           <motion.div
-            initial={{ opacity: 0, y: -20, x: 20 }}
-            animate={{ opacity: 1, y: 0, x: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className={`fixed top-6 right-6 z-50 px-6 py-4 rounded-2xl shadow-2xl backdrop-blur-xl border flex items-center gap-3 ${
+            initial={{ opacity: 0, y: -20, x: "-50%" }}
+            animate={{ opacity: 1, y: 0, x: "-50%" }}
+            exit={{ opacity: 0, y: -20, x: "-50%" }}
+            className={cn(
+              "fixed top-8 left-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-2xl border backdrop-blur-xl shadow-2xl",
               toast.type === "success"
                 ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
-                : "bg-red-500/20 border-red-500/50 text-red-400"
-            }`}
+                : "bg-red-500/20 border-red-500/50 text-red-400",
+            )}
           >
             <div
-              className={`p-2 rounded-full ${toast.type === "success" ? "bg-emerald-500/20" : "bg-red-500/20"}`}
+              className={cn(
+                "p-1.5 rounded-full",
+                toast.type === "success"
+                  ? "bg-emerald-500/20"
+                  : "bg-red-500/20",
+              )}
             >
-              {toast.type === "success" ? <FaCheck /> : <FaTimes />}
+              {toast.type === "success" ? (
+                <FaCheck size={10} />
+              ) : (
+                <FaTimes size={10} />
+              )}
             </div>
-            <span className="font-semibold">{toast.msg}</span>
+            <span className="font-bold text-sm tracking-tight">
+              {toast.msg}
+            </span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -183,7 +195,7 @@ export default function AdminMessagesPage() {
                         "before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1.5 before:bg-blue-500",
                     )}
                   >
-                    <CardContent className="p-5">
+                    <CardContent className="p-3">
                       <div className="flex justify-between items-start mb-2">
                         <p
                           className={cn(
@@ -231,7 +243,7 @@ export default function AdminMessagesPage() {
                   className="space-y-6"
                 >
                   <Card className="rounded-[2.5rem] border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/60 backdrop-blur-xl overflow-hidden shadow-2xl dark:shadow-none">
-                    <CardContent className="p-8 md:p-12 space-y-8">
+                    <CardContent className="p-6 md:p-10 space-y-8">
                       {/* Meta */}
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-100 dark:border-white/5 pb-8">
                         <div className="flex items-center gap-5">

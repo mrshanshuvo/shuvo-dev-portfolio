@@ -160,43 +160,39 @@ export default function AdminAboutPage() {
       <AnimatePresence>
         {toast && (
           <motion.div
-            initial={{ opacity: 0, y: -20, x: 20 }}
-            animate={{ opacity: 1, y: 0, x: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className={`fixed top-6 right-6 z-50 px-6 py-4 rounded-2xl shadow-2xl backdrop-blur-xl border flex items-center gap-3 ${
+            initial={{ opacity: 0, y: -20, x: "-50%" }}
+            animate={{ opacity: 1, y: 0, x: "-50%" }}
+            exit={{ opacity: 0, y: -20, x: "-50%" }}
+            className={cn(
+              "fixed top-8 left-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-2xl border backdrop-blur-xl shadow-2xl",
               toast.type === "success"
                 ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
-                : "bg-red-500/20 border-red-500/50 text-red-400"
-            }`}
+                : "bg-red-500/20 border-red-500/50 text-red-400",
+            )}
           >
             <div
-              className={`p-2 rounded-full ${toast.type === "success" ? "bg-emerald-500/20" : "bg-red-500/20"}`}
+              className={cn(
+                "p-1.5 rounded-full",
+                toast.type === "success"
+                  ? "bg-emerald-500/20"
+                  : "bg-red-500/20",
+              )}
             >
-              {toast.type === "success" ? <FaCheck /> : <FaTimes />}
+              {toast.type === "success" ? (
+                <FaCheck size={10} />
+              ) : (
+                <FaTimes size={10} />
+              )}
             </div>
-            <span className="font-semibold">{toast.msg}</span>
+            <span className="font-bold text-sm tracking-tight">
+              {toast.msg}
+            </span>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="max-w-5xl mx-auto space-y-6">
-        {/* Action bar — title is already shown in the AdminTopbar breadcrumb */}
-        <div className="flex items-center justify-end gap-4">
-          <Button
-            id="save-about-btn"
-            onClick={handleSave}
-            disabled={saving}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold px-8 h-10 shadow-lg shadow-emerald-600/20 active:scale-95 transition-all group text-xs"
-          >
-            <FaSave
-              className={cn(
-                "mr-2 transition-transform duration-500",
-                saving ? "animate-spin" : "group-hover:rotate-12",
-              )}
-            />
-            {saving ? "Saving Changes..." : "Save Changes"}
-          </Button>
-        </div>
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Floating save button will be at the bottom */}
 
         <div className="space-y-8">
           {loading ? (
@@ -226,10 +222,10 @@ export default function AdminAboutPage() {
               </motion.div>
             ))
           ) : (
-            <div className="space-y-8 animate-in fade-in duration-700">
-              <div className="grid grid-cols-1 gap-8">
+            <div className="space-y-6 animate-in fade-in duration-700">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
-                  <CardHeader>
+                  <CardHeader className="p-4 pb-1">
                     <div className="flex items-center gap-3">
                       <div className="p-2.5 bg-blue-500/20 text-blue-400 rounded-xl">
                         <FaUser size={20} />
@@ -244,7 +240,7 @@ export default function AdminAboutPage() {
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-8 pt-0">
+                  <CardContent className="space-y-6 pt-2">
                     <AdminField label="Section Title">
                       <AdminInput
                         value={data.title}
@@ -276,7 +272,7 @@ export default function AdminAboutPage() {
                 </Card>
 
                 <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
-                  <CardHeader>
+                  <CardHeader className="p-4 pb-1">
                     <div className="flex items-center gap-3">
                       <div className="p-2.5 bg-pink-500/20 text-pink-400 rounded-xl">
                         <FaLightbulb size={20} />
@@ -291,7 +287,7 @@ export default function AdminAboutPage() {
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-6 pt-0">
+                  <CardContent className="space-y-4 pt-2">
                     <AdminField label="Highlights Checklist">
                       <div className="space-y-4">
                         <div className="flex flex-wrap gap-2">
@@ -341,7 +337,7 @@ export default function AdminAboutPage() {
                           <Button
                             onClick={addHighlight}
                             size="icon"
-                            className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl shrink-0 h-14 w-14 border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none"
+                            className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl shrink-0 p-6 border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none"
                           >
                             <FaPlus size={14} />
                           </Button>
@@ -354,6 +350,24 @@ export default function AdminAboutPage() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Floating Save Button */}
+      <div className="fixed bottom-10 right-10 z-50">
+        <Button
+          onClick={handleSave}
+          disabled={saving}
+          className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl p-6 font-black shadow-[0_20px_50px_rgba(16,185,129,0.3)] text-base active:scale-95 transition-all group"
+        >
+          <FaSave
+            className={cn(
+              "mr-1 transition-transform duration-500",
+              saving ? "animate-spin" : "group-hover:rotate-12",
+            )}
+            size={20}
+          />
+          {saving ? "Saving DNA..." : "Apply Changes"}
+        </Button>
       </div>
     </div>
   );

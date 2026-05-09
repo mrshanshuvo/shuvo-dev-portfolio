@@ -44,20 +44,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
+
 import { cn } from "@/lib/utils";
 import { AdminDialogShell } from "../components/AdminDialogShell";
 import { AdminField, AdminInput, AdminSelect } from "../components/AdminFields";
@@ -133,7 +120,7 @@ function SortableSkillRow({
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group flex items-center gap-4 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10 rounded-2xl p-4 transition-all duration-300 shadow-sm dark:shadow-none",
+        "group flex items-center gap-4 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10 rounded-2xl p-2 transition-all duration-300 shadow-sm dark:shadow-none",
         isDragging &&
           "z-50 border-purple-500/50 shadow-2xl shadow-purple-500/10",
       )}
@@ -359,9 +346,7 @@ export default function AdminSkillsPage() {
             <div
               className={cn(
                 "p-1.5 rounded-full",
-                toast.type === "success"
-                  ? "bg-emerald-500/20"
-                  : "bg-red-500/20",
+                toast.type === "success" ? "bg-emerald-500/20" : "bg-red-500/20",
               )}
             >
               {toast.type === "success" ? (
@@ -370,14 +355,12 @@ export default function AdminSkillsPage() {
                 <FaTimes size={10} />
               )}
             </div>
-            <span className="font-bold text-sm tracking-tight">
-              {toast.msg}
-            </span>
+            <span className="font-bold text-sm tracking-tight">{toast.msg}</span>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="max-w-4xl mx-auto space-y-8">
+      <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex items-center justify-between bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-2xl p-4 shadow-sm dark:shadow-none">
           <div className="flex items-center gap-3">
             <Badge
@@ -396,138 +379,140 @@ export default function AdminSkillsPage() {
           </Button>
         </div>
 
-        <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
-              Skill Expertise
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <div className="space-y-3">
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="h-16 bg-slate-100 dark:bg-slate-800/20 rounded-2xl animate-pulse"
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-in fade-in duration-700">
+          <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
+            <CardHeader className="p-4 pb-1">
+              <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
+                Skill Expertise
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-2">
+              {loading ? (
+                <div className="space-y-3">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="h-16 bg-slate-100 dark:bg-slate-800/20 rounded-2xl animate-pulse"
+                    />
+                  ))}
+                </div>
+              ) : skills.length === 0 ? (
+                <div className="text-center py-20 bg-white dark:bg-slate-950/20 rounded-3xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
+                  <FaLaptopCode
+                    className="mx-auto text-slate-200 dark:text-slate-800 mb-4"
+                    size={40}
                   />
-                ))}
-              </div>
-            ) : skills.length === 0 ? (
-              <div className="text-center py-20 bg-white dark:bg-slate-950/20 rounded-3xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
-                <FaLaptopCode
-                  className="mx-auto text-slate-200 dark:text-slate-800 mb-4"
-                  size={40}
-                />
-                <p className="text-slate-400 dark:text-slate-500 font-medium">
-                  No skills found. Add your expertise above.
-                </p>
-              </div>
-            ) : (
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragStart={(e) => setActiveId(e.active.id as string)}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext
-                  items={skills.map((s) => s._id!)}
-                  strategy={verticalListSortingStrategy}
+                  <p className="text-slate-400 dark:text-slate-500 font-medium">
+                    No skills found. Add your expertise above.
+                  </p>
+                </div>
+              ) : (
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragStart={(e) => setActiveId(e.active.id as string)}
+                  onDragEnd={handleDragEnd}
                 >
-                  <div className="space-y-3">
-                    <AnimatePresence mode="popLayout">
-                      {skills.map((skill) => (
-                        <SortableSkillRow
-                          key={skill._id}
-                          skill={skill}
-                          onEdit={() => openEdit(skill)}
-                          onDelete={() => handleDelete(skill._id!)}
-                          isDeleting={deletingId === skill._id}
-                        />
-                      ))}
-                    </AnimatePresence>
-                  </div>
-                </SortableContext>
-
-                <DragOverlay dropAnimation={null}>
-                  {activeId ? (
-                    <div className="flex items-center gap-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-4 shadow-2xl opacity-90 scale-105">
-                      <FaGripVertical className="text-purple-500" size={14} />
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
-                          {skills.find((s) => s._id === activeId)?.name}
-                        </h3>
-                      </div>
-                    </div>
-                  ) : null}
-                </DragOverlay>
-              </DndContext>
-            )}
-
-            {!loading && skills.length > 0 && (
-              <p className="text-center text-[10px] text-slate-400 dark:text-slate-700 mt-8 font-bold uppercase tracking-widest">
-                Drag rows to reorder • Changes save automatically
-              </p>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 rounded-xl">
-                <FaCode size={20} />
-              </div>
-              <div>
-                <CardTitle className="text-slate-900 dark:text-white">
-                  Tech Stack List
-                </CardTitle>
-                <CardDescription className="text-slate-500 dark:text-slate-500">
-                  Technologies displayed in the scrolling banner.
-                </CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex flex-wrap gap-2 min-h-[40px] p-3 bg-slate-50 dark:bg-slate-950/20 rounded-2xl border border-slate-200 dark:border-white/5">
-              {techList.map((t, i) => (
-                <Badge
-                  key={i}
-                  variant="outline"
-                  className="pl-3 pr-1 py-1 gap-1 bg-white dark:bg-slate-950 border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 rounded-lg group shadow-sm dark:shadow-none"
-                >
-                  {t}
-                  <button
-                    onClick={() => removeTech(i)}
-                    className="h-5 w-5 rounded-full hover:bg-red-500/10 dark:hover:bg-red-500/20 hover:text-red-500 dark:hover:text-red-400 flex items-center justify-center transition-colors"
+                  <SortableContext
+                    items={skills.map((s) => s._id!)}
+                    strategy={verticalListSortingStrategy}
                   >
-                    <FaTimes size={10} />
-                  </button>
-                </Badge>
-              ))}
-              {techList.length === 0 && (
-                <p className="text-[10px] text-slate-700 uppercase tracking-widest font-bold m-auto">
-                  List is empty
+                    <div className="space-y-3">
+                      <AnimatePresence mode="popLayout">
+                        {skills.map((skill) => (
+                          <SortableSkillRow
+                            key={skill._id}
+                            skill={skill}
+                            onEdit={() => openEdit(skill)}
+                            onDelete={() => handleDelete(skill._id!)}
+                            isDeleting={deletingId === skill._id}
+                          />
+                        ))}
+                      </AnimatePresence>
+                    </div>
+                  </SortableContext>
+
+                  <DragOverlay dropAnimation={null}>
+                    {activeId ? (
+                      <div className="flex items-center gap-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-4 shadow-2xl opacity-90 scale-105">
+                        <FaGripVertical className="text-purple-500" size={14} />
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
+                            {skills.find((s) => s._id === activeId)?.name}
+                          </h3>
+                        </div>
+                      </div>
+                    ) : null}
+                  </DragOverlay>
+                </DndContext>
+              )}
+
+              {!loading && skills.length > 0 && (
+                <p className="text-center text-[10px] text-slate-400 dark:text-slate-700 mt-8 font-bold uppercase tracking-widest">
+                  Drag rows to reorder • Changes save automatically
                 </p>
               )}
-            </div>
+            </CardContent>
+          </Card>
 
-            <div className="flex gap-2">
-              <Input
-                className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-white/5 rounded-xl focus-visible:ring-purple-500/30 h-11 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
-                value={techInput}
-                onChange={(e) => setTechInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && addTech()}
-                placeholder="Add technology (e.g. Docker)..."
-              />
-              <Button
-                onClick={addTech}
-                className="bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white rounded-xl px-6 h-11 font-bold shrink-0 transition-all active:scale-95"
-              >
-                Add
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+          <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
+            <CardHeader className="p-4 pb-1">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 rounded-xl">
+                  <FaCode size={20} />
+                </div>
+                <div>
+                  <CardTitle className="text-slate-900 dark:text-white">
+                    Tech Stack List
+                  </CardTitle>
+                  <CardDescription className="text-slate-500 dark:text-slate-500">
+                    Technologies displayed in the scrolling banner.
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6 pt-2">
+              <div className="flex flex-wrap gap-2 min-h-[40px] p-3 bg-slate-50 dark:bg-slate-950/20 rounded-2xl border border-slate-200 dark:border-white/5">
+                {techList.map((t, i) => (
+                  <Badge
+                    key={i}
+                    variant="outline"
+                    className="pl-3 pr-1 py-1 gap-1 bg-white dark:bg-slate-950 border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 rounded-lg group shadow-sm dark:shadow-none"
+                  >
+                    {t}
+                    <button
+                      onClick={() => removeTech(i)}
+                      className="h-5 w-5 rounded-full hover:bg-red-500/10 dark:hover:bg-red-500/20 hover:text-red-500 dark:hover:text-red-400 flex items-center justify-center transition-colors"
+                    >
+                      <FaTimes size={10} />
+                    </button>
+                  </Badge>
+                ))}
+                {techList.length === 0 && (
+                  <p className="text-[10px] text-slate-700 uppercase tracking-widest font-bold m-auto">
+                    List is empty
+                  </p>
+                )}
+              </div>
+
+              <div className="flex gap-2 items-end">
+                <Input
+                  className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-white/5 rounded-xl focus-visible:ring-purple-500/30 h-11 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                  value={techInput}
+                  onChange={(e) => setTechInput(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && addTech()}
+                  placeholder="Add technology (e.g. Docker)..."
+                />
+                <Button
+                  onClick={addTech}
+                  className="bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white rounded-xl px-6 h-11 font-bold shrink-0 transition-all active:scale-95"
+                >
+                  Add
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       <AdminDialogShell
