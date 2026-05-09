@@ -102,7 +102,7 @@ export default function CategoryCombobox({
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="flex items-center gap-1.5 pl-3 pr-1.5 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl text-xs font-bold"
+              className="flex items-center gap-1.5 pl-3 pr-1.5 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-xl text-xs font-bold"
             >
               <span>{val}</span>
               <button
@@ -134,7 +134,7 @@ export default function CategoryCombobox({
             <FaSearch className="text-slate-500 mr-2 shrink-0" size={12} />
             <input
               autoFocus
-              className="bg-transparent border-none outline-none text-sm text-white w-full placeholder:text-slate-600"
+              className="bg-transparent border-none focus:ring-0 text-sm text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-slate-600 w-full outline-none font-medium h-9"
               placeholder="Search or create..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}

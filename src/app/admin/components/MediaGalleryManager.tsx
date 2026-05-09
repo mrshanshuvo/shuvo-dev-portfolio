@@ -60,13 +60,13 @@ export default function MediaGalleryManager({
             {label}
           </label>
         )}
-        <div className="flex items-center gap-1 bg-slate-900/50 p-1 rounded-xl border border-white/5">
+        <div className="flex items-center gap-1 bg-white dark:bg-slate-900/50 p-1 rounded-xl border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={() => addItem("image")}
-            className="text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 h-7 px-3 rounded-lg transition-all"
+            className="text-[9px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 h-7 px-3 rounded-lg transition-all"
           >
             <FaPlus className="mr-1.5" /> Image
           </Button>
@@ -75,7 +75,7 @@ export default function MediaGalleryManager({
             variant="ghost"
             size="sm"
             onClick={() => addItem("video")}
-            className="text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-purple-400 hover:bg-purple-500/10 h-7 px-3 rounded-lg transition-all"
+            className="text-[9px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-500/10 h-7 px-3 rounded-lg transition-all"
           >
             <FaPlus className="mr-1.5" /> Video
           </Button>
@@ -84,7 +84,7 @@ export default function MediaGalleryManager({
             variant="ghost"
             size="sm"
             onClick={() => setEmbedInput("")}
-            className="text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 h-7 px-3 rounded-lg transition-all"
+            className="text-[9px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-500/10 h-7 px-3 rounded-lg transition-all"
           >
             <FaPlus className="mr-1.5" /> Embed
           </Button>
@@ -217,21 +217,21 @@ export default function MediaGalleryManager({
       </Reorder.Group>
 
       {media.length === 0 && (
-        <div className="group/empty relative py-16 border-2 border-dashed border-white/5 rounded-[2.5rem] bg-slate-950/20 flex flex-col items-center justify-center gap-6 overflow-hidden transition-all hover:border-emerald-500/20 hover:bg-emerald-500/5">
+        <div className="group/empty relative py-16 border-2 border-dashed border-slate-200 dark:border-white/5 rounded-[2.5rem] bg-white dark:bg-slate-950/20 flex flex-col items-center justify-center gap-6 overflow-hidden transition-all hover:border-emerald-500/20 hover:bg-emerald-500/5 shadow-sm dark:shadow-none">
            <div className="absolute inset-0 bg-linear-to-b from-emerald-500/0 to-emerald-500/5 opacity-0 group-hover/empty:opacity-100 transition-opacity" />
-           <div className="w-16 h-16 bg-slate-900 rounded-3xl flex items-center justify-center text-slate-700 group-hover/empty:scale-110 group-hover/empty:text-emerald-400 transition-all duration-500 shadow-2xl">
+            <div className="w-16 h-16 bg-slate-100 dark:bg-slate-900 rounded-3xl flex items-center justify-center text-slate-400 dark:text-slate-700 group-hover/empty:scale-110 group-hover/empty:text-emerald-600 dark:group-hover/empty:text-emerald-400 transition-all duration-500 shadow-sm dark:shadow-2xl">
               <FaImage size={32} />
-           </div>
-           <div className="text-center space-y-1 relative z-10">
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 group-hover/empty:text-slate-300 transition-colors">Showcase is Empty</p>
-              <p className="text-[9px] text-slate-600 font-medium">Add images, videos or interactive embeds</p>
-           </div>
-           <div className="flex gap-2 relative z-10">
+            </div>
+            <div className="text-center space-y-1 relative z-10">
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 dark:text-slate-500 group-hover/empty:text-slate-900 dark:group-hover/empty:text-slate-300 transition-colors">Showcase is Empty</p>
+              <p className="text-[9px] text-slate-400 dark:text-slate-600 font-medium">Add images, videos or interactive embeds</p>
+            </div>
+            <div className="flex gap-2 relative z-10">
               <Button 
                 variant="outline" 
                 size="sm" 
                 onClick={() => addItem("image")} 
-                className="bg-slate-900/50 hover:bg-emerald-500 hover:text-white border-white/5 rounded-xl text-[9px] font-black uppercase tracking-widest h-9 px-4 transition-all"
+                className="bg-white dark:bg-slate-900/50 hover:bg-emerald-500 hover:text-white border-slate-200 dark:border-white/5 rounded-xl text-[9px] font-black uppercase tracking-widest h-9 px-4 transition-all"
               >
                 + Image
               </Button>
@@ -239,11 +239,11 @@ export default function MediaGalleryManager({
                 variant="outline" 
                 size="sm" 
                 onClick={() => addItem("video")} 
-                className="bg-slate-900/50 hover:bg-purple-500 hover:text-white border-white/5 rounded-xl text-[9px] font-black uppercase tracking-widest h-9 px-4 transition-all"
+                className="bg-white dark:bg-slate-900/50 hover:bg-purple-500 hover:text-white border-slate-200 dark:border-white/5 rounded-xl text-[9px] font-black uppercase tracking-widest h-9 px-4 transition-all"
               >
                 + Video
               </Button>
-           </div>
+            </div>
         </div>
       )}
     </div>

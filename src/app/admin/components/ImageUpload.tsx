@@ -203,7 +203,7 @@ export default function ImageUpload({
           </div>
         </div>
       ) : value ? (
-        <div className="relative group/image rounded-2xl overflow-hidden border border-white/10 aspect-square bg-slate-950 flex flex-col items-center justify-center shadow-2xl transition-all duration-500 hover:shadow-[0_10px_40px_rgba(99,102,241,0.15)] hover:border-indigo-500/30">
+        <div className="relative group/image rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 aspect-square bg-white dark:bg-slate-950 flex flex-col items-center justify-center shadow-2xl transition-all duration-500 hover:shadow-[0_10px_40px_rgba(99,102,241,0.15)] hover:border-indigo-500/30">
           {value &&
           (value.includes("/video/upload/") ||
             value.toLowerCase().endsWith(".mp4") ||
@@ -301,7 +301,7 @@ export default function ImageUpload({
             ${
               isDragging
                 ? "border-indigo-400 border-solid bg-indigo-500/10 shadow-[0_0_40px_rgba(99,102,241,0.2)]"
-                : "border-slate-700 border-dashed bg-slate-900/50 hover:border-indigo-500/50 hover:bg-slate-800/80"
+                : "border-slate-300 dark:border-slate-700 border-dashed bg-white dark:bg-slate-900/50 hover:border-indigo-500/50 hover:bg-slate-50 dark:hover:bg-slate-800/80 shadow-sm dark:shadow-none"
             }
           `}
         >
@@ -309,9 +309,9 @@ export default function ImageUpload({
           <div className="absolute inset-0 bg-linear-to-tr from-indigo-500/0 via-purple-500/0 to-pink-500/0 group-hover/image:from-indigo-500/5 group-hover/image:via-purple-500/5 group-hover/image:to-pink-500/5 transition-all duration-700" />
 
           <div className="relative z-10 flex flex-col items-center gap-4">
-            <div className="w-10 h-10 rounded-xl bg-slate-800/80 shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-white/5 flex items-center justify-center group-hover/image:scale-110 group-hover/image:-translate-y-1 transition-all duration-500">
+            <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800/80 shadow-[0_10px_30px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-slate-200 dark:border-white/5 flex items-center justify-center group-hover/image:scale-110 group-hover/image:-translate-y-1 transition-all duration-500">
               <FaCloudUploadAlt
-                className="text-indigo-400 drop-shadow-[0_0_15px_rgba(99,102,241,0.4)]"
+                className="text-indigo-600 dark:text-indigo-400 drop-shadow-[0_0_15px_rgba(99,102,241,0.4)]"
                 size={20}
               />
             </div>
@@ -323,12 +323,12 @@ export default function ImageUpload({
                 or click
               </p>
             </div>
-            <div className="flex items-center gap-1.5 text-[7px] uppercase tracking-[0.2em] font-black text-slate-600 bg-slate-950/50 px-3 py-1 rounded-full border border-white/5">
-              <span className="text-indigo-400/50">IMG</span>
-              <span className="w-1 h-1 rounded-full bg-slate-800" />
-              <span className="text-purple-400/50">VID</span>
-              <span className="w-1 h-1 rounded-full bg-slate-800" />
-              <span className="text-fuchsia-400/50">PDF</span>
+            <div className="flex items-center gap-1.5 text-[7px] uppercase tracking-[0.2em] font-black text-slate-500 dark:text-slate-600 bg-slate-50 dark:bg-slate-950/50 px-3 py-1 rounded-full border border-slate-200 dark:border-white/5">
+              <span className="text-indigo-500 dark:text-indigo-400/50">IMG</span>
+              <span className="w-1 h-1 rounded-full bg-slate-200 dark:bg-slate-800" />
+              <span className="text-purple-500 dark:text-purple-400/50">VID</span>
+              <span className="w-1 h-1 rounded-full bg-slate-200 dark:bg-slate-800" />
+              <span className="text-fuchsia-500 dark:text-fuchsia-400/50">PDF</span>
             </div>
           </div>
         </div>

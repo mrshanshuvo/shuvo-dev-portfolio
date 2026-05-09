@@ -21,7 +21,7 @@ export function AdminField({
 }: AdminFieldProps) {
   return (
     <div className={cn("space-y-1.5", className)}>
-      <label className="text-[11px] font-black text-slate-400/80 uppercase tracking-[0.2em] ml-1.5 group-focus-within:text-emerald-400 transition-all duration-300">
+      <label className="text-[11px] font-black text-slate-500 dark:text-slate-400/80 uppercase tracking-[0.2em] ml-1.5 group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400 transition-all duration-300">
         {label}
       </label>
       <div className="relative group mt-2">{children}</div>
@@ -46,7 +46,7 @@ export function AdminInput({
   return (
     <div className="relative group/input w-full">
       {Icon && (
-        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within/input:text-white transition-colors z-10 pointer-events-none">
+        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-500 group-focus-within/input:text-slate-900 dark:group-focus-within/input:text-white transition-colors z-10 pointer-events-none">
           <Icon size={16} />
         </div>
       )}
@@ -74,7 +74,7 @@ export function AdminTextarea({
   return (
     <div className="relative group/input w-full">
       {Icon && (
-        <div className="absolute left-4 top-5 text-slate-600 group-focus-within/input:text-white transition-colors z-10 pointer-events-none">
+        <div className="absolute left-4 top-5 text-slate-600 dark:text-slate-500 group-focus-within/input:text-slate-900 dark:group-focus-within/input:text-white transition-colors z-10 pointer-events-none">
           <Icon size={16} />
         </div>
       )}
