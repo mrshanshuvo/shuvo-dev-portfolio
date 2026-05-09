@@ -232,7 +232,10 @@ export default function AdminCertificationsPage() {
   }
 
   function openEdit(item: Certification) {
-    setCurrentCert({ ...item });
+    setCurrentCert({
+      ...item,
+      details: item.details || [],
+    });
     setIsDialogOpen(true);
   }
 
@@ -399,7 +402,9 @@ export default function AdminCertificationsPage() {
       <AdminDialogShell
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
-        title={currentCert?._id ? "Refine Credential" : "New Professional Honor"}
+        title={
+          currentCert?._id ? "Refine Credential" : "New Professional Honor"
+        }
         subtitle="Validate your expertise with verified certifications"
         icon={FaAward}
         iconColor="text-yellow-400"
@@ -481,7 +486,10 @@ export default function AdminCertificationsPage() {
                           if (skillInput.trim()) {
                             setCurrentCert({
                               ...currentCert,
-                              details: [...currentCert.details, skillInput.trim()],
+                              details: [
+                                ...currentCert.details,
+                                skillInput.trim(),
+                              ],
                             });
                             setSkillInput("");
                           }
@@ -496,7 +504,10 @@ export default function AdminCertificationsPage() {
                         if (skillInput.trim()) {
                           setCurrentCert({
                             ...currentCert,
-                            details: [...currentCert.details, skillInput.trim()],
+                            details: [
+                              ...currentCert.details,
+                              skillInput.trim(),
+                            ],
                           });
                           setSkillInput("");
                         }
@@ -507,7 +518,7 @@ export default function AdminCertificationsPage() {
                     </Button>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {currentCert.details.map((detail, i) => (
+                    {(currentCert.details || []).map((detail, i) => (
                       <Badge
                         key={i}
                         variant="secondary"
@@ -518,7 +529,9 @@ export default function AdminCertificationsPage() {
                           onClick={() =>
                             setCurrentCert({
                               ...currentCert,
-                              details: currentCert.details.filter((_, idx) => idx !== i),
+                              details: currentCert.details.filter(
+                                (_, idx) => idx !== i,
+                              ),
                             })
                           }
                           className="hover:text-red-400 transition-colors"

@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { IconType } from "react-icons";
+import { FaTimes } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -60,6 +61,7 @@ export function AdminDialogShell({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
+        showCloseButton={false}
         className={cn(
           "bg-slate-900/98 border-white/10 text-white rounded-[2.5rem] backdrop-blur-3xl shadow-[0_0_80px_rgba(0,0,0,0.6)] overflow-hidden p-0 gap-0",
           widthClasses[maxWidth],
@@ -73,25 +75,35 @@ export function AdminDialogShell({
         />
 
         <DialogHeader className="p-10 pb-6 relative z-10 border-b border-white/5">
-          <div className="flex items-center gap-5">
-            <div
-              className={cn(
-                "w-14 h-14 rounded-[1.25rem] bg-white/5 flex items-center justify-center border border-white/10 shadow-xl shadow-black/20",
-                iconColor,
-              )}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-5">
+              <div
+                className={cn(
+                  "w-14 h-14 rounded-[1.25rem] bg-white/5 flex items-center justify-center border border-white/10 shadow-xl shadow-black/20",
+                  iconColor,
+                )}
+              >
+                <Icon size={28} />
+              </div>
+              <div>
+                <DialogTitle className="text-2xl font-black tracking-tight">
+                  {title}
+                </DialogTitle>
+                {subtitle && (
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 mt-1">
+                    {subtitle}
+                  </p>
+                )}
+              </div>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onOpenChange(false)}
+              className="rounded-2xl h-12 w-12 text-slate-500 hover:text-white hover:bg-white/5 transition-all"
             >
-              <Icon size={28} />
-            </div>
-            <div>
-              <DialogTitle className="text-2xl font-black tracking-tight">
-                {title}
-              </DialogTitle>
-              {subtitle && (
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 mt-1">
-                  {subtitle}
-                </p>
-              )}
-            </div>
+              <FaTimes size={20} />
+            </Button>
           </div>
         </DialogHeader>
 

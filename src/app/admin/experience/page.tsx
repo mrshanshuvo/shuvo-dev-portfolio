@@ -242,8 +242,11 @@ export default function AdminExperiencePage() {
     }
   }
 
-  function openEdit(exp: Experience) {
-    setCurrentExp({ ...exp });
+  function openEdit(item: Experience) {
+    setCurrentExp({
+      ...item,
+      details: item.details || [],
+    });
     setIsDialogOpen(true);
   }
 
@@ -482,7 +485,9 @@ export default function AdminExperiencePage() {
                   value={currentExp.color}
                   onValueChange={(val: string | null) => {
                     if (val) {
-                      setCurrentExp((prev) => (prev ? { ...prev, color: val } : null));
+                      setCurrentExp((prev) =>
+                        prev ? { ...prev, color: val } : null,
+                      );
                     }
                   }}
                 >
@@ -575,7 +580,7 @@ export default function AdminExperiencePage() {
                 </div>
                 <div className="grid grid-cols-1 gap-3">
                   <AnimatePresence mode="popLayout">
-                    {currentExp.details.map((detail, i) => (
+                    {(currentExp.details || []).map((detail, i) => (
                       <motion.div
                         key={i}
                         initial={{ opacity: 0, scale: 0.95, y: 10 }}

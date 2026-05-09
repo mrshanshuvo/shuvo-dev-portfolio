@@ -3,14 +3,14 @@ import BlogModel from "@/models/Blog";
 import type { Blog } from "@/types";
 import BlogArchiveClient from "./BlogArchiveClient";
 import Navbar from "@/app/components/Navbar/Navbar";
-import Footer from "@/app/components/Footer/Footer";
 import HeroModel from "@/models/Hero";
 import SocialLinkModel from "@/models/SocialLink";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Blog & Technical Writing | Shahid Hasan Shuvo",
-  description: "Explore my latest thoughts on software engineering, machine learning, and web development.",
+  description:
+    "Explore my latest thoughts on software engineering, machine learning, and web development.",
 };
 
 async function getBlogs(): Promise<Blog[]> {
@@ -21,7 +21,7 @@ async function getBlogs(): Promise<Blog[]> {
 
 export default async function BlogPage() {
   const blogs = await getBlogs();
-  
+
   // Need these for Navbar and Footer consistency
   const [heroDoc, socialDocs] = await Promise.all([
     HeroModel.findOne().lean(),
@@ -35,7 +35,6 @@ export default async function BlogPage() {
     <>
       <Navbar resumeUrl={resumeUrl} />
       <BlogArchiveClient blogs={blogs} />
-      <Footer socialLinks={socialLinks} />
     </>
   );
 }

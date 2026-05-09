@@ -67,6 +67,7 @@ export function AdminSheetShell({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
+        showCloseButton={false}
         className={cn(
           "bg-slate-900/98 border-l border-white/10 text-white p-0 gap-0 flex flex-col backdrop-blur-3xl shadow-[-20px_0_80px_rgba(0,0,0,0.6)]",
           widthClasses[maxWidth] || widthClasses["2xl"],
