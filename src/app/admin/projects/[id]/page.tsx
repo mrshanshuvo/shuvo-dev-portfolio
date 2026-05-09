@@ -238,16 +238,16 @@ export default function ProjectEditPage() {
       </header>
 
       {/* Form */}
-      <main className="p-6 md:p-12 max-w-5xl mx-auto space-y-12 pb-32">
-        {/* Row 1: Media + Core Info */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-10">
-          {/* Left: Media Gallery */}
-          <div className="space-y-8">
+      <main className="p-6 md:p-12 max-w-400 mx-auto pb-32">
+        <div className="grid grid-cols-1 xl:grid-cols-[1fr_2fr] gap-12 items-start">
+          {/* Left Column: Assets & Links */}
+          <div className="space-y-10 xl:sticky xl:top-32">
             <MediaGalleryManager
               media={(form.media as MediaItem[]) || []}
               onChange={(m) => update("media", m as any)}
               label="Project Showcase"
             />
+
             <AdminField label="Thumbnail / Cover">
               <ImageUpload
                 value={form.image}
@@ -256,53 +256,54 @@ export default function ProjectEditPage() {
             </AdminField>
           </div>
 
-          {/* Right: Core Fields */}
-          <div className="space-y-8">
-            <div className="flex gap-4 items-start">
+          {/* Right Column: Content & Metadata */}
+          <div className="space-y-10">
+            <div className="flex gap-4 items-end">
               <AdminField label="Project Title" className="flex-1">
                 <AdminInput
+                  className="h-14"
                   value={form.title}
                   onChange={(e) => update("title", e.target.value)}
                   placeholder="e.g. AI-Powered Dashboard"
                 />
               </AdminField>
-              <div className="pt-2">
-                <Button
-                  variant="ghost"
-                  onClick={() => update("featured", !form.featured)}
-                  className={cn(
-                    "h-14 w-14 rounded-2xl border transition-all",
-                    form.featured
-                      ? "bg-amber-500/10 border-amber-500/30 text-amber-400"
-                      : "bg-slate-950/50 border-white/5 text-slate-600 hover:text-amber-400",
-                  )}
-                >
-                  {form.featured ? (
-                    <FaStar size={20} />
-                  ) : (
-                    <FaRegStar size={20} />
-                  )}
-                </Button>
-              </div>
-            </div>
 
-            <AdminField label="Category">
-              <Select
-                value={form.category ?? ""}
-                onValueChange={(v) => update("category", v || "")}
+              <AdminField label="Category" className="w-60">
+                <Select
+                  value={form.category ?? ""}
+                  onValueChange={(v) => update("category", v || "")}
+                >
+                  <SelectTrigger className="py-7 bg-slate-950/50 border-white/5 rounded-2xl font-bold">
+                    <SelectValue placeholder="Select Category" />
+                  </SelectTrigger>
+
+                  <SelectContent className="bg-slate-900 border-white/10 text-white rounded-2xl">
+                    {categories.map((c) => (
+                      <SelectItem key={c.name} value={c.name}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </AdminField>
+
+              <Button
+                variant="ghost"
+                onClick={() => update("featured", !form.featured)}
+                className={cn(
+                  "rounded-2xl border transition-all py-7 px-5",
+                  form.featured
+                    ? "bg-amber-500/10 border-amber-500/30 text-amber-400"
+                    : "bg-slate-950/50 border-white/5 text-slate-600 hover:text-amber-400",
+                )}
               >
-                <SelectTrigger className="bg-slate-950/50 border-white/5 rounded-2xl h-14 font-bold">
-                  <SelectValue placeholder="Select category..." />
-                </SelectTrigger>
-                <SelectContent className="bg-slate-900 border-white/10 text-white rounded-2xl">
-                  {categories.map((c) => (
-                    <SelectItem key={c.name} value={c.name}>
-                      {c.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </AdminField>
+                {form.featured ? (
+                  <FaStar className="size-6" />
+                ) : (
+                  <FaRegStar className="size-6" />
+                )}
+              </Button>
+            </div>
 
             <AdminField label="Value Proposition (Description)">
               <AdminTextarea
@@ -360,80 +361,81 @@ export default function ProjectEditPage() {
                 </div>
               </div>
             </AdminField>
-          </div>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="p-8 bg-slate-950/40 rounded-[2.5rem] border border-white/5 space-y-8">
-            <MultiLinkManager
-              label="Repositories"
-              iconType="github"
-              links={(form.github as LinkItem[]) || []}
-              onChange={(l) => update("github", l as any)}
-            />
-          </div>
-          <div className="p-8 bg-slate-950/40 rounded-[2.5rem] border border-white/5 space-y-8">
-            <MultiLinkManager
-              label="Live Deployments"
-              iconType="live"
-              links={(form.live as LinkItem[]) || []}
-              onChange={(l) => update("live", l as any)}
-            />
-          </div>
-        </div>
-
-        <AdminField label="Key Improvements & Impacts">
-          <div className="space-y-6">
-            <div className="flex gap-3">
-              <AdminInput
-                icon={FaInfoCircle}
-                value={impInput}
-                onChange={(e) => setImpInput(e.target.value)}
-                onKeyDown={(e) =>
-                  e.key === "Enter" && (e.preventDefault(), addImprovement())
-                }
-                placeholder="What was the key outcome or technical hurdle you solved?"
-              />
-              <Button
-                onClick={addImprovement}
-                className="bg-slate-800 hover:bg-slate-700 text-white rounded-2xl h-14 w-14 shrink-0 border border-white/5"
-              >
-                <FaPlus size={14} />
-              </Button>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="p-6 bg-slate-950/40 rounded-[2rem] border border-white/5 space-y-6">
+                <MultiLinkManager
+                  label="Github Repositories"
+                  iconType="github"
+                  links={(form.github as LinkItem[]) || []}
+                  onChange={(l) => update("github", l as any)}
+                />
+              </div>
+              <div className="p-6 bg-slate-950/40 rounded-[2rem] border border-white/5 space-y-6">
+                <MultiLinkManager
+                  label="Live Deployments"
+                  iconType="live"
+                  links={(form.live as LinkItem[]) || []}
+                  onChange={(l) => update("live", l as any)}
+                />
+              </div>
             </div>
-            <div className="space-y-3">
-              <AnimatePresence mode="popLayout">
-                {(form.improvements ?? []).map((imp, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 10 }}
-                    className="flex items-center gap-4 bg-slate-950/50 border border-white/5 rounded-2xl px-5 py-4 group/imp"
+
+            <AdminField label="Key Improvements & Impacts">
+              <div className="space-y-6">
+                <div className="flex gap-3">
+                  <AdminInput
+                    icon={FaInfoCircle}
+                    value={impInput}
+                    onChange={(e) => setImpInput(e.target.value)}
+                    onKeyDown={(e) =>
+                      e.key === "Enter" &&
+                      (e.preventDefault(), addImprovement())
+                    }
+                    placeholder="What was the key outcome or technical hurdle you solved?"
+                  />
+                  <Button
+                    onClick={addImprovement}
+                    className="bg-slate-800 hover:bg-slate-700 text-white rounded-2xl h-14 w-14 shrink-0 border border-white/5"
                   >
-                    <div className="w-2 h-2 rounded-full bg-emerald-500/40 shrink-0" />
-                    <span className="text-sm text-slate-300 flex-1 font-medium leading-relaxed">
-                      {imp}
-                    </span>
-                    <button
-                      onClick={() =>
-                        update(
-                          "improvements",
-                          (form.improvements ?? []).filter(
-                            (_, idx) => idx !== i,
-                          ),
-                        )
-                      }
-                      className="text-slate-600 hover:text-red-400 transition-colors p-2 hover:bg-red-400/10 rounded-lg"
-                    >
-                      <FaTrash size={12} />
-                    </button>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
+                    <FaPlus size={14} />
+                  </Button>
+                </div>
+                <div className="space-y-3">
+                  <AnimatePresence mode="popLayout">
+                    {(form.improvements ?? []).map((imp, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 10 }}
+                        className="flex items-center gap-4 bg-slate-950/50 border border-white/5 rounded-2xl px-5 py-4 group/imp"
+                      >
+                        <div className="w-2 h-2 rounded-full bg-emerald-500/40 shrink-0" />
+                        <span className="text-sm text-slate-300 flex-1 font-medium leading-relaxed">
+                          {imp}
+                        </span>
+                        <button
+                          onClick={() =>
+                            update(
+                              "improvements",
+                              (form.improvements ?? []).filter(
+                                (_, idx) => idx !== i,
+                              ),
+                            )
+                          }
+                          className="text-slate-600 hover:text-red-400 transition-colors p-2 hover:bg-red-400/10 rounded-lg"
+                        >
+                          <FaTrash size={12} />
+                        </button>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+              </div>
+            </AdminField>
           </div>
-        </AdminField>
+        </div>
       </main>
     </div>
   );

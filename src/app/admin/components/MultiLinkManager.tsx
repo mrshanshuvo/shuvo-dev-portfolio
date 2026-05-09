@@ -1,6 +1,12 @@
 "use client";
 import { useState } from "react";
-import { FaPlus, FaTrash, FaLink, FaExternalLinkAlt, FaGithub } from "react-icons/fa";
+import {
+  FaPlus,
+  FaTrash,
+  FaLink,
+  FaExternalLinkAlt,
+  FaGithub,
+} from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
@@ -24,7 +30,13 @@ export default function MultiLinkManager({
 
   const addLink = () => {
     if (!newUrl) return;
-    onChange([...links, { label: newLabel || (iconType === "github" ? "Repository" : "Live Demo"), url: newUrl }]);
+    onChange([
+      ...links,
+      {
+        label: newLabel || (iconType === "github" ? "Repository" : "Live Demo"),
+        url: newUrl,
+      },
+    ]);
     setNewLabel("");
     setNewUrl("");
   };
@@ -48,7 +60,7 @@ export default function MultiLinkManager({
         {label}
       </label>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 gap-3">
         <AnimatePresence mode="popLayout">
           {safeLinks.map((link, i) => (
             <motion.div
@@ -59,12 +71,19 @@ export default function MultiLinkManager({
               className="group relative bg-slate-900/50 border border-white/5 p-3 rounded-2xl space-y-2 hover:border-white/10 transition-all"
             >
               <div className="flex items-center gap-2">
-                <Icon className={iconType === "github" ? "text-slate-400" : "text-emerald-400"} size={12} />
+                <Icon
+                  className={
+                    iconType === "github"
+                      ? "text-slate-400"
+                      : "text-emerald-400"
+                  }
+                  size={12}
+                />
                 <Input
-                  className="bg-transparent border-none p-0 h-6 text-[11px] font-bold text-white focus-visible:ring-0"
+                  className="bg-transparent border-none p-0 h-6 text-[11px] font-bold text-white focus-visible:ring-0 flex-1 min-w-0"
                   value={link.label}
                   onChange={(e) => updateLink(i, "label", e.target.value)}
-                  placeholder="Label..."
+                  placeholder="Label"
                 />
                 <Button
                   variant="ghost"
@@ -79,7 +98,7 @@ export default function MultiLinkManager({
                 className="bg-slate-950/50 border-white/5 h-8 text-[10px] text-slate-400 rounded-lg focus-visible:ring-white/10"
                 value={link.url}
                 onChange={(e) => updateLink(i, "url", e.target.value)}
-                placeholder="URL..."
+                placeholder="URL"
               />
             </motion.div>
           ))}
@@ -89,10 +108,10 @@ export default function MultiLinkManager({
           <div className="flex items-center gap-2">
             <FaPlus className="text-slate-600" size={10} />
             <Input
-              className="bg-transparent border-none p-0 h-6 text-[11px] font-bold text-slate-400 focus-visible:ring-0"
+              className="bg-transparent border-none pl-3 h-8 text-[11px] font-bold text-slate-400 focus-visible:ring-0"
               value={newLabel}
               onChange={(e) => setNewLabel(e.target.value)}
-              placeholder="Add Label..."
+              placeholder="Add Label"
               onKeyDown={(e) => e.key === "Enter" && addLink()}
             />
           </div>
@@ -101,10 +120,16 @@ export default function MultiLinkManager({
               className="bg-slate-950/50 border-white/5 h-8 text-[10px] text-slate-400 rounded-lg focus-visible:ring-white/10"
               value={newUrl}
               onChange={(e) => setNewUrl(e.target.value)}
-              placeholder="Add URL..."
+              placeholder="Add URL"
               onKeyDown={(e) => e.key === "Enter" && addLink()}
             />
-            <Button onClick={addLink} variant="outline" className="h-8 w-8 p-0 border-white/10 rounded-lg">+</Button>
+            <Button
+              onClick={addLink}
+              variant="outline"
+              className="h-8 w-8 p-0 border-white/10 rounded-lg"
+            >
+              +
+            </Button>
           </div>
         </div>
       </div>
