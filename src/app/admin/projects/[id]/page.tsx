@@ -5,11 +5,8 @@ import {
   FaCheck,
   FaTimes,
   FaSave,
-  FaArrowLeft,
   FaStar,
   FaRegStar,
-  FaGithub,
-  FaExternalLinkAlt,
   FaCode,
   FaInfoCircle,
   FaPlus,
@@ -207,33 +204,18 @@ export default function ProjectEditPage() {
       <header className="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-xl border-b border-white/5 px-6 md:px-12 py-4">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              onClick={() => router.push("/admin/projects")}
-              className="text-slate-500 hover:text-white rounded-xl h-10 px-4"
-            >
-              <FaArrowLeft className="mr-2" size={12} /> Projects
-            </Button>
-            <div className="w-px h-5 bg-white/10" />
             <div>
               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">
-                {isNew ? "New Project" : "Editing"}
+                {isNew ? "Configuration" : "Editing"}
               </span>
               {!isNew && (
                 <p className="text-sm font-bold text-white truncate max-w-xs">
-                  {form.title}
+                  {form.title || "Untitled"}
                 </p>
               )}
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              onClick={() => router.push("/admin/projects")}
-              className="text-slate-500 hover:text-white rounded-xl h-10 px-4 text-sm"
-            >
-              Cancel
-            </Button>
             <Button
               onClick={handleSave}
               disabled={saving}

@@ -37,6 +37,7 @@ export default function AdminTopbar() {
 
   const page = PAGE_MAP[matched];
   const isDashboard = matched === "/admin";
+  const subRoute = pathname.replace(matched, "").split("/").filter(Boolean);
 
   return (
     <div className="sticky top-0 z-30 w-full bg-slate-950/80 backdrop-blur-xl border-b border-white/5 h-14 flex items-center px-6 gap-3">
@@ -57,8 +58,24 @@ export default function AdminTopbar() {
         {!isDashboard && (
           <>
             <FaChevronRight size={9} className="text-slate-700 shrink-0" />
-            <span className="text-white font-bold text-base tracking-tight truncate">
+            <Link
+              href={matched}
+              className={`tracking-tight truncate ${
+                subRoute.length > 0
+                  ? "text-slate-500 hover:text-slate-300 font-medium transition-colors"
+                  : "text-white font-bold text-base"
+              }`}
+            >
               {page?.label ?? "Page"}
+            </Link>
+          </>
+        )}
+
+        {subRoute.length > 0 && (
+          <>
+            <FaChevronRight size={9} className="text-slate-700 shrink-0" />
+            <span className="text-white font-bold text-base tracking-tight truncate">
+              {subRoute[0] === "new" ? "New" : "Edit"}
             </span>
           </>
         )}
