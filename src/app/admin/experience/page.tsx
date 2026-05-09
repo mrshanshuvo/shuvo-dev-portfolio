@@ -444,16 +444,16 @@ export default function AdminExperiencePage() {
                   />
                 </AdminField>
 
-                <div className="p-6 bg-emerald-500/5 border border-emerald-500/10 rounded-3xl flex items-start gap-4">
+                <div className="p-6 bg-emerald-500/5 border border-emerald-500/10 dark:border-emerald-500/20 rounded-3xl flex items-start gap-4 shadow-sm dark:shadow-none">
                   <FaInfoCircle
-                    className="text-emerald-400 shrink-0 mt-1"
+                    className="text-emerald-600 dark:text-emerald-400 shrink-0 mt-1"
                     size={18}
                   />
                   <div className="space-y-1">
-                    <p className="text-[10px] font-black uppercase tracking-wider text-emerald-400/90">
+                    <p className="text-[10px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400/90">
                       Visual Branding
                     </p>
-                    <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
                       Company logos enhance the timeline visually. Use PNGs with
                       transparent backgrounds for the cleanest look.
                     </p>

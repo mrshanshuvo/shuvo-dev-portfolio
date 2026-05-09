@@ -163,24 +163,24 @@ export default function ImageUpload({
           </button>
         </div>
       ) : loading ? (
-        <div className="p-4 rounded-2xl border border-white/5 bg-slate-900/50 backdrop-blur-md shadow-2xl relative overflow-hidden group aspect-square flex flex-col justify-center">
+        <div className="p-4 rounded-2xl border border-slate-200 dark:border-white/5 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md shadow-xl dark:shadow-2xl relative overflow-hidden group aspect-square flex flex-col justify-center">
           {/* Subtle animated background glow */}
-          <div className="absolute inset-0 bg-linear-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 animate-pulse" />
+          <div className="absolute inset-0 bg-linear-to-r from-indigo-500/5 dark:from-indigo-500/10 via-purple-500/5 dark:via-purple-500/10 to-pink-500/5 dark:to-pink-500/10 animate-pulse" />
 
           <div className="relative z-10 space-y-4">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <div className="p-2 bg-indigo-500/20 rounded-lg border border-indigo-500/30">
+                <div className="p-2 bg-indigo-500/10 dark:bg-indigo-500/20 rounded-lg border border-indigo-500/20 dark:border-indigo-500/30">
                   <FiRefreshCw
-                    className="text-indigo-400 animate-spin"
+                    className="text-indigo-600 dark:text-indigo-400 animate-spin"
                     size={14}
                   />
                 </div>
                 <div>
-                  <h4 className="font-bold text-slate-200 tracking-wide text-[10px] uppercase">
+                  <h4 className="font-bold text-slate-900 dark:text-slate-200 tracking-wide text-[10px] uppercase">
                     Processing
                   </h4>
-                  <span className="text-indigo-300/60 font-medium truncate text-[9px] max-w-[80px] block mt-0.5">
+                  <span className="text-indigo-600/40 dark:text-indigo-300/60 font-medium truncate text-[9px] max-w-[80px] block mt-0.5">
                     {fileName}
                   </span>
                 </div>
@@ -191,7 +191,7 @@ export default function ImageUpload({
             </div>
 
             {/* Premium Gradient Progress Bar */}
-            <div className="w-full bg-slate-950 rounded-full h-2 overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] border border-white/5 relative">
+            <div className="w-full bg-slate-100 dark:bg-slate-950 rounded-full h-2 overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)] border border-slate-200 dark:border-white/5 relative">
               <div
                 className="h-full rounded-full transition-all duration-500 ease-out bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500 relative"
                 style={{ width: `${progress}%` }}

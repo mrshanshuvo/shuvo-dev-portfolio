@@ -418,16 +418,16 @@ export default function AdminDemosPage() {
               {/* Left Column: Visuals */}
               <div className="space-y-6">
                 <AdminField label="Media Gallery">
-                  <div className="p-6 bg-indigo-500/5 border border-indigo-500/10 rounded-3xl flex items-start gap-4 mb-4">
+                  <div className="p-6 bg-indigo-500/5 border border-indigo-500/10 dark:border-indigo-500/20 rounded-3xl flex items-start gap-4 mb-4 shadow-sm dark:shadow-none">
                     <FaInfoCircle
-                      className="text-indigo-400 shrink-0 mt-1"
+                      className="text-indigo-600 dark:text-indigo-400 shrink-0 mt-1"
                       size={16}
                     />
                     <div className="space-y-1">
-                      <p className="text-[10px] font-black uppercase tracking-wider text-indigo-400/90">
+                      <p className="text-[10px] font-black uppercase tracking-wider text-indigo-600 dark:text-indigo-400/90">
                         Visual Engagement
                       </p>
-                      <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
                         Showcase your work visually. You can add multiple images
                         or videos to document your experiment.
                       </p>

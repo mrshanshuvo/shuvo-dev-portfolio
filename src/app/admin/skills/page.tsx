@@ -599,16 +599,16 @@ export default function AdminSkillsPage() {
                   </div>
                 </AdminField>
 
-                <div className="p-6 bg-purple-500/5 border border-purple-500/10 rounded-3xl flex items-start gap-4">
+                <div className="p-6 bg-purple-500/5 border border-purple-500/10 dark:border-purple-500/20 rounded-3xl flex items-start gap-4 shadow-sm dark:shadow-none">
                   <FaInfoCircle
-                    className="text-purple-400 shrink-0 mt-1"
+                    className="text-purple-600 dark:text-purple-400 shrink-0 mt-1"
                     size={16}
                   />
                   <div className="space-y-1">
-                    <p className="text-[10px] font-black uppercase tracking-wider text-purple-400/90">
+                    <p className="text-[10px] font-black uppercase tracking-wider text-purple-600 dark:text-purple-400/90">
                       Technical Branding
                     </p>
-                    <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
                       Select an icon that best represents this technology.
                       Mastery levels help visitors understand your depth of
                       knowledge.
@@ -649,11 +649,11 @@ export default function AdminSkillsPage() {
                 </AdminField>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-4">
-                  <div className="p-4 bg-slate-950/40 border border-white/5 rounded-2xl flex flex-col gap-1">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">
+                  <div className="p-4 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-white/5 rounded-2xl flex flex-col gap-1 shadow-sm dark:shadow-none">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
                       Mastery Status
                     </span>
-                    <span className="text-sm font-bold text-white">
+                    <span className="text-sm font-bold text-slate-900 dark:text-white">
                       {currentSkill.level >= 80
                         ? "Specialist"
                         : currentSkill.level >= 50
@@ -661,11 +661,13 @@ export default function AdminSkillsPage() {
                           : "Proficient"}
                     </span>
                   </div>
-                  <div className="p-4 bg-slate-950/40 border border-white/5 rounded-2xl flex flex-col gap-1">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">
+                  <div className="p-4 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-white/5 rounded-2xl flex flex-col gap-1 shadow-sm dark:shadow-none">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
                       Last Calibrated
                     </span>
-                    <span className="text-sm font-bold text-white">Today</span>
+                    <span className="text-sm font-bold text-slate-900 dark:text-white">
+                      Today
+                    </span>
                   </div>
                 </div>
               </div>

@@ -90,7 +90,8 @@ function SortableEduRow({
       style={style}
       className={cn(
         "group flex items-center gap-4 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10 rounded-2xl p-4 transition-all duration-300 shadow-sm dark:shadow-none",
-        isDragging && "z-50 border-emerald-500/50 shadow-2xl shadow-emerald-500/10",
+        isDragging &&
+          "z-50 border-emerald-500/50 shadow-2xl shadow-emerald-500/10",
       )}
     >
       <div
@@ -118,7 +119,9 @@ function SortableEduRow({
             <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
               {edu.degree}
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{edu.institution}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+              {edu.institution}
+            </p>
           </div>
         </div>
       </div>
@@ -435,16 +438,16 @@ export default function AdminEducationPage() {
                   />
                 </AdminField>
 
-                <div className="p-6 bg-blue-500/5 border border-blue-500/10 rounded-3xl flex items-start gap-4">
+                <div className="p-6 bg-blue-500/5 border border-blue-500/10 dark:border-blue-500/20 rounded-3xl flex items-start gap-4 shadow-sm dark:shadow-none">
                   <FaInfoCircle
-                    className="text-blue-400 shrink-0 mt-1"
+                    className="text-blue-600 dark:text-blue-400 shrink-0 mt-1"
                     size={16}
                   />
                   <div className="space-y-1">
-                    <p className="text-[10px] font-black uppercase tracking-wider text-blue-400/90">
+                    <p className="text-[10px] font-black uppercase tracking-wider text-blue-600 dark:text-blue-400/90">
                       Academic Credibility
                     </p>
-                    <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
                       Connecting your academic background with official
                       institutions adds credibility to your profile.
                     </p>

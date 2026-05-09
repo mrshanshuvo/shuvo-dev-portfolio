@@ -61,11 +61,11 @@ export function AdminDialogShell({
       <DialogContent
         showCloseButton={false}
         className={cn(
-          "bg-slate-900 border-white/10 text-white rounded-3xl shadow-[0_0_80px_rgba(0,0,0,0.6)] overflow-hidden p-0 gap-0 flex flex-col max-h-[95vh] outline-none",
+          "bg-white dark:bg-slate-900 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-3xl shadow-[0_0_80px_rgba(0,0,0,0.1)] dark:shadow-[0_0_80px_rgba(0,0,0,0.6)] overflow-hidden p-0 gap-0 flex flex-col max-h-[95vh] outline-none",
           widthClasses[maxWidth],
         )}
       >
-        <DialogHeader className="p-8 pb-4 relative z-20 border-b border-white/5 shrink-0 bg-slate-900/60 backdrop-blur-xl">
+        <DialogHeader className="p-8 pb-4 relative z-20 border-b border-slate-100 dark:border-white/5 shrink-0 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl">
           {/* Subtle accent glow in header */}
           <div
             className={cn(
@@ -77,7 +77,7 @@ export function AdminDialogShell({
             <div className="flex items-center gap-5">
               <div
                 className={cn(
-                  "w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10 shadow-xl shadow-black/20",
+                  "w-12 h-12 rounded-2xl bg-slate-50 dark:bg-white/5 flex items-center justify-center border border-slate-200 dark:border-white/10 shadow-xl shadow-black/5 dark:shadow-black/20",
                   iconColor,
                 )}
               >
@@ -88,7 +88,7 @@ export function AdminDialogShell({
                   {title}
                 </DialogTitle>
                 {subtitle && (
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 mt-1">
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mt-1">
                     {subtitle}
                   </p>
                 )}
@@ -98,7 +98,7 @@ export function AdminDialogShell({
               <Button
                 variant="ghost"
                 onClick={() => onOpenChange(false)}
-                className="rounded-xl h-10 px-5 font-bold text-slate-500 hover:text-white hover:bg-white/5 transition-all text-[10px] uppercase tracking-[0.15em] border border-transparent hover:border-white/10"
+                className="rounded-xl h-10 px-5 font-bold text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition-all text-[10px] uppercase tracking-[0.15em] border border-transparent hover:border-slate-200 dark:hover:border-white/10"
               >
                 {cancelLabel}
               </Button>

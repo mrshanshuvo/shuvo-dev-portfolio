@@ -551,7 +551,7 @@ export default function AdminBlogsPage() {
                             setTagInput("");
                           }
                         }}
-                        className="h-12 px-6 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-bold border border-white/5 shadow-inner shadow-black/20"
+                        className="h-12 px-6 bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white rounded-xl font-bold border border-slate-200 dark:border-white/5 shadow-inner shadow-black/5 dark:shadow-black/20"
                       >
                         <FaPlus size={14} />
                       </Button>
@@ -567,7 +567,7 @@ export default function AdminBlogsPage() {
                           >
                             <Badge
                               variant="secondary"
-                              className="bg-slate-950/40 text-orange-400 border-white/5 shadow-inner shadow-black/10 px-3 py-2 gap-2 rounded-xl group transition-all"
+                              className="bg-slate-50 dark:bg-slate-950/40 text-orange-600 dark:text-orange-400 border-slate-200 dark:border-white/5 shadow-inner shadow-black/5 dark:shadow-black/10 px-3 py-2 gap-2 rounded-xl group transition-all"
                             >
                               <span className="text-xs font-bold">{tag}</span>
                               <button
