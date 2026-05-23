@@ -25,7 +25,7 @@ export interface Project {
   github: LinkItem[];
   live: LinkItem[];
   featured: boolean;
-  category: string[];
+  category: string | string[];
   improvements: string[];
   media?: MediaItem[];
   order?: number;

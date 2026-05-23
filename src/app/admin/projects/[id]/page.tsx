@@ -276,9 +276,9 @@ export default function ProjectEditPage() {
                 />
               </AdminField>
 
-              <AdminField label="Category" className="min-w-[280px]">
+              <AdminField label="Category" className="min-w-70">
                 <CategoryCombobox
-                  value={form.category ?? ""}
+                  value={Array.isArray(form.category) ? form.category : form.category ? [form.category] : []}
                   onChange={(v) => update("category", v)}
                   categories={categories}
                   refreshCategories={refreshCategories}
@@ -307,7 +307,7 @@ export default function ProjectEditPage() {
 
             <AdminField label="Value Proposition (Description)">
               <AdminTextarea
-                className="min-h-[160px]"
+                className="min-h-40"
                 value={form.description}
                 onChange={(e) => update("description", e.target.value)}
                 placeholder="What problem does this project solve?"

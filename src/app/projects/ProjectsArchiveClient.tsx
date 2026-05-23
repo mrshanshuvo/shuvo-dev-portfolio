@@ -12,11 +12,12 @@ interface Props {
 export default function ProjectsArchiveClient({ projects }: Props) {
   const [activeCategory, setActiveCategory] = useState("All");
 
-  const categories = ["All", ...Array.from(new Set(projects.map((p) => p.category)))];
+  const allCats = projects.flatMap(p => Array.isArray(p.category) ? p.category : p.category ? [p.category] : []);
+  const categories = ["All", ...Array.from(new Set(allCats))];
 
   const filteredProjects = activeCategory === "All"
     ? projects
-    : projects.filter((p) => p.category === activeCategory);
+    : projects.filter((p) => Array.isArray(p.category) ? p.category.includes(activeCategory) : p.category === activeCategory);
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 pt-32 pb-24">
