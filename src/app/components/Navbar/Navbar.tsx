@@ -74,7 +74,8 @@ export default function Navbar({ resumeUrl }: Props) {
   const handleNavClick = (id: string): void => {
     setIsOpen(false);
     if (pathname === "/") {
-      const element = document.getElementById(id);
+      const targetId = id === "credentials" ? "certifications" : id;
+      const element = document.getElementById(targetId);
       if (element) {
         isClickingRef.current = true;
         setActiveSection(id);
@@ -108,7 +109,7 @@ export default function Navbar({ resumeUrl }: Props) {
         return "services";
       case "certifications":
       case "testimonials":
-        return "experience";
+        return "credentials";
       case "playground":
       case "blog":
         return "projects";
@@ -125,6 +126,7 @@ export default function Navbar({ resumeUrl }: Props) {
     { id: "services", label: "Services" },
     { id: "experience", label: "Experience" },
     { id: "projects", label: "Projects" },
+    { id: "credentials", label: "Credentials" },
     { id: "contact", label: "Contact" },
   ];
 

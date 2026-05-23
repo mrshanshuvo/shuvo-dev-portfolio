@@ -11,7 +11,9 @@ import {
   FaTwitter,
   FaCheckCircle,
   FaExclamationTriangle,
+  FaInstagram,
 } from "react-icons/fa";
+import { SiLeetcode } from "react-icons/si";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import type { ContactInfo, Status } from "@/types";
 import type { IconType } from "react-icons";
@@ -30,9 +32,10 @@ interface ContactSocialLink {
 const platformIconMap: Record<string, IconType> = {
   GitHub: FaGithub,
   LinkedIn: FaLinkedin,
-  LeetCode: FaGithub, // Fallback or add SiLeetcode if needed
+  LeetCode: SiLeetcode,
   Email: FaEnvelope,
   Twitter: FaTwitter,
+  Instagram: FaInstagram,
 };
 
 interface Props {
@@ -87,7 +90,13 @@ export default function Contact({
         ? "hover:text-slate-900 dark:hover:text-white"
         : s.platform === "LinkedIn"
           ? "hover:text-blue-600 dark:hover:text-blue-400"
-          : "hover:text-emerald-500",
+          : s.platform === "LeetCode"
+            ? "hover:text-amber-500"
+            : s.platform === "Twitter"
+              ? "hover:text-sky-500"
+              : s.platform === "Instagram"
+                ? "hover:text-pink-500"
+                : "hover:text-emerald-500",
   }));
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
@@ -238,19 +247,24 @@ export default function Contact({
               </p>
               <div className="flex gap-3">
                 {socialLinks.map((social, idx) => (
-                  <a
-                    key={idx}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`w-11 h-11 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-400 transition-all duration-200 hover:border-emerald-500 dark:hover:border-emerald-400 ${social.color} hover:scale-110 hover:shadow-lg`}
-                    aria-label={social.label}
-                  >
-                    {(() => {
-                      const Icon = social.icon;
-                      return <Icon className="text-lg" />;
-                    })()}
-                  </a>
+                  <div key={idx} className="relative group/tooltip">
+                    <a
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`w-11 h-11 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-400 transition-all duration-300 hover:border-emerald-500 dark:hover:border-emerald-400 ${social.color} hover:scale-110 hover:shadow-lg`}
+                      aria-label={social.label}
+                    >
+                      {(() => {
+                        const Icon = social.icon;
+                        return <Icon className="text-lg" />;
+                      })()}
+                    </a>
+                    <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 scale-75 opacity-0 pointer-events-none transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/tooltip:scale-100 group-hover/tooltip:opacity-100 bg-slate-900 dark:bg-slate-800 text-white text-xs font-bold px-2.5 py-1.5 rounded-lg shadow-md whitespace-nowrap border border-slate-700/50 dark:border-slate-600/50 z-20">
+                      {social.label}
+                      <span className="absolute bottom-full left-1/2 -translate-x-1/2 -mb-1 border-4 border-transparent border-b-slate-900 dark:border-b-slate-800" />
+                    </span>
+                  </div>
                 ))}
               </div>
             </motion.div>
