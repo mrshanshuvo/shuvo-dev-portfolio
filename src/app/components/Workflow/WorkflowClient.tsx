@@ -72,7 +72,7 @@ export default function WorkflowClient({ workflow }: WorkflowClientProps) {
 
                   <Card className="bg-transparent border-none shadow-none">
                     <CardContent className="p-0">
-                      <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed max-w-[250px] mx-auto">
+                      <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed max-w-62.5 mx-auto">
                         {step.description}
                       </p>
                     </CardContent>

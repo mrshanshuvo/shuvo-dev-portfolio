@@ -1,8 +1,7 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import type { NavItem } from "@/types";
 import ThemeToggle from "../ThemeToggle";
@@ -18,6 +17,7 @@ export default function Navbar({ resumeUrl }: Props) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [scrolled, setScrolled] = useState<boolean>(false);
   const [activeSection, setActiveSection] = useState<string>("home");
+  const isClickingRef = useRef<boolean>(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,24 +38,29 @@ export default function Navbar({ resumeUrl }: Props) {
     const sections = [
       "home",
       "about",
+      "skills",
+      "education",
       "services",
       "workflow",
       "experience",
       "projects",
       "playground",
       "blog",
+      "certifications",
+      "testimonials",
       "contact",
     ];
 
     const observer = new IntersectionObserver(
       (entries) => {
+        if (isClickingRef.current) return;
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             setActiveSection(entry.target.id);
           }
         });
       },
-      { threshold: 0.3, rootMargin: "-50px 0px -50px 0px" },
+      { threshold: 0.2, rootMargin: "-50px 0px -50px 0px" },
     );
 
     sections.forEach((section) => {
@@ -71,6 +76,9 @@ export default function Navbar({ resumeUrl }: Props) {
     if (pathname === "/") {
       const element = document.getElementById(id);
       if (element) {
+        isClickingRef.current = true;
+        setActiveSection(id);
+        
         element.scrollIntoView({
           behavior: "smooth",
           block: "start",
@@ -80,21 +88,43 @@ export default function Navbar({ resumeUrl }: Props) {
         if (window.history.pushState) {
           window.history.pushState(null, "", `#${id}`);
         }
+        
+        // Re-enable observer after smooth scroll finishes
+        setTimeout(() => {
+          isClickingRef.current = false;
+        }, 1000);
       }
     } else {
       router.push(`/#${id}`);
     }
   };
 
+  const getMappedActiveSection = (id: string): string => {
+    switch (id) {
+      case "skills":
+      case "education":
+        return "about";
+      case "workflow":
+        return "services";
+      case "certifications":
+      case "testimonials":
+        return "experience";
+      case "playground":
+      case "blog":
+        return "projects";
+      default:
+        return id;
+    }
+  };
+
+  const mappedActive = getMappedActiveSection(activeSection);
+
   const navItems: NavItem[] = [
     { id: "home", label: "Home" },
     { id: "about", label: "About" },
     { id: "services", label: "Services" },
-    { id: "workflow", label: "Methodology" },
     { id: "experience", label: "Experience" },
     { id: "projects", label: "Projects" },
-    { id: "playground", label: "Playground" },
-    { id: "blog", label: "Blog" },
     { id: "contact", label: "Contact" },
   ];
 
@@ -146,12 +176,12 @@ export default function Navbar({ resumeUrl }: Props) {
                       onClick={() => handleNavClick(item.id)}
                       className="relative px-3 lg:px-4 py-2 group"
                       aria-current={
-                        activeSection === item.id ? "page" : undefined
+                        mappedActive === item.id ? "page" : undefined
                       }
                     >
                       <span
                         className={`relative z-10 text-sm font-bold transition-colors cursor-pointer ${
-                          activeSection === item.id
+                          mappedActive === item.id
                             ? scrolled
                               ? "text-emerald-600 dark:text-emerald-400"
                               : "text-slate-900 dark:text-white"
@@ -162,7 +192,7 @@ export default function Navbar({ resumeUrl }: Props) {
                       >
                         {item.label}
                       </span>
-                      {activeSection === item.id && (
+                      {mappedActive === item.id && (
                         <motion.div
                           layoutId="navIndicator"
                           className={`absolute bottom-0 left-0 right-0 h-0.5 ${
@@ -259,7 +289,7 @@ export default function Navbar({ resumeUrl }: Props) {
                       key={item.id}
                       onClick={() => handleNavClick(item.id)}
                       className={`w-full text-left px-4 py-3 rounded-lg text-base font-medium transition-colors ${
-                        activeSection === item.id
+                        mappedActive === item.id
                           ? scrolled
                             ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400"
                             : "bg-white/10 text-white"
@@ -268,7 +298,7 @@ export default function Navbar({ resumeUrl }: Props) {
                             : "text-white/80 hover:bg-white/5"
                       }`}
                       aria-current={
-                        activeSection === item.id ? "page" : undefined
+                        mappedActive === item.id ? "page" : undefined
                       }
                     >
                       {item.label}
