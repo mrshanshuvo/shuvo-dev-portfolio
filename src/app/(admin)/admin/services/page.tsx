@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   DndContext,
   closestCenter,
@@ -143,9 +144,8 @@ function SortableServiceRow({
 }
 
 export default function AdminServicesPage() {
+  const queryClient = useQueryClient();
   const [data, setData] = useState<Service[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -168,57 +168,71 @@ export default function AdminServicesPage() {
     setTimeout(() => setToast(null), 3000);
   }
 
-  useEffect(() => {
-    fetchServices();
-  }, []);
+  const { data: fetchedData, isLoading: loading } = useQuery({
+    queryKey: ["services"],
+    queryFn: async () => {
+      const r = await fetch("/api/admin/services");
+      if (!r.ok) throw new Error("Failed to fetch services");
+      return r.json();
+    },
+  });
 
-  async function fetchServices() {
-    setLoading(true);
-    const r = await fetch("/api/admin/services");
-    const d = await r.json();
-    setData(Array.isArray(d) ? d : []);
-    setLoading(false);
-  }
+  useEffect(() => {
+    if (fetchedData) {
+      setData(Array.isArray(fetchedData) ? fetchedData : []);
+    }
+  }, [fetchedData]);
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await fetch(`/api/admin/services?id=${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete");
+      return id;
+    },
+    onSuccess: (id) => {
+      setData((prev) => prev.filter((s) => s._id !== id));
+      queryClient.invalidateQueries({ queryKey: ["services"] });
+      showToast("Service deleted.");
+      setDeletingId(null);
+    },
+    onError: () => {
+      showToast("Failed to delete.", "error");
+      setDeletingId(null);
+    }
+  });
 
   async function handleDelete(id: string) {
     if (!confirm("Are you sure you want to delete this service?")) return;
     setDeletingId(id);
-    const res = await fetch(`/api/admin/services?id=${id}`, {
-      method: "DELETE",
-    });
-    setDeletingId(null);
-    if (res.ok) {
-      setData((prev) => prev.filter((s) => s._id !== id));
-      showToast("Service deleted.");
-    } else {
-      showToast("Failed to delete.", "error");
-    }
+    deleteMutation.mutate(id);
   }
+
+  const saveMutation = useMutation({
+    mutationFn: async (service: Service) => {
+      const isEdit = !!service._id;
+      const url = isEdit ? `/api/admin/services?id=${service._id}` : "/api/admin/services";
+      const method = isEdit ? "PATCH" : "POST";
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(service),
+      });
+      if (!res.ok) throw new Error("Failed to save");
+      return { isEdit };
+    },
+    onSuccess: ({ isEdit }) => {
+      setIsDialogOpen(false);
+      showToast(isEdit ? "Service updated!" : "Service added!");
+      queryClient.invalidateQueries({ queryKey: ["services"] });
+    },
+    onError: () => {
+      showToast("Failed to save.", "error");
+    }
+  });
 
   async function handleAddOrUpdate() {
     if (!currentService?.title) return;
-    setSaving(true);
-
-    const isEdit = !!currentService._id;
-    const url = isEdit
-      ? `/api/admin/services?id=${currentService._id}`
-      : "/api/admin/services";
-    const method = isEdit ? "PATCH" : "POST";
-
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(currentService),
-    });
-
-    setSaving(false);
-    if (res.ok) {
-      setIsDialogOpen(false);
-      showToast(isEdit ? "Service updated!" : "Service added!");
-      fetchServices();
-    } else {
-      showToast("Failed to save.", "error");
-    }
+    saveMutation.mutate(currentService);
   }
 
   function openEdit(service: Service) {
@@ -245,13 +259,11 @@ export default function AdminServicesPage() {
       const newData = arrayMove(data, oldIndex, newIndex);
       setData(newData);
       // Auto save order using PATCH
-      setTimeout(() => {
-        fetch("/api/admin/services", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newData),
-        });
-      }, 0);
+      fetch("/api/admin/services", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newData),
+      }).then(() => queryClient.invalidateQueries({ queryKey: ["services"] }));
     }
     setActiveId(null);
   }
@@ -394,7 +406,7 @@ export default function AdminServicesPage() {
         iconColor="text-emerald-400"
         accentColor="from-emerald-500/5 to-cyan-500/5"
         onSave={handleAddOrUpdate}
-        saving={saving}
+        saving={saveMutation.isPending}
         saveLabel={
           currentService?._id ? "Update Solution" : "Finalize Offering"
         }
@@ -434,7 +446,7 @@ export default function AdminServicesPage() {
 
             <AdminField label="Service Value Proposition">
               <AdminTextarea
-                className="min-h-[120px]"
+                className="min-h-30"
                 value={currentService.description}
                 onChange={(e) =>
                   setCurrentService({

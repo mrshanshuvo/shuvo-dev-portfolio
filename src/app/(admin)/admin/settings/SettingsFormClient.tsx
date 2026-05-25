@@ -1,6 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,30 +14,41 @@ export default function SettingsForm({
 }: {
   initialSettings: any;
 }) {
+  const queryClient = useQueryClient();
   const [settings, setSettings] = useState(initialSettings);
-  const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleSave = async () => {
-    setLoading(true);
-    setStatus("Saving DNA...");
-    try {
+  // Keep local state in sync if initialSettings changes (though it's fetched via RSC)
+  useEffect(() => {
+    setSettings(initialSettings);
+  }, [initialSettings]);
+
+  const saveMutation = useMutation({
+    mutationFn: async (newSettings: any) => {
       const res = await fetch("/api/admin/settings", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(settings),
+        body: JSON.stringify(newSettings),
       });
       if (!res.ok) throw new Error();
+      return newSettings;
+    },
+    onSuccess: () => {
       setStatus("Settings applied successfully!");
       setTimeout(() => setStatus(null), 3000);
       router.refresh();
-    } catch (error) {
+      // Optional: if we were querying this via React Query on client side, we'd invalidate here
+    },
+    onError: () => {
       setStatus("Failed to apply settings.");
       setTimeout(() => setStatus(null), 3000);
-    } finally {
-      setLoading(false);
-    }
+    },
+  });
+
+  const handleSave = async () => {
+    setStatus("Saving DNA...");
+    saveMutation.mutate(settings);
   };
 
   return (
@@ -260,10 +272,10 @@ export default function SettingsForm({
       <div className="fixed bottom-8 right-8 z-50">
         <Button
           onClick={handleSave}
-          disabled={loading}
+          disabled={saveMutation.isPending}
           className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl px-12 h-16 font-black shadow-[0_20px_50px_rgba(16,185,129,0.3)] text-lg"
         >
-          {loading ? "Saving DNA..." : "Apply Global Changes"}
+          {saveMutation.isPending ? "Saving DNA..." : "Apply Global Changes"}
         </Button>
       </div>
     </div>

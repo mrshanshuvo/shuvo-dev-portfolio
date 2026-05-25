@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   DndContext,
   closestCenter,
@@ -161,9 +162,8 @@ function SortableEduRow({
 }
 
 export default function AdminEducationPage() {
+  const queryClient = useQueryClient();
   const [data, setData] = useState<Education[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -186,58 +186,71 @@ export default function AdminEducationPage() {
     setTimeout(() => setToast(null), 3000);
   }
 
-  useEffect(() => {
-    fetchEducation();
-  }, []);
+  const { data: fetchedData, isLoading: loading } = useQuery({
+    queryKey: ["education"],
+    queryFn: async () => {
+      const r = await fetch("/api/admin/education");
+      if (!r.ok) throw new Error("Failed to fetch education");
+      return r.json();
+    },
+  });
 
-  async function fetchEducation() {
-    setLoading(true);
-    const r = await fetch("/api/admin/education");
-    const d = await r.json();
-    setData(Array.isArray(d) ? d : []);
-    setLoading(false);
-  }
+  useEffect(() => {
+    if (fetchedData) {
+      setData(Array.isArray(fetchedData) ? fetchedData : []);
+    }
+  }, [fetchedData]);
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await fetch(`/api/admin/education?id=${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete");
+      return id;
+    },
+    onSuccess: (id) => {
+      setData((prev) => prev.filter((s) => s._id !== id));
+      queryClient.invalidateQueries({ queryKey: ["education"] });
+      showToast("Record deleted.");
+      setDeletingId(null);
+    },
+    onError: () => {
+      showToast("Failed to delete.", "error");
+      setDeletingId(null);
+    }
+  });
 
   async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this education record?"))
-      return;
+    if (!confirm("Are you sure you want to delete this education record?")) return;
     setDeletingId(id);
-    const res = await fetch(`/api/admin/education?id=${id}`, {
-      method: "DELETE",
-    });
-    setDeletingId(null);
-    if (res.ok) {
-      setData((prev) => prev.filter((s) => s._id !== id));
-      showToast("Record deleted.");
-    } else {
-      showToast("Failed to delete.", "error");
-    }
+    deleteMutation.mutate(id);
   }
+
+  const saveMutation = useMutation({
+    mutationFn: async (edu: Education) => {
+      const isEdit = !!edu._id;
+      const url = isEdit ? `/api/admin/education?id=${edu._id}` : "/api/admin/education";
+      const method = isEdit ? "PATCH" : "POST";
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(edu),
+      });
+      if (!res.ok) throw new Error("Failed to save");
+      return { isEdit };
+    },
+    onSuccess: ({ isEdit }) => {
+      setIsDialogOpen(false);
+      showToast(isEdit ? "Education updated!" : "Education added!");
+      queryClient.invalidateQueries({ queryKey: ["education"] });
+    },
+    onError: () => {
+      showToast("Failed to save.", "error");
+    }
+  });
 
   async function handleAddOrUpdate() {
     if (!currentEdu?.degree || !currentEdu?.institution) return;
-    setSaving(true);
-
-    const isEdit = !!currentEdu._id;
-    const url = isEdit
-      ? `/api/admin/education?id=${currentEdu._id}`
-      : "/api/admin/education";
-    const method = isEdit ? "PATCH" : "POST";
-
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(currentEdu),
-    });
-
-    setSaving(false);
-    if (res.ok) {
-      setIsDialogOpen(false);
-      showToast(isEdit ? "Education updated!" : "Education added!");
-      fetchEducation();
-    } else {
-      showToast("Failed to save.", "error");
-    }
+    saveMutation.mutate(currentEdu);
   }
 
   function openEdit(edu: Education) {
@@ -268,13 +281,11 @@ export default function AdminEducationPage() {
       const newData = arrayMove(data, oldIndex, newIndex);
       setData(newData);
       // Auto save order using PATCH
-      setTimeout(() => {
-        fetch("/api/admin/education", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newData),
-        });
-      }, 0);
+      fetch("/api/admin/education", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newData),
+      }).then(() => queryClient.invalidateQueries({ queryKey: ["education"] }));
     }
     setActiveId(null);
   }
@@ -417,7 +428,7 @@ export default function AdminEducationPage() {
         iconColor="text-blue-400"
         accentColor="from-blue-500/5 to-indigo-500/5"
         onSave={handleAddOrUpdate}
-        saving={saving}
+        saving={saveMutation.isPending}
         saveLabel={
           currentEdu?._id ? "Update Academic File" : "Finalize Admission"
         }

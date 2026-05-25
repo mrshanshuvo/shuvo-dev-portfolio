@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { About, Skill, Stat, Education } from "@/types";
 import {
   FaPlus,
@@ -51,9 +52,9 @@ const DEFAULT: About = {
 };
 
 export default function AdminAboutPage() {
+  const queryClient = useQueryClient();
   const [data, setData] = useState<About>(DEFAULT);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  
   const [toast, setToast] = useState<{
     msg: string;
     type: "success" | "error";
@@ -68,25 +69,42 @@ export default function AdminAboutPage() {
     setTimeout(() => setToast(null), 3000);
   }
 
-  useEffect(() => {
-    fetch("/api/admin/about")
-      .then((r) => r.json())
-      .then((d) => {
-        setData({ ...DEFAULT, ...d });
-        setLoading(false);
-      });
-  }, []);
+  const { data: fetchedData, isLoading } = useQuery({
+    queryKey: ["about"],
+    queryFn: async () => {
+      const res = await fetch("/api/admin/about");
+      if (!res.ok) throw new Error("Failed to fetch about data");
+      return res.json();
+    },
+  });
 
-  async function handleSave() {
-    setSaving(true);
-    const res = await fetch("/api/admin/about", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    setSaving(false);
-    if (res.ok) showToast("About section saved!");
-    else showToast("Failed to save.", "error");
+  useEffect(() => {
+    if (fetchedData) {
+      setData({ ...DEFAULT, ...fetchedData });
+    }
+  }, [fetchedData]);
+
+  const mutation = useMutation({
+    mutationFn: async (updatedData: About) => {
+      const res = await fetch("/api/admin/about", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedData),
+      });
+      if (!res.ok) throw new Error("Failed to save");
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["about"] });
+      showToast("About section saved!");
+    },
+    onError: () => {
+      showToast("Failed to save.", "error");
+    },
+  });
+
+  function handleSave() {
+    mutation.mutate(data);
   }
 
   function addHighlight() {
@@ -98,61 +116,6 @@ export default function AdminAboutPage() {
     setHighlightInput("");
   }
 
-  function addStat() {
-    setData((d) => ({
-      ...d,
-      stats: [...d.stats, { number: "0", label: "New Stat" }],
-    }));
-  }
-
-  function updateStat(i: number, field: keyof Stat, val: string) {
-    setData((d) => {
-      const stats = [...d.stats];
-      stats[i] = { ...stats[i], [field]: val };
-      return { ...d, stats };
-    });
-  }
-
-  function addSkill() {
-    setData((d) => ({
-      ...d,
-      skills: [
-        ...d.skills,
-        { name: "New Skill", tech: "", level: 80, iconName: "FaDatabase" },
-      ],
-    }));
-  }
-
-  function updateSkill(i: number, field: keyof Skill, val: string | number) {
-    setData((d) => {
-      const skills = [...d.skills];
-      skills[i] = { ...skills[i], [field]: val };
-      return { ...d, skills };
-    });
-  }
-
-  function addEducation() {
-    setData((d) => ({
-      ...d,
-      education: [
-        ...d.education,
-        {
-          degree: "New Degree",
-          institution: "University",
-          period: "2020-2024",
-          details: [],
-        },
-      ],
-    }));
-  }
-
-  function updateEducation(i: number, field: keyof Education, val: any) {
-    setData((d) => {
-      const edu = [...d.education];
-      edu[i] = { ...edu[i], [field]: val };
-      return { ...d, education: edu };
-    });
-  }
 
   return (
     <div className="p-4 md:p-8 space-y-6">
@@ -195,7 +158,7 @@ export default function AdminAboutPage() {
         {/* Floating save button will be at the bottom */}
 
         <div className="space-y-8">
-          {loading ? (
+          {isLoading ? (
             /* Skeleton State */
             Array.from({ length: 3 }).map((_, i) => (
               <motion.div
@@ -252,7 +215,7 @@ export default function AdminAboutPage() {
                     </AdminField>
                     <AdminField label="Bio Paragraph 1">
                       <AdminTextarea
-                        className="min-h-[140px]"
+                        className="min-h-35"
                         value={data.bio1}
                         onChange={(e) =>
                           setData((d) => ({ ...d, bio1: e.target.value }))
@@ -261,7 +224,7 @@ export default function AdminAboutPage() {
                     </AdminField>
                     <AdminField label="Bio Paragraph 2">
                       <AdminTextarea
-                        className="min-h-[140px]"
+                        className="min-h-35"
                         value={data.bio2}
                         onChange={(e) =>
                           setData((d) => ({ ...d, bio2: e.target.value }))
@@ -356,17 +319,17 @@ export default function AdminAboutPage() {
       <div className="fixed bottom-10 right-10 z-50">
         <Button
           onClick={handleSave}
-          disabled={saving}
+          disabled={mutation.isPending}
           className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl p-6 font-black shadow-[0_20px_50px_rgba(16,185,129,0.3)] text-base active:scale-95 transition-all group"
         >
           <FaSave
             className={cn(
               "mr-1 transition-transform duration-500",
-              saving ? "animate-spin" : "group-hover:rotate-12",
+              mutation.isPending ? "animate-spin" : "group-hover:rotate-12",
             )}
             size={20}
           />
-          {saving ? "Saving DNA..." : "Apply Changes"}
+          {mutation.isPending ? "Saving DNA..." : "Apply Changes"}
         </Button>
       </div>
     </div>

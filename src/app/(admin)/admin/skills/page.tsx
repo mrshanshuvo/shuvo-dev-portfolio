@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   DndContext,
   closestCenter,
@@ -150,7 +151,7 @@ function SortableSkillRow({
       </div>
 
       <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2 min-w-[120px] justify-end">
+        <div className="flex items-center gap-2 min-w-30 justify-end">
           <span className="text-xs font-bold text-slate-400 dark:text-slate-500">
             {skill.level}%
           </span>
@@ -191,11 +192,10 @@ function SortableSkillRow({
 }
 
 export default function AdminSkillsPage() {
+  const queryClient = useQueryClient();
   const [skills, setSkills] = useState<Skill[]>([]);
   const [techList, setTechList] = useState<string[]>([]);
   const [techInput, setTechInput] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -217,59 +217,72 @@ export default function AdminSkillsPage() {
     setTimeout(() => setToast(null), 3000);
   }
 
-  useEffect(() => {
-    fetchSkills();
-  }, []);
+  const { data, isLoading: loading } = useQuery({
+    queryKey: ["skills"],
+    queryFn: async () => {
+      const r = await fetch("/api/admin/skills");
+      if (!r.ok) throw new Error("Failed to fetch skills");
+      return r.json();
+    },
+  });
 
-  async function fetchSkills() {
-    setLoading(true);
-    const r = await fetch("/api/admin/skills");
-    const d = await r.json();
-    setSkills(Array.isArray(d.skills) ? d.skills : []);
-    setTechList(Array.isArray(d.techList) ? d.techList : []);
-    setLoading(false);
-  }
+  useEffect(() => {
+    if (data) {
+      setSkills(Array.isArray(data.skills) ? data.skills : []);
+      setTechList(Array.isArray(data.techList) ? data.techList : []);
+    }
+  }, [data]);
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await fetch(`/api/admin/skills?id=${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete");
+      return id;
+    },
+    onSuccess: (id) => {
+      setSkills((prev) => prev.filter((s) => s._id !== id));
+      queryClient.invalidateQueries({ queryKey: ["skills"] });
+      showToast("Skill deleted.");
+      setDeletingId(null);
+    },
+    onError: () => {
+      showToast("Failed to delete.", "error");
+      setDeletingId(null);
+    }
+  });
 
   async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this skill expertise?"))
-      return;
+    if (!confirm("Are you sure you want to delete this skill expertise?")) return;
     setDeletingId(id);
-    const res = await fetch(`/api/admin/skills?id=${id}`, {
-      method: "DELETE",
-    });
-    setDeletingId(null);
-    if (res.ok) {
-      setSkills((prev) => prev.filter((s) => s._id !== id));
-      showToast("Skill deleted.");
-    } else {
-      showToast("Failed to delete.", "error");
-    }
+    deleteMutation.mutate(id);
   }
+
+  const saveMutation = useMutation({
+    mutationFn: async (skill: Skill) => {
+      const isEdit = !!skill._id;
+      const url = isEdit ? `/api/admin/skills?id=${skill._id}` : "/api/admin/skills";
+      const method = isEdit ? "PATCH" : "POST";
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(skill),
+      });
+      if (!res.ok) throw new Error("Failed to save");
+      return { isEdit };
+    },
+    onSuccess: ({ isEdit }) => {
+      setIsDialogOpen(false);
+      showToast(isEdit ? "Skill updated!" : "Skill added!");
+      queryClient.invalidateQueries({ queryKey: ["skills"] });
+    },
+    onError: () => {
+      showToast("Failed to save.", "error");
+    }
+  });
 
   async function handleAddOrUpdate() {
     if (!currentSkill?.name) return;
-    setSaving(true);
-
-    const isEdit = !!currentSkill._id;
-    const url = isEdit
-      ? `/api/admin/skills?id=${currentSkill._id}`
-      : "/api/admin/skills";
-    const method = isEdit ? "PATCH" : "POST";
-
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(currentSkill),
-    });
-
-    setSaving(false);
-    if (res.ok) {
-      setIsDialogOpen(false);
-      showToast(isEdit ? "Skill updated!" : "Skill added!");
-      fetchSkills();
-    } else {
-      showToast("Failed to save.", "error");
-    }
+    saveMutation.mutate(currentSkill);
   }
 
   function openEdit(skill: Skill) {
@@ -295,13 +308,11 @@ export default function AdminSkillsPage() {
       const updatedSkills = arrayMove(skills, oldIndex, newIndex);
       setSkills(updatedSkills);
       // Auto save order using PATCH
-      setTimeout(() => {
-        fetch("/api/admin/skills", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedSkills),
-        });
-      }, 0);
+      fetch("/api/admin/skills", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedSkills),
+      }).then(() => queryClient.invalidateQueries({ queryKey: ["skills"] }));
     }
     setActiveId(null);
   }
@@ -315,7 +326,7 @@ export default function AdminSkillsPage() {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ techList: newList }),
-    });
+    }).then(() => queryClient.invalidateQueries({ queryKey: ["skills"] }));
   }
 
   async function removeTech(idx: number) {
@@ -325,7 +336,7 @@ export default function AdminSkillsPage() {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ techList: newList }),
-    });
+    }).then(() => queryClient.invalidateQueries({ queryKey: ["skills"] }));
   }
 
   return (
@@ -472,7 +483,7 @@ export default function AdminSkillsPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-6 pt-2">
-              <div className="flex flex-wrap gap-2 min-h-[40px] p-3 bg-slate-50 dark:bg-slate-950/20 rounded-2xl border border-slate-200 dark:border-white/5">
+              <div className="flex flex-wrap gap-2 min-h-10 p-3 bg-slate-50 dark:bg-slate-950/20 rounded-2xl border border-slate-200 dark:border-white/5">
                 {techList.map((t, i) => (
                   <Badge
                     key={i}
@@ -524,7 +535,7 @@ export default function AdminSkillsPage() {
         iconColor="text-purple-400"
         accentColor="from-purple-500/5 to-pink-500/5"
         onSave={handleAddOrUpdate}
-        saving={saving}
+        saving={saveMutation.isPending}
         saveLabel={currentSkill?._id ? "Update Skill" : "Enshrine Expertise"}
         savingLabel="Processing..."
         maxWidth="5xl"

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   DndContext,
   closestCenter,
@@ -153,9 +154,8 @@ function SortableDemoRow({
 }
 
 export default function AdminDemosPage() {
+  const queryClient = useQueryClient();
   const [data, setData] = useState<Demo[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -178,57 +178,71 @@ export default function AdminDemosPage() {
     setTimeout(() => setToast(null), 3000);
   }
 
-  useEffect(() => {
-    fetchDemos();
-  }, []);
+  const { data: fetchedData, isLoading: loading } = useQuery({
+    queryKey: ["demos"],
+    queryFn: async () => {
+      const r = await fetch("/api/admin/demos");
+      if (!r.ok) throw new Error("Failed to fetch demos");
+      return r.json();
+    },
+  });
 
-  async function fetchDemos() {
-    setLoading(true);
-    const r = await fetch("/api/admin/demos");
-    const d = await r.json();
-    setData(Array.isArray(d) ? d : []);
-    setLoading(false);
-  }
+  useEffect(() => {
+    if (fetchedData) {
+      setData(Array.isArray(fetchedData) ? fetchedData : []);
+    }
+  }, [fetchedData]);
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await fetch(`/api/admin/demos?id=${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete");
+      return id;
+    },
+    onSuccess: (id) => {
+      setData((prev) => prev.filter((s) => s._id !== id));
+      queryClient.invalidateQueries({ queryKey: ["demos"] });
+      showToast("Demo deleted.");
+      setDeletingId(null);
+    },
+    onError: () => {
+      showToast("Failed to delete.", "error");
+      setDeletingId(null);
+    }
+  });
 
   async function handleDelete(id: string) {
     if (!confirm("Are you sure you want to delete this demo?")) return;
     setDeletingId(id);
-    const res = await fetch(`/api/admin/demos?id=${id}`, {
-      method: "DELETE",
-    });
-    setDeletingId(null);
-    if (res.ok) {
-      setData((prev) => prev.filter((s) => s._id !== id));
-      showToast("Demo deleted.");
-    } else {
-      showToast("Failed to delete.", "error");
-    }
+    deleteMutation.mutate(id);
   }
+
+  const saveMutation = useMutation({
+    mutationFn: async (demo: Demo) => {
+      const isEdit = !!demo._id;
+      const url = isEdit ? `/api/admin/demos?id=${demo._id}` : "/api/admin/demos";
+      const method = isEdit ? "PATCH" : "POST";
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(demo),
+      });
+      if (!res.ok) throw new Error("Failed to save");
+      return { isEdit };
+    },
+    onSuccess: ({ isEdit }) => {
+      setIsDialogOpen(false);
+      showToast(isEdit ? "Demo updated!" : "Demo added!");
+      queryClient.invalidateQueries({ queryKey: ["demos"] });
+    },
+    onError: () => {
+      showToast("Failed to save.", "error");
+    }
+  });
 
   async function handleAddOrUpdate() {
     if (!currentDemo?.title || !currentDemo?.url) return;
-    setSaving(true);
-
-    const isEdit = !!currentDemo._id;
-    const url = isEdit
-      ? `/api/admin/demos?id=${currentDemo._id}`
-      : "/api/admin/demos";
-    const method = isEdit ? "PATCH" : "POST";
-
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(currentDemo),
-    });
-
-    setSaving(false);
-    if (res.ok) {
-      setIsDialogOpen(false);
-      showToast(isEdit ? "Demo updated!" : "Demo added!");
-      fetchDemos();
-    } else {
-      showToast("Failed to save.", "error");
-    }
+    saveMutation.mutate(currentDemo);
   }
 
   function openEdit(item: Demo) {
@@ -256,13 +270,11 @@ export default function AdminDemosPage() {
       const newData = arrayMove(data, oldIndex, newIndex);
       setData(newData);
       // Auto save order using PATCH
-      setTimeout(() => {
-        fetch("/api/admin/demos", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newData),
-        });
-      }, 0);
+      fetch("/api/admin/demos", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newData),
+      }).then(() => queryClient.invalidateQueries({ queryKey: ["demos"] }));
     }
     setActiveId(null);
   }
@@ -407,7 +419,7 @@ export default function AdminDemosPage() {
         iconColor="text-indigo-400"
         accentColor="from-indigo-500/5 to-purple-500/5"
         onSave={handleAddOrUpdate}
-        saving={saving}
+        saving={saveMutation.isPending}
         saveLabel={currentDemo?._id ? "Update Demo" : "Publish Demo"}
         savingLabel="Processing..."
         maxWidth="5xl"
@@ -480,7 +492,7 @@ export default function AdminDemosPage() {
                       })
                     }
                     placeholder="What is this experiment about?..."
-                    className="min-h-[120px]"
+                    className="min-h-30"
                   />
                 </AdminField>
 

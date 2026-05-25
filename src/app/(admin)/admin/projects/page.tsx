@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
@@ -296,9 +297,9 @@ function DragOverlayCard({ project }: { project: Project }) {
 // ─── Main Page ───────────────────────────────────────────────────────────────
 export default function AdminProjectsListPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [data, setData] = useState<Project[]>([]);
   const [categories, setCategories] = useState<ICategory[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("All");
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -317,25 +318,40 @@ export default function AdminProjectsListPage() {
     setTimeout(() => setToast(null), 3000);
   }
 
-  const fetchAll = () => {
-    Promise.all([
-      fetch("/api/admin/projects").then((r) => r.json()),
-      fetch("/api/admin/categories").then((r) => r.json()),
-    ]).then(([projects, cats]) => {
-      setData(Array.isArray(projects) ? projects : []);
-      setCategories(Array.isArray(cats) ? cats : []);
-      setLoading(false);
-    });
-  };
+  const { data: projectsData, isLoading: loadingProjects } = useQuery({
+    queryKey: ["projects"],
+    queryFn: async () => {
+      const res = await fetch("/api/admin/projects");
+      if (!res.ok) throw new Error("Failed to fetch projects");
+      return res.json();
+    },
+  });
+
+  const { data: categoriesData, isLoading: loadingCategories } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const res = await fetch("/api/admin/categories");
+      if (!res.ok) throw new Error("Failed to fetch categories");
+      return res.json();
+    },
+  });
+
+  const loading = loadingProjects || loadingCategories;
 
   useEffect(() => {
-    fetchAll();
-  }, []);
+    if (projectsData) {
+      setData(Array.isArray(projectsData) ? projectsData : []);
+    }
+  }, [projectsData]);
+
+  useEffect(() => {
+    if (categoriesData) {
+      setCategories(Array.isArray(categoriesData) ? categoriesData : []);
+    }
+  }, [categoriesData]);
 
   const refreshCategories = () => {
-    fetch("/api/admin/categories")
-      .then((r) => r.json())
-      .then((cats) => setCategories(Array.isArray(cats) ? cats : []));
+    queryClient.invalidateQueries({ queryKey: ["categories"] });
   };
 
   function openEdit(project: Project) {
@@ -371,24 +387,36 @@ export default function AdminProjectsListPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newData),
       });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
     } catch (err) {
       console.error("Failed to reorder:", err);
       showToast("Failed to sync order.", "error");
-      fetchAll();
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
     }
   }
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await fetch(`/api/admin/projects/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete");
+      return id;
+    },
+    onSuccess: (id) => {
+      setData((prev) => prev.filter((p) => p._id !== id));
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      showToast("Project deleted.");
+      setDeletingId(null);
+    },
+    onError: () => {
+      showToast("Failed to delete.", "error");
+      setDeletingId(null);
+    }
+  });
 
   async function handleDelete(id: string) {
     if (!confirm("Delete this project? This cannot be undone.")) return;
     setDeletingId(id);
-    const res = await fetch(`/api/admin/projects/${id}`, { method: "DELETE" });
-    setDeletingId(null);
-    if (res.ok) {
-      setData((prev) => prev.filter((p) => p._id !== id));
-      showToast("Project deleted.");
-    } else {
-      showToast("Failed to delete.", "error");
-    }
+    deleteMutation.mutate(id);
   }
 
   const filtered = data.filter((p) => {
@@ -449,7 +477,7 @@ export default function AdminProjectsListPage() {
             {data.length} {data.length === 1 ? "Project" : "Projects"}
           </Badge>
 
-          <div className="relative flex-1 min-w-[180px] max-w-xs">
+          <div className="relative flex-1 min-w-45 max-w-xs">
             <FaSearch
               className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600"
               size={12}
@@ -466,7 +494,7 @@ export default function AdminProjectsListPage() {
             value={filterCategory}
             onValueChange={(v) => setFilterCategory(v || "All")}
           >
-            <SelectTrigger className="bg-white dark:bg-slate-950 border-slate-200 dark:border-white/5 rounded-xl h-10 w-[150px] text-xs text-slate-900 dark:text-white shadow-sm dark:shadow-none">
+            <SelectTrigger className="bg-white dark:bg-slate-950 border-slate-200 dark:border-white/5 rounded-xl h-10 w-37.5 text-xs text-slate-900 dark:text-white shadow-sm dark:shadow-none">
               <FaFilter className="mr-2 text-slate-600" size={10} />
               <SelectValue />
             </SelectTrigger>

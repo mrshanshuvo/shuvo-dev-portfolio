@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Hero, TypeSequenceItem, SocialLink } from "@/types";
 import {
   FaPlus,
@@ -205,9 +206,8 @@ function SeqOverlay({ seq }: { seq: TypeSequenceItem }) {
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function AdminHeroPage() {
+  const queryClient = useQueryClient();
   const [data, setData] = useState<Hero>(DEFAULT);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState<string | null>(null);
   const [activeSeqId, setActiveSeqId] = useState<string | null>(null);
   const [toast, setToast] = useState<{
@@ -230,25 +230,42 @@ export default function AdminHeroPage() {
     setTimeout(() => setToast(null), 3000);
   }
 
+  const { data: fetchedData, isLoading: loading } = useQuery({
+    queryKey: ["hero"],
+    queryFn: async () => {
+      const r = await fetch("/api/admin/hero");
+      if (!r.ok) throw new Error("Failed to fetch hero");
+      return r.json();
+    },
+  });
+
   useEffect(() => {
-    fetch("/api/admin/hero")
-      .then((r) => r.json())
-      .then((d) => {
-        setData(Object.keys(d).length ? { ...DEFAULT, ...d } : DEFAULT);
-        setLoading(false);
+    if (fetchedData) {
+      setData(Object.keys(fetchedData).length ? { ...DEFAULT, ...fetchedData } : DEFAULT);
+    }
+  }, [fetchedData]);
+
+  const saveMutation = useMutation({
+    mutationFn: async (heroData: Hero) => {
+      const res = await fetch("/api/admin/hero", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(heroData),
       });
-  }, []);
+      if (!res.ok) throw new Error("Failed to save hero");
+      return heroData;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["hero"] });
+      showToast("Hero section saved successfully!");
+    },
+    onError: () => {
+      showToast("Failed to save changes.", "error");
+    }
+  });
 
   async function handleSave() {
-    setSaving(true);
-    const res = await fetch("/api/admin/hero", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    setSaving(false);
-    if (res.ok) showToast("Hero section saved successfully!");
-    else showToast("Failed to save changes.", "error");
+    saveMutation.mutate(data);
   }
 
   async function handleUpload(
@@ -612,17 +629,17 @@ export default function AdminHeroPage() {
       <div className="fixed bottom-10 right-10 z-50">
         <Button
           onClick={handleSave}
-          disabled={saving}
+          disabled={saveMutation.isPending}
           className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl p-6 font-black shadow-[0_20px_50px_rgba(16,185,129,0.3)] text-base active:scale-95 transition-all group"
         >
           <FaSave
             className={cn(
               "mr-1 transition-transform duration-500",
-              saving ? "animate-spin" : "group-hover:rotate-12",
+              saveMutation.isPending ? "animate-spin" : "group-hover:rotate-12",
             )}
             size={20}
           />
-          {saving ? "Saving DNA..." : "Apply Changes"}
+          {saveMutation.isPending ? "Saving DNA..." : "Apply Changes"}
         </Button>
       </div>
     </DndContext>

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FaChevronRight, FaHome } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
-import AdminThemeToggle from "@/app/admin/components/AdminThemeToggle";
+import AdminThemeToggle from "./AdminThemeToggle";
 
 // Mirror the nav items — label only, no icons needed here
 const PAGE_MAP: Record<string, { label: string; parent?: string }> = {

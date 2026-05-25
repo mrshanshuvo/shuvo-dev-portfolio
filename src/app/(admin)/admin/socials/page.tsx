@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   DndContext,
   closestCenter,
@@ -203,9 +204,8 @@ function SortableSocialRow({
 }
 
 export default function AdminSocialsPage() {
+  const queryClient = useQueryClient();
   const [data, setData] = useState<SocialLink[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -227,31 +227,43 @@ export default function AdminSocialsPage() {
     setTimeout(() => setToast(null), 3000);
   }
 
-  useEffect(() => {
-    fetchSocials();
-  }, []);
+  const { data: fetchedData, isLoading: loading } = useQuery({
+    queryKey: ["socials"],
+    queryFn: async () => {
+      const r = await fetch("/api/admin/socials");
+      if (!r.ok) throw new Error("Failed to fetch socials");
+      return r.json();
+    },
+  });
 
-  async function fetchSocials() {
-    setLoading(true);
-    const r = await fetch("/api/admin/socials");
-    const d = await r.json();
-    setData(Array.isArray(d) ? d : []);
-    setLoading(false);
-  }
+  useEffect(() => {
+    if (fetchedData) {
+      setData(Array.isArray(fetchedData) ? fetchedData : []);
+    }
+  }, [fetchedData]);
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await fetch(`/api/admin/socials?id=${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete");
+      return id;
+    },
+    onSuccess: (id) => {
+      setData((prev) => prev.filter((s) => s._id !== id));
+      queryClient.invalidateQueries({ queryKey: ["socials"] });
+      showToast("Link deleted.");
+      setDeletingId(null);
+    },
+    onError: () => {
+      showToast("Failed to delete.", "error");
+      setDeletingId(null);
+    }
+  });
 
   async function handleDelete(id: string) {
     if (!confirm("Are you sure you want to delete this social link?")) return;
     setDeletingId(id);
-    const res = await fetch(`/api/admin/socials?id=${id}`, {
-      method: "DELETE",
-    });
-    setDeletingId(null);
-    if (res.ok) {
-      setData((prev) => prev.filter((s) => s._id !== id));
-      showToast("Link deleted.");
-    } else {
-      showToast("Failed to delete.", "error");
-    }
+    deleteMutation.mutate(id);
   }
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -273,33 +285,35 @@ export default function AdminSocialsPage() {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newData),
-    });
+    }).then(() => queryClient.invalidateQueries({ queryKey: ["socials"] }));
   };
+
+  const saveMutation = useMutation({
+    mutationFn: async (social: SocialLink) => {
+      const isEdit = !!social._id;
+      const url = isEdit ? `/api/admin/socials?id=${social._id}` : "/api/admin/socials";
+      const method = isEdit ? "PATCH" : "POST";
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(social),
+      });
+      if (!res.ok) throw new Error("Failed to save");
+      return { isEdit };
+    },
+    onSuccess: ({ isEdit }) => {
+      setIsDialogOpen(false);
+      showToast(isEdit ? "Link updated!" : "Link added!");
+      queryClient.invalidateQueries({ queryKey: ["socials"] });
+    },
+    onError: () => {
+      showToast("Failed to save.", "error");
+    }
+  });
 
   async function handleAddOrUpdate() {
     if (!currentSocial?.label || !currentSocial?.href) return;
-    setSaving(true);
-
-    const isEdit = !!currentSocial._id;
-    const url = isEdit
-      ? `/api/admin/socials?id=${currentSocial._id}`
-      : "/api/admin/socials";
-    const method = isEdit ? "PATCH" : "POST";
-
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(currentSocial),
-    });
-
-    setSaving(false);
-    if (res.ok) {
-      setIsDialogOpen(false);
-      showToast(isEdit ? "Link updated!" : "Link added!");
-      fetchSocials();
-    } else {
-      showToast("Failed to save.", "error");
-    }
+    saveMutation.mutate(currentSocial);
   }
 
   function openEdit(item?: SocialLink) {
@@ -448,7 +462,7 @@ export default function AdminSocialsPage() {
           iconColor="text-cyan-400"
           accentColor="from-cyan-500/5 to-blue-500/5"
           onSave={handleAddOrUpdate}
-          saving={saving}
+          saving={saveMutation.isPending}
           saveLabel={currentSocial?._id ? "Update Link" : "Add Link"}
           savingLabel="Propagating..."
         >

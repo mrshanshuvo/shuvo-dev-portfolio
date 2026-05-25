@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   DndContext,
   closestCenter,
@@ -154,9 +155,8 @@ function SortableCertRow({
 }
 
 export default function AdminCertificationsPage() {
+  const queryClient = useQueryClient();
   const [data, setData] = useState<Certification[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -179,57 +179,71 @@ export default function AdminCertificationsPage() {
     setTimeout(() => setToast(null), 3000);
   }
 
-  useEffect(() => {
-    fetchCertifications();
-  }, []);
+  const { data: fetchedData, isLoading: loading } = useQuery({
+    queryKey: ["certifications"],
+    queryFn: async () => {
+      const r = await fetch("/api/admin/certifications");
+      if (!r.ok) throw new Error("Failed to fetch certifications");
+      return r.json();
+    },
+  });
 
-  async function fetchCertifications() {
-    setLoading(true);
-    const r = await fetch("/api/admin/certifications");
-    const d = await r.json();
-    setData(Array.isArray(d) ? d : []);
-    setLoading(false);
-  }
+  useEffect(() => {
+    if (fetchedData) {
+      setData(Array.isArray(fetchedData) ? fetchedData : []);
+    }
+  }, [fetchedData]);
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await fetch(`/api/admin/certifications?id=${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete");
+      return id;
+    },
+    onSuccess: (id) => {
+      setData((prev) => prev.filter((s) => s._id !== id));
+      queryClient.invalidateQueries({ queryKey: ["certifications"] });
+      showToast("Certification deleted.");
+      setDeletingId(null);
+    },
+    onError: () => {
+      showToast("Failed to delete.", "error");
+      setDeletingId(null);
+    }
+  });
 
   async function handleDelete(id: string) {
     if (!confirm("Are you sure you want to delete this certification?")) return;
     setDeletingId(id);
-    const res = await fetch(`/api/admin/certifications?id=${id}`, {
-      method: "DELETE",
-    });
-    setDeletingId(null);
-    if (res.ok) {
-      setData((prev) => prev.filter((s) => s._id !== id));
-      showToast("Certification deleted.");
-    } else {
-      showToast("Failed to delete.", "error");
-    }
+    deleteMutation.mutate(id);
   }
+
+  const saveMutation = useMutation({
+    mutationFn: async (cert: Certification) => {
+      const isEdit = !!cert._id;
+      const url = isEdit ? `/api/admin/certifications?id=${cert._id}` : "/api/admin/certifications";
+      const method = isEdit ? "PATCH" : "POST";
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(cert),
+      });
+      if (!res.ok) throw new Error("Failed to save");
+      return { isEdit };
+    },
+    onSuccess: ({ isEdit }) => {
+      setIsDialogOpen(false);
+      showToast(isEdit ? "Certification updated!" : "Certification added!");
+      queryClient.invalidateQueries({ queryKey: ["certifications"] });
+    },
+    onError: () => {
+      showToast("Failed to save.", "error");
+    }
+  });
 
   async function handleAddOrUpdate() {
     if (!currentCert?.title || !currentCert?.issuer) return;
-    setSaving(true);
-
-    const isEdit = !!currentCert._id;
-    const url = isEdit
-      ? `/api/admin/certifications?id=${currentCert._id}`
-      : "/api/admin/certifications";
-    const method = isEdit ? "PATCH" : "POST";
-
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(currentCert),
-    });
-
-    setSaving(false);
-    if (res.ok) {
-      setIsDialogOpen(false);
-      showToast(isEdit ? "Certification updated!" : "Certification added!");
-      fetchCertifications();
-    } else {
-      showToast("Failed to save.", "error");
-    }
+    saveMutation.mutate(currentCert);
   }
 
   function openEdit(item: Certification) {
@@ -261,13 +275,11 @@ export default function AdminCertificationsPage() {
       const newData = arrayMove(data, oldIndex, newIndex);
       setData(newData);
       // Auto save order using PATCH
-      setTimeout(() => {
-        fetch("/api/admin/certifications", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newData),
-        });
-      }, 0);
+      fetch("/api/admin/certifications", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newData),
+      }).then(() => queryClient.invalidateQueries({ queryKey: ["certifications"] }));
     }
     setActiveId(null);
   }
@@ -414,7 +426,7 @@ export default function AdminCertificationsPage() {
         iconColor="text-yellow-400"
         accentColor="from-yellow-500/5 to-amber-500/5"
         onSave={handleAddOrUpdate}
-        saving={saving}
+        saving={saveMutation.isPending}
         saveLabel={currentCert?._id ? "Update Credential" : "Establish Honor"}
         savingLabel="Processing..."
         maxWidth="5xl"

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   DndContext,
   closestCenter,
@@ -130,9 +131,8 @@ function SortableStatRow({
 }
 
 export default function AdminStatsPage() {
+  const queryClient = useQueryClient();
   const [data, setData] = useState<Stat[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -154,57 +154,71 @@ export default function AdminStatsPage() {
     setTimeout(() => setToast(null), 3000);
   }
 
-  useEffect(() => {
-    fetchStats();
-  }, []);
+  const { data: fetchedData, isLoading: loading } = useQuery({
+    queryKey: ["stats"],
+    queryFn: async () => {
+      const r = await fetch("/api/admin/stats");
+      if (!r.ok) throw new Error("Failed to fetch stats");
+      return r.json();
+    },
+  });
 
-  async function fetchStats() {
-    setLoading(true);
-    const r = await fetch("/api/admin/stats");
-    const d = await r.json();
-    setData(Array.isArray(d) ? d : []);
-    setLoading(false);
-  }
+  useEffect(() => {
+    if (fetchedData) {
+      setData(Array.isArray(fetchedData) ? fetchedData : []);
+    }
+  }, [fetchedData]);
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await fetch(`/api/admin/stats?id=${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete");
+      return id;
+    },
+    onSuccess: (id) => {
+      setData((prev) => prev.filter((s) => s._id !== id));
+      queryClient.invalidateQueries({ queryKey: ["stats"] });
+      showToast("Stat deleted.");
+      setDeletingId(null);
+    },
+    onError: () => {
+      showToast("Failed to delete.", "error");
+      setDeletingId(null);
+    }
+  });
 
   async function handleDelete(id: string) {
     if (!confirm("Are you sure you want to delete this stat?")) return;
     setDeletingId(id);
-    const res = await fetch(`/api/admin/stats?id=${id}`, {
-      method: "DELETE",
-    });
-    setDeletingId(null);
-    if (res.ok) {
-      setData((prev) => prev.filter((s) => s._id !== id));
-      showToast("Stat deleted.");
-    } else {
-      showToast("Failed to delete.", "error");
-    }
+    deleteMutation.mutate(id);
   }
+
+  const saveMutation = useMutation({
+    mutationFn: async (stat: Stat) => {
+      const isEdit = !!stat._id;
+      const url = isEdit ? `/api/admin/stats?id=${stat._id}` : "/api/admin/stats";
+      const method = isEdit ? "PATCH" : "POST";
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(stat),
+      });
+      if (!res.ok) throw new Error("Failed to save");
+      return { isEdit };
+    },
+    onSuccess: ({ isEdit }) => {
+      setIsDialogOpen(false);
+      showToast(isEdit ? "Stat updated!" : "Stat added!");
+      queryClient.invalidateQueries({ queryKey: ["stats"] });
+    },
+    onError: () => {
+      showToast("Failed to save.", "error");
+    }
+  });
 
   async function handleAddOrUpdate() {
     if (!currentStat?.label || !currentStat?.number) return;
-    setSaving(true);
-
-    const isEdit = !!currentStat._id;
-    const url = isEdit
-      ? `/api/admin/stats?id=${currentStat._id}`
-      : "/api/admin/stats";
-    const method = isEdit ? "PATCH" : "POST";
-
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(currentStat),
-    });
-
-    setSaving(false);
-    if (res.ok) {
-      setIsDialogOpen(false);
-      showToast(isEdit ? "Stat updated!" : "Stat added!");
-      fetchStats();
-    } else {
-      showToast("Failed to save.", "error");
-    }
+    saveMutation.mutate(currentStat);
   }
 
   function openEdit(item: Stat) {
@@ -229,13 +243,11 @@ export default function AdminStatsPage() {
       const newData = arrayMove(data, oldIndex, newIndex);
       setData(newData);
       // Auto save order using PATCH
-      setTimeout(() => {
-        fetch("/api/admin/stats", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newData),
-        });
-      }, 0);
+      fetch("/api/admin/stats", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newData),
+      }).then(() => queryClient.invalidateQueries({ queryKey: ["stats"] }));
     }
     setActiveId(null);
   }
@@ -378,7 +390,7 @@ export default function AdminStatsPage() {
         iconColor="text-rose-400"
         accentColor="from-rose-500/5 to-pink-500/5"
         onSave={handleAddOrUpdate}
-        saving={saving}
+        saving={saveMutation.isPending}
         saveLabel={currentStat?._id ? "Update Metric" : "Add Milestone"}
         savingLabel="Calibrating..."
         maxWidth="2xl"

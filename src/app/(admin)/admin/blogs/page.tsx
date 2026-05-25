@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   DndContext,
   closestCenter,
@@ -169,9 +170,8 @@ function SortableBlogRow({
 }
 
 export default function AdminBlogsPage() {
+  const queryClient = useQueryClient();
   const [data, setData] = useState<Blog[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -194,57 +194,71 @@ export default function AdminBlogsPage() {
     setTimeout(() => setToast(null), 3000);
   }
 
-  useEffect(() => {
-    fetchBlogs();
-  }, []);
+  const { data: fetchedData, isLoading: loading } = useQuery({
+    queryKey: ["blogs"],
+    queryFn: async () => {
+      const r = await fetch("/api/admin/blogs");
+      if (!r.ok) throw new Error("Failed to fetch blogs");
+      return r.json();
+    },
+  });
 
-  async function fetchBlogs() {
-    setLoading(true);
-    const r = await fetch("/api/admin/blogs");
-    const d = await r.json();
-    setData(Array.isArray(d) ? d : []);
-    setLoading(false);
-  }
+  useEffect(() => {
+    if (fetchedData) {
+      setData(Array.isArray(fetchedData) ? fetchedData : []);
+    }
+  }, [fetchedData]);
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await fetch(`/api/admin/blogs?id=${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete");
+      return id;
+    },
+    onSuccess: (id) => {
+      setData((prev) => prev.filter((s) => s._id !== id));
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+      showToast("Post deleted.");
+      setDeletingId(null);
+    },
+    onError: () => {
+      showToast("Failed to delete.", "error");
+      setDeletingId(null);
+    }
+  });
 
   async function handleDelete(id: string) {
     if (!confirm("Are you sure you want to delete this blog post?")) return;
     setDeletingId(id);
-    const res = await fetch(`/api/admin/blogs?id=${id}`, {
-      method: "DELETE",
-    });
-    setDeletingId(null);
-    if (res.ok) {
-      setData((prev) => prev.filter((s) => s._id !== id));
-      showToast("Post deleted.");
-    } else {
-      showToast("Failed to delete.", "error");
-    }
+    deleteMutation.mutate(id);
   }
+
+  const saveMutation = useMutation({
+    mutationFn: async (blog: Blog) => {
+      const isEdit = !!blog._id;
+      const url = isEdit ? `/api/admin/blogs?id=${blog._id}` : "/api/admin/blogs";
+      const method = isEdit ? "PATCH" : "POST";
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(blog),
+      });
+      if (!res.ok) throw new Error("Failed to save");
+      return { isEdit };
+    },
+    onSuccess: ({ isEdit }) => {
+      setIsDialogOpen(false);
+      showToast(isEdit ? "Post updated!" : "Post added!");
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+    },
+    onError: () => {
+      showToast("Failed to save.", "error");
+    }
+  });
 
   async function handleAddOrUpdate() {
     if (!currentBlog?.title || !currentBlog?.link) return;
-    setSaving(true);
-
-    const isEdit = !!currentBlog._id;
-    const url = isEdit
-      ? `/api/admin/blogs?id=${currentBlog._id}`
-      : "/api/admin/blogs";
-    const method = isEdit ? "PATCH" : "POST";
-
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(currentBlog),
-    });
-
-    setSaving(false);
-    if (res.ok) {
-      setIsDialogOpen(false);
-      showToast(isEdit ? "Post updated!" : "Post added!");
-      fetchBlogs();
-    } else {
-      showToast("Failed to save.", "error");
-    }
+    saveMutation.mutate(currentBlog);
   }
 
   function openEdit(item: Blog) {
@@ -277,13 +291,11 @@ export default function AdminBlogsPage() {
       const newData = arrayMove(data, oldIndex, newIndex);
       setData(newData);
       // Auto save order using PATCH
-      setTimeout(() => {
-        fetch("/api/admin/blogs", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newData),
-        });
-      }, 0);
+      fetch("/api/admin/blogs", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newData),
+      }).then(() => queryClient.invalidateQueries({ queryKey: ["blogs"] }));
     }
     setActiveId(null);
   }
@@ -428,7 +440,7 @@ export default function AdminBlogsPage() {
         iconColor="text-orange-400"
         accentColor="from-orange-500/5 to-red-500/5"
         onSave={handleAddOrUpdate}
-        saving={saving}
+        saving={saveMutation.isPending}
         saveLabel={currentBlog?._id ? "Update Article" : "Publish Insight"}
         savingLabel="Publishing..."
         maxWidth="5xl"
@@ -514,7 +526,7 @@ export default function AdminBlogsPage() {
                       })
                     }
                     placeholder="A compelling summary of the article..."
-                    className="min-h-[120px]"
+                    className="min-h-30"
                   />
                 </AdminField>
 

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
-import AdminSidebar from "./components/AdminSidebar";
 
 export const metadata: Metadata = {
   title: "Admin · Portfolio",
@@ -8,6 +7,7 @@ export const metadata: Metadata = {
 };
 
 import AdminShell from "./components/AdminShell";
+import QueryProvider from "./components/QueryProvider";
 
 export default function AdminLayout({
   children,
@@ -16,7 +16,9 @@ export default function AdminLayout({
 }) {
   return (
     <SessionProvider>
-      <AdminShell>{children}</AdminShell>
+      <QueryProvider>
+        <AdminShell>{children}</AdminShell>
+      </QueryProvider>
     </SessionProvider>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   DndContext,
   closestCenter,
@@ -165,9 +166,8 @@ function SortableExpRow({
 }
 
 export default function AdminExperiencePage() {
+  const queryClient = useQueryClient();
   const [data, setData] = useState<Experience[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -190,58 +190,71 @@ export default function AdminExperiencePage() {
     setTimeout(() => setToast(null), 3000);
   }
 
-  useEffect(() => {
-    fetchExperience();
-  }, []);
+  const { data: fetchedData, isLoading: loading } = useQuery({
+    queryKey: ["experience"],
+    queryFn: async () => {
+      const r = await fetch("/api/admin/experience");
+      if (!r.ok) throw new Error("Failed to fetch experience");
+      return r.json();
+    },
+  });
 
-  async function fetchExperience() {
-    setLoading(true);
-    const r = await fetch("/api/admin/experience");
-    const d = await r.json();
-    setData(Array.isArray(d) ? d : []);
-    setLoading(false);
-  }
+  useEffect(() => {
+    if (fetchedData) {
+      setData(Array.isArray(fetchedData) ? fetchedData : []);
+    }
+  }, [fetchedData]);
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await fetch(`/api/admin/experience?id=${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete");
+      return id;
+    },
+    onSuccess: (id) => {
+      setData((prev) => prev.filter((s) => s._id !== id));
+      queryClient.invalidateQueries({ queryKey: ["experience"] });
+      showToast("Record deleted.");
+      setDeletingId(null);
+    },
+    onError: () => {
+      showToast("Failed to delete.", "error");
+      setDeletingId(null);
+    }
+  });
 
   async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this experience record?"))
-      return;
+    if (!confirm("Are you sure you want to delete this experience record?")) return;
     setDeletingId(id);
-    const res = await fetch(`/api/admin/experience?id=${id}`, {
-      method: "DELETE",
-    });
-    setDeletingId(null);
-    if (res.ok) {
-      setData((prev) => prev.filter((s) => s._id !== id));
-      showToast("Record deleted.");
-    } else {
-      showToast("Failed to delete.", "error");
-    }
+    deleteMutation.mutate(id);
   }
+
+  const saveMutation = useMutation({
+    mutationFn: async (exp: Experience) => {
+      const isEdit = !!exp._id;
+      const url = isEdit ? `/api/admin/experience?id=${exp._id}` : "/api/admin/experience";
+      const method = isEdit ? "PATCH" : "POST";
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(exp),
+      });
+      if (!res.ok) throw new Error("Failed to save");
+      return { isEdit };
+    },
+    onSuccess: ({ isEdit }) => {
+      setIsDialogOpen(false);
+      showToast(isEdit ? "Experience updated!" : "Experience added!");
+      queryClient.invalidateQueries({ queryKey: ["experience"] });
+    },
+    onError: () => {
+      showToast("Failed to save.", "error");
+    }
+  });
 
   async function handleAddOrUpdate() {
     if (!currentExp?.title || !currentExp?.org) return;
-    setSaving(true);
-
-    const isEdit = !!currentExp._id;
-    const url = isEdit
-      ? `/api/admin/experience?id=${currentExp._id}`
-      : "/api/admin/experience";
-    const method = isEdit ? "PATCH" : "POST";
-
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(currentExp),
-    });
-
-    setSaving(false);
-    if (res.ok) {
-      setIsDialogOpen(false);
-      showToast(isEdit ? "Experience updated!" : "Experience added!");
-      fetchExperience();
-    } else {
-      showToast("Failed to save.", "error");
-    }
+    saveMutation.mutate(currentExp);
   }
 
   function openEdit(item: Experience) {
@@ -274,13 +287,11 @@ export default function AdminExperiencePage() {
       const newData = arrayMove(data, oldIndex, newIndex);
       setData(newData);
       // Auto save order using PATCH
-      setTimeout(() => {
-        fetch("/api/admin/experience", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newData),
-        });
-      }, 0);
+      fetch("/api/admin/experience", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newData),
+      }).then(() => queryClient.invalidateQueries({ queryKey: ["experience"] }));
     }
     setActiveId(null);
   }
@@ -425,7 +436,7 @@ export default function AdminExperiencePage() {
         iconColor="text-emerald-400"
         accentColor="from-emerald-500/5 to-teal-500/5"
         onSave={handleAddOrUpdate}
-        saving={saving}
+        saving={saveMutation.isPending}
         saveLabel={currentExp?._id ? "Update Chronicle" : "Save Experience"}
         savingLabel="Archiving..."
         maxWidth="5xl"

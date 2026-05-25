@@ -1,24 +1,24 @@
 import { Suspense } from "react";
-import Navbar from "./components/Navbar/Navbar";
-import Hero from "./components/Hero/Hero";
-import About from "./components/About/About";
-import Skills from "./components/Skills/Skills";
-import Education from "./components/Education/Education";
-import Contact from "./components/Contact/Contact";
-import Projects from "./components/Projects/Projects";
-import Experience from "./components/Experience/Experience";
-import Services from "./components/Services/Services";
-import Workflow from "./components/Workflow/Workflow";
-import Playground from "./components/Playground/Playground";
-import Blog from "./components/Writing/Blog";
-import Certifications from "./components/Certifications/Certifications";
-import Testimonials from "./components/Testimonials/Testimonials";
-import VisitorTracker from "./components/Analytics/VisitorTracker";
+import Navbar from "@/app/components/Navbar/Navbar";
+import Hero from "@/app/components/Hero/Hero";
+import About from "@/app/components/About/About";
+import Skills from "@/app/components/Skills/Skills";
+import Education from "@/app/components/Education/Education";
+import Contact from "@/app/components/Contact/Contact";
+import Projects from "@/app/components/Projects/Projects";
+import Experience from "@/app/components/Experience/Experience";
+import Services from "@/app/components/Services/Services";
+import Workflow from "@/app/components/Workflow/Workflow";
+import Playground from "@/app/components/Playground/Playground";
+import Blog from "@/app/components/Writing/Blog";
+import Certifications from "@/app/components/Certifications/Certifications";
+import Testimonials from "@/app/components/Testimonials/Testimonials";
+import VisitorTracker from "@/app/components/Analytics/VisitorTracker";
 import {
   SectionSkeleton,
   TimelineSkeleton,
   ListSkeleton,
-} from "./components/UI/Skeletons";
+} from "@/app/components/UI/Skeletons";
 
 import { connectDB } from "@/lib/mongodb";
 import SocialLinkModel from "@/models/SocialLink";
