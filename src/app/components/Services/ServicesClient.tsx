@@ -27,7 +27,7 @@ export default function ServicesClient({ services }: ServicesClientProps) {
               initial={{ opacity: 0, scale: 0.5 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="flex items-center gap-3 text-blue-500 font-black uppercase tracking-[0.3em] text-sm mb-4"
+              className="flex items-center gap-3 text-emerald-500 font-black uppercase tracking-[0.3em] text-sm mb-4"
             >
               <Icons.FaShieldAlt /> The Solutions
             </motion.div>
