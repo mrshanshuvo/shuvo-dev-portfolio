@@ -182,20 +182,14 @@ export default function Contact({
           className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16"
         >
           <div className="text-left">
-            <motion.div
+            <motion.h2
               initial={{ opacity: 0, scale: 0.5 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="flex items-center gap-3 text-emerald-500 font-black uppercase tracking-[0.3em] text-sm mb-4"
+              className="flex items-center gap-3 text-emerald-500 font-black uppercase tracking-[0.3em] text-sm md:text-base mb-4"
             >
-              <FaPaperPlane /> The Connection
-            </motion.div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight whitespace-nowrap">
-              Get In{" "}
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-500 to-blue-600">
-                Touch
-              </span>
-            </h2>
+              <FaPaperPlane /> Get In Touch
+            </motion.h2>
           </div>
         </motion.div>
 

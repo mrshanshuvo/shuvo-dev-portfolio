@@ -22,20 +22,14 @@ export default function WorkflowClient({ workflow }: WorkflowClientProps) {
           className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20"
         >
           <div className="text-left">
-            <motion.div
+            <motion.h2
               initial={{ opacity: 0, scale: 0.5 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="flex items-center gap-3 text-emerald-500 font-black uppercase tracking-[0.3em] text-sm mb-4"
+              className="flex items-center gap-3 text-emerald-500 font-black uppercase tracking-[0.3em] text-sm md:text-base mb-4"
             >
-              <Icons.FaCodeBranch /> The Process
-            </motion.div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight whitespace-nowrap">
-              Development{" "}
-              <span className="text-emerald-400">
-                Lifecycle
-              </span>
-            </h2>
+              <FaCogs /> Development Lifecycle
+            </motion.h2>
           </div>
         </motion.div>
 

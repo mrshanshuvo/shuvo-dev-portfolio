@@ -41,20 +41,14 @@ export default function AboutClient({ about }: Props) {
           className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12"
         >
           <div className="text-left">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={isInView ? { scale: 1 } : { scale: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="flex items-center gap-3 text-emerald-500 font-black uppercase tracking-[0.3em] text-sm mb-4"
+            <motion.h2
+              initial={{ opacity: 0, scale: 0.5 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="flex items-center gap-3 text-emerald-500 font-black uppercase tracking-[0.3em] text-sm md:text-base mb-4"
             >
-              <FaRobot /> The Identity
-            </motion.div>
-            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight whitespace-nowrap">
-              Cinematic{" "}
-              <span className="text-emerald-400">
-                Profile
-              </span>
-            </h2>
+              <FaUser /> Cinematic Profile
+            </motion.h2>
           </div>
         </motion.div>
 
