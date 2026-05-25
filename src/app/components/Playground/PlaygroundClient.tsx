@@ -31,7 +31,7 @@ export default function PlaygroundClient({ demos }: PlaygroundClientProps) {
             </motion.div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight whitespace-nowrap">
               Interactive{" "}
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-500">
+              <span className="text-emerald-400">
                 Playground
               </span>
             </h2>

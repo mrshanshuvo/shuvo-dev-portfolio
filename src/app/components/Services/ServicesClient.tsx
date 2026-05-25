@@ -33,7 +33,7 @@ export default function ServicesClient({ services }: ServicesClientProps) {
             </motion.div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight whitespace-nowrap">
               Technical{" "}
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-indigo-500">
+              <span className="text-emerald-400">
                 Expertise
               </span>
             </h2>

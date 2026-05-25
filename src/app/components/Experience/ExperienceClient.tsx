@@ -52,7 +52,7 @@ export default function ExperienceClient({ experiences }: Props) {
             </motion.div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight whitespace-nowrap">
               Professional{" "}
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-500 to-blue-500">
+              <span className="text-emerald-400">
                 History
               </span>
             </h2>

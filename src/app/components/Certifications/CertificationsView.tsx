@@ -34,7 +34,7 @@ export default function CertificationsView({
               <FaAward /> The Validation
             </motion.div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight whitespace-nowrap">
-              Academic & <span className="text-amber-500">Credentials</span>
+              Academic & <span className="text-emerald-400">Credentials</span>
             </h2>
           </div>
         </motion.div>

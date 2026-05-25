@@ -32,7 +32,7 @@ export default function WorkflowClient({ workflow }: WorkflowClientProps) {
             </motion.div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight whitespace-nowrap">
               Development{" "}
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-teal-500">
+              <span className="text-emerald-400">
                 Lifecycle
               </span>
             </h2>

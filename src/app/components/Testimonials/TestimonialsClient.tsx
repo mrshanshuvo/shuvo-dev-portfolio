@@ -34,7 +34,7 @@ export default function TestimonialsClient({
               <FaQuoteLeft /> The Feedback
             </motion.div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight whitespace-nowrap">
-              Client <span className="text-blue-500">Testimonials</span>
+              Client <span className="text-emerald-400">Testimonials</span>
             </h2>
           </div>
         </motion.div>
