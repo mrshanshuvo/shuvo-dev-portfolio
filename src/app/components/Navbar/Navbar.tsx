@@ -250,7 +250,7 @@ export default function Navbar({ resumeUrl }: Props) {
                         />
                       )}
                     </button>
-                    <div className="absolute top-full left-0 mt-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0">
+                    <div className="absolute top-full left-0 mt-2 w-48 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0">
                       <div className="py-2">
                         {moreNavItems.map((item) => (
                           <button
