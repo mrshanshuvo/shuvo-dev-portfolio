@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { FaGithub, FaExternalLinkAlt, FaStar } from "react-icons/fa";
+import { FaGithub, FaExternalLinkAlt, FaStar, FaCode } from "react-icons/fa";
 import type { Project } from "@/types";
 import { getIcon } from "@/lib/techIconMap";
 import { Button } from "@/components/ui/button";

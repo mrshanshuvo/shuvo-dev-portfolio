@@ -28,7 +28,7 @@ export default function WorkflowClient({ workflow }: WorkflowClientProps) {
               viewport={{ once: true }}
               className="flex items-center gap-3 text-emerald-500 font-black uppercase tracking-[0.3em] text-sm md:text-base mb-4"
             >
-              <FaCogs /> Development Lifecycle
+              <Icons.FaCogs /> Development Lifecycle
             </motion.h2>
           </div>
         </motion.div>

@@ -1,7 +1,7 @@
 "use client";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { FaCode, FaDatabase, FaCloud, FaRobot } from "react-icons/fa";
+import { FaCode, FaDatabase, FaCloud, FaRobot, FaLayerGroup } from "react-icons/fa";
 import { SiTensorflow, SiReact, SiNodedotjs } from "react-icons/si";
 import { Badge } from "@/components/ui/badge";
 import type { IconType } from "react-icons";
