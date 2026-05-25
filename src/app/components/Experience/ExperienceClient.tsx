@@ -74,14 +74,11 @@ export default function ExperienceClient({ experiences }: Props) {
                     </div>
                   )}
                   
-                  <ul className="mt-4 text-sm md:text-base leading-relaxed text-slate-600 dark:text-slate-400 space-y-3">
+                  <div className="mt-4 text-sm md:text-base leading-relaxed text-slate-600 dark:text-slate-400 space-y-4">
                     {exp.details.map((item, idx) => (
-                      <li key={idx} className="flex gap-3">
-                        <span className="text-emerald-500 mt-1.5 text-xs">▹</span>
-                        <span>{item}</span>
-                      </li>
+                      <p key={idx}>{item}</p>
                     ))}
-                  </ul>
+                  </div>
 
                   {exp.links && exp.links.length > 0 && (
                     <div className="flex flex-wrap gap-4 mt-4">

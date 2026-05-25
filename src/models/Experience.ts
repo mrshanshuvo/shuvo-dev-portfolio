@@ -3,11 +3,8 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 export interface IExperience extends Document {
   title: string;
   org: string;
-  location?: string;
   duration: string;
   details: string[];
-  logo?: string;
-  color: "emerald" | "blue" | "amber";
   type: "work";
   order: number;
   createdAt: Date;
@@ -21,15 +18,8 @@ const ExperienceSchema = new Schema<IExperience>(
   {
     title: { type: String, required: true },
     org: { type: String, required: true },
-    location: { type: String },
     duration: { type: String, required: true },
     details: [{ type: String }],
-    logo: { type: String },
-    color: {
-      type: String,
-      enum: ["emerald", "blue", "amber"],
-      default: "emerald",
-    },
     type: {
       type: String,
       enum: ["work"],

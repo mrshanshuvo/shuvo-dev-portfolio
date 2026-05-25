@@ -35,11 +35,8 @@ export interface Experience {
   _id?: string;
   title: string;
   org: string;
-  location?: string;
   duration: string;
   details: string[];
-  logo?: string;
-  color: "emerald" | "blue" | "amber";
   type: "work" | "education" | "certification";
   order?: number;
   previousTitles?: string[];
