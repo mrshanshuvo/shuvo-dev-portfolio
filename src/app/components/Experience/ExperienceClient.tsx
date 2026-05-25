@@ -1,5 +1,6 @@
 "use client";
 import { FaBriefcase, FaLink } from "react-icons/fa";
+import { ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
 import type { Experience } from "@/types";
 
@@ -57,11 +58,25 @@ export default function ExperienceClient({ experiences }: Props) {
                 {/* Content Column */}
                 <div className="z-10 sm:col-span-6">
                   <h3 className="font-medium leading-snug text-slate-900 dark:text-slate-200">
-                    <div className="inline-flex items-baseline font-bold leading-tight text-slate-900 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 text-lg md:text-xl transition-colors">
-                      <span>
-                        {exp.title} · <span className="inline-block">{exp.org}</span>
-                      </span>
-                    </div>
+                    {exp.url ? (
+                      <a
+                        href={exp.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-baseline font-bold leading-tight text-slate-900 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 text-lg md:text-xl transition-colors group/link"
+                      >
+                        <span>
+                          {exp.title} · <span className="inline-block">{exp.org}</span>
+                        </span>
+                        <ArrowUpRight className="inline-block ml-1 h-4 w-4 shrink-0 transition-transform group-hover/link:-translate-y-1 group-hover/link:translate-x-1" />
+                      </a>
+                    ) : (
+                      <div className="inline-flex items-baseline font-bold leading-tight text-slate-900 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 text-lg md:text-xl transition-colors">
+                        <span>
+                          {exp.title} · <span className="inline-block">{exp.org}</span>
+                        </span>
+                      </div>
+                    )}
                   </h3>
                   
                   {exp.previousTitles && exp.previousTitles.length > 0 && (

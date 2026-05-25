@@ -5,10 +5,10 @@ export interface IExperience extends Document {
   org: string;
   duration: string;
   details: string[];
-  type: "work";
   order: number;
   createdAt: Date;
   updatedAt: Date;
+  url?: string;
   previousTitles?: string[];
   links?: { label?: string; url: string }[];
   technologies?: string[];
@@ -20,12 +20,8 @@ const ExperienceSchema = new Schema<IExperience>(
     org: { type: String, required: true },
     duration: { type: String, required: true },
     details: [{ type: String }],
-    type: {
-      type: String,
-      enum: ["work"],
-      default: "work",
-    },
     order: { type: Number, default: 0 },
+    url: { type: String },
     previousTitles: [{ type: String }],
     links: [
       {

@@ -37,8 +37,8 @@ export interface Experience {
   org: string;
   duration: string;
   details: string[];
-  type: "work" | "education" | "certification";
   order?: number;
+  url?: string;
   previousTitles?: string[];
   links?: LinkItem[];
   technologies?: string[];
