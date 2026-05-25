@@ -21,6 +21,11 @@ const SkillSchema = new Schema<ISkill>(
   { timestamps: true },
 );
 
+// Force delete the model from mongoose.models in development to pick up schema changes
+if (process.env.NODE_ENV === "development") {
+  delete mongoose.models.Skill;
+}
+
 const Skill: Model<ISkill> =
   mongoose.models.Skill || mongoose.model<ISkill>("Skill", SkillSchema);
 

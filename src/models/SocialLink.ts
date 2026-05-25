@@ -19,6 +19,11 @@ const SocialLinkSchema = new Schema<ISocialLink>(
   { timestamps: true },
 );
 
+// Force delete the model from mongoose.models in development to pick up schema changes
+if (process.env.NODE_ENV === "development") {
+  delete mongoose.models.SocialLink;
+}
+
 const SocialLink: Model<ISocialLink> =
   mongoose.models.SocialLink || mongoose.model<ISocialLink>("SocialLink", SocialLinkSchema);
 

@@ -17,6 +17,11 @@ const StatSchema = new Schema<IStat>(
   { timestamps: true },
 );
 
+// Force delete the model from mongoose.models in development to pick up schema changes
+if (process.env.NODE_ENV === "development") {
+  delete mongoose.models.Stat;
+}
+
 const Stat: Model<IStat> =
   mongoose.models.Stat || mongoose.model<IStat>("Stat", StatSchema);
 

@@ -92,12 +92,12 @@ export interface Education {
   _id?: string;
   degree: string;
   institution: string;
-  location?: string;
-  logo?: string;
+  location: string;
+  logo: string;
   period: string;
-  gpa?: string;
+  gpa: string;
   details: string[];
-  link?: string;
+  link: string;
   order?: number;
 }
 

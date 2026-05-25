@@ -15,6 +15,11 @@ const CategorySchema = new Schema<ICategory>(
   { timestamps: true },
 );
 
+// Force delete the model from mongoose.models in development to pick up schema changes
+if (process.env.NODE_ENV === "development") {
+  delete mongoose.models.Category;
+}
+
 const Category: Model<ICategory> =
   mongoose.models.Category ||
   mongoose.model<ICategory>("Category", CategorySchema);

@@ -21,6 +21,7 @@ const HeroSchema = new Schema<IHero>(
     lastName: { type: String, required: true },
     profileImage: { type: String },
     resumeUrl: { type: String },
+    bio: { type: String, default: "" },
     typeSequences: [
       {
         text: { type: String },
@@ -30,6 +31,11 @@ const HeroSchema = new Schema<IHero>(
   },
   { timestamps: true },
 );
+
+// Force delete the model from mongoose.models in development to pick up schema changes
+if (process.env.NODE_ENV === "development") {
+  delete mongoose.models.Hero;
+}
 
 const Hero: Model<IHero> =
   mongoose.models.Hero || mongoose.model<IHero>("Hero", HeroSchema);

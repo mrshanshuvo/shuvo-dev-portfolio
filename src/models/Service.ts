@@ -21,6 +21,11 @@ const ServiceSchema = new Schema<IService>(
   { timestamps: true },
 );
 
+// Force delete the model from mongoose.models in development to pick up schema changes
+if (process.env.NODE_ENV === "development") {
+  delete mongoose.models.Service;
+}
+
 const Service: Model<IService> =
   mongoose.models.Service || mongoose.model<IService>("Service", ServiceSchema);
 
