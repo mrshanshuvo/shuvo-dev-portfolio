@@ -42,6 +42,9 @@ export interface Experience {
   color: "emerald" | "blue" | "amber";
   type: "work" | "education" | "certification";
   order?: number;
+  previousTitles?: string[];
+  links?: LinkItem[];
+  technologies?: string[];
 }
 
 export interface Skill {

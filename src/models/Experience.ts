@@ -12,6 +12,9 @@ export interface IExperience extends Document {
   order: number;
   createdAt: Date;
   updatedAt: Date;
+  previousTitles?: string[];
+  links?: { label?: string; url: string }[];
+  technologies?: string[];
 }
 
 const ExperienceSchema = new Schema<IExperience>(
@@ -33,6 +36,14 @@ const ExperienceSchema = new Schema<IExperience>(
       default: "work",
     },
     order: { type: Number, default: 0 },
+    previousTitles: [{ type: String }],
+    links: [
+      {
+        label: { type: String },
+        url: { type: String, required: true },
+      },
+    ],
+    technologies: [{ type: String }],
   },
   { timestamps: true },
 );

@@ -1,5 +1,5 @@
 "use client";
-import { FaBriefcase } from "react-icons/fa";
+import { FaBriefcase, FaLink } from "react-icons/fa";
 import { motion } from "framer-motion";
 import type { Experience } from "@/types";
 
@@ -41,7 +41,7 @@ export default function ExperienceClient({ experiences }: Props) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="group relative grid pb-1 transition-all sm:grid-cols-8 sm:gap-8 md:gap-4 lg:hover:!opacity-100 lg:group-hover/list:opacity-50"
+                className="group relative grid pb-1 transition-all sm:grid-cols-8 sm:gap-8 md:gap-4 lg:hover:opacity-100! lg:group-hover/list:opacity-50"
               >
                 {/* Hover Background */}
                 <div className="absolute -inset-x-4 -inset-y-4 z-0 hidden rounded-xl transition motion-reduce:transition-none lg:-inset-x-6 lg:block lg:group-hover:bg-slate-200/50 dark:lg:group-hover:bg-slate-800/50 lg:group-hover:shadow-[inset_0_1px_0_0_rgba(148,163,184,0.1)] lg:group-hover:drop-shadow-lg" />
@@ -64,6 +64,16 @@ export default function ExperienceClient({ experiences }: Props) {
                     </div>
                   </h3>
                   
+                  {exp.previousTitles && exp.previousTitles.length > 0 && (
+                    <div className="flex flex-col gap-1 mt-1 mb-2">
+                      {exp.previousTitles.map((prev, idx) => (
+                        <div key={idx} className="text-slate-500 dark:text-slate-400 font-medium text-base">
+                          {prev}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  
                   <ul className="mt-4 text-sm md:text-base leading-relaxed text-slate-600 dark:text-slate-400 space-y-3">
                     {exp.details.map((item, idx) => (
                       <li key={idx} className="flex gap-3">
@@ -72,6 +82,36 @@ export default function ExperienceClient({ experiences }: Props) {
                       </li>
                     ))}
                   </ul>
+
+                  {exp.links && exp.links.length > 0 && (
+                    <div className="flex flex-wrap gap-4 mt-4">
+                      {exp.links.map((link, idx) => (
+                        <a
+                          key={idx}
+                          href={link.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors"
+                        >
+                          <FaLink size={12} />
+                          <span>{link.label || link.url}</span>
+                        </a>
+                      ))}
+                    </div>
+                  )}
+
+                  {exp.technologies && exp.technologies.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-4">
+                      {exp.technologies.map((tech, idx) => (
+                        <span
+                          key={idx}
+                          className="px-3 py-1 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </motion.div>
             ))}
