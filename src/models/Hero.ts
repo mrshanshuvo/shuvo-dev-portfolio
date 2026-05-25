@@ -10,6 +10,7 @@ export interface IHero extends Document {
   lastName: string;
   profileImage: string;
   resumeUrl: string;
+  bio: string;
   typeSequences: TypeSequenceItem[];
   createdAt: Date;
   updatedAt: Date;
