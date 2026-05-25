@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { FaLock, FaEnvelope, FaEye, FaEyeSlash } from "react-icons/fa";
@@ -10,27 +11,29 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const loginMutation = useMutation({
+    mutationFn: async () => {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
+      if (result?.error) {
+        throw new Error("Invalid email or password.");
+      }
 
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
-
-    if (result?.error) {
-      setError("Invalid email or password.");
-      setLoading(false);
-    } else {
+      return result;
+    },
+    onSuccess: () => {
       router.push("/admin");
-    }
-  }
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    loginMutation.mutate();
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4">
@@ -55,9 +58,9 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {error && (
+          {loginMutation.isError && (
             <div className="mb-6 p-3 bg-red-900/30 border border-red-500/30 rounded-lg text-red-400 text-sm text-center">
-              {error}
+              {loginMutation.error.message}
             </div>
           )}
 
@@ -106,9 +109,9 @@ export default function LoginPage() {
                 </button>
               </div>
               <div className="flex justify-end mt-2">
-                <Link 
+                <Link
                   href="/forgot-password"
-                  className="text-xs text-emerald-600 hover:text-emerald-500 font-medium transition-colors"
+                  className="text-sm font-medium text-emerald-600 hover:text-emerald-500 transition-colors"
                 >
                   Forgot Password?
                 </Link>
@@ -118,10 +121,10 @@ export default function LoginPage() {
             <button
               id="admin-login-btn"
               type="submit"
-              disabled={loading}
+              disabled={loginMutation.isPending}
               className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors text-sm mt-2"
             >
-              {loading ? "Signing in…" : "Sign In"}
+              {loginMutation.isPending ? "Signing in…" : "Sign In"}
             </button>
           </form>
 

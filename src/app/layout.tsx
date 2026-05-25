@@ -20,8 +20,12 @@ export async function generateMetadata(): Promise<Metadata> {
   await connectDB();
   const settings = await Setting.findOne().lean();
 
-  const title = settings?.siteName || "Shahid Hasan Shuvo – Full-Stack Developer & ML Engineer";
-  const description = settings?.siteDescription || "Full-Stack Developer & Machine Learning Enthusiast building high-performance, cinematic digital experiences.";
+  const title =
+    settings?.siteName ||
+    "Shahid Hasan Shuvo – Full-Stack Developer & ML Engineer";
+  const description =
+    settings?.siteDescription ||
+    "Full-Stack Developer & Machine Learning Enthusiast building high-performance, cinematic digital experiences.";
   const ogImage = settings?.ogImage || "/favicons/android-chrome-512x512.png";
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
@@ -77,7 +81,7 @@ export default async function RootLayout({
   const accentColor = settings?.accentColor || "#10b981";
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} antialiased bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 transition-colors duration-300 font-sans`}
         style={{ "--dynamic-accent": accentColor } as any}

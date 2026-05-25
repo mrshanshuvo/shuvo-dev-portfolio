@@ -6,26 +6,49 @@ import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
   try {
-    const { token, password } = await req.json();
-    if (!token || !password) {
-      return NextResponse.json({ message: "Token and password are required" }, { status: 400 });
+    const { token, otp, email, password } = await req.json();
+    if (!password) {
+      return NextResponse.json({ message: "Password is required" }, { status: 400 });
+    }
+    if (!token && (!otp || !email)) {
+      return NextResponse.json({ message: "Either a reset link token or an OTP and email are required" }, { status: 400 });
     }
 
     await connectDB();
 
-    // Reconstruct the hashed token
-    const resetPasswordToken = crypto
-      .createHash("sha256")
-      .update(token)
-      .digest("hex");
+    let user: any = null;
 
-    const user = await User.findOne({
-      resetPasswordToken,
-      resetPasswordExpire: { $gt: Date.now() },
-    });
+    if (token) {
+      // Flow A: Magic Link Token
+      const resetPasswordToken = crypto
+        .createHash("sha256")
+        .update(token)
+        .digest("hex");
 
-    if (!user) {
-      return NextResponse.json({ message: "Invalid or expired token" }, { status: 400 });
+      user = await User.findOne({
+        resetPasswordToken,
+        resetPasswordExpire: { $gt: Date.now() },
+      });
+
+      if (!user) {
+        return NextResponse.json({ message: "Invalid or expired token" }, { status: 400 });
+      }
+    } else {
+      // Flow B: OTP + Email
+      user = await User.findOne({ email }).select("+resetPasswordOtp +resetPasswordExpire");
+
+      if (!user || !user.resetPasswordExpire || user.resetPasswordExpire.getTime() < Date.now()) {
+        return NextResponse.json({ message: "Invalid or expired OTP" }, { status: 400 });
+      }
+
+      if (!user.resetPasswordOtp) {
+        return NextResponse.json({ message: "No OTP was requested for this account" }, { status: 400 });
+      }
+
+      const isMatch = await bcrypt.compare(otp, user.resetPasswordOtp);
+      if (!isMatch) {
+        return NextResponse.json({ message: "Invalid OTP" }, { status: 400 });
+      }
     }
 
     // Hash the new password
@@ -34,6 +57,7 @@ export async function POST(req: Request) {
 
     user.passwordHash = passwordHash;
     user.resetPasswordToken = undefined;
+    user.resetPasswordOtp = undefined;
     user.resetPasswordExpire = undefined;
     await user.save();
 

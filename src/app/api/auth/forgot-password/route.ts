@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
+import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
   try {
@@ -27,9 +28,15 @@ export async function POST(req: Request) {
       .update(resetToken)
       .digest("hex");
 
+    // Generate OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const salt = await bcrypt.genSalt(10);
+    const resetPasswordOtp = await bcrypt.hash(otp, salt);
+
     const resetPasswordExpire = Date.now() + 10 * 60 * 1000; // 10 minutes
 
     user.resetPasswordToken = resetPasswordToken;
+    user.resetPasswordOtp = resetPasswordOtp;
     user.resetPasswordExpire = new Date(resetPasswordExpire);
     await user.save();
 
@@ -55,7 +62,13 @@ export async function POST(req: Request) {
           <p style="color: #555;">You requested a password reset for your portfolio admin panel.</p>
           <p style="color: #555;">Click the button below to reset your password:</p>
           <a href="${resetUrl}" style="display: inline-block; padding: 10px 20px; color: white; background-color: #10b981; text-decoration: none; border-radius: 5px; margin-top: 10px;">Reset Password</a>
-          <p style="color: #999; font-size: 12px; margin-top: 20px;">If you didn't request this, please ignore this email. This link will expire in 10 minutes.</p>
+          
+          <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eaeaea;">
+            <p style="color: #555; margin-bottom: 5px;">Alternatively, you can use this 6-digit OTP:</p>
+            <h3 style="color: #10b981; letter-spacing: 5px; font-size: 28px; margin: 0;">${otp}</h3>
+          </div>
+          
+          <p style="color: #999; font-size: 12px; margin-top: 20px;">If you didn't request this, please ignore this email. This link and OTP will expire in 10 minutes.</p>
         </div>
       `,
     };
