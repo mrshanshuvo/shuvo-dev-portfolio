@@ -23,7 +23,9 @@ export default function ForgotPasswordPage() {
       return data;
     },
     onSuccess: () => {
-      router.push(`/reset-password?email=${encodeURIComponent(email)}&sent=true`);
+      router.push(
+        `/reset-password?email=${encodeURIComponent(email)}&sent=true`,
+      );
     },
   });
 
@@ -48,8 +50,8 @@ export default function ForgotPasswordPage() {
               Forgot Password
             </h1>
             <p className="text-slate-500 dark:text-slate-400 text-sm mt-1 text-center">
-              Enter your email address and we'll send you a link and an OTP to
-              reset your password.
+              Enter your email address and we&apos;ll send you a link and an OTP
+              to reset your password.
             </p>
           </div>
 
@@ -82,7 +84,9 @@ export default function ForgotPasswordPage() {
               disabled={forgotMutation.isPending}
               className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors text-sm mt-2"
             >
-              {forgotMutation.isPending ? "Sending..." : "Send Reset Link & OTP"}
+              {forgotMutation.isPending
+                ? "Sending..."
+                : "Send Reset Link & OTP"}
             </button>
           </form>
 
