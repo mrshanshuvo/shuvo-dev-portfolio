@@ -47,18 +47,6 @@ export default async function Home() {
         <Suspense fallback={<SectionSkeleton cols={1} />}>
           <About />
         </Suspense>
-        <Suspense fallback={<SectionSkeleton cols={1} />}>
-          <Skills />
-        </Suspense>
-        <Suspense fallback={<SectionSkeleton cols={3} />}>
-          <Education />
-        </Suspense>
-        <Suspense fallback={<SectionSkeleton cols={3} />}>
-          <Services />
-        </Suspense>
-        <Suspense fallback={<SectionSkeleton cols={4} />}>
-          <Workflow />
-        </Suspense>
         <Suspense fallback={<TimelineSkeleton />}>
           <Experience />
         </Suspense>
@@ -68,14 +56,26 @@ export default async function Home() {
         <Suspense fallback={<SectionSkeleton cols={2} />}>
           <Playground />
         </Suspense>
+        <Suspense fallback={<SectionSkeleton cols={1} />}>
+          <Skills />
+        </Suspense>
         <Suspense fallback={<SectionSkeleton cols={3} />}>
-          <Blog />
+          <Testimonials />
+        </Suspense>
+        <Suspense fallback={<SectionSkeleton cols={3} />}>
+          <Services />
+        </Suspense>
+        <Suspense fallback={<SectionSkeleton cols={4} />}>
+          <Workflow />
+        </Suspense>
+        <Suspense fallback={<SectionSkeleton cols={3} />}>
+          <Education />
         </Suspense>
         <Suspense fallback={<ListSkeleton count={6} />}>
           <Certifications />
         </Suspense>
         <Suspense fallback={<SectionSkeleton cols={3} />}>
-          <Testimonials />
+          <Blog />
         </Suspense>
         <Contact
           socialLinks={socialLinks}

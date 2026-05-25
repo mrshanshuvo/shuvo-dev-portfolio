@@ -103,16 +103,15 @@ export default function Navbar({ resumeUrl }: Props) {
   const getMappedActiveSection = (id: string): string => {
     switch (id) {
       case "skills":
-      case "education":
-        return "about";
+      case "playground":
+        return "projects";
+      case "testimonials":
       case "workflow":
         return "services";
+      case "education":
       case "certifications":
-      case "testimonials":
-        return "credentials";
-      case "playground":
       case "blog":
-        return "projects";
+        return "more";
       default:
         return id;
     }
@@ -120,14 +119,18 @@ export default function Navbar({ resumeUrl }: Props) {
 
   const mappedActive = getMappedActiveSection(activeSection);
 
-  const navItems: NavItem[] = [
+  const mainNavItems: NavItem[] = [
     { id: "home", label: "Home" },
     { id: "about", label: "About" },
-    { id: "services", label: "Services" },
     { id: "experience", label: "Experience" },
     { id: "projects", label: "Projects" },
-    { id: "credentials", label: "Credentials" },
-    { id: "contact", label: "Contact" },
+    { id: "services", label: "Services" },
+  ];
+
+  const moreNavItems: NavItem[] = [
+    { id: "education", label: "Education" },
+    { id: "certifications", label: "Certifications" },
+    { id: "blog", label: "Blog" },
   ];
 
   return (
@@ -172,7 +175,7 @@ export default function Navbar({ resumeUrl }: Props) {
               {/* Desktop Navigation */}
               <div className="hidden md:flex items-center gap-6">
                 <div className="flex items-center gap-1 mr-2">
-                  {navItems.map((item) => (
+                  {mainNavItems.map((item) => (
                     <button
                       key={item.id}
                       onClick={() => handleNavClick(item.id)}
@@ -211,6 +214,92 @@ export default function Navbar({ resumeUrl }: Props) {
                       )}
                     </button>
                   ))}
+
+                  {/* More Dropdown */}
+                  <div className="relative group">
+                    <button
+                      className="relative px-3 lg:px-4 py-2 group flex items-center gap-1"
+                      aria-current={mappedActive === "more" ? "page" : undefined}
+                    >
+                      <span
+                        className={`relative z-10 text-sm font-bold transition-colors cursor-pointer ${
+                          mappedActive === "more"
+                            ? scrolled
+                              ? "text-emerald-600 dark:text-emerald-400"
+                              : "text-slate-900 dark:text-white"
+                            : scrolled
+                              ? "text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-200"
+                              : "text-slate-700/70 dark:text-white/70 group-hover:text-slate-900 dark:group-hover:text-white"
+                        }`}
+                      >
+                        More ▾
+                      </span>
+                      {mappedActive === "more" && (
+                        <motion.div
+                          layoutId="navIndicator"
+                          className={`absolute bottom-0 left-0 right-0 h-0.5 ${
+                            scrolled
+                              ? "bg-emerald-600 dark:bg-emerald-400"
+                              : "bg-slate-900 dark:bg-white"
+                          }`}
+                          transition={{
+                            type: "spring",
+                            stiffness: 400,
+                            damping: 30,
+                          }}
+                        />
+                      )}
+                    </button>
+                    <div className="absolute top-full left-0 mt-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0">
+                      <div className="py-2">
+                        {moreNavItems.map((item) => (
+                          <button
+                            key={item.id}
+                            onClick={() => handleNavClick(item.id)}
+                            className="w-full text-left px-4 py-2 text-sm font-medium transition-colors text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 cursor-pointer"
+                          >
+                            {item.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Contact */}
+                  <button
+                    onClick={() => handleNavClick("contact")}
+                    className="relative px-3 lg:px-4 py-2 group"
+                    aria-current={mappedActive === "contact" ? "page" : undefined}
+                  >
+                    <span
+                      className={`relative z-10 text-sm font-bold transition-colors cursor-pointer ${
+                        mappedActive === "contact"
+                          ? scrolled
+                            ? "text-emerald-600 dark:text-emerald-400"
+                            : "text-slate-900 dark:text-white"
+                          : scrolled
+                            ? "text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-200"
+                            : "text-slate-700/70 dark:text-white/70 group-hover:text-slate-900 dark:group-hover:text-white"
+                      }`}
+                    >
+                      Contact
+                    </span>
+                    {mappedActive === "contact" && (
+                      <motion.div
+                        layoutId="navIndicator"
+                        className={`absolute bottom-0 left-0 right-0 h-0.5 ${
+                          scrolled
+                            ? "bg-emerald-600 dark:bg-emerald-400"
+                            : "bg-slate-900 dark:bg-white"
+                        }`}
+                        transition={{
+                          type: "spring",
+                          stiffness: 400,
+                          damping: 30,
+                        }}
+                      />
+                    )}
+                  </button>
                 </div>
 
                 <div className="flex items-center gap-4">
@@ -286,12 +375,12 @@ export default function Navbar({ resumeUrl }: Props) {
                 }`}
               >
                 <div className="p-3">
-                  {navItems.map((item) => (
+                  {[...mainNavItems, ...moreNavItems, { id: "contact", label: "Contact" }].map((item) => (
                     <button
                       key={item.id}
                       onClick={() => handleNavClick(item.id)}
                       className={`w-full text-left px-4 py-3 rounded-lg text-base font-medium transition-colors ${
-                        mappedActive === item.id
+                        mappedActive === item.id || (mappedActive === "more" && moreNavItems.some(m => m.id === item.id))
                           ? scrolled
                             ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400"
                             : "bg-white/10 text-white"
@@ -300,7 +389,7 @@ export default function Navbar({ resumeUrl }: Props) {
                             : "text-white/80 hover:bg-white/5"
                       }`}
                       aria-current={
-                        mappedActive === item.id ? "page" : undefined
+                        mappedActive === item.id || (mappedActive === "more" && moreNavItems.some(m => m.id === item.id)) ? "page" : undefined
                       }
                     >
                       {item.label}
