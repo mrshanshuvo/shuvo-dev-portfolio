@@ -267,12 +267,12 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
         <div className="p-2 border-t border-white/5 space-y-3">
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
-            className="w-full flex items-center gap-3 px-4 py-2 rounded-2xl text-normal font-semibold text-slate-900 hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/10 transition-all group"
+            className="w-full flex items-center gap-3 px-4 py-2 rounded-2xl text-normal font-semibold text-slate-700 dark:text-slate-300 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/10 transition-all group"
           >
-            <div className="p-2 rounded-lg bg-slate-200 group-hover:bg-red-500/20 transition-colors">
+            <div className="p-2 rounded-lg bg-slate-200 dark:bg-slate-800 group-hover:bg-red-500/20 transition-colors text-slate-500 dark:text-slate-400 group-hover:text-red-600 dark:group-hover:text-red-400">
               <FaSignOutAlt size={16} />
             </div>
-            <span className="text-slate-900">Sign Out</span>
+            <span>Sign Out</span>
           </button>
         </div>
       </aside>
