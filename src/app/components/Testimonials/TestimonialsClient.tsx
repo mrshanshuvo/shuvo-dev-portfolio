@@ -37,10 +37,6 @@ export default function TestimonialsClient({
               Client <span className="text-blue-500">Testimonials</span>
             </h2>
           </div>
-          <p className="text-slate-600 dark:text-slate-400 max-w-xl md:text-right text-md md:text-lg font-medium leading-relaxed line-clamp-2">
-            Don&apos;t just take my word for it. Here&apos;s what my clients and
-            colleagues have to say about our collaboration.
-          </p>
         </motion.div>
 
         <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">

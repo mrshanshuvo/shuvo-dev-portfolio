@@ -70,11 +70,6 @@ export default function SkillsClient({ skills, techList }: Props) {
               </span>
             </h2>
           </div>
-          <p className="text-slate-600 dark:text-slate-400 max-w-xl md:text-right text-md md:text-lg font-medium leading-relaxed line-clamp-2">
-            A comprehensive overview of my technical expertise, proficiency
-            levels, and the specialized tools I use to build intelligent
-            systems.
-          </p>
         </motion.div>
         <div className="space-y-16">
           <motion.div

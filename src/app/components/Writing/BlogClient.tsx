@@ -3,8 +3,6 @@ import { motion } from "framer-motion";
 import { Blog } from "@/types";
 import Link from "next/link";
 import { FaPenNib, FaArrowRight, FaCalendarAlt } from "react-icons/fa";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 import BlogCard from "./BlogCard";
 import { Button } from "@/components/ui/button";
@@ -39,10 +37,6 @@ export default function BlogClient({ blogs }: BlogClientProps) {
               Latest <span className="text-blue-500">Writing</span>
             </h2>
           </div>
-          <p className="text-slate-600 dark:text-slate-400 max-w-xl md:text-right text-md md:text-lg font-medium leading-relaxed line-clamp-2">
-            Sharing my technical insights on software engineering, machine
-            intelligence, and the architectural future of modern technology.
-          </p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">

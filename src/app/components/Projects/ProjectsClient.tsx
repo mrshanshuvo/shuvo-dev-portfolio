@@ -42,10 +42,6 @@ export default function ProjectsClient({ projects }: Props) {
               </span>
             </h2>
           </div>
-          <p className="text-md md:text-lg text-slate-600 dark:text-slate-400 max-w-xl md:text-right font-medium leading-relaxed line-clamp-2">
-            A curated selection of my most impactful work, demonstrating
-            technical depth and user-centric engineering solutions.
-          </p>
         </motion.div>
 
         {/* Featured grid */}

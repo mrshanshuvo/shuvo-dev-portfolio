@@ -36,10 +36,6 @@ export default function PlaygroundClient({ demos }: PlaygroundClientProps) {
               </span>
             </h2>
           </div>
-          <p className="text-slate-600 dark:text-slate-400 max-w-xl md:text-right text-md md:text-lg font-medium leading-relaxed line-clamp-2">
-            A selection of experimental features and interactive tools built
-            during my technical exploration and R&D phases.
-          </p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">

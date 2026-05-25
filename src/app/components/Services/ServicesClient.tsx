@@ -38,10 +38,6 @@ export default function ServicesClient({ services }: ServicesClientProps) {
               </span>
             </h2>
           </div>
-          <p className="text-slate-600 dark:text-slate-400 max-w-xl md:text-right text-md md:text-lg font-medium leading-relaxed line-clamp-2">
-            Leveraging cutting-edge technologies to deliver high-performance
-            solutions tailored to your specific engineering requirements.
-          </p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

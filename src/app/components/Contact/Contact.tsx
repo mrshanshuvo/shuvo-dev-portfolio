@@ -197,10 +197,6 @@ export default function Contact({
               </span>
             </h2>
           </div>
-          <p className="text-slate-600 dark:text-slate-400 max-w-xl md:text-right text-md md:text-lg font-medium leading-relaxed line-clamp-2">
-            Have a project in mind or want to discuss opportunities? I&apos;d
-            love to hear from you and explore how we can work together.
-          </p>
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-12">

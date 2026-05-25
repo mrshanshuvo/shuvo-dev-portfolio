@@ -57,10 +57,6 @@ export default function ExperienceClient({ experiences }: Props) {
               </span>
             </h2>
           </div>
-          <p className="text-md md:text-lg text-slate-600 dark:text-slate-400 max-w-xl md:text-right font-medium leading-relaxed line-clamp-2">
-            A chronicle of my academic foundation, professional engineering
-            roles, and continuous technical certification path.
-          </p>
         </motion.div>
 
         {experiences.length === 0 ? (

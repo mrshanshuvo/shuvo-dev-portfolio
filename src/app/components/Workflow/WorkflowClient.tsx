@@ -37,10 +37,6 @@ export default function WorkflowClient({ workflow }: WorkflowClientProps) {
               </span>
             </h2>
           </div>
-          <p className="text-slate-600 dark:text-slate-400 max-w-xl md:text-right text-md md:text-lg font-medium leading-relaxed line-clamp-2">
-            A systematic approach to engineering excellence, ensuring every
-            project is delivered with precision and industrial-grade quality.
-          </p>
         </motion.div>
 
         <div className="relative">
