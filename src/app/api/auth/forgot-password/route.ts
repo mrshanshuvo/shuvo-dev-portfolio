@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     await user.save();
 
     // Create reset URL
-    const resetUrl = `${process.env.NEXTAUTH_URL}/admin/reset-password?token=${resetToken}`;
+    const resetUrl = `${process.env.NEXTAUTH_URL}/reset-password?token=${resetToken}`;
 
     // Configure nodemailer
     const transporter = nodemailer.createTransport({

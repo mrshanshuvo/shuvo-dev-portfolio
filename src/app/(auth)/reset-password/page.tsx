@@ -43,7 +43,7 @@ function ResetPasswordForm() {
       } else {
         setMessage("Password updated successfully! Redirecting...");
         setTimeout(() => {
-          router.push("/admin/login");
+          router.push("/login");
         }, 2000);
       }
     } catch (err) {
@@ -60,7 +60,7 @@ function ResetPasswordForm() {
           Missing reset token in URL.
         </div>
         <Link 
-          href="/admin/forgot-password"
+          href="/forgot-password"
           className="inline-block mt-4 py-2 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition-colors text-sm"
         >
           Request New Link
