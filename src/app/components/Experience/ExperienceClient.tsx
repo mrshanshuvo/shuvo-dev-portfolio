@@ -1,34 +1,11 @@
 "use client";
-import { FaBriefcase, FaGraduationCap, FaAward } from "react-icons/fa";
+import { FaBriefcase } from "react-icons/fa";
 import { motion } from "framer-motion";
-import type { IconType } from "react-icons";
 import type { Experience } from "@/types";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 interface Props {
   experiences: Experience[];
 }
-
-const typeIconMap: Record<string, IconType> = {
-  work: FaBriefcase,
-  education: FaGraduationCap,
-  certification: FaAward,
-};
-
-const colorMap: Record<string, { bg: string; text: string }> = {
-  emerald: {
-    bg: "bg-emerald-50 dark:bg-emerald-900/20",
-    text: "text-emerald-600 dark:text-emerald-400",
-  },
-  blue: {
-    bg: "bg-blue-50 dark:bg-blue-900/20",
-    text: "text-blue-600 dark:text-blue-400",
-  },
-  amber: {
-    bg: "bg-amber-50 dark:bg-amber-900/20",
-    text: "text-amber-600 dark:text-amber-400",
-  },
-};
 
 export default function ExperienceClient({ experiences }: Props) {
   return (
@@ -56,56 +33,48 @@ export default function ExperienceClient({ experiences }: Props) {
         {experiences.length === 0 ? (
           <p className="text-center text-slate-400">No entries yet.</p>
         ) : (
-          <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
-            {experiences.map((exp, i) => {
-              const colors = colorMap[exp.color] ?? colorMap.emerald;
-              const Icon = typeIconMap[exp.type] ?? FaBriefcase;
-              return (
-                <motion.div
-                  key={exp._id ?? i}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.1 }}
-                  whileHover={{ y: -4 }}
-                  className="h-full"
+          <div className="flex flex-col gap-12 lg:gap-8 group/list">
+            {experiences.map((exp, i) => (
+              <motion.div
+                key={exp._id ?? i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                className="group relative grid pb-1 transition-all sm:grid-cols-8 sm:gap-8 md:gap-4 lg:hover:!opacity-100 lg:group-hover/list:opacity-50"
+              >
+                {/* Hover Background */}
+                <div className="absolute -inset-x-4 -inset-y-4 z-0 hidden rounded-xl transition motion-reduce:transition-none lg:-inset-x-6 lg:block lg:group-hover:bg-slate-200/50 dark:lg:group-hover:bg-slate-800/50 lg:group-hover:shadow-[inset_0_1px_0_0_rgba(148,163,184,0.1)] lg:group-hover:drop-shadow-lg" />
+                
+                {/* Date Column */}
+                <header
+                  className="z-10 mb-2 mt-1 text-xs font-bold uppercase tracking-widest text-slate-500 sm:col-span-2"
+                  aria-label={exp.duration}
                 >
-                  <Card className="h-full group bg-white dark:bg-slate-950 p-6 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-emerald-500/30 dark:hover:border-emerald-400/30 transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/5 overflow-hidden">
-                    <CardHeader className="p-0 mb-4">
-                      <div
-                        className={`inline-flex p-3 rounded-lg mb-4 ${colors.bg}`}
-                      >
-                        <Icon className={`text-2xl ${colors.text}`} />
-                      </div>
-                      <CardTitle className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
-                        {exp.title}
-                      </CardTitle>
-                      <p className="text-emerald-600 dark:text-emerald-400 font-medium text-sm mb-1">
-                        {exp.org}
-                      </p>
-                      <p className="text-slate-500 dark:text-slate-400 text-sm">
-                        {exp.duration}
-                      </p>
-                    </CardHeader>
-                    <CardContent className="p-0">
-                      <ul className="space-y-2">
-                        {exp.details.map((item, idx) => (
-                          <li
-                            key={idx}
-                            className="flex items-start gap-2 text-slate-600 dark:text-slate-400 text-sm"
-                          >
-                            <span className="text-emerald-600 dark:text-emerald-400 mt-1">
-                              •
-                            </span>
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              );
-            })}
+                  {exp.duration}
+                </header>
+                
+                {/* Content Column */}
+                <div className="z-10 sm:col-span-6">
+                  <h3 className="font-medium leading-snug text-slate-900 dark:text-slate-200">
+                    <div className="inline-flex items-baseline font-bold leading-tight text-slate-900 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 text-lg md:text-xl transition-colors">
+                      <span>
+                        {exp.title} · <span className="inline-block">{exp.org}</span>
+                      </span>
+                    </div>
+                  </h3>
+                  
+                  <ul className="mt-4 text-sm md:text-base leading-relaxed text-slate-600 dark:text-slate-400 space-y-3">
+                    {exp.details.map((item, idx) => (
+                      <li key={idx} className="flex gap-3">
+                        <span className="text-emerald-500 mt-1.5 text-xs">▹</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </motion.div>
+            ))}
           </div>
         )}
       </div>
