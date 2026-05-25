@@ -30,6 +30,9 @@ import {
   FaCalendarAlt,
   FaMapMarkerAlt,
   FaInfoCircle,
+  FaLink,
+  FaRocket,
+  FaPenNib,
 } from "react-icons/fa";
 import { AdminDialogShell } from "../components/AdminDialogShell";
 import {
@@ -55,25 +58,118 @@ interface Experience {
   _id?: string;
   title: string;
   org: string;
-  location: string;
   duration: string;
-  logo: string;
   details: string[];
-  color: string;
   order: number;
+  url?: string;
+  previousTitles?: string[];
+  links?: { label?: string; url: string }[];
+  technologies?: string[];
 }
 
-function SortableExpRow({
-  exp,
-  onEdit,
-  onDelete,
-  isDeleting,
-}: {
-  exp: Experience;
-  onEdit: () => void;
-  onDelete: () => void;
-  isDeleting: boolean;
-}) {
+import { forwardRef } from "react";
+
+const ExpRow = forwardRef<HTMLDivElement, any>(
+  (
+    {
+      exp,
+      isOverlay,
+      isDragging,
+      isDeleting,
+      onEdit,
+      onDelete,
+      attributes,
+      listeners,
+      style,
+      ...props
+    },
+    ref,
+  ) => {
+    return (
+      <div
+        ref={ref}
+        style={style}
+        {...props}
+        className={cn(
+          "group flex items-center gap-4 bg-white dark:bg-slate-900 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-2xl p-2 shadow-sm dark:shadow-none w-full",
+          !isOverlay &&
+            "transition-colors duration-300 hover:border-slate-300 dark:hover:border-white/10 dark:bg-slate-900/40",
+          isDragging && !isOverlay && "opacity-50",
+          isOverlay &&
+            "z-[99999] border-emerald-500/50 shadow-2xl shadow-emerald-500/20 scale-[1.02] cursor-grabbing",
+        )}
+      >
+        <div
+          {...attributes}
+          {...listeners}
+          className={cn(
+            "text-slate-300 dark:text-slate-600 transition-colors",
+            isOverlay
+              ? "cursor-grabbing"
+              : "cursor-grab hover:text-emerald-500 dark:hover:text-emerald-400",
+          )}
+        >
+          <FaGripVertical size={14} />
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-emerald-500/10 text-emerald-400 rounded-lg shrink-0">
+              <FaBriefcase size={14} />
+            </div>
+            <div className="min-w-0">
+              <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
+                {exp.title}
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                {exp.org}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-6 pr-2">
+          <div className="hidden md:flex items-center gap-2 text-slate-500">
+            <FaCalendarAlt size={10} />
+            <span className="text-[10px] font-medium">{exp.duration}</span>
+          </div>
+
+          <div
+            className={cn(
+              "flex items-center gap-2 transition-opacity",
+              isOverlay ? "opacity-0" : "opacity-0 group-hover:opacity-100",
+            )}
+          >
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onEdit}
+              className="h-8 w-8 rounded-lg text-slate-400 hover:text-emerald-400 hover:bg-emerald-400/10"
+            >
+              <FaEdit size={12} />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onDelete}
+              disabled={isDeleting}
+              className="h-8 w-8 rounded-lg text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-500/10"
+            >
+              {isDeleting ? (
+                <div className="h-3 w-3 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <FaTrash size={12} />
+              )}
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  },
+);
+ExpRow.displayName = "ExpRow";
+
+function SortableExpRow({ exp, onEdit, onDelete, isDeleting }: any) {
   const {
     attributes,
     listeners,
@@ -82,86 +178,22 @@ function SortableExpRow({
     transition,
     isDragging,
   } = useSortable({ id: exp._id! });
-
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Translate.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
   };
-
   return (
-    <div
+    <ExpRow
       ref={setNodeRef}
       style={style}
-      className={cn(
-        "group flex items-center gap-4 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10 rounded-2xl p-2 transition-all duration-300 shadow-sm dark:shadow-none",
-        isDragging &&
-          "z-50 border-emerald-500/50 shadow-2xl shadow-emerald-500/10",
-      )}
-    >
-      <div
-        {...attributes}
-        {...listeners}
-        className="cursor-grab active:cursor-grabbing text-slate-300 dark:text-slate-600 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors"
-      >
-        <FaGripVertical size={14} />
-      </div>
-
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-3">
-          {exp.logo ? (
-            <img
-              src={exp.logo}
-              alt={exp.org}
-              className="w-8 h-8 rounded-lg object-contain bg-white/5 p-1"
-            />
-          ) : (
-            <div className="p-2 bg-emerald-500/10 text-emerald-400 rounded-lg">
-              <FaBriefcase size={14} />
-            </div>
-          )}
-          <div className="min-w-0">
-            <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
-              {exp.title}
-            </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
-              {exp.org}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex items-center gap-6 pr-2">
-        <div className="hidden md:flex items-center gap-2 text-slate-500">
-          <FaCalendarAlt size={10} />
-          <span className="text-[10px] font-medium">{exp.duration}</span>
-        </div>
-
-        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onEdit}
-            className="h-8 w-8 rounded-lg text-slate-400 hover:text-emerald-400 hover:bg-emerald-400/10"
-          >
-            <FaEdit size={12} />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onDelete}
-            disabled={isDeleting}
-            className="h-8 w-8 rounded-lg text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-500/10"
-          >
-            {isDeleting ? (
-              <div className="h-3 w-3 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
-            ) : (
-              <FaTrash size={12} />
-            )}
-          </Button>
-        </div>
-      </div>
-    </div>
+      exp={exp}
+      isDragging={isDragging}
+      attributes={attributes}
+      listeners={listeners}
+      onEdit={onEdit}
+      onDelete={onDelete}
+      isDeleting={isDeleting}
+    />
   );
 }
 
@@ -173,6 +205,10 @@ export default function AdminExperiencePage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentExp, setCurrentExp] = useState<Experience | null>(null);
   const [detailInput, setDetailInput] = useState("");
+  const [techInput, setTechInput] = useState("");
+  const [prevTitleInput, setPrevTitleInput] = useState("");
+  const [linkLabelInput, setLinkLabelInput] = useState("");
+  const [linkUrlInput, setLinkUrlInput] = useState("");
   const [toast, setToast] = useState<{
     msg: string;
     type: "success" | "error";
@@ -201,13 +237,16 @@ export default function AdminExperiencePage() {
 
   useEffect(() => {
     if (fetchedData) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setData(Array.isArray(fetchedData) ? fetchedData : []);
     }
   }, [fetchedData]);
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const res = await fetch(`/api/admin/experience?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/experience?id=${id}`, {
+        method: "DELETE",
+      });
       if (!res.ok) throw new Error("Failed to delete");
       return id;
     },
@@ -220,11 +259,12 @@ export default function AdminExperiencePage() {
     onError: () => {
       showToast("Failed to delete.", "error");
       setDeletingId(null);
-    }
+    },
   });
 
   async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this experience record?")) return;
+    if (!confirm("Are you sure you want to delete this experience record?"))
+      return;
     setDeletingId(id);
     deleteMutation.mutate(id);
   }
@@ -232,7 +272,9 @@ export default function AdminExperiencePage() {
   const saveMutation = useMutation({
     mutationFn: async (exp: Experience) => {
       const isEdit = !!exp._id;
-      const url = isEdit ? `/api/admin/experience?id=${exp._id}` : "/api/admin/experience";
+      const url = isEdit
+        ? `/api/admin/experience?id=${exp._id}`
+        : "/api/admin/experience";
       const method = isEdit ? "PATCH" : "POST";
       const res = await fetch(url, {
         method,
@@ -249,7 +291,7 @@ export default function AdminExperiencePage() {
     },
     onError: () => {
       showToast("Failed to save.", "error");
-    }
+    },
   });
 
   async function handleAddOrUpdate() {
@@ -261,6 +303,9 @@ export default function AdminExperiencePage() {
     setCurrentExp({
       ...item,
       details: item.details || [],
+      previousTitles: item.previousTitles || [],
+      technologies: item.technologies || [],
+      links: item.links || [],
     });
     setIsDialogOpen(true);
   }
@@ -269,11 +314,12 @@ export default function AdminExperiencePage() {
     setCurrentExp({
       title: "",
       org: "",
-      location: "",
       duration: "",
-      logo: "",
       details: [],
-      color: "emerald",
+      url: "",
+      previousTitles: [],
+      links: [],
+      technologies: [],
       order: data.length,
     });
     setIsDialogOpen(true);
@@ -291,7 +337,9 @@ export default function AdminExperiencePage() {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newData),
-      }).then(() => queryClient.invalidateQueries({ queryKey: ["experience"] }));
+      }).then(() =>
+        queryClient.invalidateQueries({ queryKey: ["experience"] }),
+      );
     }
     setActiveId(null);
   }
@@ -403,16 +451,12 @@ export default function AdminExperiencePage() {
                   </div>
                 </SortableContext>
 
-                <DragOverlay dropAnimation={null}>
+                <DragOverlay zIndex={99999} dropAnimation={null}>
                   {activeId ? (
-                    <div className="flex items-center gap-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-emerald-500/30 rounded-2xl p-4 shadow-2xl opacity-90 scale-105">
-                      <FaGripVertical className="text-emerald-500" size={14} />
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
-                          {data.find((s) => s._id === activeId)?.title}
-                        </h3>
-                      </div>
-                    </div>
+                    <ExpRow
+                      exp={data.find((s) => s._id === activeId)!}
+                      isOverlay
+                    />
                   ) : null}
                 </DragOverlay>
               </DndContext>
@@ -442,204 +486,368 @@ export default function AdminExperiencePage() {
         maxWidth="5xl"
       >
         {currentExp && (
-          <div className="px-1">
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-10">
-              {/* Left Column: Branding */}
-              <div className="space-y-6">
-                <AdminField label="Organization Logo">
-                  <ImageUpload
-                    value={currentExp.logo}
-                    onChange={(url) =>
-                      setCurrentExp({ ...currentExp, logo: url })
-                    }
-                  />
-                </AdminField>
+          <div className="px-1 space-y-8">
+            {/* Top Info Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <AdminField label="Job Title">
+                <AdminInput
+                  icon={FaBriefcase}
+                  value={currentExp.title}
+                  onChange={(e) =>
+                    setCurrentExp({ ...currentExp, title: e.target.value })
+                  }
+                  placeholder="e.g. Senior Software Engineer"
+                />
+              </AdminField>
+              <AdminField label="Organization">
+                <AdminInput
+                  icon={FaUniversity}
+                  value={currentExp.org}
+                  onChange={(e) =>
+                    setCurrentExp({ ...currentExp, org: e.target.value })
+                  }
+                  placeholder="e.g. Google"
+                />
+              </AdminField>
+              <AdminField label="Duration">
+                <AdminInput
+                  icon={FaCalendarAlt}
+                  value={currentExp.duration}
+                  onChange={(e) =>
+                    setCurrentExp({ ...currentExp, duration: e.target.value })
+                  }
+                  placeholder="e.g. Jan 2022 - Present"
+                />
+              </AdminField>
+              <AdminField label="Website URL">
+                <AdminInput
+                  icon={FaLink}
+                  value={currentExp.url || ""}
+                  onChange={(e) =>
+                    setCurrentExp({ ...currentExp, url: e.target.value })
+                  }
+                  placeholder="e.g. https://google.com"
+                />
+              </AdminField>
+            </div>
 
-                <div className="p-6 bg-emerald-500/5 border border-emerald-500/10 dark:border-emerald-500/20 rounded-3xl flex items-start gap-4 shadow-sm dark:shadow-none">
-                  <FaInfoCircle
-                    className="text-emerald-600 dark:text-emerald-400 shrink-0 mt-1"
-                    size={18}
-                  />
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400/90">
-                      Visual Branding
-                    </p>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
-                      Company logos enhance the timeline visually. Use PNGs with
-                      transparent backgrounds for the cleanest look.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: Experience Details */}
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <AdminField label="Job Title">
+            {/* Arrays Section in Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Previous Titles */}
+              <AdminField label="Previous Titles (Optional)">
+                <div className="space-y-4">
+                  <div className="flex gap-2">
                     <AdminInput
                       icon={FaBriefcase}
-                      value={currentExp.title}
-                      onChange={(e) =>
-                        setCurrentExp({ ...currentExp, title: e.target.value })
-                      }
-                      placeholder="e.g. Senior Software Engineer"
-                    />
-                  </AdminField>
-                  <AdminField label="Organization">
-                    <AdminInput
-                      icon={FaUniversity}
-                      value={currentExp.org}
-                      onChange={(e) =>
-                        setCurrentExp({ ...currentExp, org: e.target.value })
-                      }
-                      placeholder="e.g. Google"
-                    />
-                  </AdminField>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                  <AdminField label="Location">
-                    <AdminInput
-                      icon={FaMapMarkerAlt}
-                      value={currentExp.location}
-                      onChange={(e) =>
-                        setCurrentExp({
-                          ...currentExp,
-                          location: e.target.value,
-                        })
-                      }
-                      placeholder="e.g. London, UK"
-                    />
-                  </AdminField>
-                  <AdminField label="Duration">
-                    <AdminInput
-                      icon={FaCalendarAlt}
-                      value={currentExp.duration}
-                      onChange={(e) =>
-                        setCurrentExp({
-                          ...currentExp,
-                          duration: e.target.value,
-                        })
-                      }
-                      placeholder="e.g. Jan 2022 - Present"
-                    />
-                  </AdminField>
-                  <AdminField label="Theme Color">
-                    <Select
-                      value={currentExp.color}
-                      onValueChange={(val: string | null) => {
-                        if (val) {
-                          setCurrentExp((prev) =>
-                            prev ? { ...prev, color: val } : null,
-                          );
-                        }
-                      }}
-                    >
-                      <SelectTrigger className="bg-slate-950/40 border-white/5 rounded-xl h-12 font-bold shadow-inner shadow-black/20 focus:ring-4 focus:ring-emerald-500/5 transition-all">
-                        <SelectValue placeholder="Select color" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-slate-900 border-white/10 text-white rounded-xl">
-                        {[
-                          "emerald",
-                          "blue",
-                          "purple",
-                          "rose",
-                          "amber",
-                          "cyan",
-                        ].map((c) => (
-                          <SelectItem key={c} value={c} className="capitalize">
-                            <div className="flex items-center gap-3">
-                              <div
-                                className={`w-3 h-3 rounded-full bg-${c}-500`}
-                              />
-                              {c}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </AdminField>
-                </div>
-
-                <AdminField label="Impact & Responsibilities">
-                  <div className="space-y-6">
-                    <div className="flex gap-3">
-                      <AdminInput
-                        icon={FaInfoCircle}
-                        value={detailInput}
-                        onChange={(e) => setDetailInput(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
-                            if (detailInput.trim()) {
-                              setCurrentExp({
-                                ...currentExp,
-                                details: [
-                                  ...currentExp.details,
-                                  detailInput.trim(),
-                                ],
-                              });
-                              setDetailInput("");
-                            }
-                          }
-                        }}
-                        placeholder="e.g. Spearheaded the migration to microservices architecture..."
-                        className="h-12"
-                      />
-                      <Button
-                        onClick={() => {
-                          if (detailInput.trim()) {
+                      value={prevTitleInput}
+                      onChange={(e) => setPrevTitleInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          if (prevTitleInput.trim()) {
                             setCurrentExp({
                               ...currentExp,
-                              details: [
-                                ...currentExp.details,
-                                detailInput.trim(),
+                              previousTitles: [
+                                ...(currentExp.previousTitles || []),
+                                prevTitleInput.trim(),
                               ],
                             });
-                            setDetailInput("");
+                            setPrevTitleInput("");
                           }
-                        }}
-                        className="bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white rounded-xl h-12 px-6 border border-slate-200 dark:border-white/5 font-bold shadow-inner shadow-black/5 dark:shadow-black/20"
-                      >
-                        Add
-                      </Button>
-                    </div>
-                    <div className="grid grid-cols-1 gap-3">
-                      <AnimatePresence mode="popLayout">
-                        {(currentExp.details || []).map((detail, i) => (
-                          <motion.div
-                            key={i}
-                            layout
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.9 }}
-                            className="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-white/5 rounded-2xl group/item shadow-inner shadow-black/5 dark:shadow-black/10"
-                          >
-                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-                            <span className="text-sm text-slate-700 dark:text-slate-300 flex-1 font-medium">
-                              {detail}
-                            </span>
-                            <button
-                              onClick={() =>
-                                setCurrentExp({
-                                  ...currentExp,
-                                  details: currentExp.details.filter(
-                                    (_, idx) => idx !== i,
-                                  ),
-                                })
-                              }
-                              className="text-slate-600 hover:text-red-400 transition-colors p-2 hover:bg-red-400/10 rounded-lg"
-                            >
-                              <FaTimes size={14} />
-                            </button>
-                          </motion.div>
-                        ))}
-                      </AnimatePresence>
-                    </div>
+                        }
+                      }}
+                      placeholder="e.g. Software Engineer II"
+                    />
+                    <Button
+                      onClick={() => {
+                        if (prevTitleInput.trim()) {
+                          setCurrentExp({
+                            ...currentExp,
+                            previousTitles: [
+                              ...(currentExp.previousTitles || []),
+                              prevTitleInput.trim(),
+                            ],
+                          });
+                          setPrevTitleInput("");
+                        }
+                      }}
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                    >
+                      Add
+                    </Button>
                   </div>
-                </AdminField>
-              </div>
+                  <div className="flex flex-wrap gap-2">
+                    {(currentExp.previousTitles || []).map((t, i) => (
+                      <Badge
+                        key={i}
+                        variant="secondary"
+                        className="pl-3 pr-2 py-1.5 gap-2"
+                      >
+                        {t}
+                        <button
+                          onClick={() =>
+                            setCurrentExp({
+                              ...currentExp,
+                              previousTitles: (
+                                currentExp.previousTitles || []
+                              ).filter((_, idx) => idx !== i),
+                            })
+                          }
+                          className="hover:text-red-500"
+                        >
+                          <FaTimes size={12} />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </AdminField>
+
+              {/* Technologies */}
+              <AdminField label="Technologies Used">
+                <div className="space-y-4">
+                  <div className="flex gap-2">
+                    <AdminInput
+                      icon={FaRocket}
+                      value={techInput}
+                      onChange={(e) => setTechInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          if (techInput.trim()) {
+                            setCurrentExp({
+                              ...currentExp,
+                              technologies: [
+                                ...(currentExp.technologies || []),
+                                techInput.trim(),
+                              ],
+                            });
+                            setTechInput("");
+                          }
+                        }
+                      }}
+                      placeholder="e.g. React"
+                    />
+                    <Button
+                      onClick={() => {
+                        if (techInput.trim()) {
+                          setCurrentExp({
+                            ...currentExp,
+                            technologies: [
+                              ...(currentExp.technologies || []),
+                              techInput.trim(),
+                            ],
+                          });
+                          setTechInput("");
+                        }
+                      }}
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                    >
+                      Add
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {(currentExp.technologies || []).map((t, i) => (
+                      <Badge
+                        key={i}
+                        variant="outline"
+                        className="pl-3 pr-2 py-1.5 gap-2 border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
+                      >
+                        {t}
+                        <button
+                          onClick={() =>
+                            setCurrentExp({
+                              ...currentExp,
+                              technologies: (
+                                currentExp.technologies || []
+                              ).filter((_, idx) => idx !== i),
+                            })
+                          }
+                          className="hover:text-red-500"
+                        >
+                          <FaTimes size={12} />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </AdminField>
             </div>
+
+            {/* Custom Links */}
+            <AdminField label="Custom Links (e.g., Company Post, Project)">
+              <div className="space-y-4">
+                <div className="flex gap-2">
+                  <AdminInput
+                    icon={FaPenNib}
+                    value={linkLabelInput}
+                    onChange={(e) => setLinkLabelInput(e.target.value)}
+                    placeholder="Label (e.g. Blog Post)"
+                  />
+                  <AdminInput
+                    icon={FaLink}
+                    value={linkUrlInput}
+                    onChange={(e) => setLinkUrlInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        if (linkUrlInput.trim()) {
+                          setCurrentExp({
+                            ...currentExp,
+                            links: [
+                              ...(currentExp.links || []),
+                              {
+                                label: linkLabelInput.trim() || undefined,
+                                url: linkUrlInput.trim(),
+                              },
+                            ],
+                          });
+                          setLinkLabelInput("");
+                          setLinkUrlInput("");
+                        }
+                      }
+                    }}
+                    placeholder="URL (https://...)"
+                  />
+                  <Button
+                    onClick={() => {
+                      if (linkUrlInput.trim()) {
+                        setCurrentExp({
+                          ...currentExp,
+                          links: [
+                            ...(currentExp.links || []),
+                            {
+                              label: linkLabelInput.trim() || undefined,
+                              url: linkUrlInput.trim(),
+                            },
+                          ],
+                        });
+                        setLinkLabelInput("");
+                        setLinkUrlInput("");
+                      }
+                    }}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                  >
+                    Add
+                  </Button>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <AnimatePresence>
+                    {(currentExp.links || []).map((link, i) => (
+                      <motion.div
+                        key={i}
+                        layout
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/5 rounded-xl"
+                      >
+                        <div className="flex items-center gap-3">
+                          <FaLink className="text-slate-400" />
+                          <div>
+                            <span className="text-sm font-bold block">
+                              {link.label || "Link"}
+                            </span>
+                            <span className="text-xs text-slate-500">
+                              {link.url}
+                            </span>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() =>
+                            setCurrentExp({
+                              ...currentExp,
+                              links: (currentExp.links || []).filter(
+                                (_, idx) => idx !== i,
+                              ),
+                            })
+                          }
+                          className="text-slate-400 hover:text-red-500 p-2"
+                        >
+                          <FaTimes />
+                        </button>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+              </div>
+            </AdminField>
+
+            {/* Impact & Details */}
+            <AdminField label="Impact & Responsibilities">
+              <div className="space-y-4">
+                <div className="flex gap-3">
+                  <AdminInput
+                    icon={FaInfoCircle}
+                    value={detailInput}
+                    onChange={(e) => setDetailInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        if (detailInput.trim()) {
+                          setCurrentExp({
+                            ...currentExp,
+                            details: [
+                              ...currentExp.details,
+                              detailInput.trim(),
+                            ],
+                          });
+                          setDetailInput("");
+                        }
+                      }
+                    }}
+                    placeholder="e.g. Spearheaded the migration to microservices architecture..."
+                    className="h-12"
+                  />
+                  <Button
+                    onClick={() => {
+                      if (detailInput.trim()) {
+                        setCurrentExp({
+                          ...currentExp,
+                          details: [...currentExp.details, detailInput.trim()],
+                        });
+                        setDetailInput("");
+                      }
+                    }}
+                    className="bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white rounded-xl h-12 px-6"
+                  >
+                    Add
+                  </Button>
+                </div>
+                <div className="grid grid-cols-1 gap-3">
+                  <AnimatePresence mode="popLayout">
+                    {(currentExp.details || []).map((detail, i) => (
+                      <motion.div
+                        key={i}
+                        layout
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        className="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-white/5 rounded-2xl group/item shadow-inner shadow-black/5 dark:shadow-black/10"
+                      >
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                        <span className="text-sm text-slate-700 dark:text-slate-300 flex-1 font-medium">
+                          {detail}
+                        </span>
+                        <button
+                          onClick={() =>
+                            setCurrentExp({
+                              ...currentExp,
+                              details: currentExp.details.filter(
+                                (_, idx) => idx !== i,
+                              ),
+                            })
+                          }
+                          className="text-slate-600 hover:text-red-400 transition-colors p-2 hover:bg-red-400/10 rounded-lg"
+                        >
+                          <FaTimes size={14} />
+                        </button>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+              </div>
+            </AdminField>
           </div>
         )}
       </AdminDialogShell>

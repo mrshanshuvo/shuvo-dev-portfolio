@@ -20,7 +20,7 @@ export async function GET(req: Request) {
       return NextResponse.json(item);
     }
 
-    const experiences = await Experience.find({ type: "work" })
+    const experiences = await Experience.find()
       .sort({ order: 1 })
       .lean();
     return NextResponse.json(experiences);
@@ -38,12 +38,12 @@ export async function POST(req: Request) {
     await connectDB();
     const body = await req.json();
 
-    const lastItem = await Experience.findOne({ type: "work" }).sort({
+    const lastItem = await Experience.findOne().sort({
       order: -1,
     });
     const order = lastItem ? lastItem.order + 1 : 0;
 
-    const newItem = await Experience.create({ ...body, type: "work", order });
+    const newItem = await Experience.create({ ...body, order });
     return NextResponse.json(newItem);
   } catch (error) {
     return NextResponse.json({ error: "Failed to create" }, { status: 500 });
@@ -123,7 +123,7 @@ export async function PUT(req: Request) {
       const updates = items.map((item, idx) =>
         Experience.findByIdAndUpdate(
           item._id,
-          { ...item, type: "work", order: idx },
+          { ...item, order: idx },
           { upsert: true },
         ),
       );
