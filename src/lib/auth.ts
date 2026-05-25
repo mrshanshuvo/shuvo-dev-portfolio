@@ -19,7 +19,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         };
 
         await connectDB();
-        const user = await User.findOne({ email }).lean();
+        const user = await User.findOne({ email }).select("+passwordHash").lean();
 
         if (!user || !user.passwordHash) return null;
 
