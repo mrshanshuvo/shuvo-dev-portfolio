@@ -128,19 +128,15 @@ export default function HeroClient({ hero }: Props) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.8 }}
-            className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16"
+            className="flex flex-col sm:flex-row gap-8   justify-center items-center mb-16"
           >
-            <MagneticButton strength={40}>
+            <MagneticButton strength={20}>
               <Button
                 onClick={scrollToProjects}
-                className="group relative px-6 py-2 sm:py-3 lg:py-4 h-auto bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold rounded-full overflow-hidden transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105"
+                className="group relative px-6 py-2 sm:py-3 lg:py-4 h-auto bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-900 font-bold rounded-full overflow-hidden transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105 cursor-pointer"
               >
-                <div className="absolute inset-0 bg-linear-to-r from-emerald-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <span className="relative z-10 flex items-center gap-2 group-hover:text-white transition-colors duration-300">
+                <span className="relative z-10 flex items-center gap-2 transition-colors duration-300">
                   Explore My Work
-                  <span className="group-hover:translate-y-1 transition-transform duration-300">
-                    ↓
-                  </span>
                 </span>
               </Button>
             </MagneticButton>
@@ -190,13 +186,17 @@ export default function HeroClient({ hero }: Props) {
                       type: "spring",
                       stiffness: 200,
                     }}
-                    className="flex p-4 text-slate-600 dark:text-slate-400 hover:text-white transition-colors duration-300 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-900 dark:hover:bg-slate-800 hover:border-slate-900 dark:hover:border-slate-700 shadow-sm hover:shadow-md group"
+                    className="relative flex p-4 text-slate-600 dark:text-slate-400 hover:text-white transition-colors duration-300 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-900 dark:hover:bg-slate-800 hover:border-slate-900 dark:hover:border-slate-700 shadow-sm hover:shadow-md group"
                     aria-label={social.label}
                   >
                     <Icon
                       size={20}
                       className="group-hover:scale-110 transition-transform duration-300"
                     />
+                    <span className="absolute -top-12 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 px-3 py-1.5 bg-slate-900 dark:bg-slate-800 text-white text-xs font-medium rounded-md pointer-events-none whitespace-nowrap shadow-xl z-50 translate-y-2 group-hover:translate-y-0">
+                      {social.label}
+                      <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-slate-900 dark:bg-slate-800 rotate-45" />
+                    </span>
                   </motion.a>
                 </MagneticButton>
               );
