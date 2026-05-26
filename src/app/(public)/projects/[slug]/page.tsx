@@ -1,10 +1,7 @@
 import { connectDB } from "@/lib/mongodb";
 import ProjectModel from "@/models/Project";
 import { notFound } from "next/navigation";
-import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
-import { motion } from "framer-motion";
-import Image from "next/image";
-import { getIcon } from "@/lib/techIconMap";
+
 import type { Project } from "@/types";
 import type { Metadata } from "next";
 import ProjectDetailClient from "./ProjectDetailClient";
@@ -47,20 +44,7 @@ export default async function ProjectPage({ params }: Props) {
   const raw = await ProjectModel.findOne({ slug }).lean();
   if (!raw) notFound();
 
-  const project: Project = {
-    _id: raw._id.toString(),
-    title: raw.title,
-    slug: raw.slug,
-    description: raw.description,
-    image: raw.image,
-    techNames: raw.techNames,
-    github: raw.github,
-    live: raw.live,
-    featured: raw.featured,
-    category: raw.category,
-    improvements: raw.improvements,
-    order: raw.order,
-  };
+  const project: Project = JSON.parse(JSON.stringify(raw));
 
   return <ProjectDetailClient project={project} />;
 }

@@ -20,9 +20,68 @@ _Chronological log of agent interactions, tasks completed, and context switches.
 - **Next Steps:** Await next task from the user.
 
 ## [2026-05-26] Linting and Warning Cleanup
+
 - **Task:** Resolve IDE warnings and ESLint errors.
 - **Actions:**
   - Fixed `setState` warning in `AdminThemeToggle.tsx` and removed unused variables.
   - Escaped quotes and removed unused imports in `CategoryCombobox.tsx`, `AdminSheetShell.tsx`, `AdminShell.tsx`, `AdminTopbar.tsx`, `CategoryManagerDialog.tsx`, `ImageUpload.tsx`, `MediaGalleryManager.tsx`, and `MultiLinkManager.tsx`.
   - Replaced arbitrary class names with standard Tailwind classes (e.g., `min-h-[56px]` to `min-h-14`, `max-w-[80px]` to `max-w-20`).
 - **Next Steps:** Mark "Linting Sweep" as complete in `todos.md`.
+
+## [2026-05-26] Version Control Snapshot
+
+- **Task:** Commit recent AI memory and linting changes.
+- **Actions:**
+  - Ran `git status` to verify modified files.
+  - Staged all changes using `git add .`
+  - Committed with message: `chore: integrate AI memory system and resolve ESLint/TypeScript warnings`
+- **Next Steps:** Await next task from the user.
+
+## [2026-05-26] Bug Fix: Server Component Serialization
+
+- **Task:** Fix Next.js serialization error for Mongoose nested ObjectIds.
+- **Actions:**
+  - Identified that nested subdocuments (`github`, `live`, etc.) in the `Project` model contained `ObjectId`s with `.toJSON()` methods.
+  - Replaced manual mapping in `src/app/(public)/projects/[slug]/page.tsx` with `JSON.parse(JSON.stringify(raw))` to fully serialize the Mongoose document into a plain object before passing it to the Client Component.
+- **Next Steps:** Await next task from the user.
+
+## [2026-05-26] Clean Up Unused Code in Projects Archive
+
+- **Task:** Resolve IDE warning for unused `socialLinks` in `src/app/(public)/projects/page.tsx`.
+- **Actions:**
+  - Removed the unused `socialLinks` variable and the `SocialLinkModel` database query since the footer (which presumably needed it) is not being rendered on this specific page.
+- **Next Steps:** Await next task from the user.
+
+## [2026-05-26] UI Refinement: Projects Archive Header
+
+- **Task:** Update the layout structure of the "Project Archive" page heading to match the academic background style.
+- **Actions:**
+  - Replaced the simple centered `div` and `motion.h1` with a `motion.div` flex layout wrapper (`flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20`).
+  - Added `text-left` alignment and `whileInView` animations matching the requested template format.
+  - Added the `<FaArchive />` icon and uppercase emerald eyebrow text (`Portfolio Showcase`) above the main heading.
+- **Next Steps:** Await next task from the user.
+
+## [2026-05-26] Clean Up Unused Imports in Public Route
+
+- **Task:** Resolve IDE warnings for unused imports in `src/app/(public)/projects/[slug]/page.tsx`.
+- **Actions:**
+  - Removed unused imports (`FaGithub`, `FaExternalLinkAlt`, `motion`, `Image`, `getIcon`) which were left over from before the Server/Client component split.
+- **Next Steps:** Await next task from the user.
+
+## [2026-05-26] Resolve Missing Project Assets
+
+- **Task:** Fix 404 Not Found errors for project images.
+- **Actions:**
+  - Identified that the database expects local images (`mcms.png`, `whereisit.png`, `profast.png`, `car-doctor.png`, `portfolio.png`) in the `/public/images` directory, which were missing.
+  - Utilized AI image generation to design 5 high-quality, dark-mode, modern UI placeholder graphics for each respective project.
+  - Created the `/public/images` directory and populated it with the newly generated assets to ensure a rich, premium aesthetic as per the core guidelines.
+- **Next Steps:** Await next task from the user.
+
+## [2026-05-26] Cloudinary Migration for Projects
+- **Task:** Inject locally generated project images into Cloudinary and update MongoDB.
+- **Actions:**
+  - Wrote a custom Node.js script using `cloudinary` and `mongoose` connecting via `.env.local` credentials.
+  - Uploaded the 5 generated placeholder images (`mcms.png`, `whereisit.png`, etc.) directly to the `portfolio/projects` folder in Cloudinary.
+  - Updated the corresponding MongoDB documents to use the absolute `secure_url` returned by Cloudinary, completely decoupling the app from local images.
+  - Cleaned up by deleting the temporary script.
+- **Next Steps:** Await next task from the user.

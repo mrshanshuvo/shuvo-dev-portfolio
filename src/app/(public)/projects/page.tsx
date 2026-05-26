@@ -4,7 +4,6 @@ import type { Project } from "@/types";
 import ProjectsArchiveClient from "./ProjectsArchiveClient";
 import Navbar from "@/app/components/Navbar/Navbar";
 import HeroModel from "@/models/Hero";
-import SocialLinkModel from "@/models/SocialLink";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -24,14 +23,10 @@ async function getProjects(): Promise<Project[]> {
 export default async function ProjectsPage() {
   const projects = await getProjects();
 
-  // Need these for Navbar and Footer consistency
-  const [heroDoc, socialDocs] = await Promise.all([
-    HeroModel.findOne().lean(),
-    SocialLinkModel.find().sort({ order: 1 }).lean(),
-  ]);
+  // Need this for Navbar consistency
+  const heroDoc = await HeroModel.findOne().lean();
 
   const resumeUrl = heroDoc?.resumeUrl || "/Resume_of_Shahid_Hasan_Shuvo.pdf";
-  const socialLinks = JSON.parse(JSON.stringify(socialDocs));
 
   return (
     <>

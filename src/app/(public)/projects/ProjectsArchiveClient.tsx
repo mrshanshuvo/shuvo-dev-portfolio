@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { Project } from "@/types";
 import ProjectCard from "@/app/components/Projects/ProjectCard";
 import { Button } from "@/components/ui/button";
+import { FaArchive } from "react-icons/fa";
 
 interface Props {
   projects: Project[];
@@ -12,34 +13,41 @@ interface Props {
 export default function ProjectsArchiveClient({ projects }: Props) {
   const [activeCategory, setActiveCategory] = useState("All");
 
-  const allCats = projects.flatMap(p => Array.isArray(p.category) ? p.category : p.category ? [p.category] : []);
+  const allCats = projects.flatMap((p) =>
+    Array.isArray(p.category) ? p.category : p.category ? [p.category] : [],
+  );
   const categories = ["All", ...Array.from(new Set(allCats))];
 
-  const filteredProjects = activeCategory === "All"
-    ? projects
-    : projects.filter((p) => Array.isArray(p.category) ? p.category.includes(activeCategory) : p.category === activeCategory);
+  const filteredProjects =
+    activeCategory === "All"
+      ? projects
+      : projects.filter((p) =>
+          Array.isArray(p.category)
+            ? p.category.includes(activeCategory)
+            : p.category === activeCategory,
+        );
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 pt-32 pb-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-black text-slate-900 dark:text-white mb-6 tracking-tight"
-          >
-            Project <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-blue-500">Archive</span>
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto"
-          >
-            A comprehensive collection of my technical work, from experimental prototypes to full-scale applications.
-          </motion.p>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-8"
+        >
+          <div className="text-left">
+            <motion.h2
+              initial={{ opacity: 0, scale: 0.5 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="flex items-center gap-3 text-emerald-500 font-black uppercase tracking-[0.3em] text-sm md:text-base mx-6"
+            >
+              <FaArchive />{" "}
+              {projects.length > 0 ? "All Projects" : "No Projects"}
+            </motion.h2>
+          </div>
+        </motion.div>
 
         {/* Filters */}
         <motion.div
@@ -65,10 +73,7 @@ export default function ProjectsArchiveClient({ projects }: Props) {
         </motion.div>
 
         {/* Grid */}
-        <motion.div
-          layout
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
+        <motion.div layout className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           <AnimatePresence mode="popLayout">
             {filteredProjects.map((project, i) => (
               <motion.div
@@ -91,7 +96,9 @@ export default function ProjectsArchiveClient({ projects }: Props) {
             animate={{ opacity: 1 }}
             className="text-center py-20"
           >
-            <p className="text-slate-500 text-xl font-medium">No projects found in this category.</p>
+            <p className="text-slate-500 text-xl font-medium">
+              No projects found in this category.
+            </p>
           </motion.div>
         )}
       </div>
