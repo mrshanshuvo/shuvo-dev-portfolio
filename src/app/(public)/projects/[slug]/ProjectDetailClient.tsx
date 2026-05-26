@@ -1,7 +1,13 @@
 "use client";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { FaGithub, FaExternalLinkAlt, FaArrowLeft } from "react-icons/fa";
+import {
+  FaGithub,
+  FaExternalLinkAlt,
+  FaArrowLeft,
+  FaGlobe,
+  FaCodeBranch,
+} from "react-icons/fa";
 import Link from "next/link";
 import { getIcon } from "@/lib/techIconMap";
 import type { Project } from "@/types";
@@ -12,243 +18,305 @@ interface Props {
 
 export default function ProjectDetailClient({ project }: Props) {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 relative overflow-hidden">
-      {/* Cinematic Background Orbs */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-emerald-500/5 rounded-full blur-[140px] dark:opacity-40" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[140px] dark:opacity-40" />
+    <div className="min-h-screen bg-slate-950 text-slate-100 relative overflow-hidden font-sans">
+      {/* Background Noise & Vibrant Radial Mesh Gradients */}
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-40">
+        <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-emerald-500/10 rounded-full blur-[140px]" />
+        <div className="absolute top-[20%] right-[-10%] w-[60%] h-[60%] bg-blue-500/10 rounded-full blur-[140px]" />
+        <div className="absolute bottom-[-10%] left-[20%] w-[50%] h-[50%] bg-purple-500/5 rounded-full blur-[140px]" />
       </div>
 
-      <section className="max-w-7xl mx-auto py-24 md:py-32 px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-          
-          {/* LEFT COLUMN: Sticky Sidebar */}
-          <div className="lg:col-span-5 lg:sticky lg:top-32 space-y-8">
-            <Link
-              href="/projects"
-              className="group inline-flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-emerald-500 dark:hover:text-emerald-400 text-xs font-bold uppercase tracking-widest transition-colors"
-            >
-              <FaArrowLeft className="text-[10px] group-hover:-translate-x-1 transition-transform" />
-              Back to Archive
-            </Link>
-
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="p-8 md:p-10 rounded-[2.5rem] bg-white/60 dark:bg-slate-900/60 backdrop-blur-2xl border border-slate-200/50 dark:border-white/10 shadow-2xl relative overflow-hidden group"
-            >
-              {/* Decorative subtle background gradient */}
-              <div className="absolute -inset-px bg-gradient-to-r from-emerald-500/10 to-blue-500/10 rounded-[2.5rem] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-
-              <div className="relative space-y-8">
-                {/* Categories */}
-                <div className="flex flex-wrap gap-2">
-                  {Array.isArray(project.category)
-                    ? project.category.map((cat) => (
-                        <span
-                          key={cat}
-                          className="px-3 py-1 bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-black text-[9px] rounded-full uppercase tracking-widest border border-emerald-500/20"
-                        >
-                          {cat}
-                        </span>
-                      ))
-                    : project.category && (
-                        <span className="px-3 py-1 bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-black text-[9px] rounded-full uppercase tracking-widest border border-emerald-500/20">
-                          {project.category}
-                        </span>
-                      )}
-                </div>
-
-                {/* Title */}
-                <div>
-                  <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
-                    {project.title}
-                  </h1>
-                </div>
-
-                {/* Tech Stack */}
-                <div className="space-y-4">
-                  <h3 className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">
-                    Built With
-                  </h3>
-                  <div className="flex flex-wrap gap-2.5">
-                    {project.techNames.map((name) => {
-                      const Icon = getIcon(name);
-                      return (
-                        <div
-                          key={name}
-                          className="flex items-center gap-2 px-3.5 py-2 bg-slate-100 dark:bg-slate-800/80 border border-slate-200/50 dark:border-white/5 rounded-xl text-xs text-slate-700 dark:text-slate-300 font-bold shadow-sm"
-                        >
-                          <Icon className="text-emerald-500 text-sm shrink-0" />
-                          <span>{name}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Action CTA Buttons */}
-                <div className="pt-6 border-t border-slate-200/50 dark:border-white/10 space-y-3.5">
-                  {project.live &&
-                    project.live.map((live, idx) => (
-                      <a
-                        key={`live-${idx}`}
-                        href={live.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-3 px-6 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-black text-sm transition-all hover:-translate-y-0.5 shadow-lg shadow-emerald-500/20 hover:shadow-xl hover:shadow-emerald-500/30"
-                      >
-                        <FaExternalLinkAlt className="text-xs shrink-0" />
-                        <span>{live.label || "Visit Live Demo"}</span>
-                      </a>
-                    ))}
-                  {project.github &&
-                    project.github.map((gh, idx) => (
-                      <a
-                        key={`gh-${idx}`}
-                        href={gh.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-3 px-6 py-4 bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 rounded-2xl font-black text-sm transition-all hover:-translate-y-0.5 shadow-md hover:shadow-lg"
-                      >
-                        <FaGithub className="text-sm shrink-0" />
-                        <span>{gh.label || "View Code"}</span>
-                      </a>
-                    ))}
-                </div>
-              </div>
-            </motion.div>
+      <section className="max-w-350 mx-auto px-4 sm:px-6 lg:px-8 mt-10 py-20 relative z-10 space-y-8">
+        {/* Top Header Bar */}
+        <div className="flex justify-between items-center">
+          <Link
+            href="/projects"
+            className="group inline-flex items-center gap-2 px-4 py-2 bg-slate-900/80 hover:bg-slate-800/80 backdrop-blur-md text-slate-400 hover:text-white text-xs font-bold uppercase tracking-widest rounded-full border border-white/5 transition-all shadow-lg"
+          >
+            <FaArrowLeft className="text-[10px] group-hover:-translate-x-1 transition-transform" />
+            Back to Archive
+          </Link>
+          <div className="flex gap-2">
+            {Array.isArray(project.category)
+              ? project.category.map((cat) => (
+                  <span
+                    key={cat}
+                    className="px-3.5 py-1.5 bg-emerald-500/10 text-emerald-400 font-black text-[10px] rounded-full uppercase tracking-widest border border-emerald-500/20 shadow-md shadow-emerald-500/5"
+                  >
+                    {cat}
+                  </span>
+                ))
+              : project.category && (
+                  <span className="px-3.5 py-1.5 bg-emerald-500/10 text-emerald-400 font-black text-[10px] rounded-full uppercase tracking-widest border border-emerald-500/20 shadow-md shadow-emerald-500/5">
+                    {project.category}
+                  </span>
+                )}
           </div>
+        </div>
 
-          {/* RIGHT COLUMN: Scrollable Bento Case Study */}
-          <div className="lg:col-span-7 space-y-12 lg:space-y-16">
-            {/* Main Showcase Image */}
+        {/* Cinematic Title Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="space-y-4"
+        >
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-[1.1] text-transparent bg-clip-text bg-linear-to-r from-white via-slate-100 to-slate-500">
+            {project.title}
+          </h1>
+        </motion.div>
+
+        {/* Master Bento Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* COLUMN 1-8: Left Side Content (Showcase, Story, Gallery) */}
+          <div className="lg:col-span-8 space-y-8">
+            {/* CARD 1: Main High-Fi Showcase Screen */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="relative w-full aspect-video rounded-[2.5rem] overflow-hidden bg-slate-100 dark:bg-slate-900 shadow-2xl border border-slate-200/50 dark:border-white/10 group"
+              className="relative aspect-video rounded-2xl overflow-hidden bg-slate-900 shadow-[0_0_50px_rgba(0,0,0,0.8)] border border-white/10 group"
             >
+              {/* Subtle ambient light behind screen */}
+              <div className="absolute inset-0 bg-linear-to-t from-slate-950/40 via-transparent to-slate-950/20 z-10" />
               <Image
                 src={project.image || "/images/placeholder.png"}
                 alt={project.title}
                 fill
-                className="object-cover group-hover:scale-102 transition-transform duration-700 ease-out"
-                sizes="(max-width: 768px) 100vw, 60vw"
+                className="object-cover group-hover:scale-[1.01] transition-transform duration-700 ease-out z-0"
+                sizes="(max-width: 1200px) 100vw, 80vw"
                 priority
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/20 to-transparent" />
             </motion.div>
 
-            {/* Content Bento Grid */}
-            <div className="space-y-8">
-              
-              {/* Bento Block 1: The Story */}
+            {/* CARD 4: The Story Case Study */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="p-8 md:p-12 rounded-xl bg-slate-900/30 backdrop-blur-2xl border border-white/5 shadow-xl relative overflow-hidden"
+            >
+              <div className="absolute top-0 left-0 w-24 h-0.5 bg-linear-to-r from-emerald-500 to-blue-500" />
+              <div className="space-y-4">
+                <h2 className="text-xs font-black tracking-[0.2em] text-emerald-400 uppercase">
+                  Project Case Study
+                </h2>
+                <h3 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-wider">
+                  The Story
+                </h3>
+                <p className="text-slate-300 text-lg leading-relaxed font-medium">
+                  {project.description}
+                </p>
+              </div>
+            </motion.div>
+
+            {/* CARD 5: Execution & Outcomes */}
+            {project.improvements && project.improvements.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
-                className="p-8 md:p-10 rounded-[2rem] bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200/50 dark:border-white/5 shadow-xl space-y-4"
+                className="p-8 md:p-12 rounded-xl bg-slate-900/30 backdrop-blur-2xl border border-white/5 shadow-xl space-y-6"
               >
-                <h2 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white uppercase tracking-wider">
-                  The Story
-                </h2>
-                <p className="text-slate-600 dark:text-slate-300 text-base md:text-lg leading-relaxed font-medium">
-                  {project.description}
-                </p>
-              </motion.div>
-
-              {/* Bento Block 2: Execution & Outcomes */}
-              {project.improvements && project.improvements.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6 }}
-                  className="p-8 md:p-10 rounded-[2rem] bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200/50 dark:border-white/5 shadow-xl space-y-6"
-                >
-                  <h2 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white uppercase tracking-wider">
-                    Execution & Outcomes
+                <div className="space-y-2">
+                  <h2 className="text-xs font-black tracking-[0.2em] text-emerald-400 uppercase">
+                    Execution Details
                   </h2>
-                  <div className="grid md:grid-cols-2 gap-5">
-                    {project.improvements.map((item, index) => (
-                      <div
-                        key={index}
-                        className="flex items-start gap-3.5 p-4 rounded-2xl bg-white/80 dark:bg-slate-950/40 border border-slate-200/50 dark:border-white/5 shadow-sm"
-                      >
-                        <div className="w-5 h-5 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center text-emerald-500 shrink-0 mt-0.5">
-                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                        </div>
-                        <span className="text-slate-600 dark:text-slate-300 font-bold text-sm leading-relaxed">
-                          {item}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Bento Block 3: Media Gallery */}
-              {project.media && project.media.length > 0 && (
-                <div className="space-y-6 pt-4">
-                  <h2 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white uppercase tracking-wider px-2">
-                    Project Gallery
-                  </h2>
-                  <div className="grid sm:grid-cols-2 gap-6">
-                    {project.media.map((m, idx) => (
-                      <motion.div
-                        key={idx}
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.5, delay: idx * 0.1 }}
-                        className="relative aspect-video rounded-3xl overflow-hidden shadow-xl border border-slate-200/50 dark:border-white/10 group bg-slate-100 dark:bg-slate-900"
-                      >
-                        {m.type === "video" ? (
-                          <video
-                            src={m.url}
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                            className="object-cover w-full h-full group-hover:scale-102 transition-transform duration-700 ease-out"
-                          />
-                        ) : m.type === "embed" ? (
-                          <iframe
-                            src={m.url}
-                            className="w-full h-full border-0"
-                            allowFullScreen
-                          />
-                        ) : (
-                          <Image
-                            src={m.url}
-                            alt={
-                              m.caption || `${project.title} screenshot ${idx + 1}`
-                            }
-                            fill
-                            className="object-cover group-hover:scale-102 transition-transform duration-700 ease-out"
-                            sizes="(max-width: 768px) 100vw, 30vw"
-                          />
-                        )}
-                        {m.caption && (
-                          <div className="absolute bottom-0 left-0 right-0 bg-slate-900/90 backdrop-blur-xs p-3.5 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out">
-                            <p className="text-white text-xs font-bold text-center">
-                              {m.caption}
-                            </p>
-                          </div>
-                        )}
-                      </motion.div>
-                    ))}
-                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-wider">
+                    Outcomes & Improvements
+                  </h3>
                 </div>
-              )}
-
-            </div>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {project.improvements.map((item, index) => (
+                    <div
+                      key={index}
+                      className="flex items-start gap-4 p-5 rounded-lg bg-slate-900/50 border border-white/5 shadow-md hover:border-emerald-500/20 transition-all duration-300 group"
+                    >
+                      <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400 shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+                      </div>
+                      <span className="text-slate-300 font-bold text-sm leading-relaxed">
+                        {item}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
           </div>
 
+          {/* COLUMN 9-12: Right Side Sidebar Bento Cards (Links, Tech Stack) */}
+          <div className="lg:col-span-4 space-y-8 lg:sticky lg:top-32">
+            {/* CARD 2: High-End Launchpad Links */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="p-8 rounded-xl bg-slate-900/40 backdrop-blur-2xl border border-white/5 shadow-xl relative overflow-hidden group space-y-6"
+            >
+              <div className="space-y-1">
+                <h2 className="text-xs font-black tracking-[0.2em] text-emerald-400 uppercase">
+                  Launchpad
+                </h2>
+                <h3 className="text-2xl font-black text-white uppercase tracking-wider">
+                  Interactive Links
+                </h3>
+              </div>
+
+              <div className="flex flex-col gap-4">
+                {/* Live Link Render */}
+                {project.live &&
+                  project.live.map((live, idx) => (
+                    <a
+                      key={`live-${idx}`}
+                      href={live.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between p-4 rounded-lg bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-sm shadow-lg shadow-emerald-950/40 hover:shadow-xl hover:shadow-emerald-500/20 transition-all duration-300 hover:-translate-y-0.5 group"
+                    >
+                      <div className="flex items-center gap-3.5">
+                        <div className="p-2.5 bg-white/10 rounded-md">
+                          <FaGlobe className="text-base" />
+                        </div>
+                        <div className="flex flex-col items-start gap-0.5">
+                          <span className="text-sm font-black">
+                            {live.label || "Live Deployment"}
+                          </span>
+                          <span className="text-[10px] text-white/70 font-semibold tracking-wider uppercase">
+                            Open Project
+                          </span>
+                        </div>
+                      </div>
+                      <FaExternalLinkAlt className="text-xs opacity-80 group-hover:translate-x-0.5 transition-transform" />
+                    </a>
+                  ))}
+
+                {/* GitHub Link Render */}
+                {project.github &&
+                  project.github.map((gh, idx) => (
+                    <a
+                      key={`gh-${idx}`}
+                      href={gh.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between p-4 rounded-lg bg-slate-900 hover:bg-slate-850 text-white font-black text-sm border border-white/5 hover:border-white/10 transition-all duration-300 hover:-translate-y-0.5 group"
+                    >
+                      <div className="flex items-center gap-3.5">
+                        <div className="p-2.5 bg-slate-800 rounded-md border border-white/5">
+                          <FaGithub className="text-base" />
+                        </div>
+                        <div className="flex flex-col items-start gap-0.5">
+                          <span className="text-sm font-black">
+                            {gh.label || "Source Code"}
+                          </span>
+                          <span className="text-[10px] text-slate-400 font-semibold tracking-wider uppercase">
+                            Git Repository
+                          </span>
+                        </div>
+                      </div>
+                      <FaCodeBranch className="text-xs text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+                    </a>
+                  ))}
+              </div>
+            </motion.div>
+
+            {/* CARD 3: Tech Stack Matrix Grid */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="p-8 rounded-xl bg-slate-900/40 backdrop-blur-2xl border border-white/5 shadow-xl space-y-6"
+            >
+              <div className="space-y-1">
+                <h2 className="text-xs font-black tracking-[0.2em] text-emerald-400 uppercase">
+                  Tech Matrix
+                </h2>
+                <h3 className="text-2xl font-black text-white uppercase tracking-wider">
+                  Technology Stack
+                </h3>
+              </div>
+              <div className="grid grid-cols-2 gap-3.5">
+                {project.techNames.map((name) => {
+                  const Icon = getIcon(name);
+                  return (
+                    <div
+                      key={name}
+                      className="flex flex-col items-center justify-center p-4 bg-slate-950/40 border border-white/5 hover:border-emerald-500/20 rounded-lg text-center shadow-sm hover:shadow-md hover:shadow-emerald-500/5 transition-all duration-300 group"
+                    >
+                      <Icon className="text-slate-400 group-hover:text-emerald-400 text-2xl mb-2 transition-colors duration-300 shrink-0" />
+                      <span className="text-[11px] text-slate-400 group-hover:text-slate-200 font-bold transition-colors tracking-wide">
+                        {name}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          </div>
         </div>
+
+        {/* BOTTOM SECTION: Full Width Gallery */}
+        {project.media && project.media.length > 0 && (
+          <div className="space-y-8 pt-8">
+            <div className="space-y-2 text-center">
+              <h2 className="text-xs font-black tracking-[0.2em] text-emerald-400 uppercase">
+                Visual Showcase
+              </h2>
+              <h3 className="text-3xl sm:text-4xl font-black text-white uppercase tracking-widest">
+                Project Gallery
+              </h3>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {project.media.map((m, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: idx * 0.1 }}
+                  className="relative aspect-video rounded-xl overflow-hidden shadow-2xl border border-white/10 group bg-slate-900"
+                >
+                  {m.type === "video" ? (
+                    <video
+                      src={m.url}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="object-cover w-full h-full group-hover:scale-102 transition-transform duration-700 ease-out"
+                    />
+                  ) : m.type === "embed" ? (
+                    <iframe
+                      src={m.url}
+                      className="w-full h-full border-0"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <Image
+                      src={m.url}
+                      alt={
+                        m.caption || `${project.title} screenshot ${idx + 1}`
+                      }
+                      fill
+                      className="object-cover group-hover:scale-102 transition-transform duration-700 ease-out"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                  )}
+                  {m.caption && (
+                    <div className="absolute bottom-0 left-0 right-0 bg-slate-950/85 backdrop-blur-md p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out z-20">
+                      <p className="text-white text-xs font-bold text-center tracking-wide">
+                        {m.caption}
+                      </p>
+                    </div>
+                  )}
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
     </div>
   );

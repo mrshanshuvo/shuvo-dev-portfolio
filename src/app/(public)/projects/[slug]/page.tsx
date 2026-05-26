@@ -2,6 +2,9 @@ import { connectDB } from "@/lib/mongodb";
 import ProjectModel from "@/models/Project";
 import { notFound } from "next/navigation";
 
+import Navbar from "@/app/components/Navbar/Navbar";
+import HeroModel from "@/models/Hero";
+
 import type { Project } from "@/types";
 import type { Metadata } from "next";
 import ProjectDetailClient from "./ProjectDetailClient";
@@ -44,10 +47,15 @@ export default async function ProjectPage({ params }: Props) {
   const raw = await ProjectModel.findOne({ slug }).lean();
   if (!raw) notFound();
 
+  const heroDoc = await HeroModel.findOne().lean();
+  const resumeUrl = heroDoc?.resumeUrl || "/Resume_of_Shahid_Hasan_Shuvo.pdf";
+
   const project: Project = JSON.parse(JSON.stringify(raw));
 
-  console.log("=== DB Result for Project:", slug, "===");
-  console.dir(project, { depth: null });
-
-  return <ProjectDetailClient project={project} />;
+  return (
+    <>
+      <Navbar resumeUrl={resumeUrl} />
+      <ProjectDetailClient project={project} />
+    </>
+  );
 }
