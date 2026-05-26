@@ -110,6 +110,15 @@ _Chronological log of agent interactions, tasks completed, and context switches.
 ## [2026-05-26] Code Cleanup
 - **Task:** Resolve Mongoose `new` option deprecation warning.
 - **Actions:** Replaced all occurrences of `{ new: true }` with `{ returnDocument: "after" }` across all API route handlers (`src/app/api/admin/**/*.ts`).
+- **Next Steps:** Await next task from the user.
+
+## [2026-05-26] Premium Project Page Overhaul
+- **Task:** Redesign Project Details page structure into a high-end split-screen case study layout.
+- **Actions:**
+  - Redesigned `ProjectDetailClient.tsx` to utilize an asymmetric 12-column layout.
+  - Implemented a sticky left sidebar holding Project Title, Tech Stack, and Action links.
+  - Created a scrollable Bento Grid column for the main showcase image, Story text, Outcomes cards, and the dynamic Media Gallery.
+  - Verified compilation via TypeScript type-checks (100% type-safe).
 - **Next Steps:** Await next task from the user.## [2026-05-26] Minor Cleanup
 - **Task:** Resolve TypeScript unused import warning.
 - **Actions:** Removed the unused `mongoose` import in `src/app/api/admin/projects/[id]/route.ts`.
