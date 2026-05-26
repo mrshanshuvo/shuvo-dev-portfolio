@@ -46,5 +46,8 @@ export default async function ProjectPage({ params }: Props) {
 
   const project: Project = JSON.parse(JSON.stringify(raw));
 
+  console.log("=== DB Result for Project:", slug, "===");
+  console.dir(project, { depth: null });
+
   return <ProjectDetailClient project={project} />;
 }

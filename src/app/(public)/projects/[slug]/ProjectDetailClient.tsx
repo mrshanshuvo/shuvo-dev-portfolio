@@ -39,22 +39,20 @@ export default function ProjectDetailClient({ project }: Props) {
             </h1>
             <div className="flex items-center gap-4 flex-wrap">
               <div className="flex flex-wrap gap-3">
-                {Array.isArray(project.category) ? (
-                  project.category.map((cat) => (
-                    <span
-                      key={cat}
-                      className="px-4 py-1.5 bg-emerald-500 text-white font-black text-[10px] rounded-full uppercase tracking-[0.2em] shadow-lg shadow-emerald-500/20"
-                    >
-                      {cat}
-                    </span>
-                  ))
-                ) : (
-                  project.category && (
-                    <span className="px-4 py-1.5 bg-emerald-500 text-white font-black text-[10px] rounded-full uppercase tracking-[0.2em] shadow-lg shadow-emerald-500/20">
-                      {project.category}
-                    </span>
-                  )
-                )}
+                {Array.isArray(project.category)
+                  ? project.category.map((cat) => (
+                      <span
+                        key={cat}
+                        className="px-4 py-1.5 bg-emerald-500 text-white font-black text-[10px] rounded-full uppercase tracking-[0.2em] shadow-lg shadow-emerald-500/20"
+                      >
+                        {cat}
+                      </span>
+                    ))
+                  : project.category && (
+                      <span className="px-4 py-1.5 bg-emerald-500 text-white font-black text-[10px] rounded-full uppercase tracking-[0.2em] shadow-lg shadow-emerald-500/20">
+                        {project.category}
+                      </span>
+                    )}
               </div>
               <div className="h-px flex-1 bg-slate-200 dark:bg-white/10 min-w-8" />
             </div>
@@ -131,30 +129,86 @@ export default function ProjectDetailClient({ project }: Props) {
                   Links
                 </h3>
                 <div className="flex flex-col gap-4">
-                  {project.github && project.github.length > 0 && (
-                    <a
-                      href={project.github[0].url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-3 px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-950 rounded-2xl font-black transition-all hover:scale-105 shadow-xl"
-                    >
-                      <FaGithub size={20} /> View Source Code
-                    </a>
-                  )}
-                  {project.live && project.live.length > 0 && (
-                    <a
-                      href={project.live[0].url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-3 px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-black transition-all hover:scale-105 shadow-xl shadow-emerald-500/20"
-                    >
-                      <FaExternalLinkAlt size={18} /> Visit Live Project
-                    </a>
-                  )}
+                  {project.github &&
+                    project.github.map((gh, idx) => (
+                      <a
+                        key={`gh-${idx}`}
+                        href={gh.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-3 px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-950 rounded-2xl font-black transition-all hover:scale-105 shadow-xl"
+                      >
+                        <FaGithub size={20} /> {gh.label || "View Source Code"}
+                      </a>
+                    ))}
+                  {project.live &&
+                    project.live.map((live, idx) => (
+                      <a
+                        key={`live-${idx}`}
+                        href={live.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-3 px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-black transition-all hover:scale-105 shadow-xl shadow-emerald-500/20"
+                      >
+                        <FaExternalLinkAlt size={18} />{" "}
+                        {live.label || "Visit Live Project"}
+                      </a>
+                    ))}
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Media Gallery */}
+          {project.media && project.media.length > 0 && (
+            <div className="mt-24 space-y-12">
+              <h2 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-widest text-center">
+                Project Gallery
+              </h2>
+              <div className="grid md:grid-cols-2 gap-8">
+                {project.media.map((m, idx) => (
+                  <div
+                    key={idx}
+                    className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl border border-white/10 group bg-slate-100 dark:bg-slate-900"
+                  >
+                    {m.type === "video" ? (
+                      <video
+                        src={m.url}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700"
+                      />
+                    ) : m.type === "embed" ? (
+                      <iframe
+                        src={m.url}
+                        className="w-full h-full border-0"
+                        allowFullScreen
+                      />
+                    ) : (
+                      <Image
+                        src={m.url}
+                        alt={
+                          m.caption || `${project.title} screenshot ${idx + 1}`
+                        }
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-700"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
+                    )}
+                    {m.caption && (
+                      <div className="absolute bottom-0 left-0 right-0 bg-slate-900/80 backdrop-blur-sm p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                        <p className="text-white text-sm font-bold text-center">
+                          {m.caption}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </motion.div>
       </section>
     </div>
