@@ -3,7 +3,6 @@ import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import {
   FaTrash,
-  FaFileAlt,
   FaExternalLinkAlt,
   FaEye,
   FaTimes,
@@ -180,7 +179,7 @@ export default function ImageUpload({
                   <h4 className="font-bold text-slate-900 dark:text-slate-200 tracking-wide text-[10px] uppercase">
                     Processing
                   </h4>
-                  <span className="text-indigo-600/40 dark:text-indigo-300/60 font-medium truncate text-[10px] max-w-[80px] block mt-0.5">
+                  <span className="text-indigo-600/40 dark:text-indigo-300/60 font-medium truncate text-[10px] max-w-20 block mt-0.5">
                     {fileName}
                   </span>
                 </div>

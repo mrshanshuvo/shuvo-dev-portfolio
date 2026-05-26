@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   FaChevronDown,
   FaSearch,
@@ -93,7 +93,7 @@ export default function CategoryCombobox({
       <div
         onClick={() => setOpen(!open)}
         className={cn(
-          "w-full flex flex-wrap gap-2 p-2 min-h-[56px] bg-white dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 rounded-2xl transition-all cursor-pointer outline-none",
+          "w-full flex flex-wrap gap-2 p-2 min-h-14 bg-white dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 rounded-2xl transition-all cursor-pointer outline-none",
           open
             ? "border-emerald-500/50 ring-2 ring-emerald-500/20"
             : "border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10",
@@ -195,7 +195,7 @@ export default function CategoryCombobox({
                 ) : (
                   <FaPlus size={10} className="shrink-0" />
                 )}
-                <span className="truncate">Create "{search}"</span>
+                <span className="truncate">Create &quot;{search}&quot;</span>
               </button>
             ) : (
               <div className="px-3 py-6 text-center text-xs font-bold uppercase tracking-widest text-slate-600">

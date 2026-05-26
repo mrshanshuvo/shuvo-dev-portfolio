@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FaChevronRight, FaHome } from "react-icons/fa";
+import { FaChevronRight } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
 import AdminThemeToggle from "./AdminThemeToggle";
 

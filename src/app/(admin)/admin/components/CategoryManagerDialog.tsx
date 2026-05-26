@@ -2,13 +2,10 @@
 import { useState, useEffect } from "react";
 import {
   FaPlus,
-  FaSave,
   FaTrash,
   FaArrowUp,
   FaArrowDown,
   FaLayerGroup,
-  FaCheck,
-  FaTimes,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -31,7 +28,6 @@ export default function CategoryManagerDialog({
   onUpdate,
 }: CategoryManagerDialogProps) {
   const [data, setData] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<{
     msg: string;
@@ -48,7 +44,6 @@ export default function CategoryManagerDialog({
       .then((r) => r.json())
       .then((d) => {
         setData(Array.isArray(d) ? d : []);
-        setLoading(false);
       });
   };
 

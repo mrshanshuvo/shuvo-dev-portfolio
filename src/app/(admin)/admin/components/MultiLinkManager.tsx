@@ -3,7 +3,6 @@ import { useState } from "react";
 import {
   FaPlus,
   FaTrash,
-  FaLink,
   FaExternalLinkAlt,
   FaGithub,
 } from "react-icons/fa";

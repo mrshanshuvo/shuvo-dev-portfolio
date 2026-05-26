@@ -4,8 +4,6 @@ import { useState, ReactNode } from "react";
 import AdminSidebar from "./AdminSidebar";
 import AdminMobileHeader from "./AdminMobileHeader";
 import AdminTopbar from "./AdminTopbar";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
 
 export default function AdminShell({ children }: { children: ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

@@ -10,6 +10,7 @@ export default function AdminThemeToggle() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line
     setMounted(true);
   }, []);
 
@@ -23,13 +24,7 @@ export default function AdminThemeToggle() {
     { name: "system", icon: FaDesktop, label: "System" },
   ];
 
-  const currentTheme = themes.find((t) => t.name === theme) || themes[2];
 
-  const toggleTheme = () => {
-    const currentIndex = themes.findIndex((t) => t.name === theme);
-    const nextIndex = (currentIndex + 1) % themes.length;
-    setTheme(themes[nextIndex].name);
-  };
 
   return (
     <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-full p-1 shadow-sm">

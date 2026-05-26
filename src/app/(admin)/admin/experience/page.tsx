@@ -28,31 +28,18 @@ import {
   FaTrash,
   FaUniversity,
   FaCalendarAlt,
-  FaMapMarkerAlt,
   FaInfoCircle,
   FaLink,
   FaRocket,
   FaPenNib,
 } from "react-icons/fa";
 import { AdminDialogShell } from "../components/AdminDialogShell";
-import {
-  AdminField,
-  AdminInput,
-  AdminTextarea,
-} from "../components/AdminFields";
+import { AdminField, AdminInput } from "../components/AdminFields";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import ImageUpload from "../components/ImageUpload";
 
 interface Experience {
   _id?: string;
@@ -96,7 +83,7 @@ const ExpRow = forwardRef<HTMLDivElement, any>(
             "transition-colors duration-300 hover:border-slate-300 dark:hover:border-white/10 dark:bg-slate-900/40",
           isDragging && !isOverlay && "opacity-50",
           isOverlay &&
-            "z-[99999] border-emerald-500/50 shadow-2xl shadow-emerald-500/20 scale-[1.02] cursor-grabbing",
+            "z-99999 border-emerald-500/50 shadow-2xl shadow-emerald-500/20 scale-[1.02] cursor-grabbing",
         )}
       >
         <div

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { FaTimes, FaSave, FaCircle } from "react-icons/fa";
+import { FaSave } from "react-icons/fa";
 import { IconType } from "react-icons";
 import {
   Sheet,
@@ -9,7 +9,6 @@ import {
   SheetHeader,
   SheetTitle,
   SheetDescription,
-  SheetFooter,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -29,7 +28,6 @@ interface AdminSheetShellProps {
   savingLabel?: string;
   cancelLabel?: string;
   maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full";
-  showFooter?: boolean;
 }
 
 export function AdminSheetShell({
@@ -47,7 +45,6 @@ export function AdminSheetShell({
   savingLabel = "Saving...",
   cancelLabel = "Cancel",
   maxWidth = "3xl",
-  showFooter = true,
 }: AdminSheetShellProps) {
   // Map maxWidth to sheet specific classes if needed,
   // but Shadcn Sheet usually handles width via side or className.
@@ -116,7 +113,7 @@ export function AdminSheetShell({
                 <Button
                   onClick={onSave}
                   disabled={saving}
-                  className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl px-6 h-10 font-black shadow-[0_0_20px_rgba(16,185,129,0.2)] hover:shadow-[0_0_30px_rgba(16,185,129,0.3)] active:scale-[0.98] transition-all text-[10px] uppercase tracking-[0.15em] border border-emerald-400/20 min-w-[120px]"
+                  className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl px-6 h-10 font-black shadow-[0_0_20px_rgba(16,185,129,0.2)] hover:shadow-[0_0_30px_rgba(16,185,129,0.3)] active:scale-[0.98] transition-all text-[10px] uppercase tracking-[0.15em] border border-emerald-400/20 min-w-30"
                 >
                   {saving ? (
                     <div className="flex items-center gap-2">

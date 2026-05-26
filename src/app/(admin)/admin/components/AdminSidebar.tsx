@@ -10,10 +10,8 @@ import {
   FaUser,
   FaEnvelope,
   FaSignOutAlt,
-  FaExternalLinkAlt,
   FaChevronRight,
   FaRocket,
-  FaChartLine,
   FaChartBar,
   FaGraduationCap,
   FaLink,
@@ -24,7 +22,6 @@ import {
   FaFlask,
   FaProjectDiagram as FaWorkflow,
   FaCog,
-  FaLayerGroup,
 } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";

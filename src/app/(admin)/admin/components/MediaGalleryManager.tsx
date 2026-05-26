@@ -4,10 +4,7 @@ import {
   FaPlus,
   FaTimes,
   FaImage,
-  FaVideo,
   FaLink,
-  FaArrowUp,
-  FaArrowDown,
   FaTrash,
   FaInfoCircle,
 } from "react-icons/fa";
