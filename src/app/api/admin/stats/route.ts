@@ -58,7 +58,7 @@ export async function PATCH(req: Request) {
     const body = await req.json();
 
     if (id) {
-      const updated = await Stat.findByIdAndUpdate(id, body, { new: true });
+      const updated = await Stat.findByIdAndUpdate(id, body, { returnDocument: "after" });
       if (!updated)
         return NextResponse.json({ error: "Not found" }, { status: 404 });
       return NextResponse.json(updated);

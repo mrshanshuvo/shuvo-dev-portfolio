@@ -105,6 +105,11 @@ _Chronological log of agent interactions, tasks completed, and context switches.
   - Refactored `ProjectCard.tsx` to include a full-cover `<Link>` overlay (`absolute inset-0 z-10`).
   - Removed the "Explore Project" and "GitHub" buttons.
   - Retained the "Live Demo" button (if available), elevating it above the card link overlay (`relative z-20`) so it functions independently.
+- **Next Steps:** Await next task from the user.
+
+## [2026-05-26] Code Cleanup
+- **Task:** Resolve Mongoose `new` option deprecation warning.
+- **Actions:** Replaced all occurrences of `{ new: true }` with `{ returnDocument: "after" }` across all API route handlers (`src/app/api/admin/**/*.ts`).
 - **Next Steps:** Await next task from the user.## [2026-05-26] Minor Cleanup
 - **Task:** Resolve TypeScript unused import warning.
 - **Actions:** Removed the unused `mongoose` import in `src/app/api/admin/projects/[id]/route.ts`.

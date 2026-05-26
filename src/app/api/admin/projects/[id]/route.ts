@@ -66,7 +66,7 @@ export async function PATCH(req: Request, { params }: Params) {
     const body = await req.json();
     const sanitized = sanitizeProject(body);
 
-    const updated = await Project.findByIdAndUpdate(id, sanitized, { new: true }).lean();
+    const updated = await Project.findByIdAndUpdate(id, sanitized, { returnDocument: "after" }).lean();
     if (!updated) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     return NextResponse.json(updated);

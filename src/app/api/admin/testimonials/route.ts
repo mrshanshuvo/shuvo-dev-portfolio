@@ -59,7 +59,7 @@ export async function PATCH(req: Request) {
 
     if (id) {
       const updated = await Testimonial.findByIdAndUpdate(id, body, {
-        new: true,
+        returnDocument: "after",
       });
       if (!updated)
         return NextResponse.json({ error: "Not found" }, { status: 404 });

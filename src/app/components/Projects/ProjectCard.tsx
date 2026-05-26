@@ -75,7 +75,7 @@ export default function ProjectCard({
             src={project.image || "/images/placeholder.png"}
             alt={project.title}
             fill
-            priority={index < 2}
+            priority={index < 4}
             className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />

@@ -67,7 +67,7 @@ export async function PATCH(req: Request) {
     const body = await req.json();
 
     if (id) {
-      const updated = await Skill.findByIdAndUpdate(id, body, { new: true });
+      const updated = await Skill.findByIdAndUpdate(id, body, { returnDocument: "after" });
       if (!updated)
         return NextResponse.json({ error: "Not found" }, { status: 404 });
       return NextResponse.json(updated);
@@ -77,7 +77,7 @@ export async function PATCH(req: Request) {
       const updated = await Tech.findOneAndUpdate(
         {},
         { techList: body.techList || [] },
-        { upsert: true, new: true },
+        { upsert: true, returnDocument: "after" },
       );
       return NextResponse.json(updated);
     }
