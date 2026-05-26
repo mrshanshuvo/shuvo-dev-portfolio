@@ -9,7 +9,7 @@ export interface IProject extends Document {
   live: { label?: string; url: string }[];
   github: { label?: string; url: string }[];
   featured: boolean;
-  category: string;
+  category: string | string[];
   improvements: string[];
   media: {
     type: "image" | "video" | "embed";
@@ -42,7 +42,7 @@ const ProjectSchema = new Schema<IProject>(
       },
     ],
     featured: { type: Boolean, default: false },
-    category: { type: String, default: "Full Stack" },
+    category: [{ type: String }],
     improvements: [{ type: String }],
     media: [
       {

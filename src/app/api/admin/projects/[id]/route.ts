@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import Project from "@/models/Project";
-import mongoose from "mongoose";
-
 type Params = { params: Promise<{ id: string }> };
 
 function sanitizeProject(it: any) {
@@ -24,7 +22,7 @@ function sanitizeProject(it: any) {
       ? it.live.map((l: any) => ({ label: l.label || "Live Demo", url: l.url || "" }))
       : it.live ? [{ label: "Live Demo", url: it.live }] : [],
     featured: !!it.featured,
-    category: it.category || "Full Stack",
+    category: Array.isArray(it.category) ? it.category : it.category ? [it.category] : ["Full Stack"],
     improvements: Array.isArray(it.improvements) ? it.improvements : [],
     media: media.map((m: any) => ({
       type: ["image", "video", "embed"].includes(m.type) ? m.type : "image",

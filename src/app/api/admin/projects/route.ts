@@ -61,7 +61,7 @@ export async function PUT(req: Request) {
             ? it.live.map((l: any) => ({ label: l.label || "Live Demo", url: l.url || "" }))
             : it.live ? [{ label: "Live Demo", url: it.live }] : [],
           featured: !!it.featured,
-          category: it.category || "Full Stack",
+          category: Array.isArray(it.category) ? it.category : it.category ? [it.category] : ["Full Stack"],
           improvements: Array.isArray(it.improvements) ? it.improvements : [],
           media: media.map((m: any) => ({
             type: ["image", "video", "embed"].includes(m.type) ? m.type : "image",

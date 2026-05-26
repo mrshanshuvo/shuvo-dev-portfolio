@@ -85,3 +85,20 @@ _Chronological log of agent interactions, tasks completed, and context switches.
   - Updated the corresponding MongoDB documents to use the absolute `secure_url` returned by Cloudinary, completely decoupling the app from local images.
   - Cleaned up by deleting the temporary script.
 - **Next Steps:** Await next task from the user.
+
+## [2026-05-26] Bug Fix: Project Save 500 Error
+- **Task:** Resolve 500 Internal Server Error when patching/saving a project in the Admin dashboard.
+- **Actions:**
+  - Identified a Mongoose schema validation failure (`CastError`) where the frontend was sending the `category` field as an array of strings (from the combobox), but the `ProjectSchema` strictly expected a single `String`.
+  - Updated the `Project` model schema to define `category: [{ type: String }]` and updated the `IProject` interface.
+  - Updated both `src/app/api/admin/projects/route.ts` and `src/app/api/admin/projects/[id]/route.ts` to explicitly normalize the incoming `category` payload into an array (`Array.isArray(it.category) ? it.category : ...`).
+- **Next Steps:** Await next task from the user.
+
+## [2026-05-26] Performance Enhancement
+- **Task:** Fix Next.js LCP (Largest Contentful Paint) warning for project images.
+- **Actions:** Added `priority={index < 2}` to the Next.js `<Image>` component in `src/app/components/Projects/ProjectCard.tsx` to preload the above-the-fold images as requested by the warning.
+- **Next Steps:** Await next task from the user.
+## [2026-05-26] Minor Cleanup
+- **Task:** Resolve TypeScript unused import warning.
+- **Actions:** Removed the unused `mongoose` import in `src/app/api/admin/projects/[id]/route.ts`.
+- **Next Steps:** Await next task from the user.
