@@ -24,7 +24,6 @@ import {
   FaPlus,
   FaTimes,
   FaCheck,
-  FaSave,
   FaGithub,
   FaLinkedin,
   FaEnvelope,
@@ -38,7 +37,6 @@ import {
 import { SiLeetcode } from "react-icons/si";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -238,13 +236,16 @@ export default function AdminSocialsPage() {
 
   useEffect(() => {
     if (fetchedData) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setData(Array.isArray(fetchedData) ? fetchedData : []);
     }
   }, [fetchedData]);
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const res = await fetch(`/api/admin/socials?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/socials?id=${id}`, {
+        method: "DELETE",
+      });
       if (!res.ok) throw new Error("Failed to delete");
       return id;
     },
@@ -257,7 +258,7 @@ export default function AdminSocialsPage() {
     onError: () => {
       showToast("Failed to delete.", "error");
       setDeletingId(null);
-    }
+    },
   });
 
   async function handleDelete(id: string) {
@@ -291,7 +292,9 @@ export default function AdminSocialsPage() {
   const saveMutation = useMutation({
     mutationFn: async (social: SocialLink) => {
       const isEdit = !!social._id;
-      const url = isEdit ? `/api/admin/socials?id=${social._id}` : "/api/admin/socials";
+      const url = isEdit
+        ? `/api/admin/socials?id=${social._id}`
+        : "/api/admin/socials";
       const method = isEdit ? "PATCH" : "POST";
       const res = await fetch(url, {
         method,
@@ -308,7 +311,7 @@ export default function AdminSocialsPage() {
     },
     onError: () => {
       showToast("Failed to save.", "error");
-    }
+    },
   });
 
   async function handleAddOrUpdate() {

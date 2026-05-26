@@ -30,7 +30,6 @@ import {
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -165,13 +164,16 @@ export default function AdminStatsPage() {
 
   useEffect(() => {
     if (fetchedData) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setData(Array.isArray(fetchedData) ? fetchedData : []);
     }
   }, [fetchedData]);
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const res = await fetch(`/api/admin/stats?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/stats?id=${id}`, {
+        method: "DELETE",
+      });
       if (!res.ok) throw new Error("Failed to delete");
       return id;
     },
@@ -184,7 +186,7 @@ export default function AdminStatsPage() {
     onError: () => {
       showToast("Failed to delete.", "error");
       setDeletingId(null);
-    }
+    },
   });
 
   async function handleDelete(id: string) {
@@ -196,7 +198,9 @@ export default function AdminStatsPage() {
   const saveMutation = useMutation({
     mutationFn: async (stat: Stat) => {
       const isEdit = !!stat._id;
-      const url = isEdit ? `/api/admin/stats?id=${stat._id}` : "/api/admin/stats";
+      const url = isEdit
+        ? `/api/admin/stats?id=${stat._id}`
+        : "/api/admin/stats";
       const method = isEdit ? "PATCH" : "POST";
       const res = await fetch(url, {
         method,
@@ -213,7 +217,7 @@ export default function AdminStatsPage() {
     },
     onError: () => {
       showToast("Failed to save.", "error");
-    }
+    },
   });
 
   async function handleAddOrUpdate() {

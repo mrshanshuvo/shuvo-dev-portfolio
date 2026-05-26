@@ -1,6 +1,5 @@
 import { connectDB } from "@/lib/mongodb";
 import EducationModel from "@/models/Education";
-import type { Education as EducationType } from "@/types";
 import EducationClient from "./EducationClient";
 
 async function getEducation() {

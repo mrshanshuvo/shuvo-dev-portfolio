@@ -199,7 +199,7 @@ export default function AdminMessagesPage() {
                       <div className="flex justify-between items-start mb-2">
                         <p
                           className={cn(
-                            "font-bold truncate max-w-[150px]",
+                            "font-bold truncate max-w-37.5",
                             m.status === "unread"
                               ? "text-slate-900 dark:text-white"
                               : "text-slate-500 dark:text-slate-400",
@@ -298,7 +298,7 @@ export default function AdminMessagesPage() {
                   </Card>
                 </motion.div>
               ) : (
-                <div className="h-[500px] flex flex-col items-center justify-center text-center space-y-4 bg-white dark:bg-slate-900/20 rounded-[3rem] border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
+                <div className="h-125 flex flex-col items-center justify-center text-center space-y-4 bg-white dark:bg-slate-900/20 rounded-[3rem] border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
                   <div className="w-20 h-20 rounded-3xl bg-slate-50 dark:bg-slate-900 flex items-center justify-center text-slate-300 dark:text-slate-700">
                     <FaEnvelopeOpen size={40} />
                   </div>

@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { Certification } from "../../../types";
 import { FaAward, FaExternalLinkAlt, FaCalendarAlt } from "react-icons/fa";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import Image from "next/image";
 
 interface CertificationsViewProps {

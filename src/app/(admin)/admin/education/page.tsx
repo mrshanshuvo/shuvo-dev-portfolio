@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   DndContext,
@@ -37,7 +38,6 @@ import { AdminDialogShell } from "../components/AdminDialogShell";
 import {
   AdminField,
   AdminInput,
-  AdminTextarea,
 } from "../components/AdminFields";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -106,11 +106,14 @@ function SortableEduRow({
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3">
           {edu.logo ? (
-            <img
-              src={edu.logo}
-              alt={edu.institution}
-              className="w-8 h-8 rounded-lg object-contain bg-white/5 p-1"
-            />
+            <div className="relative w-8 h-8 rounded-lg overflow-hidden bg-white/5 shrink-0">
+              <Image
+                src={edu.logo}
+                alt={edu.institution}
+                fill
+                className="object-contain p-1"
+              />
+            </div>
           ) : (
             <div className="p-2 bg-blue-500/10 text-blue-400 rounded-lg">
               <FaGraduationCap size={14} />
@@ -197,6 +200,7 @@ export default function AdminEducationPage() {
 
   useEffect(() => {
     if (fetchedData) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setData(Array.isArray(fetchedData) ? fetchedData : []);
     }
   }, [fetchedData]);

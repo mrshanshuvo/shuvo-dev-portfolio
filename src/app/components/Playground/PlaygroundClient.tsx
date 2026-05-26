@@ -2,7 +2,6 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { FaFlask, FaArrowRight } from "react-icons/fa";
-import { Button } from "@/components/ui/button";
 import type { Demo } from "@/types";
 import PlaygroundCard from "./PlaygroundCard";
 

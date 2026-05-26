@@ -1,8 +1,6 @@
 export function SectionSkeleton({
-  rows = 3,
   cols = 3,
 }: {
-  rows?: number;
   cols?: number;
 }) {
   return (

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   DndContext,
@@ -103,11 +104,14 @@ function SortableBlogRow({
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3">
           {item.image ? (
-            <img
-              src={item.image}
-              alt={item.title}
-              className="w-12 h-8 rounded-lg object-cover border border-white/10"
-            />
+            <div className="relative w-12 h-8 rounded-lg overflow-hidden border border-white/10 shrink-0">
+              <Image
+                src={item.image}
+                alt={item.title}
+                fill
+                className="object-cover"
+              />
+            </div>
           ) : (
             <div className="p-2 bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-lg">
               <FaNewspaper size={14} />
@@ -205,13 +209,16 @@ export default function AdminBlogsPage() {
 
   useEffect(() => {
     if (fetchedData) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setData(Array.isArray(fetchedData) ? fetchedData : []);
     }
   }, [fetchedData]);
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const res = await fetch(`/api/admin/blogs?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/blogs?id=${id}`, {
+        method: "DELETE",
+      });
       if (!res.ok) throw new Error("Failed to delete");
       return id;
     },
@@ -224,7 +231,7 @@ export default function AdminBlogsPage() {
     onError: () => {
       showToast("Failed to delete.", "error");
       setDeletingId(null);
-    }
+    },
   });
 
   async function handleDelete(id: string) {
@@ -236,7 +243,9 @@ export default function AdminBlogsPage() {
   const saveMutation = useMutation({
     mutationFn: async (blog: Blog) => {
       const isEdit = !!blog._id;
-      const url = isEdit ? `/api/admin/blogs?id=${blog._id}` : "/api/admin/blogs";
+      const url = isEdit
+        ? `/api/admin/blogs?id=${blog._id}`
+        : "/api/admin/blogs";
       const method = isEdit ? "PATCH" : "POST";
       const res = await fetch(url, {
         method,
@@ -253,7 +262,7 @@ export default function AdminBlogsPage() {
     },
     onError: () => {
       showToast("Failed to save.", "error");
-    }
+    },
   });
 
   async function handleAddOrUpdate() {
@@ -471,7 +480,7 @@ export default function AdminBlogsPage() {
                     <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
                       A high-quality cover image significantly increases
                       click-through rates. Choose an image that visually
-                      summarizes your article's core topic.
+                      summarizes your article&apos;s core topic.
                     </p>
                   </div>
                 </div>

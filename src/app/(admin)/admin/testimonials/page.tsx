@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   DndContext,
@@ -99,11 +100,14 @@ function SortableTestimonialRow({
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3">
           {item.avatar ? (
-            <img
-              src={item.avatar}
-              alt={item.name}
-              className="w-8 h-8 rounded-full object-cover border border-white/10"
-            />
+            <div className="relative w-8 h-8 rounded-full overflow-hidden border border-white/10 shrink-0">
+              <Image
+                src={item.avatar}
+                alt={item.name}
+                fill
+                className="object-cover"
+              />
+            </div>
           ) : (
             <div className="p-2 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-full">
               <FaUser size={12} />
@@ -183,6 +187,7 @@ export default function AdminTestimonialsPage() {
 
   useEffect(() => {
     if (fetchedData) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setData(Array.isArray(fetchedData) ? fetchedData : []);
     }
   }, [fetchedData]);

@@ -4,7 +4,7 @@ import Message from "@/models/Message";
 import { auth } from "@/lib/auth";
 
 export async function DELETE(
-  req: NextRequest,
+  _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth();

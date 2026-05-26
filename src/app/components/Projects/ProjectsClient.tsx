@@ -1,12 +1,8 @@
 "use client";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import Image from "next/image";
-import { FaGithub, FaExternalLinkAlt, FaStar, FaCode } from "react-icons/fa";
+import { FaExternalLinkAlt, FaCode } from "react-icons/fa";
 import type { Project } from "@/types";
-import { getIcon } from "@/lib/techIconMap";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 
 import ProjectCard from "./ProjectCard";
 

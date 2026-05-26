@@ -3,7 +3,6 @@ import { useState, Suspense, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useSearchParams, useRouter } from "next/navigation";
-import Link from "next/link";
 
 function OtpInput({
   value,

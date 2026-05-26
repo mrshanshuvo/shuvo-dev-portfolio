@@ -10,7 +10,6 @@ import {
   FaSearch,
   FaFilter,
   FaStar,
-  FaRegStar,
   FaTrash,
   FaEdit,
   FaGithub,
@@ -19,7 +18,6 @@ import {
   FaVideo,
   FaGripVertical,
   FaCode,
-  FaInfoCircle,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -50,12 +48,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import type {
-  Project,
-  Category as ICategory,
-  MediaItem,
-  LinkItem,
-} from "@/types";
+import type { Project, Category as ICategory } from "@/types";
 import CategoryManagerDialog from "../components/CategoryManagerDialog";
 
 // ─── Sortable Row ───────────────────────────────────────────────────────────
@@ -340,12 +333,14 @@ export default function AdminProjectsListPage() {
 
   useEffect(() => {
     if (projectsData) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setData(Array.isArray(projectsData) ? projectsData : []);
     }
   }, [projectsData]);
 
   useEffect(() => {
     if (categoriesData) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCategories(Array.isArray(categoriesData) ? categoriesData : []);
     }
   }, [categoriesData]);
@@ -397,7 +392,9 @@ export default function AdminProjectsListPage() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const res = await fetch(`/api/admin/projects/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/projects/${id}`, {
+        method: "DELETE",
+      });
       if (!res.ok) throw new Error("Failed to delete");
       return id;
     },
@@ -410,7 +407,7 @@ export default function AdminProjectsListPage() {
     onError: () => {
       showToast("Failed to delete.", "error");
       setDeletingId(null);
-    }
+    },
   });
 
   async function handleDelete(id: string) {

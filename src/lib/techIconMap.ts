@@ -6,7 +6,6 @@ import {
   FaMobileAlt,
   FaGithub,
   FaPython,
-  FaDocker,
 } from "react-icons/fa";
 import {
   SiNextdotjs,
@@ -18,7 +17,6 @@ import {
   SiDocker,
   SiLeaflet,
   SiTypescript,
-  SiFirebase,
   SiPostgresql,
   SiRedis,
   SiGraphql,

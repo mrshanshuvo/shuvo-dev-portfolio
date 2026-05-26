@@ -1,17 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { About, Skill, Stat, Education } from "@/types";
+import type { About } from "@/types";
 import {
   FaPlus,
   FaTimes,
   FaCheck,
   FaSave,
   FaUser,
-  FaChartBar,
-  FaGraduationCap,
-  FaCode,
-  FaLayerGroup,
   FaLightbulb,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
@@ -32,14 +28,6 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-const ICON_OPTIONS = [
-  "SiReact",
-  "SiNodedotjs",
-  "FaDatabase",
-  "FaCloud",
-  "SiTensorflow",
-  "FaRobot",
-];
 
 const DEFAULT: About = {
   title: "Hello! I'm Shuvo",
@@ -54,7 +42,7 @@ const DEFAULT: About = {
 export default function AdminAboutPage() {
   const queryClient = useQueryClient();
   const [data, setData] = useState<About>(DEFAULT);
-  
+
   const [toast, setToast] = useState<{
     msg: string;
     type: "success" | "error";
@@ -62,7 +50,6 @@ export default function AdminAboutPage() {
 
   // Temp input states
   const [highlightInput, setHighlightInput] = useState("");
-  const [techInput, setTechInput] = useState("");
 
   function showToast(msg: string, type: "success" | "error" = "success") {
     setToast({ msg, type });
@@ -80,6 +67,7 @@ export default function AdminAboutPage() {
 
   useEffect(() => {
     if (fetchedData) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setData({ ...DEFAULT, ...fetchedData });
     }
   }, [fetchedData]);
@@ -115,7 +103,6 @@ export default function AdminAboutPage() {
     }));
     setHighlightInput("");
   }
-
 
   return (
     <div className="p-4 md:p-8 space-y-6">

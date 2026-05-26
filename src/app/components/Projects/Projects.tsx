@@ -1,6 +1,5 @@
 import { connectDB } from "@/lib/mongodb";
 import ProjectModel from "@/models/Project";
-import type { Project } from "@/types";
 import ProjectsClient from "./ProjectsClient";
 
 async function getProjects() {

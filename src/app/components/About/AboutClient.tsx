@@ -1,7 +1,7 @@
 "use client";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { FaRobot, FaCheckCircle, FaUser } from "react-icons/fa";
+import { FaCheckCircle, FaUser } from "react-icons/fa";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import type { About } from "@/types";
 

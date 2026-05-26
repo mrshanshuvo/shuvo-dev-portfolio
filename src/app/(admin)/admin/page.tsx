@@ -9,7 +9,6 @@ import {
   FaBriefcase,
   FaUser,
   FaHome,
-  FaArrowRight,
   FaRocket,
   FaChartLine,
   FaChartBar,
@@ -22,7 +21,6 @@ import {
   FaChevronRight,
   FaCog,
 } from "react-icons/fa";
-import { motion } from "framer-motion";
 import Message from "@/models/Message";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -32,8 +30,6 @@ import Blog from "@/models/Blog";
 import Service from "@/models/Service";
 import Testimonial from "@/models/Testimonial";
 import Certification from "@/models/Certification";
-import Workflow from "@/models/Workflow";
-import Demo from "@/models/Demo";
 
 import Visitor from "@/models/Visitor";
 
@@ -328,9 +324,13 @@ export default async function AdminDashboard() {
     {
       label: "Professional Identity",
       items: sections.filter((s) =>
-        ["Identity", "Social Links", "Biography", "Stats & Milestones", "Skills & Tech"].includes(
-          s.label,
-        ),
+        [
+          "Identity",
+          "Social Links",
+          "Biography",
+          "Stats & Milestones",
+          "Skills & Tech",
+        ].includes(s.label),
       ),
     },
     {

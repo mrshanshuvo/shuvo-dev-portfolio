@@ -1,29 +1,18 @@
 "use client";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { Hero, TypeSequenceItem, SocialLink } from "@/types";
+import type { Hero, TypeSequenceItem } from "@/types";
 import {
   FaPlus,
   FaTimes,
   FaCheck,
   FaSave,
-  FaGithub,
-  FaLinkedin,
-  FaEnvelope,
-  FaTwitter,
-  FaInstagram,
-  FaLink,
   FaUser,
   FaInfoCircle,
   FaImage,
-  FaFileAlt,
-  FaCog,
   FaGripLines,
 } from "react-icons/fa";
-import { SiLeetcode } from "react-icons/si";
 import { motion, AnimatePresence } from "framer-motion";
-import { TypeAnimation } from "react-type-animation";
-import Image from "next/image";
 import ImageUpload from "../components/ImageUpload";
 
 // dnd-kit
@@ -49,7 +38,6 @@ import { CSS } from "@dnd-kit/utilities";
 // Shadcn UI Imports
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Card,
   CardContent,
@@ -57,15 +45,8 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
 
 const DEFAULT: Hero = {
   name: "Shahid Hasan",
@@ -78,24 +59,6 @@ const DEFAULT: Hero = {
   profileImage: "/PP1.jpeg",
   resumeUrl: "/Resume_of_Shahid_Hasan_Shuvo.pdf",
   socialLinks: [],
-};
-
-const PLATFORM_OPTIONS = [
-  "GitHub",
-  "LinkedIn",
-  "LeetCode",
-  "Email",
-  "Twitter",
-  "Instagram",
-];
-
-const platformIconMap: Record<string, any> = {
-  GitHub: FaGithub,
-  LinkedIn: FaLinkedin,
-  LeetCode: SiLeetcode,
-  Email: FaEnvelope,
-  Twitter: FaTwitter,
-  Instagram: FaInstagram,
 };
 
 // ─── Sortable Sequence Row ────────────────────────────────────────────────────
@@ -205,18 +168,14 @@ function SeqOverlay({ seq }: { seq: TypeSequenceItem }) {
 }
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
-export default function AdminHeroPage() {
+function HeroFormClient({ initialData }: { initialData: Hero }) {
   const queryClient = useQueryClient();
-  const [data, setData] = useState<Hero>(DEFAULT);
-  const [uploading, setUploading] = useState<string | null>(null);
+  const [data, setData] = useState<Hero>(initialData);
   const [activeSeqId, setActiveSeqId] = useState<string | null>(null);
   const [toast, setToast] = useState<{
     msg: string;
     type: "success" | "error";
   } | null>(null);
-
-  const imageInputRef = useRef<HTMLInputElement>(null);
-  const resumeInputRef = useRef<HTMLInputElement>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
@@ -229,21 +188,6 @@ export default function AdminHeroPage() {
     setToast({ msg, type });
     setTimeout(() => setToast(null), 3000);
   }
-
-  const { data: fetchedData, isLoading: loading } = useQuery({
-    queryKey: ["hero"],
-    queryFn: async () => {
-      const r = await fetch("/api/admin/hero");
-      if (!r.ok) throw new Error("Failed to fetch hero");
-      return r.json();
-    },
-  });
-
-  useEffect(() => {
-    if (fetchedData) {
-      setData(Object.keys(fetchedData).length ? { ...DEFAULT, ...fetchedData } : DEFAULT);
-    }
-  }, [fetchedData]);
 
   const saveMutation = useMutation({
     mutationFn: async (heroData: Hero) => {
@@ -261,41 +205,11 @@ export default function AdminHeroPage() {
     },
     onError: () => {
       showToast("Failed to save changes.", "error");
-    }
+    },
   });
 
   async function handleSave() {
     saveMutation.mutate(data);
-  }
-
-  async function handleUpload(
-    e: React.ChangeEvent<HTMLInputElement>,
-    field: "profileImage" | "resumeUrl",
-  ) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setUploading(field);
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const res = await fetch("/api/admin/upload", {
-        method: "POST",
-        body: formData,
-      });
-      const d = await res.json();
-      if (d.url) {
-        setData((prev) => ({ ...prev, [field]: d.url }));
-        showToast("File uploaded successfully!");
-      } else {
-        showToast(d.error || "Upload failed", "error");
-      }
-    } catch (err) {
-      showToast("Upload failed", "error");
-    } finally {
-      setUploading(null);
-    }
   }
 
   const updateSeq = useCallback(
@@ -315,25 +229,6 @@ export default function AdminHeroPage() {
       typeSequences: d.typeSequences.filter((_, idx) => idx !== i),
     }));
   }, []);
-
-  function addLink() {
-    setData((d) => ({
-      ...d,
-      socialLinks: [
-        ...d.socialLinks,
-        { platform: "GitHub", href: "", label: "GitHub" },
-      ],
-    }));
-  }
-
-  function updateLink(i: number, field: keyof SocialLink, val: string) {
-    setData((d) => {
-      const links = [...d.socialLinks];
-      links[i] = { ...links[i], [field]: val };
-      if (field === "platform") links[i].label = val;
-      return { ...d, socialLinks: links };
-    });
-  }
 
   function handleSeqDragStart(e: DragStartEvent) {
     setActiveSeqId(e.active.id as string);
@@ -409,212 +304,182 @@ export default function AdminHeroPage() {
           {/* Floating save button will be at the bottom */}
 
           <div className="space-y-8">
-            {loading ? (
-              /* Skeleton State */
-              Array.from({ length: 3 }).map((_, i) => (
-                <motion.div
-                  key={`skeleton-${i}`}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                >
-                  <Card className="rounded-3xl border border-slate-200 dark:border-white/5 bg-white dark:bg-slate-900/20 backdrop-blur-sm overflow-hidden shadow-sm dark:shadow-none">
-                    <CardHeader className="pb-2">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2.5 bg-slate-100 dark:bg-slate-800/40 rounded-xl w-10 h-10 animate-pulse" />
-                        <div className="space-y-2">
-                          <div className="h-5 w-32 bg-slate-100 dark:bg-slate-800/60 rounded-lg animate-pulse" />
-                          <div className="h-3 w-48 bg-slate-800/30 rounded-lg animate-pulse" />
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="pt-6 space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="h-12 bg-slate-800/20 rounded-2xl animate-pulse" />
-                        <div className="h-12 bg-slate-800/20 rounded-2xl animate-pulse" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in duration-700">
-                <div className="flex flex-col gap-6">
-                  {/* Identity Card */}
-                  <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
-                    <CardHeader className="p-4 pb-1">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2.5 bg-blue-500/20 text-blue-400 rounded-xl">
-                          <FaUser size={20} />
-                        </div>
-                        <div>
-                          <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
-                            Identity
-                          </CardTitle>
-                          <CardDescription className="text-slate-500 dark:text-slate-400">
-                            Your personal branding and display name.
-                          </CardDescription>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                      <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
-                          First Name
-                        </label>
-                        <Input
-                          className="bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl focus-visible:ring-emerald-500/50 shadow-sm dark:shadow-none"
-                          value={data.name}
-                          onChange={(e) =>
-                            setData((d) => ({ ...d, name: e.target.value }))
-                          }
-                          placeholder="e.g. Shahid Hasan"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
-                          Last Name{" "}
-                          <span className="text-blue-400 font-normal">
-                            (Highlighted)
-                          </span>
-                        </label>
-                        <Input
-                          className="bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl focus-visible:ring-emerald-500/50 shadow-sm dark:shadow-none"
-                          value={data.lastName}
-                          onChange={(e) =>
-                            setData((d) => ({ ...d, lastName: e.target.value }))
-                          }
-                          placeholder="e.g. Shuvo"
-                        />
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Typing Sequences Card */}
-                  <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
-                    <CardHeader className="p-4 pb-1">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2.5 bg-purple-500/20 text-purple-400 rounded-xl">
-                            <FaInfoCircle size={20} />
-                          </div>
-                          <div>
-                            <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
-                              Typing Sequences
-                            </CardTitle>
-                          </div>
-                        </div>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            setData((d) => ({
-                              ...d,
-                              typeSequences: [
-                                ...d.typeSequences,
-                                { text: "", delay: 2000 },
-                              ],
-                            }))
-                          }
-                          className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-white/5 rounded-xl active:scale-95 shadow-sm dark:shadow-none"
-                        >
-                          <FaPlus size={12} className="mr-1" /> Add New
-                        </Button>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="pt-2">
-                      {/* Column labels */}
-                      {data.typeSequences.length > 0 && (
-                        <div className="flex items-center gap-4 px-1 mb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-600">
-                          <span className="w-5" />
-                          <span className="w-4" />
-                          <span className="flex-1">Text</span>
-                          <span className="w-28 text-center">Delay</span>
-                          <span className="w-9" />
-                        </div>
-                      )}
-
-                      {/* Sortable list */}
-                      <SortableContext
-                        items={data.typeSequences.map((_, i) => i.toString())}
-                        strategy={verticalListSortingStrategy}
-                      >
-                        <AnimatePresence mode="popLayout">
-                          {data.typeSequences.map((seq, i) => (
-                            <motion.div
-                              key={`seq-${i}`}
-                              initial={{ opacity: 0, y: 8 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, scale: 0.95 }}
-                              transition={{ duration: 0.16 }}
-                            >
-                              <SortableSeqItem
-                                id={i.toString()}
-                                seq={seq}
-                                index={i}
-                                onUpdate={updateSeq}
-                                onRemove={removeSeq}
-                              />
-                            </motion.div>
-                          ))}
-                        </AnimatePresence>
-                      </SortableContext>
-
-                      {data.typeSequences.length === 0 && (
-                        <div className="text-center py-8 bg-slate-50 dark:bg-slate-950/20 rounded-2xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
-                          <p className="text-slate-500 text-sm italic">
-                            No typing sequences added.
-                          </p>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </div>
-                {/* Assets Card */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in duration-700">
+              <div className="flex flex-col gap-6">
+                {/* Identity Card */}
                 <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
                   <CardHeader className="p-4 pb-1">
                     <div className="flex items-center gap-3">
-                      <div className="p-2.5 bg-amber-500/20 text-amber-400 rounded-xl">
-                        <FaImage size={20} />
+                      <div className="p-2.5 bg-blue-500/20 text-blue-400 rounded-xl">
+                        <FaUser size={20} />
                       </div>
                       <div>
                         <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
-                          Assets
+                          Identity
                         </CardTitle>
                         <CardDescription className="text-slate-500 dark:text-slate-400">
-                          Profile picture and resume document.
+                          Your personal branding and display name.
                         </CardDescription>
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="pt-2">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* Profile Image UI */}
-                      <div className="space-y-4">
-                        <ImageUpload
-                          label="Profile Image"
-                          value={data.profileImage}
-                          onChange={(url) =>
-                            setData((prev) => ({ ...prev, profileImage: url }))
-                          }
-                        />
-                      </div>
-
-                      {/* Resume PDF UI */}
-                      <div className="space-y-4">
-                        <ImageUpload
-                          label="Resume PDF"
-                          value={data.resumeUrl}
-                          onChange={(url) =>
-                            setData((prev) => ({ ...prev, resumeUrl: url }))
-                          }
-                        />
-                      </div>
+                  <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                        First Name
+                      </label>
+                      <Input
+                        className="bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl focus-visible:ring-emerald-500/50 shadow-sm dark:shadow-none"
+                        value={data.name}
+                        onChange={(e) =>
+                          setData((d) => ({ ...d, name: e.target.value }))
+                        }
+                        placeholder="e.g. Shahid Hasan"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                        Last Name{" "}
+                        <span className="text-blue-400 font-normal">
+                          (Highlighted)
+                        </span>
+                      </label>
+                      <Input
+                        className="bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl focus-visible:ring-emerald-500/50 shadow-sm dark:shadow-none"
+                        value={data.lastName}
+                        onChange={(e) =>
+                          setData((d) => ({ ...d, lastName: e.target.value }))
+                        }
+                        placeholder="e.g. Shuvo"
+                      />
                     </div>
                   </CardContent>
                 </Card>
+
+                {/* Typing Sequences Card */}
+                <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
+                  <CardHeader className="p-4 pb-1">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2.5 bg-purple-500/20 text-purple-400 rounded-xl">
+                          <FaInfoCircle size={20} />
+                        </div>
+                        <div>
+                          <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
+                            Typing Sequences
+                          </CardTitle>
+                        </div>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          setData((d) => ({
+                            ...d,
+                            typeSequences: [
+                              ...d.typeSequences,
+                              { text: "", delay: 2000 },
+                            ],
+                          }))
+                        }
+                        className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-white/5 rounded-xl active:scale-95 shadow-sm dark:shadow-none"
+                      >
+                        <FaPlus size={12} className="mr-1" /> Add New
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-2">
+                    {/* Column labels */}
+                    {data.typeSequences.length > 0 && (
+                      <div className="flex items-center gap-4 px-1 mb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-600">
+                        <span className="w-5" />
+                        <span className="w-4" />
+                        <span className="flex-1">Text</span>
+                        <span className="w-28 text-center">Delay</span>
+                        <span className="w-9" />
+                      </div>
+                    )}
+
+                    {/* Sortable list */}
+                    <SortableContext
+                      items={data.typeSequences.map((_, i) => i.toString())}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      <AnimatePresence mode="popLayout">
+                        {data.typeSequences.map((seq, i) => (
+                          <motion.div
+                            key={`seq-${i}`}
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            transition={{ duration: 0.16 }}
+                          >
+                            <SortableSeqItem
+                              id={i.toString()}
+                              seq={seq}
+                              index={i}
+                              onUpdate={updateSeq}
+                              onRemove={removeSeq}
+                            />
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
+                    </SortableContext>
+
+                    {data.typeSequences.length === 0 && (
+                      <div className="text-center py-8 bg-slate-50 dark:bg-slate-950/20 rounded-2xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
+                        <p className="text-slate-500 text-sm italic">
+                          No typing sequences added.
+                        </p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
               </div>
-            )}
+              {/* Assets Card */}
+              <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
+                <CardHeader className="p-4 pb-1">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-amber-500/20 text-amber-400 rounded-xl">
+                      <FaImage size={20} />
+                    </div>
+                    <div>
+                      <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
+                        Assets
+                      </CardTitle>
+                      <CardDescription className="text-slate-500 dark:text-slate-400">
+                        Profile picture and resume document.
+                      </CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-2">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Profile Image UI */}
+                    <div className="space-y-4">
+                      <ImageUpload
+                        label="Profile Image"
+                        value={data.profileImage}
+                        onChange={(url) =>
+                          setData((prev) => ({ ...prev, profileImage: url }))
+                        }
+                      />
+                    </div>
+
+                    {/* Resume PDF UI */}
+                    <div className="space-y-4">
+                      <ImageUpload
+                        label="Resume PDF"
+                        value={data.resumeUrl}
+                        onChange={(url) =>
+                          setData((prev) => ({ ...prev, resumeUrl: url }))
+                        }
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </div>
@@ -644,4 +509,60 @@ export default function AdminHeroPage() {
       </div>
     </DndContext>
   );
+}
+
+// ─── Main Page Container ──────────────────────────────────────────────────────
+export default function AdminHeroPage() {
+  const { data: fetchedData, isLoading: loading } = useQuery({
+    queryKey: ["hero"],
+    queryFn: async () => {
+      const r = await fetch("/api/admin/hero");
+      if (!r.ok) throw new Error("Failed to fetch hero");
+      return r.json();
+    },
+  });
+
+  if (loading) {
+    return (
+      <div className="p-4 md:p-8 space-y-6">
+        <div className="max-w-350 mx-auto space-y-6">
+          <div className="space-y-8">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <motion.div
+                key={`skeleton-${i}`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <Card className="rounded-3xl border border-slate-200 dark:border-white/5 bg-white dark:bg-slate-900/20 backdrop-blur-sm overflow-hidden shadow-sm dark:shadow-none">
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 bg-slate-100 dark:bg-slate-800/40 rounded-xl w-10 h-10 animate-pulse" />
+                      <div className="space-y-2">
+                        <div className="h-5 w-32 bg-slate-100 dark:bg-slate-800/60 rounded-lg animate-pulse" />
+                        <div className="h-3 w-48 bg-slate-800/30 rounded-lg animate-pulse" />
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-6 space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="h-12 bg-slate-800/20 rounded-2xl animate-pulse" />
+                      <div className="h-12 bg-slate-800/20 rounded-2xl animate-pulse" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const initialData =
+    fetchedData && Object.keys(fetchedData).length
+      ? { ...DEFAULT, ...fetchedData }
+      : DEFAULT;
+
+  return <HeroFormClient initialData={initialData} />;
 }

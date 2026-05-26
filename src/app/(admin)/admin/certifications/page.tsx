@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   DndContext,
@@ -27,7 +28,6 @@ import {
   FaEdit,
   FaTrash,
   FaCalendarAlt,
-  FaBuilding,
   FaLink,
   FaInfoCircle,
   FaCertificate,
@@ -99,11 +99,14 @@ function SortableCertRow({
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3">
           {item.image ? (
-            <img
-              src={item.image}
-              alt={item.title}
-              className="w-8 h-8 rounded-lg object-contain bg-white/5 p-1"
-            />
+            <div className="relative w-8 h-8 rounded-lg overflow-hidden bg-white/5 shrink-0">
+              <Image
+                src={item.image}
+                alt={item.title}
+                fill
+                className="object-contain p-1"
+              />
+            </div>
           ) : (
             <div className="p-2 bg-yellow-500/10 text-yellow-400 rounded-lg">
               <FaAward size={14} />
@@ -190,13 +193,16 @@ export default function AdminCertificationsPage() {
 
   useEffect(() => {
     if (fetchedData) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setData(Array.isArray(fetchedData) ? fetchedData : []);
     }
   }, [fetchedData]);
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const res = await fetch(`/api/admin/certifications?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/certifications?id=${id}`, {
+        method: "DELETE",
+      });
       if (!res.ok) throw new Error("Failed to delete");
       return id;
     },
@@ -209,7 +215,7 @@ export default function AdminCertificationsPage() {
     onError: () => {
       showToast("Failed to delete.", "error");
       setDeletingId(null);
-    }
+    },
   });
 
   async function handleDelete(id: string) {
@@ -221,7 +227,9 @@ export default function AdminCertificationsPage() {
   const saveMutation = useMutation({
     mutationFn: async (cert: Certification) => {
       const isEdit = !!cert._id;
-      const url = isEdit ? `/api/admin/certifications?id=${cert._id}` : "/api/admin/certifications";
+      const url = isEdit
+        ? `/api/admin/certifications?id=${cert._id}`
+        : "/api/admin/certifications";
       const method = isEdit ? "PATCH" : "POST";
       const res = await fetch(url, {
         method,
@@ -238,7 +246,7 @@ export default function AdminCertificationsPage() {
     },
     onError: () => {
       showToast("Failed to save.", "error");
-    }
+    },
   });
 
   async function handleAddOrUpdate() {
@@ -279,7 +287,9 @@ export default function AdminCertificationsPage() {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newData),
-      }).then(() => queryClient.invalidateQueries({ queryKey: ["certifications"] }));
+      }).then(() =>
+        queryClient.invalidateQueries({ queryKey: ["certifications"] }),
+      );
     }
     setActiveId(null);
   }

@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,13 +14,13 @@ export default function SettingsForm({
 }: {
   initialSettings: any;
 }) {
-  const queryClient = useQueryClient();
   const [settings, setSettings] = useState(initialSettings);
   const [status, setStatus] = useState<string | null>(null);
   const router = useRouter();
 
   // Keep local state in sync if initialSettings changes (though it's fetched via RSC)
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSettings(initialSettings);
   }, [initialSettings]);
 

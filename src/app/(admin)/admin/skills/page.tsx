@@ -22,7 +22,6 @@ import {
   FaPlus,
   FaTimes,
   FaCheck,
-  FaSave,
   FaCode,
   FaGripVertical,
   FaEdit,
@@ -228,6 +227,7 @@ export default function AdminSkillsPage() {
 
   useEffect(() => {
     if (data) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSkills(Array.isArray(data.skills) ? data.skills : []);
       setTechList(Array.isArray(data.techList) ? data.techList : []);
     }
