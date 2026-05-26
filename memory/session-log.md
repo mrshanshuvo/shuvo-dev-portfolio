@@ -98,7 +98,14 @@ _Chronological log of agent interactions, tasks completed, and context switches.
 - **Task:** Fix Next.js LCP (Largest Contentful Paint) warning for project images.
 - **Actions:** Added `priority={index < 2}` to the Next.js `<Image>` component in `src/app/components/Projects/ProjectCard.tsx` to preload the above-the-fold images as requested by the warning.
 - **Next Steps:** Await next task from the user.
-## [2026-05-26] Minor Cleanup
+
+## [2026-05-26] UI Tweak: Project Card Click Target
+- **Task:** Make the entire Project Card clickable, replacing the dedicated "Explore" and "GitHub" buttons.
+- **Actions:** 
+  - Refactored `ProjectCard.tsx` to include a full-cover `<Link>` overlay (`absolute inset-0 z-10`).
+  - Removed the "Explore Project" and "GitHub" buttons.
+  - Retained the "Live Demo" button (if available), elevating it above the card link overlay (`relative z-20`) so it functions independently.
+- **Next Steps:** Await next task from the user.## [2026-05-26] Minor Cleanup
 - **Task:** Resolve TypeScript unused import warning.
 - **Actions:** Removed the unused `mongoose` import in `src/app/api/admin/projects/[id]/route.ts`.
 - **Next Steps:** Await next task from the user.
