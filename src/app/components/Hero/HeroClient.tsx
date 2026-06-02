@@ -14,7 +14,6 @@ import type { Hero } from "@/types";
 import type { IconType } from "react-icons";
 import MagneticButton from "../MagneticButton";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 
 interface Props {
   hero: Hero;
@@ -38,6 +37,18 @@ export default function HeroClient({ hero }: Props) {
   // Build type animation sequence array: ["text", delay, "text", delay, ...]
   const typeSequence = hero.typeSequences.flatMap((s) => [s.text, s.delay]);
 
+  const parseMarkdown = (text: string): string => {
+    if (!text) return "";
+    let html = text;
+    // Bold: **text** -> <strong>text</strong>
+    html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+    // Italic: *text* -> <em>text</em>
+    html = html.replace(/\*(.*?)\*/g, "<em>$1</em>");
+    // Links: [text](url) -> <a href="url" target="_blank" rel="noopener noreferrer">text</a>
+    html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    return html;
+  };
+
   return (
     <section
       id="home"
@@ -55,7 +66,6 @@ export default function HeroClient({ hero }: Props) {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          
           {/* Left Column: Hero Details */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -67,7 +77,11 @@ export default function HeroClient({ hero }: Props) {
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+              transition={{
+                duration: 0.8,
+                delay: 0.1,
+                ease: [0.16, 1, 0.3, 1],
+              }}
               className="relative inline-block mb-6"
             >
               <div className="relative w-28 h-28 md:w-32 md:h-32 rounded-full p-1.5 bg-white/10 dark:bg-slate-900/50 backdrop-blur-md border border-slate-200/20 dark:border-white/10 shadow-2xl">
@@ -90,7 +104,11 @@ export default function HeroClient({ hero }: Props) {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              transition={{
+                delay: 0.2,
+                duration: 0.8,
+                ease: [0.16, 1, 0.3, 1],
+              }}
             >
               <h1 className="font-display text-4xl sm:text-5xl font-black text-slate-900 dark:text-white mb-3 tracking-tighter leading-tight">
                 {hero.name}{" "}
@@ -180,7 +198,9 @@ export default function HeroClient({ hero }: Props) {
                   <MagneticButton key={social.label} strength={25}>
                     <motion.a
                       href={href}
-                      target={social.platform === "Email" ? undefined : "_blank"}
+                      target={
+                        social.platform === "Email" ? undefined : "_blank"
+                      }
                       rel="noopener noreferrer"
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
@@ -213,25 +233,22 @@ export default function HeroClient({ hero }: Props) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
             id="about"
-            className="lg:col-span-7 w-full h-full flex items-center scroll-mt-24"
+            className="lg:col-span-7 w-full flex items-center scroll-mt-24"
           >
-            <Card className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl rounded-[2rem] p-8 md:p-10 border border-slate-200/50 dark:border-white/10 shadow-xl hover:shadow-2xl transition-all w-full overflow-hidden">
-              <CardContent className="p-0">
-                {(hero.bio || "").split("\n\n").map(
+            <div className="space-y-6 text-slate-600 dark:text-slate-400 text-base md:text-lg leading-relaxed font-normal
+              [&_a]:font-semibold [&_a]:text-slate-900 [&_a]:dark:text-slate-100 [&_a]:hover:text-emerald-500 [&_a]:dark:hover:text-emerald-400 [&_a]:transition-colors [&_a]:duration-200 [&_a]:cursor-pointer
+              [&_strong]:font-semibold [&_strong]:text-slate-900 [&_strong]:dark:text-slate-100
+              [&_b]:font-semibold [&_b]:text-slate-900 [&_b]:dark:text-slate-100">
+              {(hero.bio || "")
+                .split("\n\n")
+                .map(
                   (para, i) =>
                     para.trim() && (
-                      <p
-                        key={i}
-                        className="text-base md:text-lg text-slate-600 dark:text-slate-300 mb-6 leading-relaxed font-medium last:mb-0"
-                      >
-                        {para}
-                      </p>
+                      <p key={i} dangerouslySetInnerHTML={{ __html: parseMarkdown(para) }} />
                     ),
                 )}
-              </CardContent>
-            </Card>
+            </div>
           </motion.div>
-
         </div>
       </div>
 

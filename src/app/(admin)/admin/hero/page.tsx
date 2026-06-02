@@ -11,6 +11,9 @@ import {
   FaInfoCircle,
   FaImage,
   FaGripLines,
+  FaBold,
+  FaItalic,
+  FaLink,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import ImageUpload from "../components/ImageUpload";
@@ -177,6 +180,72 @@ function HeroFormClient({ initialData }: { initialData: Hero }) {
     msg: string;
     type: "success" | "error";
   } | null>(null);
+
+  const parseMarkdown = (text: string): string => {
+    if (!text) return "";
+    let html = text;
+    // Bold: **text** -> <strong>text</strong>
+    html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+    // Italic: *text* -> <em>text</em>
+    html = html.replace(/\*(.*?)\*/g, "<em>$1</em>");
+    // Links: [text](url) -> <a href="url" target="_blank" rel="noopener noreferrer">text</a>
+    html = html.replace(
+      /\[(.*?)\]\((.*?)\)/g,
+      '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>',
+    );
+    return html;
+  };
+
+  const insertMarkup = (tag: "bold" | "italic" | "link") => {
+    const textarea = document.getElementById(
+      "bio-textarea",
+    ) as HTMLTextAreaElement;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    const selectedText = text.substring(start, end);
+
+    let replacement = "";
+    if (tag === "bold") {
+      replacement = `**${selectedText || "bold text"}**`;
+    } else if (tag === "italic") {
+      replacement = `*${selectedText || "italic text"}*`;
+    } else if (tag === "link") {
+      const url = prompt("Enter the URL:", "https://");
+      if (url === null) return;
+      replacement = `[${selectedText || "link text"}](${url})`;
+    }
+
+    textarea.focus();
+
+    // Preserve Undo/Redo stack history natively in modern browsers
+    try {
+      textarea.setSelectionRange(start, end);
+      const inserted = document.execCommand("insertText", false, replacement);
+
+      // Fallback in case document.execCommand is not supported in the future or custom environments
+      if (!inserted) {
+        const newValue =
+          text.substring(0, start) + replacement + text.substring(end);
+        setData((d) => ({ ...d, bio: newValue }));
+      }
+    } catch (e) {
+      const newValue =
+        text.substring(0, start) + replacement + text.substring(end);
+      setData((d) => ({ ...d, bio: newValue }));
+    }
+
+    setTimeout(() => {
+      textarea.focus();
+      const offset = tag === "link" ? 1 : 2; // length of opening delimiters
+      textarea.setSelectionRange(
+        start + offset,
+        start + offset + (selectedText || "text").length,
+      );
+    }, 50);
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
@@ -367,19 +436,6 @@ function HeroFormClient({ initialData }: { initialData: Hero }) {
                         placeholder="e.g. Jr. Frontend Developer at Softvence Agency..."
                       />
                     </div>
-                    <div className="space-y-2 md:col-span-2">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
-                        Professional Biography
-                      </label>
-                      <textarea
-                        className="flex min-h-35 w-full rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/50 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-slate-900 dark:text-white shadow-sm dark:shadow-none leading-relaxed"
-                        value={data.bio || ""}
-                        onChange={(e) =>
-                          setData((d) => ({ ...d, bio: e.target.value }))
-                        }
-                        placeholder="Tell your story. Supports multiple paragraphs..."
-                      />
-                    </div>
                   </CardContent>
                 </Card>
 
@@ -507,6 +563,103 @@ function HeroFormClient({ initialData }: { initialData: Hero }) {
                 </CardContent>
               </Card>
             </div>
+
+            {/* Dedicated Standalone Professional Biography Card */}
+            <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none animate-in fade-in duration-700 delay-100">
+              <CardHeader className="p-6 pb-2 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-slate-950/20">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-emerald-500/20 text-emerald-400 rounded-xl">
+                      <FaInfoCircle size={20} />
+                    </div>
+                    <div>
+                      <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
+                        Professional Biography
+                      </CardTitle>
+                      <CardDescription className="text-slate-500 dark:text-slate-400">
+                        Write a compelling narrative of your coding journey and
+                        professional focus using our formatting toolbar.
+                      </CardDescription>
+                    </div>
+                  </div>
+
+                  {/* Formatting Toolbar moved to card header for optimal space usage */}
+                  <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-xl border border-slate-200 dark:border-white/5 self-start sm:self-center">
+                    <button
+                      type="button"
+                      onClick={() => insertMarkup("bold")}
+                      title="Format Bold (<strong>)"
+                      className="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg transition-colors cursor-pointer"
+                    >
+                      <FaBold size={11} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertMarkup("italic")}
+                      title="Format Italic (<em>)"
+                      className="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg transition-colors cursor-pointer"
+                    >
+                      <FaItalic size={11} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => insertMarkup("link")}
+                      title="Format Link (<a>)"
+                      className="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg transition-colors cursor-pointer"
+                    >
+                      <FaLink size={11} />
+                    </button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Left Column: Biography Editor */}
+                  <div className="space-y-2 flex flex-col h-full">
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                      Edit Biography Text
+                    </label>
+                    <textarea
+                      id="bio-textarea"
+                      className="flex-1 min-h-80 lg:min-h-120 w-full rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/50 px-4 py-3 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-slate-900 dark:text-white shadow-sm dark:shadow-none leading-relaxed"
+                      value={data.bio || ""}
+                      onChange={(e) =>
+                        setData((d) => ({ ...d, bio: e.target.value }))
+                      }
+                      placeholder="Tell your story. Supports multiple paragraphs..."
+                    />
+                  </div>
+
+                  {/* Right Column: Styled Live Biography Preview */}
+                  <div className="space-y-2 flex flex-col h-full border-t lg:border-t-0 lg:border-l border-slate-200 dark:border-white/5 pt-6 lg:pt-0 lg:pl-6">
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                      Live Biography Preview
+                    </label>
+                    <div
+                      className="flex-1 p-6 bg-slate-50/50 dark:bg-slate-950/20 rounded-2xl border border-slate-200 dark:border-white/5 space-y-4 text-slate-600 dark:text-slate-400 text-base leading-relaxed font-normal min-h-80 lg:min-h-120 overflow-y-auto
+                      [&_a]:font-semibold [&_a]:text-slate-900 [&_a]:dark:text-slate-100 [&_a]:hover:text-emerald-500 [&_a]:dark:hover:text-emerald-400 [&_a]:transition-colors [&_a]:duration-200
+                      [&_strong]:font-semibold [&_strong]:text-slate-900 [&_strong]:dark:text-slate-100
+                      [&_b]:font-semibold [&_b]:text-slate-900 [&_b]:dark:text-slate-100"
+                    >
+                      {data.bio ? (
+                        data.bio.split("\n\n").map((para, i) => (
+                          <p
+                            key={i}
+                            dangerouslySetInnerHTML={{
+                              __html: parseMarkdown(para),
+                            }}
+                          />
+                        ))
+                      ) : (
+                        <p className="italic text-slate-500">
+                          No biography typed yet.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
