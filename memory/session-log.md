@@ -151,3 +151,25 @@ _Chronological log of agent interactions, tasks completed, and context switches.
   - Committed: `refactor: remove Testimonials, Services, Workflows, and Stats collections for minimal Brittany Chiang-inspired portfolio aesthetic` (−2,991 lines).
 - **Design Rationale:** Brittany Chiang's portfolio focuses on Hero → About → Experience → Projects → Contact. Testimonials, Services, Workflows, and Stats are patterns from freelancer/agency portfolios and don't fit the minimal dev aesthetic.
 - **Next Steps:** Update memory files. Await next task from the user.
+
+## [2026-06-02] Dynamic Icon Registry Migration
+
+- **Task:** Migrate away from hardcoded SVGs in `techIconMap` to a scalable, Mongoose-driven technology and skills registry using `next/image`.
+- **Actions:**
+  - Expanded `Skill` model to support `iconSlug`, `brandColor`, and `isTechnology`.
+  - Migrated hardcoded tech icons into the database, generating `iconRegistry` dynamic components.
+  - Refactored `ProjectCard`, `PlaygroundCard`, and `SkillsClient` to consume dynamic database properties (SVG links, brand colors) in lieu of static mappings.
+  - Replaced all legacy `<img>` tags with optimized `<Image>` components globally.
+- **Next Steps:** Continue to clean up architecture.
+
+## [2026-06-02] Strict React Hook Architecture Refactor
+
+- **Task:** Eliminate React Hooks anti-patterns and remove `eslint-disable` suppressions across the frontend and admin dashboards.
+- **Actions:**
+  - Replaced manual `useEffect` local state syncing with direct render-phase tracking (`prevFetchedData`) across all dashboard pages (Experience, Education, Demos, Certifications, Blogs, Settings).
+  - Refactored `admin/messages/page.tsx` to leverage `@tanstack/react-query` to unify data-fetching architecture.
+  - Eliminated `// eslint-disable-next-line react-hooks/set-state-in-effect` directives globally.
+  - Resolved strict hydration warnings in `AdminThemeToggle`, `ThemeToggle`, `Navbar`, and `CustomCursor` by offloading `setState` into `requestAnimationFrame` microtasks.
+  - Stripped redundant `isMounted` states from client portal components (e.g., `ImageUpload.tsx`).
+  - Committed: `refactor: resolve react-hooks/set-state-in-effect issues and upgrade icon system`.
+- **Next Steps:** Await next task from the user.

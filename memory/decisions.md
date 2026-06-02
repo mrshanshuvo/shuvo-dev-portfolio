@@ -29,3 +29,15 @@ _This file tracks significant design and architectural decisions made during dev
 - **Context:** The portfolio had 19 collections including agency-style features (Testimonials, Services, Workflows, Stats) that don't fit a minimal developer portfolio inspired by brittanychiang.com.
 - **Decision:** Remove Testimonials, Services, Workflows, and Stats entirely — models, types, API routes, admin pages, and public components. The retained flow is: Hero → About → Experience → Projects → Playground → Skills → Education → Certifications → Blog → Contact.
 - **Consequences:** Simpler codebase (−2,991 lines), tighter public page flow, fewer admin sections to manage. The Mongoose models and MongoDB collections still exist in the database but are no longer referenced by the app. They can be dropped manually if desired.
+
+### [2026-06-02] - Centralized DB-Driven Tech Icons
+
+- **Context:** Icons and tech stack identifiers were hardcoded in `techIconMap.ts`, resulting in duplicate imports, bundle bloat, and inability to manage skills via CMS.
+- **Decision:** Deprecate static maps and migrate `isTechnology`, `iconSlug`, and `brandColor` into the `Skill` MongoDB schema. Use a dynamic `iconRegistry` helper and `next/image` to render brand-aligned icons.
+- **Consequences:** Admin users can fully manage the tech stack without codebase deployments. Removed SVG bloat and standardized Next.js image loading.
+
+### [2026-06-02] - Strict React Hook Adherence & Render-Phase Updates
+
+- **Context:** The codebase used `useEffect` extensively to synchronize local component state with fetched data, triggering a custom ESLint warning (`react-hooks/set-state-in-effect`) about cascading renders, which had been previously suppressed using `eslint-disable`.
+- **Decision:** Remove all `eslint-disable` suppressions. Adopt render-phase state synchronization by explicitly tracking previous state references during the render cycle instead of inside `useEffect`. For hydration bypassing, leverage `requestAnimationFrame` to delay the state update asynchronously without triggering synchronous `setState` in effect warnings.
+- **Consequences:** Cleaner, strictly compliant React architecture with zero suppressed linter errors. Resolves cascading render performance hits, though requires slightly more verbose boilerplate for render-phase checking.
