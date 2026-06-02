@@ -235,7 +235,9 @@ export default function AdminSkillsPage() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const res = await fetch(`/api/admin/skills?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/skills?id=${id}`, {
+        method: "DELETE",
+      });
       if (!res.ok) throw new Error("Failed to delete");
       return id;
     },
@@ -248,11 +250,10 @@ export default function AdminSkillsPage() {
     onError: () => {
       showToast("Failed to delete.", "error");
       setDeletingId(null);
-    }
+    },
   });
 
   async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this skill expertise?")) return;
     setDeletingId(id);
     deleteMutation.mutate(id);
   }
@@ -260,7 +261,9 @@ export default function AdminSkillsPage() {
   const saveMutation = useMutation({
     mutationFn: async (skill: Skill) => {
       const isEdit = !!skill._id;
-      const url = isEdit ? `/api/admin/skills?id=${skill._id}` : "/api/admin/skills";
+      const url = isEdit
+        ? `/api/admin/skills?id=${skill._id}`
+        : "/api/admin/skills";
       const method = isEdit ? "PATCH" : "POST";
       const res = await fetch(url, {
         method,
@@ -277,7 +280,7 @@ export default function AdminSkillsPage() {
     },
     onError: () => {
       showToast("Failed to save.", "error");
-    }
+    },
   });
 
   async function handleAddOrUpdate() {
@@ -357,7 +360,9 @@ export default function AdminSkillsPage() {
             <div
               className={cn(
                 "p-1.5 rounded-full",
-                toast.type === "success" ? "bg-emerald-500/20" : "bg-red-500/20",
+                toast.type === "success"
+                  ? "bg-emerald-500/20"
+                  : "bg-red-500/20",
               )}
             >
               {toast.type === "success" ? (
@@ -366,7 +371,9 @@ export default function AdminSkillsPage() {
                 <FaTimes size={10} />
               )}
             </div>
-            <span className="font-bold text-sm tracking-tight">{toast.msg}</span>
+            <span className="font-bold text-sm tracking-tight">
+              {toast.msg}
+            </span>
           </motion.div>
         )}
       </AnimatePresence>
