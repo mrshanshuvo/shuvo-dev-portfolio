@@ -45,7 +45,10 @@ export default function HeroClient({ hero }: Props) {
     // Italic: *text* -> <em>text</em>
     html = html.replace(/\*(.*?)\*/g, "<em>$1</em>");
     // Links: [text](url) -> <a href="url" target="_blank" rel="noopener noreferrer">text</a>
-    html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    html = html.replace(
+      /\[(.*?)\]\((.*?)\)/g,
+      '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>',
+    );
     return html;
   };
 
@@ -113,7 +116,7 @@ export default function HeroClient({ hero }: Props) {
             >
               <h1 className="font-display text-4xl sm:text-5xl font-black text-slate-900 dark:text-white mb-3 tracking-tighter leading-tight">
                 {hero.name}{" "}
-                <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-500 to-blue-600 dark:from-emerald-400 dark:to-blue-500">
+                <span className="text-emerald-500 dark:text-emerald-400">
                   {hero.lastName}
                 </span>
               </h1>
@@ -235,16 +238,23 @@ export default function HeroClient({ hero }: Props) {
             transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
             className="lg:col-span-7 w-full flex items-center"
           >
-            <div className="space-y-6 text-slate-600 dark:text-slate-400 text-base md:text-lg leading-relaxed font-normal
+            <div
+              className="space-y-6 text-slate-600 dark:text-slate-400 text-base md:text-lg leading-relaxed font-normal
               [&_a]:font-semibold [&_a]:text-slate-900 [&_a]:dark:text-slate-100 [&_a]:hover:text-emerald-500 [&_a]:dark:hover:text-emerald-400 [&_a]:transition-colors [&_a]:duration-200 [&_a]:cursor-pointer
               [&_strong]:font-semibold [&_strong]:text-slate-900 [&_strong]:dark:text-slate-100
-              [&_b]:font-semibold [&_b]:text-slate-900 [&_b]:dark:text-slate-100">
+              [&_b]:font-semibold [&_b]:text-slate-900 [&_b]:dark:text-slate-100"
+            >
               {(hero.bio || "")
                 .split("\n\n")
                 .map(
                   (para, i) =>
                     para.trim() && (
-                      <p key={i} dangerouslySetInnerHTML={{ __html: parseMarkdown(para) }} />
+                      <p
+                        key={i}
+                        dangerouslySetInnerHTML={{
+                          __html: parseMarkdown(para),
+                        }}
+                      />
                     ),
                 )}
             </div>

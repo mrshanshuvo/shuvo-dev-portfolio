@@ -50,7 +50,10 @@ export default function ProjectsArchiveClient({ projects }: Props) {
             animate={{ opacity: 1, y: 0 }}
             className="text-5xl md:text-7xl font-black text-slate-900 dark:text-white mb-6 tracking-tight"
           >
-            Technical <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-teal-500">Showcases</span>
+            Technical{" "}
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-teal-500">
+              Showcases
+            </span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}
@@ -58,7 +61,8 @@ export default function ProjectsArchiveClient({ projects }: Props) {
             transition={{ delay: 0.2 }}
             className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium"
           >
-            A curated collection of production applications, custom packages, and open-source contributions.
+            A curated collection of production applications, custom packages,
+            and open-source contributions.
           </motion.p>
         </div>
 

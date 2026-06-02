@@ -158,9 +158,9 @@ export default function Navbar({ resumeUrl }: Props) {
                   <Image
                     src="/favicons/android-chrome-512x512.png"
                     alt="Logo"
-                    width={36}
-                    height={36}
-                    className="rounded-lg ring-2 ring-emerald-500/20 dark:ring-emerald-400/20"
+                    width={40}
+                    height={40}
+                    className="rounded-lg"
                     priority
                   />
                 </div>
