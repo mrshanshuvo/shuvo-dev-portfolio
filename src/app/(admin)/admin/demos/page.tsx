@@ -27,7 +27,6 @@ import {
   FaEdit,
   FaTrash,
   FaLink,
-  FaCode,
   FaInfoCircle,
   FaStar,
   FaImage,
@@ -46,6 +45,8 @@ import {
   AdminInput,
   AdminTextarea,
 } from "../components/AdminFields";
+import TechCombobox from "../components/TechCombobox";
+import type { Skill } from "@/types";
 
 interface Demo {
   _id?: string;
@@ -187,7 +188,7 @@ export default function AdminDemosPage() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentDemo, setCurrentDemo] = useState<Demo | null>(null);
-  const [techInput, setTechInput] = useState("");
+  const [technologies, setTechnologies] = useState<Skill[]>([]);
   const [toast, setToast] = useState<{
     msg: string;
     type: "success" | "error";
@@ -220,6 +221,17 @@ export default function AdminDemosPage() {
       setData(Array.isArray(fetchedData) ? fetchedData : []);
     }
   }, [fetchedData]);
+
+  // Fetch technologies from the central Skill registry
+  useEffect(() => {
+    fetch("/api/admin/skills")
+      .then((r) => r.json())
+      .then((data) => {
+        const allSkills: Skill[] = Array.isArray(data?.skills) ? data.skills : [];
+        setTechnologies(allSkills.filter((s) => s.isTechnology));
+      })
+      .catch(console.error);
+  }, []);
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
@@ -600,76 +612,13 @@ export default function AdminDemosPage() {
                 </AdminField>
 
                 <AdminField label="Technologies Used">
-                  <div className="space-y-4">
-                    <div className="flex gap-3">
-                      <AdminInput
-                        icon={FaCode}
-                        value={techInput}
-                        onChange={(e) => setTechInput(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
-                            if (techInput.trim()) {
-                              setCurrentDemo({
-                                ...currentDemo,
-                                tech: [...currentDemo.tech, techInput.trim()],
-                              });
-                              setTechInput("");
-                            }
-                          }
-                        }}
-                        placeholder="Add tech..."
-                        className="h-12 text-sm"
-                      />
-                      <Button
-                        type="button"
-                        onClick={() => {
-                          if (techInput.trim()) {
-                            setCurrentDemo({
-                              ...currentDemo,
-                              tech: [...currentDemo.tech, techInput.trim()],
-                            });
-                            setTechInput("");
-                          }
-                        }}
-                        className="h-12 px-6 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-bold border border-white/5 shadow-inner shadow-black/20"
-                      >
-                        <FaPlus size={14} />
-                      </Button>
-                    </div>
-                    <div className="flex flex-wrap gap-2 pt-2">
-                      <AnimatePresence>
-                        {currentDemo.tech.map((t, i) => (
-                          <motion.div
-                            key={i}
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.8 }}
-                          >
-                            <Badge
-                              variant="secondary"
-                              className="bg-slate-950/40 text-indigo-400 border-white/5 shadow-inner shadow-black/10 px-3 py-2 gap-2 rounded-xl group transition-all"
-                            >
-                              <span className="text-xs font-bold">{t}</span>
-                              <button
-                                onClick={() =>
-                                  setCurrentDemo({
-                                    ...currentDemo,
-                                    tech: currentDemo.tech.filter(
-                                      (_, idx) => idx !== i,
-                                    ),
-                                  })
-                                }
-                                className="text-slate-500 hover:text-red-400 p-1 transition-colors"
-                              >
-                                <FaTimes size={10} />
-                              </button>
-                            </Badge>
-                          </motion.div>
-                        ))}
-                      </AnimatePresence>
-                    </div>
-                  </div>
+                  <TechCombobox
+                    value={currentDemo.tech}
+                    onChange={(val) =>
+                      setCurrentDemo({ ...currentDemo, tech: val })
+                    }
+                    technologies={technologies}
+                  />
                 </AdminField>
               </div>
             </div>

@@ -7,7 +7,6 @@ import {
   FaSave,
   FaStar,
   FaRegStar,
-  FaCode,
   FaInfoCircle,
   FaPlus,
   FaTrash,
@@ -17,8 +16,8 @@ import ImageUpload from "../../components/ImageUpload";
 import MediaGalleryManager from "../../components/MediaGalleryManager";
 import MultiLinkManager from "../../components/MultiLinkManager";
 import CategoryCombobox from "../../components/CategoryCombobox";
+import TechCombobox from "../../components/TechCombobox";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   AdminField,
   AdminInput,
@@ -30,6 +29,7 @@ import type {
   MediaItem,
   Category as ICategory,
   LinkItem,
+  Skill,
 } from "@/types";
 
 const EMPTY_PROJECT: Omit<Project, "_id"> = {
@@ -55,7 +55,7 @@ export default function ProjectEditPage() {
 
   const [form, setForm] = useState<Omit<Project, "_id">>(EMPTY_PROJECT);
   const [categories, setCategories] = useState<ICategory[]>([]);
-  const [techInput, setTechInput] = useState("");
+  const [technologies, setTechnologies] = useState<Skill[]>([]);
   const [impInput, setImpInput] = useState("");
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
@@ -86,12 +86,17 @@ export default function ProjectEditPage() {
   useEffect(() => {
     const fetches: Promise<any>[] = [
       fetch("/api/admin/categories").then((r) => r.json()),
+      fetch("/api/admin/skills").then((r) => r.json()),
     ];
     if (!isNew) {
       fetches.push(fetch(`/api/admin/projects/${id}`).then((r) => r.json()));
     }
-    Promise.all(fetches).then(([cats, project]) => {
+    Promise.all(fetches).then(([cats, skillsData, project]) => {
       setCategories(Array.isArray(cats) ? cats : []);
+      const allSkills: Skill[] = Array.isArray(skillsData?.skills)
+        ? skillsData.skills
+        : [];
+      setTechnologies(allSkills.filter((s) => s.isTechnology));
       if (project) {
         // Coerce nullable fields to safe defaults
         setForm({
@@ -149,13 +154,6 @@ export default function ProjectEditPage() {
     } else {
       showToast("Failed to save.", "error");
     }
-  }
-
-  function addTech() {
-    const val = techInput.trim();
-    if (!val || form.techNames.includes(val)) return;
-    update("techNames", [...form.techNames, val]);
-    setTechInput("");
   }
 
   function addImprovement() {
@@ -321,51 +319,11 @@ export default function ProjectEditPage() {
             </AdminField>
 
             <AdminField label="Tech Stack">
-              <div className="space-y-4">
-                <div className="flex gap-3">
-                  <AdminInput
-                    icon={FaCode}
-                    value={techInput}
-                    onChange={(e) => setTechInput(e.target.value)}
-                    onKeyDown={(e) =>
-                      e.key === "Enter" && (e.preventDefault(), addTech())
-                    }
-                    placeholder="Add technology..."
-                  />
-                  <Button
-                    onClick={addTech}
-                    className="bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white rounded-2xl h-14 w-14 shrink-0 border border-slate-200 dark:border-white/5 shadow-inner shadow-black/5 dark:shadow-black/20"
-                  >
-                    <FaPlus size={14} />
-                  </Button>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <AnimatePresence mode="popLayout">
-                    {form.techNames.map((t) => (
-                      <motion.div
-                        key={t}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.8 }}
-                      >
-                        <Badge className="bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs group/badge cursor-default">
-                          {t}
-                          <FaTimes
-                            size={9}
-                            className="text-slate-600 group-hover/badge:text-red-400 cursor-pointer transition-colors"
-                            onClick={() =>
-                              update(
-                                "techNames",
-                                form.techNames.filter((x) => x !== t),
-                              )
-                            }
-                          />
-                        </Badge>
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                </div>
-              </div>
+              <TechCombobox
+                value={form.techNames}
+                onChange={(val) => update("techNames", val)}
+                technologies={technologies}
+              />
             </AdminField>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

@@ -28,13 +28,13 @@ import {
   FaTrash,
   FaLaptopCode,
   FaInfoCircle,
+  FaPalette,
 } from "react-icons/fa";
 import { SiReact, SiNodedotjs, SiTensorflow } from "react-icons/si";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Shadcn UI Imports
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -85,6 +85,9 @@ interface Skill {
   tech: string;
   level: number;
   iconName: string;
+  iconSlug?: string;
+  brandColor?: string;
+  isTechnology?: boolean;
 }
 
 function SortableSkillRow({
@@ -193,8 +196,8 @@ function SortableSkillRow({
 export default function AdminSkillsPage() {
   const queryClient = useQueryClient();
   const [skills, setSkills] = useState<Skill[]>([]);
-  const [techList, setTechList] = useState<string[]>([]);
-  const [techInput, setTechInput] = useState("");
+  const expertises = skills.filter((s) => !s.isTechnology);
+  const technologies = skills.filter((s) => !!s.isTechnology);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -229,7 +232,6 @@ export default function AdminSkillsPage() {
     if (data) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setSkills(Array.isArray(data.skills) ? data.skills : []);
-      setTechList(Array.isArray(data.techList) ? data.techList : []);
     }
   }, [data]);
 
@@ -298,7 +300,10 @@ export default function AdminSkillsPage() {
       name: "",
       tech: "",
       level: 80,
-      iconName: "SiReact",
+      iconName: "FaCode",
+      iconSlug: "",
+      brandColor: "",
+      isTechnology: false,
     });
     setIsDialogOpen(true);
   }
@@ -318,28 +323,6 @@ export default function AdminSkillsPage() {
       }).then(() => queryClient.invalidateQueries({ queryKey: ["skills"] }));
     }
     setActiveId(null);
-  }
-
-  async function addTech() {
-    if (!techInput.trim()) return;
-    const newList = [...techList, techInput.trim()];
-    setTechList(newList);
-    setTechInput("");
-    await fetch("/api/admin/skills?type=banner", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ techList: newList }),
-    }).then(() => queryClient.invalidateQueries({ queryKey: ["skills"] }));
-  }
-
-  async function removeTech(idx: number) {
-    const newList = techList.filter((_, i) => i !== idx);
-    setTechList(newList);
-    await fetch("/api/admin/skills?type=banner", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ techList: newList }),
-    }).then(() => queryClient.invalidateQueries({ queryKey: ["skills"] }));
   }
 
   return (
@@ -385,7 +368,13 @@ export default function AdminSkillsPage() {
               variant="outline"
               className="bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[10px]"
             >
-              {skills.length} Expertise Areas
+              {expertises.length} Expertise Areas
+            </Badge>
+            <Badge
+              variant="outline"
+              className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[10px]"
+            >
+              {technologies.length} Brand Techs
             </Badge>
           </div>
           <Button
@@ -414,14 +403,14 @@ export default function AdminSkillsPage() {
                     />
                   ))}
                 </div>
-              ) : skills.length === 0 ? (
+              ) : expertises.length === 0 ? (
                 <div className="text-center py-16 bg-white dark:bg-slate-950/20 rounded-3xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
                   <FaLaptopCode
                     className="mx-auto text-slate-200 dark:text-slate-800 mb-4"
                     size={40}
                   />
                   <p className="text-slate-400 dark:text-slate-500 font-medium">
-                    No skills found. Add your expertise above.
+                    No expertises found. Add your expertise above.
                   </p>
                 </div>
               ) : (
@@ -432,12 +421,12 @@ export default function AdminSkillsPage() {
                   onDragEnd={handleDragEnd}
                 >
                   <SortableContext
-                    items={skills.map((s) => s._id!)}
+                    items={expertises.map((s) => s._id!)}
                     strategy={verticalListSortingStrategy}
                   >
                     <div className="space-y-3">
                       <AnimatePresence mode="popLayout">
-                        {skills.map((skill) => (
+                        {expertises.map((skill) => (
                           <SortableSkillRow
                             key={skill._id}
                             skill={skill}
@@ -475,58 +464,73 @@ export default function AdminSkillsPage() {
 
           <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
             <CardHeader className="p-4 pb-1">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 rounded-xl">
-                  <FaCode size={20} />
+              <div className="flex flex-row items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 rounded-xl">
+                    <FaCode size={20} />
+                  </div>
+                  <div>
+                    <CardTitle className="text-slate-900 dark:text-white">
+                      Brand Tech Registry ({technologies.length})
+                    </CardTitle>
+                    <CardDescription className="text-slate-500 dark:text-slate-500">
+                      Technologies with custom colors & icons selectable in
+                      Projects.
+                    </CardDescription>
+                  </div>
                 </div>
-                <div>
-                  <CardTitle className="text-slate-900 dark:text-white">
-                    Tech Stack List
-                  </CardTitle>
-                  <CardDescription className="text-slate-500 dark:text-slate-500">
-                    Technologies displayed in the scrolling banner.
-                  </CardDescription>
-                </div>
+                <Button
+                  onClick={() => {
+                    setCurrentSkill({
+                      name: "",
+                      tech: "Technology",
+                      level: 80,
+                      iconName: "FaCode",
+                      iconSlug: "",
+                      brandColor: "#10B981",
+                      isTechnology: true,
+                    });
+                    setIsDialogOpen(true);
+                  }}
+                  className="bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold px-4 h-9 shadow-lg shadow-blue-600/20 text-xs active:scale-95 transition-all cursor-pointer"
+                >
+                  <FaPlus className="mr-1.5" size={10} /> Add Tech
+                </Button>
               </div>
             </CardHeader>
             <CardContent className="space-y-6 pt-2">
-              <div className="flex flex-wrap gap-2 min-h-10 p-3 bg-slate-50 dark:bg-slate-950/20 rounded-2xl border border-slate-200 dark:border-white/5">
-                {techList.map((t, i) => (
+              <div className="flex flex-wrap gap-2.5 min-h-20 p-4 bg-slate-50 dark:bg-slate-950/20 rounded-2xl border border-slate-200 dark:border-white/5">
+                {technologies.map((t) => (
                   <Badge
-                    key={i}
+                    key={t._id}
                     variant="outline"
-                    className="pl-3 pr-1 py-1 gap-1 bg-white dark:bg-slate-950 border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 rounded-lg group shadow-sm dark:shadow-none"
+                    className="pl-3 pr-2 py-2 gap-2 bg-white dark:bg-slate-950 border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 rounded-xl group shadow-sm dark:shadow-none hover:scale-102 transition-transform cursor-default"
+                    style={{
+                      borderLeft: `3px solid ${t.brandColor || "#10B981"}`,
+                    }}
                   >
-                    {t}
-                    <button
-                      onClick={() => removeTech(i)}
-                      className="h-5 w-5 rounded-full hover:bg-red-500/10 dark:hover:bg-red-500/20 hover:text-red-500 dark:hover:text-red-400 flex items-center justify-center transition-colors"
-                    >
-                      <FaTimes size={10} />
-                    </button>
+                    <span className="text-xs font-black">{t.name}</span>
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={() => openEdit(t)}
+                        className="h-5 w-5 rounded-full hover:bg-blue-500/10 dark:hover:bg-blue-500/20 hover:text-blue-500 flex items-center justify-center transition-colors cursor-pointer"
+                      >
+                        <FaEdit size={10} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(t._id!)}
+                        className="h-5 w-5 rounded-full hover:bg-red-500/10 dark:hover:bg-red-500/20 hover:text-red-500 flex items-center justify-center transition-colors cursor-pointer"
+                      >
+                        <FaTrash size={9} />
+                      </button>
+                    </div>
                   </Badge>
                 ))}
-                {techList.length === 0 && (
-                  <p className="text-[10px] text-slate-700 uppercase tracking-widest font-bold m-auto">
-                    List is empty
+                {technologies.length === 0 && (
+                  <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold m-auto py-6">
+                    No brand technologies registered
                   </p>
                 )}
-              </div>
-
-              <div className="flex gap-2 items-end">
-                <Input
-                  className="bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-white/5 rounded-xl focus-visible:ring-purple-500/30 h-11 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
-                  value={techInput}
-                  onChange={(e) => setTechInput(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && addTech()}
-                  placeholder="Add technology (e.g. Docker)..."
-                />
-                <Button
-                  onClick={addTech}
-                  className="bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white rounded-xl px-6 h-11 font-bold shrink-0 transition-all active:scale-95"
-                >
-                  Add
-                </Button>
               </div>
             </CardContent>
           </Card>
@@ -547,46 +551,121 @@ export default function AdminSkillsPage() {
         savingLabel="Processing..."
         maxWidth="5xl"
       >
+        {" "}
         {currentSkill && (
           <div className="px-1">
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-10">
-              {/* Left Column: Visuals & Mastery */}
+              {/* Left Column: Visuals & Classification */}
               <div className="space-y-8">
-                <AdminField label="Visual Icon">
-                  <AdminSelect
-                    value={currentSkill.iconName}
-                    onValueChange={(val) => {
-                      if (val) {
-                        setCurrentSkill((prev) =>
-                          prev ? { ...prev, iconName: val } : null,
-                        );
-                      }
-                    }}
-                    options={ICON_OPTIONS.map((p) => ({
-                      label: p,
-                      value: p,
-                      icon: iconOptionsMap[p] || <FaCode size={10} />,
-                    }))}
-                    placeholder="Select icon"
-                  />
-                </AdminField>
-
-                <AdminField label={`Expertise Mastery: ${currentSkill.level}%`}>
-                  <div className="pt-4 px-2">
-                    <Slider
-                      value={[currentSkill.level]}
-                      max={100}
-                      step={1}
-                      onValueChange={(val: number | readonly number[]) => {
-                        const level = Array.isArray(val) ? val[0] : val;
-                        setCurrentSkill((prev) =>
-                          prev ? { ...prev, level } : null,
-                        );
-                      }}
-                      className="cursor-pointer"
-                    />
+                <AdminField label="Skill Classification">
+                  <div className="flex items-center h-12 px-4 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-white/5 rounded-xl">
+                    <label className="flex items-center gap-3 cursor-pointer w-full select-none">
+                      <input
+                        type="checkbox"
+                        checked={!!currentSkill.isTechnology}
+                        onChange={(e) => {
+                          const isTech = e.target.checked;
+                          setCurrentSkill((prev) =>
+                            prev
+                              ? {
+                                  ...prev,
+                                  isTechnology: isTech,
+                                  tech: isTech ? "Technology" : "",
+                                  iconName: isTech ? "FaCode" : "SiReact",
+                                }
+                              : null,
+                          );
+                        }}
+                        className="size-4 accent-purple-500 rounded border-slate-300 dark:border-white/10 dark:bg-slate-950 focus:ring-purple-500 cursor-pointer"
+                      />
+                      <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                        Is Technology Logo / Brand
+                      </span>
+                    </label>
                   </div>
                 </AdminField>
+
+                {!currentSkill.isTechnology ? (
+                  <>
+                    <AdminField label="Visual Icon">
+                      <AdminSelect
+                        value={currentSkill.iconName}
+                        onValueChange={(val) => {
+                          if (val) {
+                            setCurrentSkill((prev) =>
+                              prev ? { ...prev, iconName: val } : null,
+                            );
+                          }
+                        }}
+                        options={ICON_OPTIONS.map((p) => ({
+                          label: p,
+                          value: p,
+                          icon: iconOptionsMap[p] || <FaCode size={10} />,
+                        }))}
+                        placeholder="Select icon"
+                      />
+                    </AdminField>
+
+                    <AdminField
+                      label={`Expertise Mastery: ${currentSkill.level}%`}
+                    >
+                      <div className="pt-4 px-2">
+                        <Slider
+                          value={[currentSkill.level]}
+                          max={100}
+                          step={1}
+                          onValueChange={(val: number | readonly number[]) => {
+                            const level = Array.isArray(val) ? val[0] : val;
+                            setCurrentSkill((prev) =>
+                              prev ? { ...prev, level } : null,
+                            );
+                          }}
+                          className="cursor-pointer"
+                        />
+                      </div>
+                    </AdminField>
+                  </>
+                ) : (
+                  <>
+                    <AdminField label="Simple Icon Slug">
+                      <AdminInput
+                        icon={FaLaptopCode}
+                        value={currentSkill.iconSlug || ""}
+                        onChange={(e) =>
+                          setCurrentSkill((prev) =>
+                            prev ? { ...prev, iconSlug: e.target.value } : null,
+                          )
+                        }
+                        placeholder="e.g. react (see simpleicons.org)"
+                      />
+                    </AdminField>
+
+                    <AdminField label="Brand Color (Hex)">
+                      <div className="flex gap-3 items-center">
+                        <AdminInput
+                          icon={FaPalette}
+                          value={currentSkill.brandColor || ""}
+                          onChange={(e) =>
+                            setCurrentSkill((prev) =>
+                              prev
+                                ? { ...prev, brandColor: e.target.value }
+                                : null,
+                            )
+                          }
+                          placeholder="e.g. #61DAFB"
+                          className="flex-1"
+                        />
+                        <div
+                          className="w-10 h-10 rounded-xl border border-slate-200 dark:border-white/10 shrink-0 shadow-sm"
+                          style={{
+                            backgroundColor:
+                              currentSkill.brandColor || "#10B981",
+                          }}
+                        />
+                      </div>
+                    </AdminField>
+                  </>
+                )}
 
                 <div className="p-6 bg-purple-500/5 border border-purple-500/10 dark:border-purple-500/20 rounded-3xl flex items-start gap-4 shadow-sm dark:shadow-none">
                   <FaInfoCircle
@@ -598,9 +677,9 @@ export default function AdminSkillsPage() {
                       Technical Branding
                     </p>
                     <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
-                      Select an icon that best represents this technology.
-                      Mastery levels help visitors understand your depth of
-                      knowledge.
+                      {currentSkill.isTechnology
+                        ? "Define the SimpleIcons slug and brand color. Your icon will display in the scrolling tech marquee and as selectable tags."
+                        : "Select an icon that best represents this technology. Mastery levels help visitors understand your depth of knowledge."}
                     </p>
                   </div>
                 </div>
@@ -608,34 +687,44 @@ export default function AdminSkillsPage() {
 
               {/* Right Column: Skill Identity */}
               <div className="space-y-6">
-                <AdminField label="Expertise Title">
+                <AdminField
+                  label={
+                    currentSkill.isTechnology
+                      ? "Technology Brand Name"
+                      : "Expertise Title"
+                  }
+                >
                   <AdminInput
                     icon={FaLaptopCode}
                     value={currentSkill.name}
                     onChange={(e) =>
-                      setCurrentSkill({
-                        ...currentSkill,
-                        name: e.target.value,
-                      })
+                      setCurrentSkill((prev) =>
+                        prev ? { ...prev, name: e.target.value } : null,
+                      )
                     }
-                    placeholder="e.g. Full Stack Development"
+                    placeholder={
+                      currentSkill.isTechnology
+                        ? "e.g. React"
+                        : "e.g. Full Stack Development"
+                    }
                   />
                 </AdminField>
 
-                <AdminField label="Stack / Technologies">
-                  <AdminInput
-                    icon={FaCode}
-                    className="font-medium text-sm"
-                    value={currentSkill.tech}
-                    onChange={(e) =>
-                      setCurrentSkill({
-                        ...currentSkill,
-                        tech: e.target.value,
-                      })
-                    }
-                    placeholder="e.g. React, Next.js, TypeScript"
-                  />
-                </AdminField>
+                {!currentSkill.isTechnology && (
+                  <AdminField label="Stack / Technologies">
+                    <AdminInput
+                      icon={FaCode}
+                      className="font-medium text-sm"
+                      value={currentSkill.tech}
+                      onChange={(e) =>
+                        setCurrentSkill((prev) =>
+                          prev ? { ...prev, tech: e.target.value } : null,
+                        )
+                      }
+                      placeholder="e.g. React, Next.js, TypeScript"
+                    />
+                  </AdminField>
+                )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-4">
                   <div className="p-4 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-white/5 rounded-2xl flex flex-col gap-1 shadow-sm dark:shadow-none">

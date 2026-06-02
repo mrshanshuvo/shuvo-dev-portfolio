@@ -50,10 +50,14 @@ export interface Experience {
 }
 
 export interface Skill {
+  _id?: string;
   name: string;
   tech: string;
   level: number;
   iconName: string;
+  iconSlug?: string;
+  brandColor?: string;
+  isTechnology?: boolean;
 }
 
 export interface SocialLink {
