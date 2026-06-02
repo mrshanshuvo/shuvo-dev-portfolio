@@ -11,11 +11,8 @@ import {
   FaHome,
   FaRocket,
   FaChartLine,
-  FaChartBar,
   FaEnvelope,
-  FaQuoteLeft,
   FaAward,
-  FaServicestack,
   FaFlask,
   FaPenNib,
   FaChevronRight,
@@ -27,8 +24,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 import Blog from "@/models/Blog";
-import Service from "@/models/Service";
-import Testimonial from "@/models/Testimonial";
 import Certification from "@/models/Certification";
 
 import Visitor from "@/models/Visitor";
@@ -40,8 +35,6 @@ async function getStats() {
     expCount,
     msgCount,
     blogCount,
-    serviceCount,
-    testimonialCount,
     certCount,
     visitorStats,
     visitorTrend,
@@ -50,8 +43,6 @@ async function getStats() {
     Experience.countDocuments(),
     Message.countDocuments({ status: "unread" }),
     Blog.countDocuments(),
-    Service.countDocuments(),
-    Testimonial.countDocuments(),
     Certification.countDocuments(),
     Visitor.aggregate([{ $group: { _id: null, total: { $sum: "$count" } } }]),
     Visitor.find().sort({ date: -1 }).limit(7).lean(),
@@ -62,8 +53,6 @@ async function getStats() {
     expCount,
     msgCount,
     blogCount,
-    serviceCount,
-    testimonialCount,
     certCount,
     visitorCount: visitorStats[0]?.total || 0,
     visitorTrend: visitorTrend.reverse().map((v: any) => ({
@@ -82,14 +71,12 @@ async function getRecentActivity() {
     recentBlogs,
     recentExp,
     recentCerts,
-    recentTestimonials,
   ] = await Promise.all([
     Project.find().sort({ updatedAt: -1 }).limit(3).lean(),
     Message.find().sort({ createdAt: -1 }).limit(3).lean(),
     Blog.find().sort({ updatedAt: -1 }).limit(2).lean(),
     Experience.find().sort({ updatedAt: -1 }).limit(2).lean(),
     Certification.find().sort({ updatedAt: -1 }).limit(2).lean(),
-    Testimonial.find().sort({ updatedAt: -1 }).limit(2).lean(),
   ]);
 
   const activities = [
@@ -123,12 +110,7 @@ async function getRecentActivity() {
       time: c.updatedAt,
       action: "Added",
     })),
-    ...recentTestimonials.map((t: any) => ({
-      type: "Testimonial",
-      title: t.name,
-      time: t.updatedAt,
-      action: "Updated",
-    })),
+
   ]
     .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
     .slice(0, 6);
@@ -173,15 +155,7 @@ const sections = [
     gradient: "from-purple-500/20 to-purple-600/5 border-purple-500/20",
     iconColor: "text-purple-400",
   },
-  {
-    href: "/admin/stats",
-    label: "Stats & Milestones",
-    desc: "Showcase your achievements in numbers (projects, years, etc.)",
-    icon: FaChartBar,
-    color: "amber",
-    gradient: "from-amber-500/20 to-amber-600/5 border-amber-500/20",
-    iconColor: "text-amber-400",
-  },
+
   {
     href: "/admin/skills",
     label: "Skills & Tech",
@@ -191,24 +165,7 @@ const sections = [
     gradient: "from-pink-500/20 to-pink-600/5 border-pink-500/20",
     iconColor: "text-pink-400",
   },
-  {
-    href: "/admin/services",
-    label: "Services",
-    desc: "Define your professional offerings for clients",
-    icon: FaServicestack,
-    color: "emerald",
-    gradient: "from-emerald-500/20 to-emerald-600/5 border-emerald-500/20",
-    iconColor: "text-emerald-400",
-  },
-  {
-    href: "/admin/workflow",
-    label: "Methodology",
-    desc: "Showcase your development and engineering process",
-    icon: FaProjectDiagram,
-    color: "amber",
-    gradient: "from-amber-500/20 to-amber-600/5 border-amber-500/20",
-    iconColor: "text-amber-400",
-  },
+
   {
     href: "/admin/projects",
     label: "Projects",
@@ -263,15 +220,7 @@ const sections = [
     gradient: "from-amber-500/20 to-amber-600/5 border-amber-500/20",
     iconColor: "text-amber-400",
   },
-  {
-    href: "/admin/testimonials",
-    label: "Testimonials",
-    desc: "Manage client feedback and social proof",
-    icon: FaQuoteLeft,
-    color: "blue",
-    gradient: "from-blue-500/20 to-blue-600/5 border-blue-500/20",
-    iconColor: "text-blue-400",
-  },
+
   {
     href: "/admin/settings",
     label: "Settings",
@@ -328,21 +277,14 @@ export default async function AdminDashboard() {
           "Identity",
           "Social Links",
           "Biography",
-          "Stats & Milestones",
           "Skills & Tech",
         ].includes(s.label),
       ),
     },
     {
-      label: "Professional Offerings",
-      items: sections.filter((s) =>
-        ["Services", "Methodology"].includes(s.label),
-      ),
-    },
-    {
       label: "Portfolio & Writing",
       items: sections.filter((s) =>
-        ["Projects", "Playground", "Blog & Writing", "Testimonials"].includes(
+        ["Projects", "Playground", "Blog & Writing"].includes(
           s.label,
         ),
       ),
@@ -474,9 +416,7 @@ export default async function AdminDashboard() {
                           {act.type === "Certification" && (
                             <FaAward size={16} />
                           )}
-                          {act.type === "Testimonial" && (
-                            <FaQuoteLeft size={16} />
-                          )}
+
                         </div>
                         {idx !== activities.length - 1 && (
                           <div className="w-px h-full bg-slate-200 dark:bg-white/5 mt-2" />

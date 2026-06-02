@@ -7,12 +7,9 @@ import Education from "@/app/components/Education/Education";
 import Contact from "@/app/components/Contact/Contact";
 import Projects from "@/app/components/Projects/Projects";
 import Experience from "@/app/components/Experience/Experience";
-import Services from "@/app/components/Services/Services";
-import Workflow from "@/app/components/Workflow/Workflow";
 import Playground from "@/app/components/Playground/Playground";
 import Blog from "@/app/components/Writing/Blog";
 import Certifications from "@/app/components/Certifications/Certifications";
-import Testimonials from "@/app/components/Testimonials/Testimonials";
 import VisitorTracker from "@/app/components/Analytics/VisitorTracker";
 import {
   SectionSkeleton,
@@ -59,15 +56,7 @@ export default async function Home() {
         <Suspense fallback={<SectionSkeleton cols={1} />}>
           <Skills />
         </Suspense>
-        <Suspense fallback={<SectionSkeleton cols={3} />}>
-          <Testimonials />
-        </Suspense>
-        <Suspense fallback={<SectionSkeleton cols={3} />}>
-          <Services />
-        </Suspense>
-        <Suspense fallback={<SectionSkeleton cols={4} />}>
-          <Workflow />
-        </Suspense>
+
         <Suspense fallback={<SectionSkeleton cols={3} />}>
           <Education />
         </Suspense>

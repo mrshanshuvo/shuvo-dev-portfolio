@@ -12,15 +12,11 @@ import {
   FaSignOutAlt,
   FaChevronRight,
   FaRocket,
-  FaChartBar,
   FaGraduationCap,
   FaLink,
-  FaQuoteLeft,
   FaAward,
   FaPenNib,
-  FaServicestack,
   FaFlask,
-  FaProjectDiagram as FaWorkflow,
   FaCog,
 } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
@@ -62,12 +58,7 @@ const navItems = [
     icon: FaUser,
     color: "text-pink-400",
   },
-  {
-    href: "/admin/stats",
-    label: "Stats & Milestones",
-    icon: FaChartBar,
-    color: "text-amber-400",
-  },
+
   {
     type: "label",
     label: "Professional",
@@ -78,18 +69,7 @@ const navItems = [
     icon: FaRocket,
     color: "text-purple-500",
   },
-  {
-    href: "/admin/services",
-    label: "Services",
-    icon: FaServicestack,
-    color: "text-emerald-400",
-  },
-  {
-    href: "/admin/workflow",
-    label: "Methodology",
-    icon: FaWorkflow,
-    color: "text-amber-400",
-  },
+
   {
     type: "label",
     label: "Portfolio",
@@ -112,12 +92,7 @@ const navItems = [
     icon: FaPenNib,
     color: "text-blue-400",
   },
-  {
-    href: "/admin/testimonials",
-    label: "Testimonials",
-    icon: FaQuoteLeft,
-    color: "text-blue-500",
-  },
+
   {
     type: "label",
     label: "Timeline",

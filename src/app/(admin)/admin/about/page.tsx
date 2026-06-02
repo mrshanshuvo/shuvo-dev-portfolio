@@ -34,7 +34,6 @@ const DEFAULT: About = {
   bio1: "",
   bio2: "",
   highlights: [],
-  stats: [],
   skills: [],
   education: [],
 };

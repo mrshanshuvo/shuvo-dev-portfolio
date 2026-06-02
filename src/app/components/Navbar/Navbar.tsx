@@ -40,14 +40,11 @@ export default function Navbar({ resumeUrl }: Props) {
       "about",
       "skills",
       "education",
-      "services",
-      "workflow",
       "experience",
       "projects",
       "playground",
       "blog",
       "certifications",
-      "testimonials",
       "contact",
     ];
 
@@ -105,9 +102,6 @@ export default function Navbar({ resumeUrl }: Props) {
       case "skills":
       case "playground":
         return "projects";
-      case "testimonials":
-      case "workflow":
-        return "services";
       case "education":
       case "certifications":
       case "blog":
@@ -124,7 +118,6 @@ export default function Navbar({ resumeUrl }: Props) {
     { id: "about", label: "About" },
     { id: "experience", label: "Experience" },
     { id: "projects", label: "Projects" },
-    { id: "services", label: "Services" },
   ];
 
   const moreNavItems: NavItem[] = [

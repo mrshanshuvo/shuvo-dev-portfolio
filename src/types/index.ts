@@ -56,14 +56,7 @@ export interface Skill {
   iconName: string;
 }
 
-export interface Stat {
-  _id?: string;
-  number: string;
-  label: string;
-  createdAt?: string; // ISO date string
-  updatedAt?: string; // ISO date string
-  order?: number; // display order
-}
+
 
 export interface SocialLink {
   platform: string;
@@ -89,7 +82,6 @@ export interface Profile {
   aboutTitle: string;
   aboutBio: string;
   highlights: string[];
-  stats: Stat[];
   skills: Skill[];
 }
 
@@ -114,7 +106,6 @@ export interface About {
   bio1: string;
   bio2: string;
   highlights: string[];
-  stats: Stat[];
   skills: Skill[];
   education: Education[];
 }
@@ -149,15 +140,7 @@ export interface Status {
   type: "success" | "error" | "loading" | "";
 }
 
-export interface Testimonial {
-  _id?: string;
-  name: string;
-  role: string;
-  content: string;
-  avatar?: string;
-  company?: string;
-  order: number;
-}
+
 
 export interface Certification {
   _id?: string;
@@ -183,22 +166,9 @@ export interface Blog {
   order: number;
 }
 
-export interface Service {
-  _id?: string;
-  title: string;
-  description: string;
-  icon: string;
-  features: string[];
-  order: number;
-}
 
-export interface WorkflowStep {
-  _id?: string;
-  title: string;
-  description: string;
-  icon: string;
-  order: number;
-}
+
+
 
 export interface Category {
   _id?: string;

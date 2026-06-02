@@ -13,11 +13,6 @@ export default function AboutClient({ about }: Props) {
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
-  };
-
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
@@ -50,32 +45,6 @@ export default function AboutClient({ about }: Props) {
               <FaUser /> Cinematic Profile
             </motion.h2>
           </div>
-        </motion.div>
-
-        {/* Stats */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-          className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8"
-        >
-          {about.stats.map((stat, index) => (
-            <motion.div
-              key={index}
-              variants={itemVariants}
-              whileHover={{ y: -5, scale: 1.02 }}
-              className="relative group h-full"
-            >
-              <Card className="h-full text-center p-6 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl rounded-2xl border border-slate-200/50 dark:border-white/10 hover:border-emerald-500/50 transition-all duration-300 shadow-xl overflow-hidden">
-                <div className="font-display text-5xl font-black bg-linear-to-r from-emerald-600 to-blue-600 dark:from-emerald-400 dark:to-blue-500 bg-clip-text text-transparent mb-2">
-                  {stat.number}
-                </div>
-                <div className="text-sm font-bold tracking-widest uppercase text-slate-500 dark:text-slate-400">
-                  {stat.label}
-                </div>
-              </Card>
-            </motion.div>
-          ))}
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
