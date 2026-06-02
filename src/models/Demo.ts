@@ -2,8 +2,12 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 
 export interface IDemo extends Document {
   title: string;
+  slug: string;
   description: string;
   url: string;
+  github?: string;
+  featured?: boolean;
+  image?: string;
   skillIds: mongoose.Types.ObjectId[];
   media: {
     type: "image" | "video" | "embed";
@@ -16,8 +20,12 @@ export interface IDemo extends Document {
 const DemoSchema = new Schema<IDemo>(
   {
     title: { type: String, required: true },
+    slug: { type: String, required: true, unique: true },
     description: { type: String, required: true },
     url: { type: String, required: true },
+    github: { type: String },
+    featured: { type: Boolean, default: false },
+    image: { type: String },
     skillIds: [{ type: Schema.Types.ObjectId, ref: "Skill" }],
     media: [
       {

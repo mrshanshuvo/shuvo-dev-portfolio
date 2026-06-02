@@ -150,8 +150,8 @@ export default function SkillsClient({ skills, techList }: Props) {
               <div className="absolute inset-y-0 right-0 w-16 md:w-32 bg-linear-to-l from-white dark:from-slate-950 to-transparent z-10 pointer-events-none" />
 
               <motion.div
-                className="flex space-x-12 px-6 flex-nowrap w-max shrink-0"
-                animate={{ x: ["0%", "-33.333%"] }}
+                className="flex flex-nowrap w-max"
+                animate={{ x: ["0%", "-33.3333%"] }}
                 transition={{
                   x: {
                     repeat: Infinity,
@@ -161,16 +161,20 @@ export default function SkillsClient({ skills, techList }: Props) {
                   },
                 }}
               >
-                {/* Triple the list to guarantee perfect looping on any screen size */}
-                {[...techList, ...techList, ...techList].map((tech, index) => (
-                  <Badge
-                    key={index}
-                    variant="outline"
-                    className="flex items-center gap-2 px-4 py-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium whitespace-nowrap shadow-sm hover:border-emerald-500/30 dark:hover:border-emerald-400/30 transition-colors"
-                  >
-                    <FaCode className="text-emerald-600 dark:text-emerald-400" />
-                    <span className="text-lg">{tech}</span>
-                  </Badge>
+                {/* Triple the list inside identical tracks to guarantee mathematically perfect seamless looping on any screen size */}
+                {[0, 1, 2].map((trackIndex) => (
+                  <div key={trackIndex} className="flex gap-12 shrink-0 pr-12">
+                    {techList.map((tech, techIndex) => (
+                      <Badge
+                        key={`${trackIndex}-${techIndex}`}
+                        variant="outline"
+                        className="flex items-center gap-2 px-4 py-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium whitespace-nowrap shadow-sm hover:border-emerald-500/30 dark:hover:border-emerald-400/30 transition-colors"
+                      >
+                        <FaCode className="text-emerald-600 dark:text-emerald-400" />
+                        <span className="text-lg">{tech}</span>
+                      </Badge>
+                    ))}
+                  </div>
                 ))}
               </motion.div>
             </div>

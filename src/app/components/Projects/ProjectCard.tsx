@@ -21,8 +21,8 @@ export default function ProjectCard({
   const mouseXSpring = useSpring(x, { stiffness: 150, damping: 15 });
   const mouseYSpring = useSpring(y, { stiffness: 150, damping: 15 });
 
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["7deg", "-7deg"]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-7deg", "7deg"]);
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["5deg", "-5deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-5deg", "5deg"]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -58,7 +58,7 @@ export default function ProjectCard({
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-        className="relative bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl rounded-[2rem] border border-slate-200/50 dark:border-white/10 transition-colors duration-300 overflow-hidden flex flex-col h-full shadow-xl hover:shadow-2xl hover:border-emerald-500/50 dark:hover:border-emerald-500/50 group/card"
+        className="relative bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl rounded-[1rem] border border-slate-200/50 dark:border-white/10 transition-colors duration-300 overflow-hidden flex flex-col h-full shadow-xl hover:shadow-2xl hover:border-emerald-500/50 dark:hover:border-emerald-500/50 group/card"
       >
         <Link
           href={`/projects/${project.slug}`}

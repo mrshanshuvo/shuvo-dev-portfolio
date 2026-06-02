@@ -56,8 +56,6 @@ export interface Skill {
   iconName: string;
 }
 
-
-
 export interface SocialLink {
   platform: string;
   href: string;
@@ -136,8 +134,6 @@ export interface Status {
   type: "success" | "error" | "loading" | "";
 }
 
-
-
 export interface Certification {
   _id?: string;
   title: string;
@@ -162,10 +158,6 @@ export interface Blog {
   order: number;
 }
 
-
-
-
-
 export interface Category {
   _id?: string;
   name: string;
@@ -176,8 +168,12 @@ export interface Category {
 export interface Demo {
   _id?: string;
   title: string;
+  slug: string;
   description: string;
   url: string;
+  github?: string;
+  featured?: boolean;
+  image?: string;
   tech: string[];     // backward compatibility
   skillIds?: string[]; // relational database field
   media?: MediaItem[];

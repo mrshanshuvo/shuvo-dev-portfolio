@@ -29,6 +29,9 @@ import {
   FaLink,
   FaCode,
   FaInfoCircle,
+  FaStar,
+  FaImage,
+  FaGithub,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -36,6 +39,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import MediaGalleryManager from "../components/MediaGalleryManager";
+import ImageUpload from "../components/ImageUpload";
 import { AdminDialogShell } from "../components/AdminDialogShell";
 import {
   AdminField,
@@ -46,8 +50,12 @@ import {
 interface Demo {
   _id?: string;
   title: string;
+  slug: string;
   description: string;
   url: string;
+  github?: string;
+  featured?: boolean;
+  image?: string;
   tech: string[];
   media: any[];
   order: number;
@@ -103,7 +111,10 @@ function SortableDemoRow({
             <FaFlask size={14} />
           </div>
           <div className="min-w-0">
-            <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
+            <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm flex items-center gap-1.5">
+              {item.featured && (
+                <FaStar className="text-amber-400 shrink-0" size={11} />
+              )}
               {item.title}
             </h3>
             <div className="flex gap-1 mt-0.5">
@@ -118,6 +129,23 @@ function SortableDemoRow({
               {item.tech.length > 3 && (
                 <span className="text-[10px] text-slate-600">
                   +{item.tech.length - 3}
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-3 text-[10px] text-slate-500 mt-1">
+              {(item.media?.length ?? 0) > 0 && (
+                <span className="flex items-center gap-1">
+                  <FaImage size={9} /> {item.media.length}
+                </span>
+              )}
+              {item.github && (
+                <span className="flex items-center gap-1">
+                  <FaGithub size={9} /> Source
+                </span>
+              )}
+              {item.url && (
+                <span className="flex items-center gap-1">
+                  <FaLink size={9} /> Live
                 </span>
               )}
             </div>
@@ -257,8 +285,12 @@ export default function AdminDemosPage() {
   function openNew() {
     setCurrentDemo({
       title: "",
+      slug: "",
       description: "",
       url: "",
+      github: "",
+      featured: false,
+      image: "",
       tech: [],
       media: [],
       order: data.length,
@@ -456,6 +488,13 @@ export default function AdminDemosPage() {
                     }
                   />
                 </AdminField>
+
+                <AdminField label="Thumbnail / Cover">
+                  <ImageUpload
+                    value={currentDemo.image || ""}
+                    onChange={(url) => setCurrentDemo({ ...currentDemo, image: url })}
+                  />
+                </AdminField>
               </div>
 
               {/* Right Column: Information */}
@@ -465,15 +504,39 @@ export default function AdminDemosPage() {
                     <AdminInput
                       icon={FaFlask}
                       value={currentDemo.title}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        const title = e.target.value;
+                        const slug = title
+                          .toLowerCase()
+                          .replace(/[^a-z0-9]+/g, "-")
+                          .replace(/(^-|-$)+/g, "");
                         setCurrentDemo({
                           ...currentDemo,
-                          title: e.target.value,
-                        })
-                      }
+                          title,
+                          slug: currentDemo._id ? currentDemo.slug : slug,
+                        });
+                      }}
                       placeholder="e.g. AI-Powered Chatbot"
                     />
                   </AdminField>
+                  <AdminField label="Slug">
+                    <AdminInput
+                      icon={FaLink}
+                      value={currentDemo.slug || ""}
+                      onChange={(e) =>
+                        setCurrentDemo({
+                          ...currentDemo,
+                          slug: e.target.value
+                            .toLowerCase()
+                            .replace(/[^a-z0-9]+/g, "-"),
+                        })
+                      }
+                      placeholder="ai-powered-chatbot"
+                    />
+                  </AdminField>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <AdminField label="Live URL">
                     <AdminInput
                       icon={FaLink}
@@ -483,6 +546,42 @@ export default function AdminDemosPage() {
                       }
                       placeholder="https://playground..."
                     />
+                  </AdminField>
+                  <AdminField label="GitHub Repository URL">
+                    <AdminInput
+                      icon={FaGithub}
+                      value={currentDemo.github || ""}
+                      onChange={(e) =>
+                        setCurrentDemo({
+                          ...currentDemo,
+                          github: e.target.value,
+                        })
+                      }
+                      placeholder="https://github.com/..."
+                    />
+                  </AdminField>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <AdminField label="Featured Flag">
+                    <div className="flex items-center h-12 px-4 bg-slate-900/20 dark:bg-slate-950/40 border border-slate-200 dark:border-white/5 rounded-xl">
+                      <label className="flex items-center gap-3 cursor-pointer w-full select-none">
+                        <input
+                          type="checkbox"
+                          checked={!!currentDemo.featured}
+                          onChange={(e) =>
+                            setCurrentDemo({
+                              ...currentDemo,
+                              featured: e.target.checked,
+                            })
+                          }
+                          className="size-4 accent-indigo-500 rounded border-slate-300 dark:border-white/10 dark:bg-slate-950 focus:ring-indigo-500 cursor-pointer"
+                        />
+                        <span className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                          <FaStar className="text-amber-400" size={11} /> Featured Lab Experiment
+                        </span>
+                      </label>
+                    </div>
                   </AdminField>
                 </div>
 
