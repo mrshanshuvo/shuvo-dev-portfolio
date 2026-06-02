@@ -24,7 +24,7 @@ export default function ExperienceClient({ experiences }: Props) {
               initial={{ opacity: 0, scale: 0.5 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="flex items-center gap-3 text-emerald-500 font-black uppercase tracking-[0.3em] text-sm md:text-base mb-4"
+              className="flex items-center gap-3 text-emerald-500 font-black uppercase tracking-[0.2em] text-sm md:text-xl mb-4"
             >
               <FaBriefcase /> Professional History
             </motion.h2>
@@ -46,7 +46,7 @@ export default function ExperienceClient({ experiences }: Props) {
               >
                 {/* Hover Background */}
                 <div className="absolute -inset-x-4 -inset-y-4 z-0 hidden rounded-xl transition motion-reduce:transition-none lg:-inset-x-6 lg:block lg:group-hover:bg-slate-200/50 dark:lg:group-hover:bg-slate-800/50 lg:group-hover:shadow-[inset_0_1px_0_0_rgba(148,163,184,0.1)] lg:group-hover:drop-shadow-lg" />
-                
+
                 {/* Date Column */}
                 <header
                   className="z-10 mb-2 mt-1 text-xs font-bold uppercase tracking-widest text-slate-500 sm:col-span-2"
@@ -54,7 +54,7 @@ export default function ExperienceClient({ experiences }: Props) {
                 >
                   {exp.duration}
                 </header>
-                
+
                 {/* Content Column */}
                 <div className="z-10 sm:col-span-6">
                   <h3 className="font-medium leading-snug text-slate-900 dark:text-slate-200">
@@ -66,29 +66,34 @@ export default function ExperienceClient({ experiences }: Props) {
                         className="inline-flex items-baseline font-bold leading-tight text-slate-900 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 text-lg md:text-xl transition-colors group/link"
                       >
                         <span>
-                          {exp.title} · <span className="inline-block">{exp.org}</span>
+                          {exp.title} ·{" "}
+                          <span className="inline-block">{exp.org}</span>
                         </span>
                         <ArrowUpRight className="inline-block ml-1 h-4 w-4 shrink-0 transition-transform group-hover/link:-translate-y-1 group-hover/link:translate-x-1" />
                       </a>
                     ) : (
                       <div className="inline-flex items-baseline font-bold leading-tight text-slate-900 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 text-lg md:text-xl transition-colors">
                         <span>
-                          {exp.title} · <span className="inline-block">{exp.org}</span>
+                          {exp.title} ·{" "}
+                          <span className="inline-block">{exp.org}</span>
                         </span>
                       </div>
                     )}
                   </h3>
-                  
+
                   {exp.previousTitles && exp.previousTitles.length > 0 && (
                     <div className="flex flex-col gap-1 mt-1 mb-2">
                       {exp.previousTitles.map((prev, idx) => (
-                        <div key={idx} className="text-slate-500 dark:text-slate-400 font-medium text-base">
+                        <div
+                          key={idx}
+                          className="text-slate-500 dark:text-slate-400 font-medium text-base"
+                        >
                           {prev}
                         </div>
                       ))}
                     </div>
                   )}
-                  
+
                   <div className="mt-4 text-sm md:text-base leading-relaxed text-slate-600 dark:text-slate-400 space-y-4">
                     {exp.details.map((item, idx) => (
                       <p key={idx}>{item}</p>

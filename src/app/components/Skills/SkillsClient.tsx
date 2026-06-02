@@ -1,7 +1,13 @@
 "use client";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { FaCode, FaDatabase, FaCloud, FaRobot, FaLayerGroup } from "react-icons/fa";
+import {
+  FaCode,
+  FaDatabase,
+  FaCloud,
+  FaRobot,
+  FaLayerGroup,
+} from "react-icons/fa";
 import { SiTensorflow, SiReact, SiNodedotjs } from "react-icons/si";
 import { Badge } from "@/components/ui/badge";
 import type { IconType } from "react-icons";
@@ -59,7 +65,7 @@ export default function SkillsClient({ skills, techList }: Props) {
               initial={{ opacity: 0, scale: 0.5 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="flex items-center gap-3 text-emerald-500 font-black uppercase tracking-[0.3em] text-sm md:text-base mb-4"
+              className="flex items-center gap-3 text-emerald-500 font-black uppercase tracking-[0.2em] text-sm md:text-lg mb-4"
             >
               <FaLayerGroup /> Technical Mastery
             </motion.h2>
