@@ -35,10 +35,7 @@ import {
   FaInfoCircle,
 } from "react-icons/fa";
 import { AdminDialogShell } from "../components/AdminDialogShell";
-import {
-  AdminField,
-  AdminInput,
-} from "../components/AdminFields";
+import { AdminField, AdminInput } from "../components/AdminFields";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -207,7 +204,9 @@ export default function AdminEducationPage() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const res = await fetch(`/api/admin/education?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/education?id=${id}`, {
+        method: "DELETE",
+      });
       if (!res.ok) throw new Error("Failed to delete");
       return id;
     },
@@ -220,11 +219,12 @@ export default function AdminEducationPage() {
     onError: () => {
       showToast("Failed to delete.", "error");
       setDeletingId(null);
-    }
+    },
   });
 
   async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this education record?")) return;
+    if (!confirm("Are you sure you want to delete this education record?"))
+      return;
     setDeletingId(id);
     deleteMutation.mutate(id);
   }
@@ -232,7 +232,9 @@ export default function AdminEducationPage() {
   const saveMutation = useMutation({
     mutationFn: async (edu: Education) => {
       const isEdit = !!edu._id;
-      const url = isEdit ? `/api/admin/education?id=${edu._id}` : "/api/admin/education";
+      const url = isEdit
+        ? `/api/admin/education?id=${edu._id}`
+        : "/api/admin/education";
       const method = isEdit ? "PATCH" : "POST";
       const res = await fetch(url, {
         method,
@@ -249,7 +251,7 @@ export default function AdminEducationPage() {
     },
     onError: () => {
       showToast("Failed to save.", "error");
-    }
+    },
   });
 
   async function handleAddOrUpdate() {
@@ -365,7 +367,7 @@ export default function AdminEducationPage() {
                 ))}
               </div>
             ) : data.length === 0 ? (
-              <div className="text-center py-20 bg-white dark:bg-slate-950/20 rounded-3xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
+              <div className="text-center py-16 bg-white dark:bg-slate-950/20 rounded-3xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
                 <FaGraduationCap
                   className="mx-auto text-slate-200 dark:text-slate-800 mb-4"
                   size={40}

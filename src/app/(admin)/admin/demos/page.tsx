@@ -195,7 +195,9 @@ export default function AdminDemosPage() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const res = await fetch(`/api/admin/demos?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/demos?id=${id}`, {
+        method: "DELETE",
+      });
       if (!res.ok) throw new Error("Failed to delete");
       return id;
     },
@@ -208,7 +210,7 @@ export default function AdminDemosPage() {
     onError: () => {
       showToast("Failed to delete.", "error");
       setDeletingId(null);
-    }
+    },
   });
 
   async function handleDelete(id: string) {
@@ -220,7 +222,9 @@ export default function AdminDemosPage() {
   const saveMutation = useMutation({
     mutationFn: async (demo: Demo) => {
       const isEdit = !!demo._id;
-      const url = isEdit ? `/api/admin/demos?id=${demo._id}` : "/api/admin/demos";
+      const url = isEdit
+        ? `/api/admin/demos?id=${demo._id}`
+        : "/api/admin/demos";
       const method = isEdit ? "PATCH" : "POST";
       const res = await fetch(url, {
         method,
@@ -237,7 +241,7 @@ export default function AdminDemosPage() {
     },
     onError: () => {
       showToast("Failed to save.", "error");
-    }
+    },
   });
 
   async function handleAddOrUpdate() {
@@ -351,7 +355,7 @@ export default function AdminDemosPage() {
                 ))}
               </div>
             ) : data.length === 0 ? (
-              <div className="text-center py-20 bg-white dark:bg-slate-950/20 rounded-3xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
+              <div className="text-center py-16 bg-white dark:bg-slate-950/20 rounded-3xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
                 <FaFlask
                   className="mx-auto text-slate-200 dark:text-slate-800 mb-4"
                   size={40}

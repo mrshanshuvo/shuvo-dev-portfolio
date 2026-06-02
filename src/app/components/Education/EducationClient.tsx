@@ -33,7 +33,7 @@ export default function EducationClient({ education }: Props) {
     <section
       id="education"
       ref={ref}
-      className="relative py-24 bg-white dark:bg-slate-950 overflow-hidden"
+      className="relative py-16 bg-white dark:bg-slate-950 overflow-hidden"
     >
       <div className="absolute top-20 left-0 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl" />
       <div className="absolute bottom-20 right-0 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl" />

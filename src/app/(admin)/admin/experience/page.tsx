@@ -403,7 +403,7 @@ export default function AdminExperiencePage() {
                 ))}
               </div>
             ) : data.length === 0 ? (
-              <div className="text-center py-20 bg-white dark:bg-slate-950/20 rounded-3xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
+              <div className="text-center py-16 bg-white dark:bg-slate-950/20 rounded-3xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
                 <FaBriefcase
                   className="mx-auto text-slate-200 dark:text-slate-800 mb-4"
                   size={40}
