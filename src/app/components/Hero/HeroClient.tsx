@@ -56,7 +56,6 @@ export default function HeroClient({ hero, aboutBio }: Props) {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          
           {/* Left Column: Hero Details */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -68,7 +67,11 @@ export default function HeroClient({ hero, aboutBio }: Props) {
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+              transition={{
+                duration: 0.8,
+                delay: 0.1,
+                ease: [0.16, 1, 0.3, 1],
+              }}
               className="relative inline-block mb-6"
             >
               <div className="relative w-28 h-28 md:w-32 md:h-32 rounded-full p-1.5 bg-white/10 dark:bg-slate-900/50 backdrop-blur-md border border-slate-200/20 dark:border-white/10 shadow-2xl">
@@ -91,7 +94,11 @@ export default function HeroClient({ hero, aboutBio }: Props) {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              transition={{
+                delay: 0.2,
+                duration: 0.8,
+                ease: [0.16, 1, 0.3, 1],
+              }}
             >
               <h1 className="font-display text-4xl sm:text-5xl font-black text-slate-900 dark:text-white mb-3 tracking-tighter leading-tight">
                 {hero.name}{" "}
@@ -118,16 +125,6 @@ export default function HeroClient({ hero, aboutBio }: Props) {
                 />
               )}
             </motion.div>
-
-            {/* Hero Subheading */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4, duration: 0.8 }}
-              className="text-base md:text-lg text-slate-600 dark:text-slate-400 mb-8 leading-relaxed max-w-md"
-            >
-              {hero.bio}
-            </motion.p>
 
             {/* CTA buttons */}
             <motion.div
@@ -181,7 +178,9 @@ export default function HeroClient({ hero, aboutBio }: Props) {
                   <MagneticButton key={social.label} strength={25}>
                     <motion.a
                       href={href}
-                      target={social.platform === "Email" ? undefined : "_blank"}
+                      target={
+                        social.platform === "Email" ? undefined : "_blank"
+                      }
                       rel="noopener noreferrer"
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
@@ -232,7 +231,6 @@ export default function HeroClient({ hero, aboutBio }: Props) {
               </CardContent>
             </Card>
           </motion.div>
-
         </div>
       </div>
 
