@@ -10,6 +10,7 @@ import {
 } from "react-icons/fa";
 import { SiTensorflow, SiReact, SiNodedotjs } from "react-icons/si";
 import { Badge } from "@/components/ui/badge";
+import { getIcon } from "@/lib/techIconMap";
 import type { IconType } from "react-icons";
 import type { Skill } from "@/types";
 
@@ -164,16 +165,19 @@ export default function SkillsClient({ skills, techList }: Props) {
                 {/* Triple the list inside identical tracks to guarantee mathematically perfect seamless looping on any screen size */}
                 {[0, 1, 2].map((trackIndex) => (
                   <div key={trackIndex} className="flex gap-12 shrink-0 pr-12">
-                    {techList.map((tech, techIndex) => (
-                      <Badge
-                        key={`${trackIndex}-${techIndex}`}
-                        variant="outline"
-                        className="flex items-center gap-2 px-4 py-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium whitespace-nowrap shadow-sm hover:border-emerald-500/30 dark:hover:border-emerald-400/30 transition-colors"
-                      >
-                        <FaCode className="text-emerald-600 dark:text-emerald-400" />
-                        <span className="text-lg">{tech}</span>
-                      </Badge>
-                    ))}
+                    {techList.map((tech, techIndex) => {
+                      const TechIcon = getIcon(tech);
+                      return (
+                        <Badge
+                          key={`${trackIndex}-${techIndex}`}
+                          variant="outline"
+                          className="flex items-center gap-3 px-5 py-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium whitespace-nowrap shadow-sm hover:border-emerald-500/30 dark:hover:border-emerald-400/30 hover:text-emerald-500 dark:hover:text-emerald-400 hover:scale-102 transition-all cursor-default"
+                        >
+                          <TechIcon className="text-xl text-emerald-600 dark:text-emerald-400 transition-colors" />
+                          <span className="text-lg font-bold">{tech}</span>
+                        </Badge>
+                      );
+                    })}
                   </div>
                 ))}
               </motion.div>
