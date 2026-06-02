@@ -30,9 +30,7 @@ import { cn } from "@/lib/utils";
 
 
 const DEFAULT: About = {
-  title: "Hello! I'm Shuvo",
-  bio1: "",
-  bio2: "",
+  bio: "",
   highlights: [],
   skills: [],
   education: [],
@@ -190,31 +188,14 @@ export default function AdminAboutPage() {
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-6 pt-2">
-                    <AdminField label="Section Title">
-                      <AdminInput
-                        value={data.title}
-                        onChange={(e) =>
-                          setData((d) => ({ ...d, title: e.target.value }))
-                        }
-                        placeholder="e.g. Hello! I'm Shuvo"
-                      />
-                    </AdminField>
-                    <AdminField label="Bio Paragraph 1">
+                    <AdminField label="About Biography">
                       <AdminTextarea
-                        className="min-h-35"
-                        value={data.bio1}
+                        className="min-h-50"
+                        value={data.bio}
                         onChange={(e) =>
-                          setData((d) => ({ ...d, bio1: e.target.value }))
+                          setData((d) => ({ ...d, bio: e.target.value }))
                         }
-                      />
-                    </AdminField>
-                    <AdminField label="Bio Paragraph 2">
-                      <AdminTextarea
-                        className="min-h-35"
-                        value={data.bio2}
-                        onChange={(e) =>
-                          setData((d) => ({ ...d, bio2: e.target.value }))
-                        }
+                        placeholder="Tell your story. Supports multiple paragraphs..."
                       />
                     </AdminField>
                   </CardContent>

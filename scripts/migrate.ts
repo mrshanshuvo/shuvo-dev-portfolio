@@ -264,7 +264,6 @@ async function run() {
     const firstAbout = await About.findOne({});
     if (firstAbout) {
       const aboutData = {
-        title: firstAbout.title || "About me",
         aboutBio: firstAbout.aboutBio,
         highlights: firstAbout.highlights || [],
       };

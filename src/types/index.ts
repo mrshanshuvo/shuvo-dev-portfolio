@@ -79,7 +79,6 @@ export interface Profile {
   typeSequences: TypeSequenceItem[];
   heroBio: string;
   socialLinks: SocialLink[];
-  aboutTitle: string;
   aboutBio: string;
   highlights: string[];
   skills: Skill[];
@@ -91,9 +90,9 @@ export interface Education {
   institution: string;
   location: string;
   logo: string;
-  period?: string;    // backward compatibility
-  startDate?: string; // ISO date string
-  endDate?: string;   // ISO date string, undefined/null means current
+  period?: string;   
+  startDate?: string; 
+  endDate?: string;  
   gpa: string;
   details: string[];
   link: string;
@@ -102,9 +101,7 @@ export interface Education {
 
 export interface About {
   _id?: string;
-  title: string;
-  bio1: string;
-  bio2: string;
+  bio: string;
   highlights: string[];
   skills: Skill[];
   education: Education[];

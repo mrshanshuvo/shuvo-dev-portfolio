@@ -56,22 +56,22 @@ export default function AboutClient({ about }: Props) {
             className="md:col-span-2 h-full"
           >
             <Card className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl rounded-[2rem] p-10 border border-slate-200/50 dark:border-white/10 shadow-xl hover:shadow-2xl transition-shadow h-full overflow-hidden">
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 mb-6">
                 <CardTitle className="font-display text-3xl font-bold text-slate-900 dark:text-white">
-                  {about.title}
+                  Biography
                 </CardTitle>
               </div>
               <CardContent className="p-0">
-                {about.bio1 && (
-                  <p className="text-lg text-slate-600 dark:text-slate-300 mb-6 leading-relaxed font-medium">
-                    {about.bio1}
-                  </p>
-                )}
-                {about.bio2 && (
-                  <p className="text-lg text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
-                    {about.bio2}
-                  </p>
-                )}
+                {(about.bio || "")
+                  .split("\n\n")
+                  .map((para, i) => para.trim() && (
+                    <p
+                      key={i}
+                      className="text-lg text-slate-600 dark:text-slate-300 mb-6 leading-relaxed font-medium last:mb-0"
+                    >
+                      {para}
+                    </p>
+                  ))}
               </CardContent>
             </Card>
           </motion.div>

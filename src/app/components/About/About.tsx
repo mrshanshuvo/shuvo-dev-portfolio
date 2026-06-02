@@ -10,14 +10,9 @@ async function getAbout(): Promise<About> {
 
   const aboutRaw = aboutDoc ? JSON.parse(JSON.stringify(aboutDoc)) : {};
 
-  // Split aboutBio into bio1 and bio2 by double newline
-  const bios = (aboutRaw.aboutBio || "").split("\n\n");
-
   return {
     _id: aboutRaw._id?.toString(),
-    title: aboutRaw.title || "Hello! I'm Shuvo",
-    bio1: bios[0] || "",
-    bio2: bios.slice(1).join("\n\n") || "",
+    bio: aboutRaw.aboutBio || "",
     highlights: aboutRaw.highlights || [],
     skills: [], // Independent now
     education: [], // Independent now
