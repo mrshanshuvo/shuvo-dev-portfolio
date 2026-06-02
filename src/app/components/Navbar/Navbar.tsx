@@ -76,7 +76,7 @@ export default function Navbar({ resumeUrl }: Props) {
       if (element) {
         isClickingRef.current = true;
         setActiveSection(id);
-        
+
         element.scrollIntoView({
           behavior: "smooth",
           block: "start",
@@ -86,7 +86,7 @@ export default function Navbar({ resumeUrl }: Props) {
         if (window.history.pushState) {
           window.history.pushState(null, "", `#${id}`);
         }
-        
+
         // Re-enable observer after smooth scroll finishes
         setTimeout(() => {
           isClickingRef.current = false;
@@ -213,7 +213,9 @@ export default function Navbar({ resumeUrl }: Props) {
                   <div className="relative group">
                     <button
                       className="relative px-3 lg:px-4 py-2 group flex items-center gap-1"
-                      aria-current={mappedActive === "more" ? "page" : undefined}
+                      aria-current={
+                        mappedActive === "more" ? "page" : undefined
+                      }
                     >
                       <span
                         className={`relative z-10 text-sm font-bold transition-colors cursor-pointer ${
@@ -263,7 +265,9 @@ export default function Navbar({ resumeUrl }: Props) {
                   <button
                     onClick={() => handleNavClick("contact")}
                     className="relative px-3 lg:px-4 py-2 group"
-                    aria-current={mappedActive === "contact" ? "page" : undefined}
+                    aria-current={
+                      mappedActive === "contact" ? "page" : undefined
+                    }
                   >
                     <span
                       className={`relative z-10 text-sm font-bold transition-colors cursor-pointer ${
@@ -369,12 +373,18 @@ export default function Navbar({ resumeUrl }: Props) {
                 }`}
               >
                 <div className="p-3">
-                  {[...mainNavItems, ...moreNavItems, { id: "contact", label: "Contact" }].map((item) => (
+                  {[
+                    ...mainNavItems,
+                    ...moreNavItems,
+                    { id: "contact", label: "Contact" },
+                  ].map((item) => (
                     <button
                       key={item.id}
                       onClick={() => handleNavClick(item.id)}
                       className={`w-full text-left px-4 py-3 rounded-lg text-base font-medium transition-colors ${
-                        mappedActive === item.id || (mappedActive === "more" && moreNavItems.some(m => m.id === item.id))
+                        mappedActive === item.id ||
+                        (mappedActive === "more" &&
+                          moreNavItems.some((m) => m.id === item.id))
                           ? scrolled
                             ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400"
                             : "bg-white/10 text-white"
@@ -383,7 +393,11 @@ export default function Navbar({ resumeUrl }: Props) {
                             : "text-white/80 hover:bg-white/5"
                       }`}
                       aria-current={
-                        mappedActive === item.id || (mappedActive === "more" && moreNavItems.some(m => m.id === item.id)) ? "page" : undefined
+                        mappedActive === item.id ||
+                        (mappedActive === "more" &&
+                          moreNavItems.some((m) => m.id === item.id))
+                          ? "page"
+                          : undefined
                       }
                     >
                       {item.label}

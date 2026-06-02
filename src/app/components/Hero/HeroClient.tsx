@@ -51,9 +51,10 @@ export default function HeroClient({ hero }: Props) {
 
   return (
     <section
-      id="home"
-      className="min-h-screen pt-24 pb-12 flex items-center justify-center relative overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-500"
+      id="about"
+      className="min-h-screen pt-28 pb-16 md:pt-32 md:pb-20 flex items-center justify-center relative overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-500 scroll-mt-24"
     >
+      <div id="home" className="absolute top-0" />
       {/* High-end Grid Background */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-size-[4rem_4rem] mask-[radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)]" />
 
@@ -232,8 +233,7 @@ export default function HeroClient({ hero }: Props) {
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            id="about"
-            className="lg:col-span-7 w-full flex items-center scroll-mt-24"
+            className="lg:col-span-7 w-full flex items-center"
           >
             <div className="space-y-6 text-slate-600 dark:text-slate-400 text-base md:text-lg leading-relaxed font-normal
               [&_a]:font-semibold [&_a]:text-slate-900 [&_a]:dark:text-slate-100 [&_a]:hover:text-emerald-500 [&_a]:dark:hover:text-emerald-400 [&_a]:transition-colors [&_a]:duration-200 [&_a]:cursor-pointer
