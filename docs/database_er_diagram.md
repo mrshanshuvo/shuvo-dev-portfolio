@@ -60,6 +60,9 @@ erDiagram
         string tech "Optional"
         number level "0-100, Default: 80"
         string iconName "Optional"
+        string iconSlug "Optional - for simple-icons registry"
+        string brandColor "Optional - hex code"
+        boolean isTechnology "Default: false"
         number order "Default: 0"
         date createdAt
         date updatedAt
@@ -84,8 +87,10 @@ erDiagram
     DEMO {
         ObjectId _id PK
         string title
+        string slug "Unique"
         string description
         string url
+        string image "Optional"
         ObjectId_array skillIds "FK to Skill._id"
         object_array media
         number order "Default: 0"
