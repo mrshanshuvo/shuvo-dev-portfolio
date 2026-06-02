@@ -4,7 +4,7 @@ import { Demo } from "@/types";
 import { FaExternalLinkAlt, FaCode, FaStar, FaGithub } from "react-icons/fa";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getIcon } from "@/lib/techIconMap";
+import { getIcon, getColorClass } from "@/lib/techIconMap";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -165,7 +165,7 @@ export default function PlaygroundCard({ demo, index }: PlaygroundCardProps) {
                     className="flex items-center gap-1.5 px-2.5 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-[10px] font-bold shadow-sm"
                     title={name}
                   >
-                    <Icon className="text-purple-500" />
+                    <Icon className={getColorClass(name)} />
                     {name}
                   </Badge>
                 );

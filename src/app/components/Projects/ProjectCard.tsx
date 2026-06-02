@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { FaExternalLinkAlt, FaStar } from "react-icons/fa";
 import type { Project } from "@/types";
-import { getIcon } from "@/lib/techIconMap";
+import { getIcon, getColorClass } from "@/lib/techIconMap";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -127,7 +127,7 @@ export default function ProjectCard({
                     className="flex items-center gap-1.5 px-2.5 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-[10px] font-bold shadow-sm"
                     title={name}
                   >
-                    <Icon className="text-emerald-500" />
+                    <Icon className={getColorClass(name)} />
                     {name}
                   </Badge>
                 );
