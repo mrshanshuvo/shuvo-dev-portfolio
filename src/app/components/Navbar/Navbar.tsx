@@ -99,6 +99,8 @@ export default function Navbar({ resumeUrl }: Props) {
 
   const getMappedActiveSection = (id: string): string => {
     switch (id) {
+      case "home":
+        return "about";
       case "skills":
       case "playground":
         return "projects";
@@ -114,7 +116,6 @@ export default function Navbar({ resumeUrl }: Props) {
   const mappedActive = getMappedActiveSection(activeSection);
 
   const mainNavItems: NavItem[] = [
-    { id: "home", label: "Home" },
     { id: "about", label: "About" },
     { id: "experience", label: "Experience" },
     { id: "projects", label: "Projects" },
