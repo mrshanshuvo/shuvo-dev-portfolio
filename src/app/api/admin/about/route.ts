@@ -3,7 +3,6 @@ import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import About from "@/models/About";
 import Skill from "@/models/Skill";
-import Stat from "@/models/Stat";
 import Experience from "@/models/Experience";
 
 export async function GET() {
@@ -12,9 +11,8 @@ export async function GET() {
 
   await connectDB();
   const about = await About.findOne().lean();
-  const [skills, stats, education] = await Promise.all([
+  const [skills, education] = await Promise.all([
     Skill.find().sort({ order: 1 }).lean(),
-    Stat.find().sort({ order: 1 }).lean(),
     Experience.find({ type: "education" }).sort({ order: 1 }).lean(),
   ]);
 
@@ -24,7 +22,6 @@ export async function GET() {
     bio1: (about?.aboutBio || "").split("\n\n")[0] || "",
     bio2: (about?.aboutBio || "").split("\n\n").slice(1).join("\n\n") || "",
     skills: skills || [],
-    stats: stats || [],
     education: education.map((edu: any) => ({
       degree: edu.title,
       institution: edu.org,
