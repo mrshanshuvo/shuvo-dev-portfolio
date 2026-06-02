@@ -9,9 +9,8 @@ import AdminThemeToggle from "./AdminThemeToggle";
 // Mirror the nav items — label only, no icons needed here
 const PAGE_MAP: Record<string, { label: string; parent?: string }> = {
   "/admin": { label: "Dashboard" },
-  "/admin/hero": { label: "Identity", parent: "Identity & Social" },
+  "/admin/hero": { label: "Identity & Bio", parent: "Identity & Social" },
   "/admin/socials": { label: "Social Links", parent: "Identity & Social" },
-  "/admin/about": { label: "Biography", parent: "Identity & Social" },
   "/admin/skills": { label: "Skills & Tech", parent: "Professional" },
   "/admin/projects": { label: "Projects", parent: "Portfolio" },
   "/admin/demos": { label: "Playground", parent: "Portfolio" },

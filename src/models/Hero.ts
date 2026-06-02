@@ -10,6 +10,7 @@ export interface IHero extends Document {
   lastName: string;
   profileImage: string;
   resumeUrl: string;
+  tagline: string;
   bio: string;
   typeSequences: TypeSequenceItem[];
   createdAt: Date;
@@ -26,6 +27,7 @@ const HeroSchema = new Schema<IHero>(
     lastName: { type: String, required: true },
     profileImage: { type: String },
     resumeUrl: { type: String },
+    tagline: { type: String, default: "" },
     bio: { type: String, default: "" },
     typeSequences: [
       {

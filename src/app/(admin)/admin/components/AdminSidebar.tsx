@@ -7,7 +7,6 @@ import {
   FaHome,
   FaProjectDiagram,
   FaBriefcase,
-  FaUser,
   FaEnvelope,
   FaSignOutAlt,
   FaChevronRight,
@@ -42,7 +41,7 @@ const navItems = [
   },
   {
     href: "/admin/hero",
-    label: "Identity",
+    label: "Identity & Bio",
     icon: FaHome,
     color: "text-purple-400",
   },
@@ -51,12 +50,6 @@ const navItems = [
     label: "Social Links",
     icon: FaLink,
     color: "text-blue-400",
-  },
-  {
-    href: "/admin/about",
-    label: "Biography",
-    icon: FaUser,
-    color: "text-pink-400",
   },
 
   {

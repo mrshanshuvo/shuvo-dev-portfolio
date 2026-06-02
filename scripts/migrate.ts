@@ -8,7 +8,6 @@ import Certification from "../src/models/Certification";
 import Blog from "../src/models/Blog";
 import Visitor from "../src/models/Visitor";
 import Hero from "../src/models/Hero";
-import About from "../src/models/About";
 import Setting from "../src/models/Setting";
 import Tech from "../src/models/Tech";
 
@@ -260,18 +259,7 @@ async function run() {
     // ==========================================
     console.log("\n🔄 Step 8: Hardening Singleton collections with fixed IDs...");
 
-    // About
-    const firstAbout = await About.findOne({});
-    if (firstAbout) {
-      const aboutData = {
-        aboutBio: firstAbout.aboutBio,
-      };
-      await About.deleteMany({});
-      const enforced = new About(aboutData);
-      enforced._id = new mongoose.Types.ObjectId("000000000000000000000001");
-      await enforced.save();
-      console.log("Hardened singleton: About");
-    }
+
 
     // Hero
     const firstHero = await Hero.findOne({});
@@ -281,6 +269,7 @@ async function run() {
         lastName: firstHero.lastName,
         profileImage: firstHero.profileImage,
         resumeUrl: firstHero.resumeUrl,
+        tagline: firstHero.tagline || "",
         bio: firstHero.bio || "",
         typeSequences: firstHero.typeSequences || [],
       };

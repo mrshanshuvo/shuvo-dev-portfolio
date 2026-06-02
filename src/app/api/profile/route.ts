@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Hero from "@/models/Hero";
-import About from "@/models/About";
 import SocialLink from "@/models/SocialLink";
 import Skill from "@/models/Skill";
 import Certification from "@/models/Certification";
@@ -13,7 +12,6 @@ export async function GET() {
 
   const [
     hero,
-    about,
     socialLinks,
     skills,
     certifications,
@@ -21,7 +19,6 @@ export async function GET() {
     demos,
   ] = await Promise.all([
     Hero.findOne().lean(),
-    About.findOne().lean(),
     SocialLink.find().sort({ order: 1 }).lean(),
     Skill.find().sort({ order: 1 }).lean(),
     Certification.find().sort({ order: 1 }).lean(),
@@ -31,7 +28,6 @@ export async function GET() {
 
   const profile = {
     ...(hero || {}),
-    ...(about || {}),
     socialLinks: socialLinks || [],
     skills: skills || [],
     certifications: certifications || [],

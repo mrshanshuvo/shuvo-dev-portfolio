@@ -110,6 +110,7 @@ export interface Hero {
   name: string;
   lastName: string;
   typeSequences: TypeSequenceItem[];
+  tagline: string;
   bio: string;
   profileImage: string;
   resumeUrl: string;

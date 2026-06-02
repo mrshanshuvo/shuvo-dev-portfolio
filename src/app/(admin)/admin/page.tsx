@@ -7,7 +7,6 @@ import Link from "next/link";
 import {
   FaProjectDiagram,
   FaBriefcase,
-  FaUser,
   FaHome,
   FaRocket,
   FaChartLine,
@@ -130,8 +129,8 @@ const sections = [
   },
   {
     href: "/admin/hero",
-    label: "Identity",
-    desc: "Update your name, profile picture, resume & typing sequences",
+    label: "Identity & Bio",
+    desc: "Update your name, profile picture, resume, typing sequences & biography",
     icon: FaHome,
     color: "emerald",
     gradient: "from-emerald-500/20 to-emerald-600/5 border-emerald-500/20",
@@ -145,15 +144,6 @@ const sections = [
     color: "blue",
     gradient: "from-blue-500/20 to-blue-600/5 border-blue-500/20",
     iconColor: "text-blue-400",
-  },
-  {
-    href: "/admin/about",
-    label: "Biography",
-    desc: "Edit your professional bio, highlights & tech list",
-    icon: FaUser,
-    color: "purple",
-    gradient: "from-purple-500/20 to-purple-600/5 border-purple-500/20",
-    iconColor: "text-purple-400",
   },
 
   {

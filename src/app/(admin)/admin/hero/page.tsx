@@ -55,7 +55,8 @@ const DEFAULT: Hero = {
     { text: "Full-Stack Web Developer", delay: 2000 },
     { text: "Computer Engineer", delay: 2000 },
   ],
-  bio: "Crafting exceptional digital experiences with clean code and modern technologies.",
+  tagline: "Jr. Frontend Developer at Softvence Agency",
+  bio: "I am a passionate Full-Stack Web Developer and Computer Engineer...",
   profileImage: "/PP1.jpeg",
   resumeUrl: "/Resume_of_Shahid_Hasan_Shuvo.pdf",
   socialLinks: [],
@@ -351,6 +352,32 @@ function HeroFormClient({ initialData }: { initialData: Hero }) {
                           setData((d) => ({ ...d, lastName: e.target.value }))
                         }
                         placeholder="e.g. Shuvo"
+                      />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                        Branding Tagline
+                      </label>
+                      <Input
+                        className="bg-slate-50 dark:bg-slate-950/50 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl focus-visible:ring-emerald-500/50 shadow-sm dark:shadow-none"
+                        value={data.tagline || ""}
+                        onChange={(e) =>
+                          setData((d) => ({ ...d, tagline: e.target.value }))
+                        }
+                        placeholder="e.g. Jr. Frontend Developer at Softvence Agency..."
+                      />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                        Professional Biography
+                      </label>
+                      <textarea
+                        className="flex min-h-35 w-full rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-950/50 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-slate-900 dark:text-white shadow-sm dark:shadow-none leading-relaxed"
+                        value={data.bio || ""}
+                        onChange={(e) =>
+                          setData((d) => ({ ...d, bio: e.target.value }))
+                        }
+                        placeholder="Tell your story. Supports multiple paragraphs..."
                       />
                     </div>
                   </CardContent>
