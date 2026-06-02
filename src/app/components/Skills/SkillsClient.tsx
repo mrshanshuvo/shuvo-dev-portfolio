@@ -30,6 +30,11 @@ export default function SkillsClient({ skills, techList }: Props) {
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
+  // Separate expertise (progress bars) from brand technologies (marquee)
+  const expertises = skills.filter((s) => !s.isTechnology);
+  const brandTechs = skills.filter((s) => !!s.isTechnology);
+  // Fall back to legacy techList strings if no isTechnology skills exist yet
+  const marqueeItems = brandTechs.length > 0 ? brandTechs.map((t) => t.name) : techList;
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
@@ -77,7 +82,7 @@ export default function SkillsClient({ skills, techList }: Props) {
               className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl rounded-[1rem] p-10 border border-slate-200/50 dark:border-white/10 shadow-xl"
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-8">
-                {skills.map((skill, index) => {
+                {expertises.map((skill, index) => {
                   const Icon = getSkillIcon(skill.iconName);
                   return (
                     <motion.div key={skill.name} variants={itemVariants}>
@@ -159,7 +164,7 @@ export default function SkillsClient({ skills, techList }: Props) {
                 {/* Triple the list inside identical tracks to guarantee mathematically perfect seamless looping on any screen size */}
                 {[0, 1, 2].map((trackIndex) => (
                   <div key={trackIndex} className="flex gap-12 shrink-0 pr-12">
-                    {techList.map((tech, techIndex) => {
+                    {marqueeItems.map((tech, techIndex) => {
                       const TechIcon = getIcon(tech);
                       return (
                         <Badge

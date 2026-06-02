@@ -311,9 +311,15 @@ export default function AdminSkillsPage() {
   function handleDragEnd(event: any) {
     const { active, over } = event;
     if (active && over && active.id !== over.id) {
-      const oldIndex = skills.findIndex((i) => i._id === active.id);
-      const newIndex = skills.findIndex((i) => i._id === over.id);
-      const updatedSkills = arrayMove(skills, oldIndex, newIndex);
+      // Operate only on the expertises sub-array
+      const oldIndex = expertises.findIndex((i) => i._id === active.id);
+      const newIndex = expertises.findIndex((i) => i._id === over.id);
+      if (oldIndex === -1 || newIndex === -1) return;
+      const reorderedExpertises = arrayMove(expertises, oldIndex, newIndex);
+      // Merge back: keep technologies in their positions, replace expertise slots
+      const updatedSkills = skills.map((s) =>
+        s.isTechnology ? s : reorderedExpertises.shift()!,
+      );
       setSkills(updatedSkills);
       // Auto save order using PATCH
       fetch("/api/admin/skills", {
@@ -454,7 +460,7 @@ export default function AdminSkillsPage() {
                 </DndContext>
               )}
 
-              {!loading && skills.length > 0 && (
+              {!loading && expertises.length > 0 && (
                 <p className="text-center text-[10px] text-slate-400 dark:text-slate-700 mt-8 font-bold uppercase tracking-widest">
                   Drag rows to reorder • Changes save automatically
                 </p>
