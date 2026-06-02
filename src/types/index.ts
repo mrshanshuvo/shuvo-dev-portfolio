@@ -80,7 +80,6 @@ export interface Profile {
   heroBio: string;
   socialLinks: SocialLink[];
   aboutBio: string;
-  highlights: string[];
   skills: Skill[];
 }
 
@@ -102,7 +101,6 @@ export interface Education {
 export interface About {
   _id?: string;
   bio: string;
-  highlights: string[];
   skills: Skill[];
   education: Education[];
 }

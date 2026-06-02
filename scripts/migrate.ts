@@ -265,7 +265,6 @@ async function run() {
     if (firstAbout) {
       const aboutData = {
         aboutBio: firstAbout.aboutBio,
-        highlights: firstAbout.highlights || [],
       };
       await About.deleteMany({});
       const enforced = new About(aboutData);

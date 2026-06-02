@@ -2,7 +2,6 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 
 export interface IAbout extends Document {
   aboutBio: string;
-  highlights: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -14,7 +13,6 @@ const AboutSchema = new Schema<IAbout>(
       default: () => new mongoose.Types.ObjectId("000000000000000000000001"),
     },
     aboutBio: { type: String },
-    highlights: [{ type: String }],
   },
   { timestamps: true },
 );

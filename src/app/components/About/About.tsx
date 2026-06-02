@@ -13,7 +13,6 @@ async function getAbout(): Promise<About> {
   return {
     _id: aboutRaw._id?.toString(),
     bio: aboutRaw.aboutBio || "",
-    highlights: aboutRaw.highlights || [],
     skills: [], // Independent now
     education: [], // Independent now
   };

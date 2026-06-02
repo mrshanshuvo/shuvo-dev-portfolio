@@ -40,7 +40,6 @@ export async function PUT(request: Request) {
   // Skills → /api/admin/skills, Stats → /api/admin/stats, Education → /api/admin/education
   const aboutData = {
     aboutBio: (body.bio || "").trim(),
-    highlights: body.highlights || [],
     techList: body.techList || [],
   };
   const about = await About.findOneAndUpdate({}, aboutData, {

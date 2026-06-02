@@ -3,22 +3,18 @@ import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { About } from "@/types";
 import {
-  FaPlus,
   FaTimes,
   FaCheck,
   FaSave,
   FaUser,
-  FaLightbulb,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
 import {
   AdminField,
-  AdminInput,
   AdminTextarea,
 } from "../components/AdminFields";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardHeader,
@@ -31,7 +27,6 @@ import { cn } from "@/lib/utils";
 
 const DEFAULT: About = {
   bio: "",
-  highlights: [],
   skills: [],
   education: [],
 };
@@ -44,9 +39,6 @@ export default function AdminAboutPage() {
     msg: string;
     type: "success" | "error";
   } | null>(null);
-
-  // Temp input states
-  const [highlightInput, setHighlightInput] = useState("");
 
   function showToast(msg: string, type: "success" | "error" = "success") {
     setToast({ msg, type });
@@ -90,15 +82,6 @@ export default function AdminAboutPage() {
 
   function handleSave() {
     mutation.mutate(data);
-  }
-
-  function addHighlight() {
-    if (!highlightInput.trim()) return;
-    setData((d) => ({
-      ...d,
-      highlights: [...d.highlights, highlightInput.trim()],
-    }));
-    setHighlightInput("");
   }
 
   return (
@@ -169,114 +152,36 @@ export default function AdminAboutPage() {
               </motion.div>
             ))
           ) : (
-            <div className="space-y-6 animate-in fade-in duration-700">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
-                  <CardHeader className="p-4 pb-1">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2.5 bg-blue-500/20 text-blue-400 rounded-xl">
-                        <FaUser size={20} />
-                      </div>
-                      <div>
-                        <CardTitle className="text-slate-900 dark:text-white">
-                          Professional Bio
-                        </CardTitle>
-                        <CardDescription className="text-slate-500 dark:text-slate-400">
-                          Two paragraphs that tell your story.
-                        </CardDescription>
-                      </div>
+            <div className="space-y-6 animate-in fade-in duration-700 max-w-4xl mx-auto">
+              <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
+                <CardHeader className="p-4 pb-1">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-blue-500/20 text-blue-400 rounded-xl">
+                      <FaUser size={20} />
                     </div>
-                  </CardHeader>
-                  <CardContent className="space-y-6 pt-2">
-                    <AdminField label="About Biography">
-                      <AdminTextarea
-                        className="min-h-50"
-                        value={data.bio}
-                        onChange={(e) =>
-                          setData((d) => ({ ...d, bio: e.target.value }))
-                        }
-                        placeholder="Tell your story. Supports multiple paragraphs..."
-                      />
-                    </AdminField>
-                  </CardContent>
-                </Card>
-
-                <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
-                  <CardHeader className="p-4 pb-1">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2.5 bg-pink-500/20 text-pink-400 rounded-xl">
-                        <FaLightbulb size={20} />
-                      </div>
-                      <div>
-                        <CardTitle className="text-slate-900 dark:text-white">
-                          Key Highlights
-                        </CardTitle>
-                        <CardDescription className="text-slate-500 dark:text-slate-400">
-                          Short bullet points of what you bring to the table.
-                        </CardDescription>
-                      </div>
+                    <div>
+                      <CardTitle className="text-slate-900 dark:text-white">
+                        Professional Bio
+                      </CardTitle>
+                      <CardDescription className="text-slate-500 dark:text-slate-400">
+                        Tell your story in a beautifully formatted biography.
+                      </CardDescription>
                     </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4 pt-2">
-                    <AdminField label="Highlights Checklist">
-                      <div className="space-y-4">
-                        <div className="flex flex-wrap gap-2">
-                          <AnimatePresence>
-                            {data.highlights.map((h, i) => (
-                              <motion.div
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.9 }}
-                                key={i}
-                              >
-                                <Badge
-                                  variant="secondary"
-                                  className="pl-3 pr-1 py-1 gap-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-white/5 rounded-full shadow-sm dark:shadow-none"
-                                >
-                                  {h}
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() =>
-                                      setData((d) => ({
-                                        ...d,
-                                        highlights: d.highlights.filter(
-                                          (_, idx) => idx !== i,
-                                        ),
-                                      }))
-                                    }
-                                    className="h-5 w-5 rounded-full hover:bg-red-500/20 hover:text-red-400"
-                                  >
-                                    <FaTimes size={10} />
-                                  </Button>
-                                </Badge>
-                              </motion.div>
-                            ))}
-                          </AnimatePresence>
-                        </div>
-                        <div className="flex gap-2">
-                          <AdminInput
-                            value={highlightInput}
-                            onChange={(e) => setHighlightInput(e.target.value)}
-                            onKeyDown={(e) =>
-                              e.key === "Enter" &&
-                              (e.preventDefault(), addHighlight())
-                            }
-                            placeholder="e.g. Expert in modern React..."
-                          />
-                          <Button
-                            onClick={addHighlight}
-                            size="icon"
-                            className="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl shrink-0 p-6 border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none"
-                          >
-                            <FaPlus size={14} />
-                          </Button>
-                        </div>
-                      </div>
-                    </AdminField>
-                  </CardContent>
-                </Card>
-              </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-6 pt-2">
+                  <AdminField label="About Biography">
+                    <AdminTextarea
+                      className="min-h-50"
+                      value={data.bio}
+                      onChange={(e) =>
+                        setData((d) => ({ ...d, bio: e.target.value }))
+                      }
+                      placeholder="Tell your story. Supports multiple paragraphs..."
+                    />
+                  </AdminField>
+                </CardContent>
+              </Card>
             </div>
           )}
         </div>
