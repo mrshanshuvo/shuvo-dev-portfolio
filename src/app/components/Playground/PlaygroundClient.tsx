@@ -11,7 +11,7 @@ interface PlaygroundClientProps {
 
 export default function PlaygroundClient({ demos }: PlaygroundClientProps) {
   return (
-    <section id="playground" className="py-16 relative overflow-hidden">
+    <section id="playground" className="scroll-mt-28 py-16 relative overflow-hidden">
       <div className="max-w-350 mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-16">
           {/* Heading */}

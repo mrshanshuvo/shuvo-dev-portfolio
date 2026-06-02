@@ -10,7 +10,7 @@ interface Props {
 
 export default function ExperienceClient({ experiences }: Props) {
   return (
-    <section id="experience" className="py-24 bg-slate-50 dark:bg-slate-900">
+    <section id="experience" className="scroll-mt-28 py-24 bg-slate-50 dark:bg-slate-900">
       <div className="max-w-350 mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

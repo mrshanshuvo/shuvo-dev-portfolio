@@ -15,7 +15,7 @@ export default function CertificationsView({
   return (
     <section
       id="certifications"
-      className="py-24 relative overflow-hidden bg-slate-900/10"
+      className="scroll-mt-28 py-24 relative overflow-hidden bg-slate-900/10"
     >
       <div className="max-w-350 mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div

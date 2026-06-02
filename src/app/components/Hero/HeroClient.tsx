@@ -244,19 +244,17 @@ export default function HeroClient({ hero }: Props) {
               [&_strong]:font-semibold [&_strong]:text-slate-900 [&_strong]:dark:text-slate-100
               [&_b]:font-semibold [&_b]:text-slate-900 [&_b]:dark:text-slate-100"
             >
-              {(hero.bio || "")
-                .split("\n\n")
-                .map(
-                  (para, i) =>
-                    para.trim() && (
-                      <p
-                        key={i}
-                        dangerouslySetInnerHTML={{
-                          __html: parseMarkdown(para),
-                        }}
-                      />
-                    ),
-                )}
+              {(hero.bio || "").split("\n\n").map(
+                (para, i) =>
+                  para.trim() && (
+                    <p
+                      key={i}
+                      dangerouslySetInnerHTML={{
+                        __html: parseMarkdown(para),
+                      }}
+                    />
+                  ),
+              )}
             </div>
           </motion.div>
         </div>

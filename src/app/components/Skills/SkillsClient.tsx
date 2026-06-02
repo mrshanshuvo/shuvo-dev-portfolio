@@ -49,7 +49,7 @@ export default function SkillsClient({ skills, techList }: Props) {
     <section
       id="skills"
       ref={ref}
-      className="relative py-16 bg-white dark:bg-slate-950 overflow-hidden"
+      className="scroll-mt-28 relative py-16 bg-white dark:bg-slate-950 overflow-hidden"
     >
       <div className="absolute top-20 left-0 w-72 h-72 bg-emerald-500/5 rounded-full blur-3xl" />
 

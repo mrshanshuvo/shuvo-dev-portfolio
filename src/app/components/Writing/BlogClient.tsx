@@ -14,7 +14,7 @@ export default function BlogClient({ blogs }: BlogClientProps) {
   return (
     <section
       id="blog"
-      className="py-16 bg-white dark:bg-slate-950 relative overflow-hidden"
+      className="scroll-mt-28 py-16 bg-white dark:bg-slate-950 relative overflow-hidden"
     >
       <div className="max-w-350 mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-16">
