@@ -278,7 +278,13 @@ export default function ProjectEditPage() {
 
               <AdminField label="Category" className="min-w-70">
                 <CategoryCombobox
-                  value={Array.isArray(form.category) ? form.category : form.category ? [form.category] : []}
+                  value={
+                    Array.isArray(form.category)
+                      ? form.category
+                      : form.category
+                        ? [form.category]
+                        : []
+                  }
                   onChange={(v) => update("category", v)}
                   categories={categories}
                   refreshCategories={refreshCategories}
@@ -363,7 +369,7 @@ export default function ProjectEditPage() {
             </AdminField>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="p-6 bg-white dark:bg-slate-950/40 rounded-[2rem] border border-slate-200 dark:border-white/5 space-y-6">
+              <div className="p-6 bg-white dark:bg-slate-950/40 rounded-[1rem] border border-slate-200 dark:border-white/5 space-y-6">
                 <MultiLinkManager
                   label="Github Repositories"
                   iconType="github"
@@ -371,7 +377,7 @@ export default function ProjectEditPage() {
                   onChange={(l) => update("github", l as any)}
                 />
               </div>
-              <div className="p-6 bg-white dark:bg-slate-950/40 rounded-[2rem] border border-slate-200 dark:border-white/5 space-y-6">
+              <div className="p-6 bg-white dark:bg-slate-950/40 rounded-[1rem] border border-slate-200 dark:border-white/5 space-y-6">
                 <MultiLinkManager
                   label="Live Deployments"
                   iconType="live"

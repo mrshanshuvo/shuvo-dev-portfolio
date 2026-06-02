@@ -79,7 +79,7 @@ export default function SkillsClient({ skills, techList }: Props) {
           >
             <motion.div
               variants={itemVariants}
-              className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl rounded-[2rem] p-10 border border-slate-200/50 dark:border-white/10 shadow-xl"
+              className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl rounded-[1rem] p-10 border border-slate-200/50 dark:border-white/10 shadow-xl"
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-8">
                 {skills.map((skill, index) => {

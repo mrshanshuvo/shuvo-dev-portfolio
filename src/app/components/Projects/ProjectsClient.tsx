@@ -12,7 +12,10 @@ interface Props {
 
 export default function ProjectsClient({ projects }: Props) {
   return (
-    <section id="projects" className="scroll-mt-28 py-16 bg-white dark:bg-slate-950">
+    <section
+      id="projects"
+      className="scroll-mt-28 py-16 bg-white dark:bg-slate-950"
+    >
       <div className="max-w-350 mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-16">
           {/* Heading */}
@@ -54,7 +57,7 @@ export default function ProjectsClient({ projects }: Props) {
         </div>
 
         {/* Featured grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        <div className="grid md:grid-cols-2 gap-8 mb-16">
           {projects.map((project, i) => (
             <ProjectCard
               key={project._id ?? project.slug}
