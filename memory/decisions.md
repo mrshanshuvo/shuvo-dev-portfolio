@@ -23,3 +23,9 @@ _This file tracks significant design and architectural decisions made during dev
 - **Context:** The portfolio needs content updates.
 - **Decision:** Build a custom admin dashboard directly in the project (`/admin`) instead of using Sanity or Strapi.
 - **Consequences:** Higher initial development cost but zero external dependencies and total control over the UI/UX of the CMS.
+
+### [2026-06-02] - Trim Collections to Match Brittany Chiang Aesthetic
+
+- **Context:** The portfolio had 19 collections including agency-style features (Testimonials, Services, Workflows, Stats) that don't fit a minimal developer portfolio inspired by brittanychiang.com.
+- **Decision:** Remove Testimonials, Services, Workflows, and Stats entirely — models, types, API routes, admin pages, and public components. The retained flow is: Hero → About → Experience → Projects → Playground → Skills → Education → Certifications → Blog → Contact.
+- **Consequences:** Simpler codebase (−2,991 lines), tighter public page flow, fewer admin sections to manage. The Mongoose models and MongoDB collections still exist in the database but are no longer referenced by the app. They can be dropped manually if desired.

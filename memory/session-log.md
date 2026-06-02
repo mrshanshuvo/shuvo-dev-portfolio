@@ -78,6 +78,7 @@ _Chronological log of agent interactions, tasks completed, and context switches.
 - **Next Steps:** Await next task from the user.
 
 ## [2026-05-26] Cloudinary Migration for Projects
+
 - **Task:** Inject locally generated project images into Cloudinary and update MongoDB.
 - **Actions:**
   - Wrote a custom Node.js script using `cloudinary` and `mongoose` connecting via `.env.local` credentials.
@@ -87,6 +88,7 @@ _Chronological log of agent interactions, tasks completed, and context switches.
 - **Next Steps:** Await next task from the user.
 
 ## [2026-05-26] Bug Fix: Project Save 500 Error
+
 - **Task:** Resolve 500 Internal Server Error when patching/saving a project in the Admin dashboard.
 - **Actions:**
   - Identified a Mongoose schema validation failure (`CastError`) where the frontend was sending the `category` field as an array of strings (from the combobox), but the `ProjectSchema` strictly expected a single `String`.
@@ -95,24 +97,28 @@ _Chronological log of agent interactions, tasks completed, and context switches.
 - **Next Steps:** Await next task from the user.
 
 ## [2026-05-26] Performance Enhancement
+
 - **Task:** Fix Next.js LCP (Largest Contentful Paint) warning for project images.
 - **Actions:** Added `priority={index < 2}` to the Next.js `<Image>` component in `src/app/components/Projects/ProjectCard.tsx` to preload the above-the-fold images as requested by the warning.
 - **Next Steps:** Await next task from the user.
 
 ## [2026-05-26] UI Tweak: Project Card Click Target
+
 - **Task:** Make the entire Project Card clickable, replacing the dedicated "Explore" and "GitHub" buttons.
-- **Actions:** 
+- **Actions:**
   - Refactored `ProjectCard.tsx` to include a full-cover `<Link>` overlay (`absolute inset-0 z-10`).
   - Removed the "Explore Project" and "GitHub" buttons.
   - Retained the "Live Demo" button (if available), elevating it above the card link overlay (`relative z-20`) so it functions independently.
 - **Next Steps:** Await next task from the user.
 
 ## [2026-05-26] Code Cleanup
+
 - **Task:** Resolve Mongoose `new` option deprecation warning.
 - **Actions:** Replaced all occurrences of `{ new: true }` with `{ returnDocument: "after" }` across all API route handlers (`src/app/api/admin/**/*.ts`).
 - **Next Steps:** Await next task from the user.
 
 ## [2026-05-26] World-Class Bento Case Study Overhaul
+
 - **Task:** Rebuild the project detail view into a premium Apple-style Bento grid.
 - **Actions:**
   - Redesigned `ProjectDetailClient.tsx` into a custom, highly responsive asymmetric Bento Grid.
@@ -123,6 +129,7 @@ _Chronological log of agent interactions, tasks completed, and context switches.
 - **Next Steps:** Await next task from the user.
 
 ## [2026-05-26] Premium Project Page Overhaul
+
 - **Task:** Redesign Project Details page structure into a high-end split-screen case study layout.
 - **Actions:**
   - Redesigned `ProjectDetailClient.tsx` to utilize an asymmetric 12-column layout.
@@ -133,3 +140,14 @@ _Chronological log of agent interactions, tasks completed, and context switches.
 - **Task:** Resolve TypeScript unused import warning.
 - **Actions:** Removed the unused `mongoose` import in `src/app/api/admin/projects/[id]/route.ts`.
 - **Next Steps:** Await next task from the user.
+
+## [2026-06-02] Collection Trimming — Brittany Chiang Alignment
+
+- **Task:** Remove Testimonials, Services, Workflows, and Stats collections to achieve a clean, minimal developer portfolio aesthetic inspired by brittanychiang.com.
+- **Actions:**
+  - Deleted 14 files: public components (`Services/`, `Testimonials/`, `Workflow/`), admin pages (`admin/services/`, `admin/stats/`, `admin/testimonials/`, `admin/workflow/`), and API routes (`api/admin/services/`, `api/admin/stats/`, `api/admin/testimonials/`, `api/admin/workflow/`).
+  - Modified 10 files: public homepage, About (removed Stats data fetching & grid), Navbar (removed section tracking), AdminSidebar/Topbar (removed nav links), Admin Dashboard (removed counts, cards, activity feed refs), Profile API (removed queries), and Types (removed `Stat`, `Testimonial`, `Service`, `WorkflowStep` interfaces).
+  - Cleared `.next` cache and verified zero TypeScript errors via `npx tsc --noEmit`.
+  - Committed: `refactor: remove Testimonials, Services, Workflows, and Stats collections for minimal Brittany Chiang-inspired portfolio aesthetic` (−2,991 lines).
+- **Design Rationale:** Brittany Chiang's portfolio focuses on Hero → About → Experience → Projects → Contact. Testimonials, Services, Workflows, and Stats are patterns from freelancer/agency portfolios and don't fit the minimal dev aesthetic.
+- **Next Steps:** Update memory files. Await next task from the user.

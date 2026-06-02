@@ -6,7 +6,7 @@ A full-stack Next.js developer portfolio with a custom Content Management System
 
 ## Core Directives
 
-1. **Aesthetics First:** The public UI must be extremely premium, utilizing modern web design trends (dark mode, glassmorphism, subtle gradients, and smooth Framer Motion micro-animations).
+1. **Aesthetics First:** The public UI must be extremely premium and minimal, inspired by brittanychiang.com. Utilize modern web design trends (dark mode, glassmorphism, subtle gradients, and smooth Framer Motion micro-animations) while keeping the layout clean and developer-focused.
 2. **Type Safety:** Maintain strict TypeScript typing across all components and API routes.
 3. **Admin Usability:** The admin dashboard must be intuitive, robust, and handle data synchronization gracefully via React Query.
 4. **Performance:** Ensure optimized image loading (Cloudinary) and efficient font loading (next/font).

@@ -25,8 +25,19 @@ This project is a modern, dynamic developer portfolio built for showcasing proje
 - `src/app/api`: Next.js API routes (REST/RPC).
 - `src/components`: Reusable UI components.
 
+## Active Collections (15)
+
+User, Project, Category, Skill, Experience, Education, Certification, Demo, Blog, Hero (singleton), About (singleton), Setting (singleton), Message, Visitor, SocialLink.
+
+**Removed:** Testimonial, Service, Workflow, Stat (trimmed for minimal Brittany Chiang aesthetic).
+
+## Public Page Flow
+
+Hero → About → Experience → Projects → Playground → Skills → Education → Certifications → Blog → Contact
+
 ## Current Status
 
 - Project is active and under development.
-- The admin dashboard features sections for managing hero identity, socials, about, experiences, and more.
+- The admin dashboard features sections for managing hero identity, socials, about, experiences, projects, skills, demos, blogs, certifications, education, messages, and settings.
 - Built-in ESLint and TypeScript checking is configured and active.
+- Targeting a clean, minimal developer portfolio aesthetic inspired by brittanychiang.com.

@@ -8,7 +8,9 @@ It addresses all architectural gaps by incorporating stricter types (converting 
 
 ## 1. Visual Entity Relationship (ER) Diagram
 
-Below is the conceptual ER diagram representing all **19 collections** (with `TECH` combined into `SKILL` or singleton configuration) and their strict physical/logical relationships.
+Below is the conceptual ER diagram representing all **15 active collections** and their strict physical/logical relationships.
+
+> **Removed Collections (2026-06-02):** `Testimonial`, `Service`, `Workflow`, and `Stat` were removed to align with a minimal developer portfolio aesthetic inspired by brittanychiang.com. The Mongoose model files may still exist but are no longer referenced by the application.
 
 ```mermaid
 erDiagram
@@ -192,49 +194,7 @@ erDiagram
         date updatedAt
     }
 
-    SERVICE {
-        ObjectId _id PK
-        string title
-        string description
-        string icon
-        string_array features
-        number order "Default: 0"
-        date createdAt
-        date updatedAt
-    }
-
-    TESTIMONIAL {
-        ObjectId _id PK
-        string name
-        string role
-        string content
-        string avatar "Optional"
-        string company "Optional"
-        number order "Default: 0"
-        date createdAt
-        date updatedAt
-    }
-
-    WORKFLOW {
-        ObjectId _id PK
-        string title
-        string description
-        string icon
-        number order "Default: 0"
-        date createdAt
-        date updatedAt
-    }
-
-    STAT {
-        ObjectId _id PK
-        string number "allows 10+ or ~50"
-        string label
-        number order "Default: 0"
-        date createdAt
-        date updatedAt
-    }
-
-    SOCIAL_LINK {
+    SOCIALLINK {
         ObjectId _id PK
         string platform
         string href
@@ -467,53 +427,7 @@ Submissions generated via public contact forms.
   - `status` (String, default: `"unread"`, enum: `['unread', 'read']`): Status flag for CMS control.
   - `readBy` (ObjectId, optional): FK pointing to `User._id` indicating the administrator who reviewed/addressed the inquiry.
 
-#### 15. Service (`services`)
-
-Custom professional service packages offered.
-
-- **Fields:**
-  - `_id` (ObjectId, PK): Unique identifier.
-  - `title` (String, required): Service header label.
-  - `description` (String, required): Service overview details.
-  - `icon` (String, required): Lucide/React icon library map string.
-  - `features` (Array of Strings): Key features/deliverables included.
-  - `order` (Number, default: `0`): UI render sorting value.
-
-#### 16. Testimonial (`testimonials`)
-
-Colleague or client recommendations.
-
-- **Fields:**
-  - `_id` (ObjectId, PK): Unique identifier.
-  - `name` (String, required): Reviewer's full name.
-  - `role` (String, required): Reviewer's position.
-  - `content` (String, required): Review body copy.
-  - `avatar` (String, optional): Reviewer headshot path.
-  - `company` (String, optional): Associated company/project name.
-  - `order` (Number, default: `0`): Layout sorting value.
-
-#### 17. Workflow (`workflows`)
-
-Step-by-step dev process timeline nodes.
-
-- **Fields:**
-  - `_id` (ObjectId, PK): Unique identifier.
-  - `title` (String, required): Workflow stage title.
-  - `description` (String, required): Detailed activities involved.
-  - `icon` (String, required): UI icon label identifier.
-  - `order` (Number, default: `0`): Sequence rank.
-
-#### 18. Stat (`stats`)
-
-Key resume highlights metrics.
-
-- **Fields:**
-  - `_id` (ObjectId, PK): Unique identifier.
-  - `number` (String, required): Value string (allows custom symbols like `10+` or `~50`).
-  - `label` (String, required): Metric label (e.g. "Projects Completed").
-  - `order` (Number, default: `0`): Layout order index.
-
-#### 19. SocialLink (`sociallinks`)
+#### 15. SocialLink (`sociallinks`)
 
 External platform link configurations.
 
