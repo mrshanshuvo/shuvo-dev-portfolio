@@ -145,23 +145,28 @@ export default function SkillsClient({ skills, techList }: Props) {
               </h4>
             </div>
             <div className="overflow-hidden relative py-6">
+              {/* Premium Gradient Edge Fade Overlays */}
+              <div className="absolute inset-y-0 left-0 w-16 md:w-32 bg-linear-to-r from-white dark:from-slate-950 to-transparent z-10 pointer-events-none" />
+              <div className="absolute inset-y-0 right-0 w-16 md:w-32 bg-linear-to-l from-white dark:from-slate-950 to-transparent z-10 pointer-events-none" />
+
               <motion.div
-                className="flex space-x-12 px-6"
-                animate={{ x: [0, -1000] }}
+                className="flex space-x-12 px-6 flex-nowrap w-max shrink-0"
+                animate={{ x: ["0%", "-33.333%"] }}
                 transition={{
                   x: {
                     repeat: Infinity,
                     repeatType: "loop",
-                    duration: 25,
+                    duration: 30,
                     ease: "linear",
                   },
                 }}
               >
-                {techList.map((tech, index) => (
+                {/* Triple the list to guarantee perfect looping on any screen size */}
+                {[...techList, ...techList, ...techList].map((tech, index) => (
                   <Badge
                     key={index}
                     variant="outline"
-                    className="flex items-center gap-2 px-4 py-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium whitespace-nowrap"
+                    className="flex items-center gap-2 px-4 py-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium whitespace-nowrap shadow-sm hover:border-emerald-500/30 dark:hover:border-emerald-400/30 transition-colors"
                   >
                     <FaCode className="text-emerald-600 dark:text-emerald-400" />
                     <span className="text-lg">{tech}</span>
