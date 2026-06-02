@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import Navbar from "@/app/components/Navbar/Navbar";
 import Hero from "@/app/components/Hero/Hero";
-import About from "@/app/components/About/About";
 import Skills from "@/app/components/Skills/Skills";
 import Education from "@/app/components/Education/Education";
 import Contact from "@/app/components/Contact/Contact";
@@ -41,9 +40,6 @@ export default async function Home() {
       <Navbar resumeUrl={resumeUrl} />
       <main id="main-content">
         <Hero />
-        <Suspense fallback={<SectionSkeleton cols={1} />}>
-          <About />
-        </Suspense>
         <Suspense fallback={<TimelineSkeleton />}>
           <Experience />
         </Suspense>

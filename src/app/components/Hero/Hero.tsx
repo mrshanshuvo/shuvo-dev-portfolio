@@ -1,20 +1,23 @@
 import { connectDB } from "@/lib/mongodb";
 import HeroModel from "@/models/Hero";
 import SocialLinkModel from "@/models/SocialLink";
+import AboutModel from "@/models/About";
 import type { Hero } from "@/types";
 import HeroClient from "./HeroClient";
 
-async function getHero(): Promise<Hero> {
+export default async function Hero() {
   await connectDB();
-  const [heroDoc, socialDocs] = await Promise.all([
+  const [heroDoc, socialDocs, aboutDoc] = await Promise.all([
     HeroModel.findOne().lean(),
     SocialLinkModel.find().sort({ order: 1 }).lean(),
+    AboutModel.findOne().lean(),
   ]);
 
   const raw = heroDoc ? JSON.parse(JSON.stringify(heroDoc)) : {};
   const socials = socialDocs ? JSON.parse(JSON.stringify(socialDocs)) : [];
+  const about = aboutDoc ? JSON.parse(JSON.stringify(aboutDoc)) : {};
 
-  return {
+  const hero: Hero = {
     _id: raw._id?.toString(),
     name: raw.name ?? "Shahid Hasan",
     lastName: raw.lastName ?? "Shuvo",
@@ -29,9 +32,6 @@ async function getHero(): Promise<Hero> {
     resumeUrl: raw.resumeUrl ?? "/Resume_of_Shahid_Hasan_Shuvo.pdf",
     socialLinks: socials,
   };
-}
 
-export default async function Hero() {
-  const hero = await getHero();
-  return <HeroClient hero={hero} />;
+  return <HeroClient hero={hero} aboutBio={about.aboutBio || ""} />;
 }
