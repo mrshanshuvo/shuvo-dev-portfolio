@@ -1,6 +1,7 @@
 import { connectDB } from "@/lib/mongodb";
 import DemoModel from "@/models/Demo";
 import PlaygroundClient from "./PlaygroundClient";
+import { getIconRegistry } from "@/lib/iconRegistry";
 
 async function getDemos(): Promise<any[]> {
   await connectDB();
@@ -11,5 +12,6 @@ async function getDemos(): Promise<any[]> {
 export default async function Playground() {
   const demos = await getDemos();
   if (!demos || demos.length === 0) return null;
-  return <PlaygroundClient demos={demos} />;
+  const iconRegistry = await getIconRegistry();
+  return <PlaygroundClient demos={demos} iconRegistry={iconRegistry} />;
 }

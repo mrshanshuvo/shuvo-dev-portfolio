@@ -4,16 +4,18 @@ import Link from "next/link";
 import Image from "next/image";
 import { FaExternalLinkAlt, FaStar } from "react-icons/fa";
 import type { Project } from "@/types";
-import { getIcon, getColorClass } from "@/lib/techIconMap";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 export default function ProjectCard({
   project,
   index,
+  iconRegistry,
 }: {
   project: Project;
   index: number;
+  iconRegistry?: Record<string, string>;
 }) {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -119,7 +121,7 @@ export default function ProjectCard({
             {/* Tech stack */}
             <div className="flex flex-wrap gap-2">
               {project.techNames.slice(0, 5).map((name) => {
-                const Icon = getIcon(name);
+                const iconUrl = iconRegistry?.[name];
                 return (
                   <Badge
                     key={name}
@@ -127,7 +129,9 @@ export default function ProjectCard({
                     className="flex items-center gap-1.5 px-2.5 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-[10px] font-bold shadow-sm"
                     title={name}
                   >
-                    <Icon className={getColorClass(name)} />
+                    {iconUrl && (
+                      <Image src={iconUrl} alt={name} width={14} height={14} className="object-contain" />
+                    )}
                     {name}
                   </Badge>
                 );

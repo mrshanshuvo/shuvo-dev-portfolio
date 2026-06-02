@@ -8,6 +8,7 @@ import HeroModel from "@/models/Hero";
 import type { Demo } from "@/types";
 import type { Metadata } from "next";
 import PlaygroundDetailClient from "./PlaygroundDetailClient";
+import { getIconRegistry } from "@/lib/iconRegistry";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -55,10 +56,12 @@ export default async function PlaygroundDetailPage({ params }: Props) {
 
   const demo: Demo = JSON.parse(JSON.stringify(raw));
 
+  const iconRegistry = await getIconRegistry();
+
   return (
     <>
       <Navbar resumeUrl={resumeUrl} />
-      <PlaygroundDetailClient demo={demo} />
+      <PlaygroundDetailClient demo={demo} iconRegistry={iconRegistry} />
     </>
   );
 }

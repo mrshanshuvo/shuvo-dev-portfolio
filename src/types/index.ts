@@ -21,13 +21,13 @@ export interface Project {
   description: string;
   image: string;
   technologies?: IconType[]; // frontend-only
-  techNames: string[];      // backward compatibility
-  skillIds?: string[];       // relational database field
+  techNames: string[]; // backward compatibility
+  skillIds?: string[]; // relational database field
   github: LinkItem[];
   live: LinkItem[];
   featured: boolean;
   category?: string | string[]; // backward compatibility
-  categoryIds?: string[];       // relational database field
+  categoryIds?: string[]; // relational database field
   improvements: string[];
   media?: MediaItem[];
   order?: number;
@@ -37,16 +37,16 @@ export interface Experience {
   _id?: string;
   title: string;
   org: string;
-  duration?: string;   // backward compatibility
-  startDate?: string;  // ISO date string
-  endDate?: string;    // ISO date string, undefined/null means current
+  duration?: string; // backward compatibility
+  startDate?: string; // ISO date string
+  endDate?: string; // ISO date string, undefined/null means current
   details: string[];
   order?: number;
   url?: string;
   previousTitles?: string[];
   links?: LinkItem[];
   technologies?: string[]; // backward compatibility
-  skillIds?: string[];     // relational database field
+  skillIds?: string[]; // relational database field
 }
 
 export interface Skill {
@@ -54,9 +54,7 @@ export interface Skill {
   name: string;
   tech: string;
   level: number;
-  iconName: string;
-  iconSlug?: string;
-  brandColor?: string;
+  iconUrl?: string;
   isTechnology?: boolean;
 }
 
@@ -91,9 +89,9 @@ export interface Education {
   institution: string;
   location: string;
   logo: string;
-  period?: string;   
-  startDate?: string; 
-  endDate?: string;  
+  period?: string;
+  startDate?: string;
+  endDate?: string;
   gpa: string;
   details: string[];
   link: string;
@@ -142,9 +140,9 @@ export interface Certification {
   _id?: string;
   title: string;
   issuer: string;
-  date?: string;       // backward compatibility
-  issuedAt?: string;   // ISO date string
-  expiresAt?: string;  // ISO date string
+  date?: string; // backward compatibility
+  issuedAt?: string; // ISO date string
+  expiresAt?: string; // ISO date string
   link?: string;
   image?: string;
   details: string[];
@@ -178,7 +176,7 @@ export interface Demo {
   github?: string;
   featured?: boolean;
   image?: string;
-  tech: string[];     // backward compatibility
+  tech: string[]; // backward compatibility
   skillIds?: string[]; // relational database field
   media?: MediaItem[];
   order: number;

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import {
   FaTrash,
@@ -30,13 +30,7 @@ export default function ImageUpload({
   const [fileName, setFileName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsMounted(true);
-  }, []);
 
   const handleUpload = async (file: File) => {
     setLoading(true);
@@ -348,8 +342,7 @@ export default function ImageUpload({
       />
 
       {/* Fullscreen Premium Preview Modal */}
-      {isMounted &&
-        isPreviewOpen &&
+      {isPreviewOpen &&
         value &&
         createPortal(
           <div

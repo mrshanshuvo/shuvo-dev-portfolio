@@ -4,10 +4,11 @@ import { useState, useRef, useEffect } from "react";
 import { FaChevronDown, FaSearch, FaCheck, FaTimes } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 interface TechItem {
   name: string;
-  brandColor?: string;
+  iconUrl?: string;
   isTechnology?: boolean;
 }
 
@@ -38,7 +39,7 @@ export default function TechCombobox({
   }, []);
 
   const filtered = technologies.filter((t) =>
-    t.name.toLowerCase().includes(search.toLowerCase())
+    t.name.toLowerCase().includes(search.toLowerCase()),
   );
 
   const toggleTech = (name: string) => {
@@ -48,9 +49,9 @@ export default function TechCombobox({
     onChange(newValue);
   };
 
-  const getTechColor = (name: string) => {
+  const getTechIcon = (name: string) => {
     const item = technologies.find((t) => t.name === name);
-    return item?.brandColor || "#10B981";
+    return item?.iconUrl || null;
   };
 
   return (
@@ -61,7 +62,7 @@ export default function TechCombobox({
           "w-full flex flex-wrap gap-2.5 p-2.5 min-h-14 bg-white dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 rounded-2xl transition-all cursor-pointer outline-none",
           open
             ? "border-emerald-500/50 ring-2 ring-emerald-500/20"
-            : "border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10"
+            : "border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10",
         )}
       >
         {value.length === 0 && (
@@ -71,7 +72,7 @@ export default function TechCombobox({
         )}
         <AnimatePresence mode="popLayout">
           {value.map((val) => {
-            const brandColor = getTechColor(val);
+            const iconUrl = getTechIcon(val);
             return (
               <motion.div
                 key={val}
@@ -79,10 +80,16 @@ export default function TechCombobox({
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 className="flex items-center gap-1.5 pl-3.5 pr-2 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 shadow-sm"
-                style={{
-                  borderLeft: `3px solid ${brandColor}`,
-                }}
               >
+                {iconUrl && (
+                  <Image
+                    src={iconUrl}
+                    alt={val}
+                    width={14}
+                    height={14}
+                    className="object-contain"
+                  />
+                )}
                 <span>{val}</span>
                 <button
                   onClick={(e) => {
@@ -102,7 +109,7 @@ export default function TechCombobox({
           <FaChevronDown
             className={cn(
               "text-slate-500 text-xs transition-transform",
-              open && "rotate-180"
+              open && "rotate-180",
             )}
           />
         </div>
@@ -134,18 +141,28 @@ export default function TechCombobox({
                       "flex items-center justify-between px-3 py-2.5 rounded-xl text-sm transition-colors text-left w-full cursor-pointer",
                       isActive
                         ? "bg-slate-50 dark:bg-white/5 text-emerald-400 font-bold"
-                        : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
+                        : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white",
                     )}
                   >
                     <div className="flex items-center gap-2.5">
-                      <div
-                        className="w-3 h-3 rounded-full shrink-0 shadow-sm"
-                        style={{ backgroundColor: t.brandColor || "#10B981" }}
-                      />
+                      {t.iconUrl ? (
+                        <Image
+                          src={t.iconUrl}
+                          alt={t.name}
+                          width={14}
+                          height={14}
+                          className="object-contain shrink-0"
+                        />
+                      ) : (
+                        <div className="w-3.5 h-3.5 rounded-full shrink-0 bg-slate-200 dark:bg-slate-800" />
+                      )}
                       <span className="truncate">{t.name}</span>
                     </div>
                     {isActive && (
-                      <FaCheck size={10} className="shrink-0 ml-2 text-emerald-500" />
+                      <FaCheck
+                        size={10}
+                        className="shrink-0 ml-2 text-emerald-500"
+                      />
                     )}
                   </button>
                 );

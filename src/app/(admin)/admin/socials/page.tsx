@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   DndContext,
@@ -204,6 +204,7 @@ function SortableSocialRow({
 export default function AdminSocialsPage() {
   const queryClient = useQueryClient();
   const [data, setData] = useState<SocialLink[]>([]);
+  const [prevFetchedData, setPrevFetchedData] = useState<any>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -234,12 +235,12 @@ export default function AdminSocialsPage() {
     },
   });
 
-  useEffect(() => {
+  if (fetchedData !== prevFetchedData) {
+    setPrevFetchedData(fetchedData);
     if (fetchedData) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setData(Array.isArray(fetchedData) ? fetchedData : []);
     }
-  }, [fetchedData]);
+  }
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {

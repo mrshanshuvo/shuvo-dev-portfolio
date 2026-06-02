@@ -30,9 +30,8 @@ export default function Navbar({ resumeUrl }: Props) {
 
   useEffect(() => {
     if (pathname !== "/") {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setActiveSection("");
-      return;
+      const raf = requestAnimationFrame(() => setActiveSection(""));
+      return () => cancelAnimationFrame(raf);
     }
 
     const sections = [

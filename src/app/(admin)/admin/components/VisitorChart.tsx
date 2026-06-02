@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
 
 interface TrendData {
   date: string;
@@ -13,17 +12,6 @@ interface VisitorChartProps {
 }
 
 export default function VisitorChart({ data }: VisitorChartProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMounted(true);
-  }, []);
-
-  if (!mounted)
-    return (
-      <div className="h-24 w-full animate-pulse bg-slate-800/50 rounded-xl mt-4" />
-    );
   if (!data || data.length === 0) {
     return (
       <div className="h-24 w-full flex items-center justify-center mt-4 border border-dashed border-white/10 rounded-xl text-slate-500 text-sm">

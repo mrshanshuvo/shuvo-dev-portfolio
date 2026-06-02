@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -160,6 +160,7 @@ function SortableCertRow({
 export default function AdminCertificationsPage() {
   const queryClient = useQueryClient();
   const [data, setData] = useState<Certification[]>([]);
+  const [prevFetchedData, setPrevFetchedData] = useState<any>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -191,12 +192,12 @@ export default function AdminCertificationsPage() {
     },
   });
 
-  useEffect(() => {
+  if (fetchedData !== prevFetchedData) {
+    setPrevFetchedData(fetchedData);
     if (fetchedData) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setData(Array.isArray(fetchedData) ? fetchedData : []);
     }
-  }, [fetchedData]);
+  }
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {

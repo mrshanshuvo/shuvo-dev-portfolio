@@ -1,6 +1,5 @@
 "use client";
 import { motion } from "framer-motion";
-import Image from "next/image";
 import {
   FaGithub,
   FaExternalLinkAlt,
@@ -10,14 +9,18 @@ import {
   FaFlask,
 } from "react-icons/fa";
 import Link from "next/link";
-import { getIcon } from "@/lib/techIconMap";
+import Image from "next/image";
 import type { Demo } from "@/types";
 
-interface Props {
+interface PlaygroundDetailClientProps {
   demo: Demo;
+  iconRegistry?: Record<string, string>;
 }
 
-export default function PlaygroundDetailClient({ demo }: Props) {
+export default function PlaygroundDetailClient({
+  demo,
+  iconRegistry,
+}: PlaygroundDetailClientProps) {
   const coverImage =
     demo.image || demo.media?.find((m) => m.type === "image")?.url || "";
 
@@ -139,7 +142,9 @@ export default function PlaygroundDetailClient({ demo }: Props) {
                         <FaGlobe className="text-base" />
                       </div>
                       <div className="flex flex-col items-start gap-0.5">
-                        <span className="text-sm font-black">Live Experiment</span>
+                        <span className="text-sm font-black">
+                          Live Experiment
+                        </span>
                         <span className="text-[10px] text-white/70 font-semibold tracking-wider uppercase">
                           Open Lab Demo
                         </span>
@@ -192,13 +197,25 @@ export default function PlaygroundDetailClient({ demo }: Props) {
                 </div>
                 <div className="grid grid-cols-2 gap-3.5">
                   {demo.tech.map((name) => {
-                    const Icon = getIcon(name);
+                    const iconUrl = iconRegistry?.[name];
                     return (
                       <div
                         key={name}
                         className="flex flex-col items-center justify-center p-4 bg-slate-950/40 border border-white/5 hover:border-purple-500/20 rounded-lg text-center shadow-sm hover:shadow-md hover:shadow-purple-500/5 transition-all duration-300 group"
                       >
-                        <Icon className="text-slate-400 group-hover:text-purple-400 text-2xl mb-2 transition-colors duration-300 shrink-0" />
+                        {iconUrl ? (
+                          <Image
+                            src={iconUrl}
+                            alt={name}
+                            width={32}
+                            height={32}
+                            className="object-contain mb-2 shrink-0 opacity-80 group-hover:opacity-100 transition-opacity duration-300"
+                          />
+                        ) : (
+                          <div className="w-8 h-8 mb-2 shrink-0 flex items-center justify-center rounded bg-slate-800 text-slate-500 text-xs font-bold">
+                            {name[0]}
+                          </div>
+                        )}
                         <span className="text-[11px] text-slate-400 group-hover:text-slate-200 font-bold transition-colors tracking-wide">
                           {name}
                         </span>
@@ -251,9 +268,7 @@ export default function PlaygroundDetailClient({ demo }: Props) {
                   ) : (
                     <Image
                       src={m.url}
-                      alt={
-                        m.caption || `${demo.title} screenshot ${idx + 1}`
-                      }
+                      alt={m.caption || `${demo.title} screenshot ${idx + 1}`}
                       fill
                       className="object-cover group-hover:scale-102 transition-transform duration-700 ease-out"
                       sizes="(max-width: 768px) 100vw, 50vw"

@@ -11,11 +11,13 @@ export default function CustomCursor() {
 
   // Detect touch device after mount to prevent SSR/hydration mismatch
   useEffect(() => {
-    const hasTouch =
-      window.matchMedia("(pointer: coarse)").matches ||
-      navigator.maxTouchPoints > 0;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsTouchDevice(hasTouch);
+    const raf = requestAnimationFrame(() => {
+      const hasTouch =
+        window.matchMedia("(pointer: coarse)").matches ||
+        navigator.maxTouchPoints > 0;
+      setIsTouchDevice(hasTouch);
+    });
+    return () => cancelAnimationFrame(raf);
   }, []);
 
   // Mouse tracking & hover detection

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   DndContext,
@@ -187,6 +187,7 @@ function SortableExpRow({ exp, onEdit, onDelete, isDeleting }: any) {
 export default function AdminExperiencePage() {
   const queryClient = useQueryClient();
   const [data, setData] = useState<Experience[]>([]);
+  const [prevFetchedData, setPrevFetchedData] = useState<any>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -222,12 +223,12 @@ export default function AdminExperiencePage() {
     },
   });
 
-  useEffect(() => {
+  if (fetchedData !== prevFetchedData) {
+    setPrevFetchedData(fetchedData);
     if (fetchedData) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setData(Array.isArray(fetchedData) ? fetchedData : []);
     }
-  }, [fetchedData]);
+  }
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {

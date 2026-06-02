@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -293,6 +293,8 @@ export default function AdminProjectsListPage() {
   const queryClient = useQueryClient();
   const [data, setData] = useState<Project[]>([]);
   const [categories, setCategories] = useState<ICategory[]>([]);
+  const [prevProjectsData, setPrevProjectsData] = useState<any>(null);
+  const [prevCategoriesData, setPrevCategoriesData] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("All");
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -331,19 +333,19 @@ export default function AdminProjectsListPage() {
 
   const loading = loadingProjects || loadingCategories;
 
-  useEffect(() => {
+  if (projectsData !== prevProjectsData) {
+    setPrevProjectsData(projectsData);
     if (projectsData) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setData(Array.isArray(projectsData) ? projectsData : []);
     }
-  }, [projectsData]);
+  }
 
-  useEffect(() => {
+  if (categoriesData !== prevCategoriesData) {
+    setPrevCategoriesData(categoriesData);
     if (categoriesData) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCategories(Array.isArray(categoriesData) ? categoriesData : []);
     }
-  }, [categoriesData]);
+  }
 
   const refreshCategories = () => {
     queryClient.invalidateQueries({ queryKey: ["categories"] });

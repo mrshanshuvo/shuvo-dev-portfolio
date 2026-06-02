@@ -8,9 +8,10 @@ import ProjectCard from "./ProjectCard";
 
 interface Props {
   projects: Project[];
+  iconRegistry: Record<string, string>;
 }
 
-export default function ProjectsClient({ projects }: Props) {
+export default function ProjectsClient({ projects, iconRegistry }: Props) {
   return (
     <section
       id="projects"
@@ -63,6 +64,7 @@ export default function ProjectsClient({ projects }: Props) {
               key={project._id ?? project.slug}
               project={project}
               index={i}
+              iconRegistry={iconRegistry}
             />
           ))}
         </div>

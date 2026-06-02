@@ -1,6 +1,7 @@
 import { connectDB } from "@/lib/mongodb";
 import ProjectModel from "@/models/Project";
 import ProjectsClient from "./ProjectsClient";
+import { getIconRegistry } from "@/lib/iconRegistry";
 
 async function getProjects() {
   await connectDB();
@@ -13,5 +14,6 @@ async function getProjects() {
 
 export default async function Projects() {
   const projects = await getProjects();
-  return <ProjectsClient projects={projects} />;
+  const iconRegistry = await getIconRegistry();
+  return <ProjectsClient projects={projects} iconRegistry={iconRegistry} />;
 }

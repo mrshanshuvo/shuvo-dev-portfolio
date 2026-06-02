@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   FaTrash,
   FaEnvelope,
@@ -30,7 +31,7 @@ interface Message {
 
 export default function AdminMessagesPage() {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [prevFetchedData, setPrevFetchedData] = useState<any>(null);
   const [toast, setToast] = useState<{
     msg: string;
     type: "success" | "error";
@@ -42,22 +43,21 @@ export default function AdminMessagesPage() {
     setTimeout(() => setToast(null), 3000);
   }
 
-  const load = useCallback(async () => {
-    try {
+  const { data: fetchedData, isLoading: loading } = useQuery({
+    queryKey: ["messages"],
+    queryFn: async () => {
       const res = await fetch("/api/admin/messages");
-      const data = await res.json();
-      setMessages(data);
-    } catch (error) {
-      showToast("Failed to load messages", "error");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+      if (!res.ok) throw new Error("Failed to load messages");
+      return res.json();
+    },
+  });
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    load();
-  }, [load]);
+  if (fetchedData !== prevFetchedData) {
+    setPrevFetchedData(fetchedData);
+    if (fetchedData) {
+      setMessages(Array.isArray(fetchedData) ? fetchedData : []);
+    }
+  }
 
   async function handleDelete(id: string) {
     if (!confirm("Are you sure you want to delete this message?")) return;

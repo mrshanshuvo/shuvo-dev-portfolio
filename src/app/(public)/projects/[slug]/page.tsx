@@ -8,6 +8,7 @@ import HeroModel from "@/models/Hero";
 import type { Project } from "@/types";
 import type { Metadata } from "next";
 import ProjectDetailClient from "./ProjectDetailClient";
+import { getIconRegistry } from "@/lib/iconRegistry";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -49,13 +50,14 @@ export default async function ProjectPage({ params }: Props) {
 
   const heroDoc = await HeroModel.findOne().lean();
   const resumeUrl = heroDoc?.resumeUrl || "/Resume_of_Shahid_Hasan_Shuvo.pdf";
+  const iconRegistry = await getIconRegistry();
 
   const project: Project = JSON.parse(JSON.stringify(raw));
 
   return (
-    <>
+    <div className="bg-white dark:bg-[#020617] text-slate-900 dark:text-slate-50 min-h-screen font-sans selection:bg-emerald-500/30">
       <Navbar resumeUrl={resumeUrl} />
-      <ProjectDetailClient project={project} />
-    </>
+      <ProjectDetailClient project={project} iconRegistry={iconRegistry} />
+    </div>
   );
 }

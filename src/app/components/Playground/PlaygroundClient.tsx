@@ -7,9 +7,10 @@ import PlaygroundCard from "./PlaygroundCard";
 
 interface PlaygroundClientProps {
   demos: Demo[];
+  iconRegistry?: Record<string, string>;
 }
 
-export default function PlaygroundClient({ demos }: PlaygroundClientProps) {
+export default function PlaygroundClient({ demos, iconRegistry }: PlaygroundClientProps) {
   return (
     <section
       id="playground"
@@ -56,7 +57,7 @@ export default function PlaygroundClient({ demos }: PlaygroundClientProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {demos.map((demo, idx) => (
-            <PlaygroundCard key={demo._id} demo={demo} index={idx} />
+            <PlaygroundCard key={demo._id} demo={demo} index={idx} iconRegistry={iconRegistry} />
           ))}
         </div>
       </div>

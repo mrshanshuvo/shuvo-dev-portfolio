@@ -184,6 +184,7 @@ function SortableDemoRow({
 export default function AdminDemosPage() {
   const queryClient = useQueryClient();
   const [data, setData] = useState<Demo[]>([]);
+  const [prevFetchedData, setPrevFetchedData] = useState<any>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -215,12 +216,12 @@ export default function AdminDemosPage() {
     },
   });
 
-  useEffect(() => {
+  if (fetchedData !== prevFetchedData) {
+    setPrevFetchedData(fetchedData);
     if (fetchedData) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setData(Array.isArray(fetchedData) ? fetchedData : []);
     }
-  }, [fetchedData]);
+  }
 
   // Fetch technologies from the central Skill registry
   useEffect(() => {

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   DndContext,
@@ -28,10 +28,9 @@ import {
   FaTrash,
   FaLaptopCode,
   FaInfoCircle,
-  FaPalette,
 } from "react-icons/fa";
-import { SiReact, SiNodedotjs, SiTensorflow } from "react-icons/si";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 // Shadcn UI Imports
 import { Button } from "@/components/ui/button";
@@ -47,46 +46,15 @@ import {
 
 import { cn } from "@/lib/utils";
 import { AdminDialogShell } from "../components/AdminDialogShell";
-import { AdminField, AdminInput, AdminSelect } from "../components/AdminFields";
-
-const ICON_OPTIONS = [
-  "SiReact",
-  "SiNodedotjs",
-  "FaDatabase",
-  "FaCloud",
-  "SiTensorflow",
-  "FaRobot",
-  "FaCode",
-];
-
-const iconMap: Record<string, any> = {
-  SiReact: SiReact,
-  SiNodedotjs: SiNodedotjs,
-  FaDatabase: FaCode,
-  FaCloud: FaCode,
-  SiTensorflow: SiTensorflow,
-  FaRobot: FaCode,
-  FaCode: FaCode,
-};
-
-const iconOptionsMap: Record<string, React.ReactNode> = {
-  SiReact: <SiReact size={16} />,
-  SiNodedotjs: <SiNodedotjs size={16} />,
-  FaDatabase: <FaCode size={16} />,
-  FaCloud: <FaCode size={16} />,
-  SiTensorflow: <SiTensorflow size={16} />,
-  FaRobot: <FaCode size={16} />,
-  FaCode: <FaCode size={16} />,
-};
+import { AdminField, AdminInput } from "../components/AdminFields";
+import ImageUpload from "../components/ImageUpload";
 
 interface Skill {
   _id?: string;
   name: string;
   tech: string;
   level: number;
-  iconName: string;
-  iconSlug?: string;
-  brandColor?: string;
+  iconUrl?: string;
   isTechnology?: boolean;
 }
 
@@ -116,8 +84,6 @@ function SortableSkillRow({
     opacity: isDragging ? 0.5 : 1,
   };
 
-  const Icon = iconMap[skill.iconName] || FaCode;
-
   return (
     <div
       ref={setNodeRef}
@@ -138,8 +104,18 @@ function SortableSkillRow({
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-purple-500/10 text-purple-600 dark:text-purple-400 rounded-lg">
-            <Icon size={14} />
+          <div className="p-2 bg-purple-500/10 text-purple-600 dark:text-purple-400 rounded-lg flex items-center justify-center">
+            {skill.iconUrl ? (
+              <Image
+                src={skill.iconUrl}
+                alt={skill.name}
+                width={14}
+                height={14}
+                className="object-contain"
+              />
+            ) : (
+              <FaCode size={14} />
+            )}
           </div>
           <div className="min-w-0">
             <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
@@ -196,6 +172,7 @@ function SortableSkillRow({
 export default function AdminSkillsPage() {
   const queryClient = useQueryClient();
   const [skills, setSkills] = useState<Skill[]>([]);
+  const [prevData, setPrevData] = useState<any>(null);
   const expertises = skills.filter((s) => !s.isTechnology);
   const technologies = skills.filter((s) => !!s.isTechnology);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -228,12 +205,13 @@ export default function AdminSkillsPage() {
     },
   });
 
-  useEffect(() => {
+  // Properly sync external query data to local interactive state during render phase
+  if (data !== prevData) {
+    setPrevData(data);
     if (data) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSkills(Array.isArray(data.skills) ? data.skills : []);
     }
-  }, [data]);
+  }
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
@@ -300,9 +278,7 @@ export default function AdminSkillsPage() {
       name: "",
       tech: "",
       level: 80,
-      iconName: "FaCode",
-      iconSlug: "",
-      brandColor: "",
+      iconUrl: "",
       isTechnology: false,
     });
     setIsDialogOpen(true);
@@ -311,17 +287,14 @@ export default function AdminSkillsPage() {
   function handleDragEnd(event: any) {
     const { active, over } = event;
     if (active && over && active.id !== over.id) {
-      // Operate only on the expertises sub-array
       const oldIndex = expertises.findIndex((i) => i._id === active.id);
       const newIndex = expertises.findIndex((i) => i._id === over.id);
       if (oldIndex === -1 || newIndex === -1) return;
       const reorderedExpertises = arrayMove(expertises, oldIndex, newIndex);
-      // Merge back: keep technologies in their positions, replace expertise slots
       const updatedSkills = skills.map((s) =>
         s.isTechnology ? s : reorderedExpertises.shift()!,
       );
       setSkills(updatedSkills);
-      // Auto save order using PATCH
       fetch("/api/admin/skills", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -491,9 +464,7 @@ export default function AdminSkillsPage() {
                       name: "",
                       tech: "Technology",
                       level: 80,
-                      iconName: "FaCode",
-                      iconSlug: "",
-                      brandColor: "#10B981",
+                      iconUrl: "",
                       isTechnology: true,
                     });
                     setIsDialogOpen(true);
@@ -512,7 +483,7 @@ export default function AdminSkillsPage() {
                     variant="outline"
                     className="pl-3 pr-2 py-2 gap-2 bg-white dark:bg-slate-950 border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 rounded-xl group shadow-sm dark:shadow-none hover:scale-102 transition-transform cursor-default"
                     style={{
-                      borderLeft: `3px solid ${t.brandColor || "#10B981"}`,
+                      borderLeft: `3px solid #10B981`,
                     }}
                   >
                     <span className="text-xs font-black">{t.name}</span>
@@ -577,7 +548,7 @@ export default function AdminSkillsPage() {
                                   ...prev,
                                   isTechnology: isTech,
                                   tech: isTech ? "Technology" : "",
-                                  iconName: isTech ? "FaCode" : "SiReact",
+                                  iconUrl: prev.iconUrl || "",
                                 }
                               : null,
                           );
@@ -591,86 +562,36 @@ export default function AdminSkillsPage() {
                   </div>
                 </AdminField>
 
-                {!currentSkill.isTechnology ? (
-                  <>
-                    <AdminField label="Visual Icon">
-                      <AdminSelect
-                        value={currentSkill.iconName}
-                        onValueChange={(val) => {
-                          if (val) {
-                            setCurrentSkill((prev) =>
-                              prev ? { ...prev, iconName: val } : null,
-                            );
-                          }
-                        }}
-                        options={ICON_OPTIONS.map((p) => ({
-                          label: p,
-                          value: p,
-                          icon: iconOptionsMap[p] || <FaCode size={10} />,
-                        }))}
-                        placeholder="Select icon"
-                      />
-                    </AdminField>
+                <AdminField label="Custom Icon (SVG/PNG)">
+                  <ImageUpload
+                    value={currentSkill.iconUrl || ""}
+                    onChange={(val) =>
+                      setCurrentSkill((prev) =>
+                        prev ? { ...prev, iconUrl: val } : null,
+                      )
+                    }
+                  />
+                </AdminField>
 
-                    <AdminField
-                      label={`Expertise Mastery: ${currentSkill.level}%`}
-                    >
-                      <div className="pt-4 px-2">
-                        <Slider
-                          value={[currentSkill.level]}
-                          max={100}
-                          step={1}
-                          onValueChange={(val: number | readonly number[]) => {
-                            const level = Array.isArray(val) ? val[0] : val;
-                            setCurrentSkill((prev) =>
-                              prev ? { ...prev, level } : null,
-                            );
-                          }}
-                          className="cursor-pointer"
-                        />
-                      </div>
-                    </AdminField>
-                  </>
-                ) : (
-                  <>
-                    <AdminField label="Simple Icon Slug">
-                      <AdminInput
-                        icon={FaLaptopCode}
-                        value={currentSkill.iconSlug || ""}
-                        onChange={(e) =>
+                {!currentSkill.isTechnology && (
+                  <AdminField
+                    label={`Expertise Mastery: ${currentSkill.level}%`}
+                  >
+                    <div className="pt-4 px-2">
+                      <Slider
+                        value={[currentSkill.level]}
+                        max={100}
+                        step={1}
+                        onValueChange={(val: number | readonly number[]) => {
+                          const level = Array.isArray(val) ? val[0] : val;
                           setCurrentSkill((prev) =>
-                            prev ? { ...prev, iconSlug: e.target.value } : null,
-                          )
-                        }
-                        placeholder="e.g. react (see simpleicons.org)"
+                            prev ? { ...prev, level } : null,
+                          );
+                        }}
+                        className="cursor-pointer"
                       />
-                    </AdminField>
-
-                    <AdminField label="Brand Color (Hex)">
-                      <div className="flex gap-3 items-center">
-                        <AdminInput
-                          icon={FaPalette}
-                          value={currentSkill.brandColor || ""}
-                          onChange={(e) =>
-                            setCurrentSkill((prev) =>
-                              prev
-                                ? { ...prev, brandColor: e.target.value }
-                                : null,
-                            )
-                          }
-                          placeholder="e.g. #61DAFB"
-                          className="flex-1"
-                        />
-                        <div
-                          className="w-10 h-10 rounded-xl border border-slate-200 dark:border-white/10 shrink-0 shadow-sm"
-                          style={{
-                            backgroundColor:
-                              currentSkill.brandColor || "#10B981",
-                          }}
-                        />
-                      </div>
-                    </AdminField>
-                  </>
+                    </div>
+                  </AdminField>
                 )}
 
                 <div className="p-6 bg-purple-500/5 border border-purple-500/10 dark:border-purple-500/20 rounded-3xl flex items-start gap-4 shadow-sm dark:shadow-none">

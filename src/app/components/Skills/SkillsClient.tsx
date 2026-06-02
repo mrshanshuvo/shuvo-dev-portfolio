@@ -1,29 +1,14 @@
 "use client";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { FaDatabase, FaCloud, FaRobot, FaLayerGroup } from "react-icons/fa";
-import { SiTensorflow, SiReact, SiNodedotjs } from "react-icons/si";
+import { FaLayerGroup, FaCode } from "react-icons/fa";
 import { Badge } from "@/components/ui/badge";
-import { getIcon, getColorClass } from "@/lib/techIconMap";
-import type { IconType } from "react-icons";
+import Image from "next/image";
 import type { Skill } from "@/types";
 
 interface Props {
   skills: Skill[];
   techList: string[];
-}
-
-const iconMap: Record<string, IconType> = {
-  SiReact,
-  SiNodedotjs,
-  FaDatabase,
-  FaCloud,
-  SiTensorflow,
-  FaRobot,
-};
-
-function getSkillIcon(iconName: string): IconType {
-  return iconMap[iconName] ?? FaDatabase;
 }
 
 export default function SkillsClient({ skills, techList }: Props) {
@@ -34,7 +19,10 @@ export default function SkillsClient({ skills, techList }: Props) {
   const expertises = skills.filter((s) => !s.isTechnology);
   const brandTechs = skills.filter((s) => !!s.isTechnology);
   // Fall back to legacy techList strings if no isTechnology skills exist yet
-  const marqueeItems = brandTechs.length > 0 ? brandTechs.map((t) => t.name) : techList;
+  const marqueeItems =
+    brandTechs.length > 0
+      ? brandTechs.map((t) => ({ name: t.name, iconUrl: t.iconUrl }))
+      : techList.map((name) => ({ name, iconUrl: undefined }));
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
@@ -83,15 +71,15 @@ export default function SkillsClient({ skills, techList }: Props) {
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-8">
                 {expertises.map((skill, index) => {
-                  const Icon = getSkillIcon(skill.iconName);
                   return (
                     <motion.div key={skill.name} variants={itemVariants}>
                       <div className="flex items-start gap-5">
                         <div className="w-16 h-16 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-md group-hover:scale-110 transition-transform">
-                          <Icon
-                            className="text-emerald-500 text-3xl"
-                            aria-label={skill.name}
-                          />
+                          {skill.iconUrl ? (
+                            <Image src={skill.iconUrl} alt={skill.name} width={32} height={32} className="object-contain" />
+                          ) : (
+                            <FaCode className="text-emerald-500 text-3xl" />
+                          )}
                         </div>
                         <div className="flex-1">
                           <div className="flex justify-between items-center mb-2">
@@ -165,15 +153,18 @@ export default function SkillsClient({ skills, techList }: Props) {
                 {[0, 1, 2].map((trackIndex) => (
                   <div key={trackIndex} className="flex gap-12 shrink-0 pr-12">
                     {marqueeItems.map((tech, techIndex) => {
-                      const TechIcon = getIcon(tech);
                       return (
                         <Badge
                           key={`${trackIndex}-${techIndex}`}
                           variant="outline"
                           className="flex items-center gap-3 px-5 py-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium whitespace-nowrap shadow-sm hover:border-emerald-500/30 dark:hover:border-emerald-400/30 hover:text-emerald-500 dark:hover:text-emerald-400 hover:scale-102 transition-all cursor-default"
                         >
-                          <TechIcon className={`text-xl transition-colors ${getColorClass(tech)}`} />
-                          <span className="text-lg font-bold">{tech}</span>
+                          {tech.iconUrl ? (
+                            <Image src={tech.iconUrl} alt={tech.name} width={20} height={20} className="object-contain" />
+                          ) : (
+                            <FaCode className="text-xl text-slate-400" />
+                          )}
+                          <span className="text-lg font-bold">{tech.name}</span>
                         </Badge>
                       );
                     })}
