@@ -2,19 +2,43 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import Project from "@/models/Project";
+import Skill from "@/models/Skill";
+import Category from "@/models/Category";
+
 type Params = { params: Promise<{ id: string }> };
 
-function sanitizeProject(it: any) {
+async function sanitizeProject(it: any) {
   let media = Array.isArray(it.media) ? it.media : [];
   if (media.length === 0 && it.image) {
     media = [{ type: "image", url: it.image, caption: "Project Showcase" }];
   }
+
+  // Retrieve skill ObjectIds for matching techNames
+  const techNames = Array.isArray(it.techNames) ? it.techNames : [];
+  const skills = await Skill.find({ name: { $in: techNames } });
+  const skillIds = skills.map((s) => s._id);
+
+  // Retrieve category ObjectIds for matching categories
+  const categoryNames = Array.isArray(it.category)
+    ? it.category
+    : it.category
+    ? [it.category]
+    : ["Full Stack"];
+  const categories = await Category.find({
+    $or: [
+      { name: { $in: categoryNames } },
+      { slug: { $in: categoryNames.map((c: string) => c.toLowerCase().replace(/ /g, "-")) } },
+    ],
+  });
+  const categoryIds = categories.map((c: any) => c._id);
+
   return {
     title: it.title,
     slug: it.slug || it.title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, ""),
     description: it.description,
     image: it.image || (media[0]?.type === "image" ? media[0].url : ""),
-    techNames: Array.isArray(it.techNames) ? it.techNames : [],
+    skillIds,
+    categoryIds,
     github: Array.isArray(it.github)
       ? it.github.map((g: any) => ({ label: g.label || "Repository", url: g.url || "" }))
       : it.github ? [{ label: "Repository", url: it.github }] : [],
@@ -22,7 +46,6 @@ function sanitizeProject(it: any) {
       ? it.live.map((l: any) => ({ label: l.label || "Live Demo", url: l.url || "" }))
       : it.live ? [{ label: "Live Demo", url: it.live }] : [],
     featured: !!it.featured,
-    category: Array.isArray(it.category) ? it.category : it.category ? [it.category] : ["Full Stack"],
     improvements: Array.isArray(it.improvements) ? it.improvements : [],
     media: media.map((m: any) => ({
       type: ["image", "video", "embed"].includes(m.type) ? m.type : "image",
@@ -41,12 +64,18 @@ export async function GET(_req: Request, { params }: Params) {
 
     const { id } = await params;
     await connectDB();
-    const project = await Project.findById(id).lean();
+    const project = await Project.findById(id)
+      .populate("skillIds")
+      .populate("categoryIds")
+      .lean();
     if (!project) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     const p = project as any;
+    // Map backend relation ObjectIds back to string arrays for admin frontend compatibility
     return NextResponse.json({
       ...p,
+      techNames: Array.isArray(p.skillIds) ? p.skillIds.map((s: any) => s.name || s.toString()) : [],
+      category: Array.isArray(p.categoryIds) ? p.categoryIds.map((c: any) => c.name || c.toString()) : [],
       github: Array.isArray(p.github) ? p.github : p.github ? [{ label: "Repository", url: p.github }] : [],
       live: Array.isArray(p.live) ? p.live : p.live ? [{ label: "Live Demo", url: p.live }] : [],
       media: Array.isArray(p.media) ? p.media : [],
@@ -64,12 +93,20 @@ export async function PATCH(req: Request, { params }: Params) {
     const { id } = await params;
     await connectDB();
     const body = await req.json();
-    const sanitized = sanitizeProject(body);
+    const sanitized = await sanitizeProject(body);
 
-    const updated = await Project.findByIdAndUpdate(id, sanitized, { returnDocument: "after" }).lean();
+    const updated = await Project.findByIdAndUpdate(id, sanitized, { returnDocument: "after" })
+      .populate("skillIds")
+      .populate("categoryIds")
+      .lean();
     if (!updated) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    return NextResponse.json(updated);
+    const u = updated as any;
+    return NextResponse.json({
+      ...u,
+      techNames: Array.isArray(u.skillIds) ? u.skillIds.map((s: any) => s.name || s.toString()) : [],
+      category: Array.isArray(u.categoryIds) ? u.categoryIds.map((c: any) => c.name || c.toString()) : [],
+    });
   } catch (error: any) {
     return NextResponse.json({ error: error.message || "Failed to update" }, { status: 500 });
   }

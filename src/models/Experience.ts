@@ -3,7 +3,8 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 export interface IExperience extends Document {
   title: string;
   org: string;
-  duration: string;
+  startDate: Date;
+  endDate?: Date; // Nullable/optional where null means current job
   details: string[];
   order: number;
   createdAt: Date;
@@ -11,14 +12,15 @@ export interface IExperience extends Document {
   url?: string;
   previousTitles?: string[];
   links?: { label?: string; url: string }[];
-  technologies?: string[];
+  skillIds?: mongoose.Types.ObjectId[];
 }
 
 const ExperienceSchema = new Schema<IExperience>(
   {
     title: { type: String, required: true },
     org: { type: String, required: true },
-    duration: { type: String, required: true },
+    startDate: { type: Date, required: true },
+    endDate: { type: Date },
     details: [{ type: String }],
     order: { type: Number, default: 0 },
     url: { type: String },
@@ -29,7 +31,7 @@ const ExperienceSchema = new Schema<IExperience>(
         url: { type: String, required: true },
       },
     ],
-    technologies: [{ type: String }],
+    skillIds: [{ type: Schema.Types.ObjectId, ref: "Skill" }],
   },
   { timestamps: true },
 );

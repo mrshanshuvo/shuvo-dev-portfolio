@@ -4,8 +4,8 @@ export interface IBlog extends Document {
   title: string;
   description: string;
   link: string;
-  date: string;
-  tags: string[];
+  date: Date;
+  tags: string[]; // Free-form tags, not linked to a Category FK
   image?: string;
   order: number;
   createdAt: Date;
@@ -17,8 +17,8 @@ const BlogSchema = new Schema<IBlog>(
     title: { type: String, required: true },
     description: { type: String, required: true },
     link: { type: String, required: true },
-    date: { type: String, required: true },
-    tags: [{ type: String }],
+    date: { type: Date, required: true },
+    tags: [{ type: String }], // Freeform taxonomy tags
     image: { type: String },
     order: { type: Number, default: 0 },
   },

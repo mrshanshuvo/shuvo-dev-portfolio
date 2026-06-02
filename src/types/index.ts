@@ -20,12 +20,14 @@ export interface Project {
   slug: string;
   description: string;
   image: string;
-  technologies?: IconType[]; // frontend-only, built from techNames
-  techNames: string[];
+  technologies?: IconType[]; // frontend-only
+  techNames: string[];      // backward compatibility
+  skillIds?: string[];       // relational database field
   github: LinkItem[];
   live: LinkItem[];
   featured: boolean;
-  category: string | string[];
+  category?: string | string[]; // backward compatibility
+  categoryIds?: string[];       // relational database field
   improvements: string[];
   media?: MediaItem[];
   order?: number;
@@ -35,13 +37,16 @@ export interface Experience {
   _id?: string;
   title: string;
   org: string;
-  duration: string;
+  duration?: string;   // backward compatibility
+  startDate?: string;  // ISO date string
+  endDate?: string;    // ISO date string, undefined/null means current
   details: string[];
   order?: number;
   url?: string;
   previousTitles?: string[];
   links?: LinkItem[];
-  technologies?: string[];
+  technologies?: string[]; // backward compatibility
+  skillIds?: string[];     // relational database field
 }
 
 export interface Skill {
@@ -94,7 +99,9 @@ export interface Education {
   institution: string;
   location: string;
   logo: string;
-  period: string;
+  period?: string;    // backward compatibility
+  startDate?: string; // ISO date string
+  endDate?: string;   // ISO date string, undefined/null means current
   gpa: string;
   details: string[];
   link: string;
@@ -156,7 +163,9 @@ export interface Certification {
   _id?: string;
   title: string;
   issuer: string;
-  date: string;
+  date?: string;       // backward compatibility
+  issuedAt?: string;   // ISO date string
+  expiresAt?: string;  // ISO date string
   link?: string;
   image?: string;
   details: string[];
@@ -203,7 +212,8 @@ export interface Demo {
   title: string;
   description: string;
   url: string;
-  tech: string[];
+  tech: string[];     // backward compatibility
+  skillIds?: string[]; // relational database field
   media?: MediaItem[];
   order: number;
 }

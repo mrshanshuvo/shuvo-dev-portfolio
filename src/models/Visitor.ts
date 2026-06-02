@@ -1,13 +1,13 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
 export interface IVisitor extends Document {
-  date: string; // YYYY-MM-DD
+  date: Date; // standard unique Date index
   count: number;
 }
 
 const VisitorSchema = new Schema<IVisitor>(
   {
-    date: { type: String, required: true, unique: true },
+    date: { type: Date, required: true, unique: true },
     count: { type: Number, default: 0 },
   },
   { timestamps: true },

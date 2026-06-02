@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import Project from "@/models/Project";
+import Skill from "@/models/Skill";
+import Category from "@/models/Category";
 
 export async function GET() {
   try {
@@ -9,11 +11,17 @@ export async function GET() {
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     await connectDB();
-    const projects = await Project.find().sort({ order: 1 }).lean();
+    const projects = await Project.find()
+      .populate("skillIds")
+      .populate("categoryIds")
+      .sort({ order: 1 })
+      .lean();
     
-    // Sanitize for frontend consistency (self-healing on read)
+    // Sanitize for frontend consistency (self-healing on read) and map to legacy fields
     const sanitized = projects.map((p: any) => ({
       ...p,
+      techNames: Array.isArray(p.skillIds) ? p.skillIds.map((s: any) => s.name || s.toString()) : [],
+      category: Array.isArray(p.categoryIds) ? p.categoryIds.map((c: any) => c.name || c.toString()) : [],
       github: Array.isArray(p.github) 
         ? p.github 
         : p.github ? [{ label: "Repository", url: p.github }] : [],
@@ -41,19 +49,45 @@ export async function PUT(req: Request) {
     await Project.deleteMany({});
     
     if (items.length > 0) {
+      // Find all unique techNames and category names inside items to do a single batch query for ObjectIds
+      const allTechNames = Array.from(new Set(items.flatMap((it: any) => Array.isArray(it.techNames) ? it.techNames : [])));
+      const allCategoryNames = Array.from(new Set(items.flatMap((it: any) => Array.isArray(it.category) ? it.category : it.category ? [it.category] : ["Full Stack"])));
+      
+      const [allSkills, allCategories] = await Promise.all([
+        Skill.find({ name: { $in: allTechNames } }),
+        Category.find({
+          $or: [
+            { name: { $in: allCategoryNames } },
+            { slug: { $in: allCategoryNames.map((c) => c.toLowerCase().replace(/ /g, "-")) } },
+          ],
+        }),
+      ]);
+
+      const skillsMap = new Map(allSkills.map(s => [s.name, s._id]));
+      const categoriesMap = new Map(allCategories.map(c => [c.name, c._id]));
+      const categoriesSlugMap = new Map(allCategories.map(c => [c.slug, c._id]));
+
       const sanitized = items.map((it: any, i: number) => {
-        // Self-healing: if media is empty but legacy image exists, migrate it
         let media = Array.isArray(it.media) ? it.media : [];
         if (media.length === 0 && it.image) {
           media = [{ type: "image", url: it.image, caption: "Project Showcase" }];
         }
+
+        const techList = Array.isArray(it.techNames) ? it.techNames : [];
+        const skillIds = techList.map((name: string) => skillsMap.get(name)).filter(Boolean);
+
+        const categoryList = Array.isArray(it.category) ? it.category : it.category ? [it.category] : ["Full Stack"];
+        const categoryIds = categoryList.map((name: string) => {
+          return categoriesMap.get(name) || categoriesSlugMap.get(name.toLowerCase().replace(/ /g, "-"));
+        }).filter(Boolean);
 
         return {
           title: it.title,
           slug: it.slug || it.title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, ""),
           description: it.description,
           image: it.image || (media[0]?.type === "image" ? media[0].url : ""),
-          techNames: Array.isArray(it.techNames) ? it.techNames : [],
+          skillIds,
+          categoryIds,
           github: Array.isArray(it.github) 
             ? it.github.map((g: any) => ({ label: g.label || "Repository", url: g.url || "" }))
             : it.github ? [{ label: "Repository", url: it.github }] : [],
@@ -61,7 +95,6 @@ export async function PUT(req: Request) {
             ? it.live.map((l: any) => ({ label: l.label || "Live Demo", url: l.url || "" }))
             : it.live ? [{ label: "Live Demo", url: it.live }] : [],
           featured: !!it.featured,
-          category: Array.isArray(it.category) ? it.category : it.category ? [it.category] : ["Full Stack"],
           improvements: Array.isArray(it.improvements) ? it.improvements : [],
           media: media.map((m: any) => ({
             type: ["image", "video", "embed"].includes(m.type) ? m.type : "image",

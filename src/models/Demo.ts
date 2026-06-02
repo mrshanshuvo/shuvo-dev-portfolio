@@ -4,7 +4,7 @@ export interface IDemo extends Document {
   title: string;
   description: string;
   url: string;
-  tech: string[];
+  skillIds: mongoose.Types.ObjectId[];
   media: {
     type: "image" | "video" | "embed";
     url: string;
@@ -18,7 +18,7 @@ const DemoSchema = new Schema<IDemo>(
     title: { type: String, required: true },
     description: { type: String, required: true },
     url: { type: String, required: true },
-    tech: [{ type: String }],
+    skillIds: [{ type: Schema.Types.ObjectId, ref: "Skill" }],
     media: [
       {
         type: {

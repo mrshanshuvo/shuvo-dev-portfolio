@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
 export interface IStat extends Document {
-  number: string;
+  number: string; // Intentionally typed as string to allow rich metrics formatting, e.g. "10+", "~50" or "100%"
   label: string;
   order: number;
   createdAt: Date;
@@ -10,7 +10,7 @@ export interface IStat extends Document {
 
 const StatSchema = new Schema<IStat>(
   {
-    number: { type: String, required: true },
+    number: { type: String, required: true }, // Intentionally typed as string to support "10+", "~50"
     label: { type: String, required: true },
     order: { type: Number, default: 0 },
   },

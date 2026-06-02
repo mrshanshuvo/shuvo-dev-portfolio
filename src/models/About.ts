@@ -10,12 +10,21 @@ export interface IAbout extends Document {
 
 const AboutSchema = new Schema<IAbout>(
   {
-    title: { type: String, default: "Hello! I'm Shuvo" },
+    _id: {
+      type: Schema.Types.ObjectId,
+      default: () => new mongoose.Types.ObjectId("000000000000000000000001"),
+    },
+    title: { type: String, default: "About me" },
     aboutBio: { type: String },
     highlights: [{ type: String }],
   },
   { timestamps: true },
 );
+
+// Enforce singleton behavior by forcing a fixed _id
+AboutSchema.pre("save", function (this: any) {
+  this._id = new mongoose.Types.ObjectId("000000000000000000000001");
+});
 
 // Force delete the model from mongoose.models in development to pick up schema changes
 if (process.env.NODE_ENV === "development") {

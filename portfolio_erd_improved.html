@@ -1,0 +1,287 @@
+
+<style>
+#erd { padding: 1rem 0; }
+#erd svg { width: 100%; }
+</style>
+<div id="erd"></div>
+<script type="module">
+import mermaid from 'https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs';
+const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+await document.fonts.ready;
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'base',
+  fontFamily: '"Anthropic Sans", sans-serif',
+  themeVariables: {
+    darkMode: dark,
+    fontSize: '13px',
+    fontFamily: '"Anthropic Sans", sans-serif',
+    lineColor: dark ? '#9c9a92' : '#73726c',
+    textColor: dark ? '#c2c0b6' : '#3d3d3a',
+  },
+});
+
+const diagram = `erDiagram
+    USER {
+        ObjectId _id PK
+        string email "Unique"
+        string passwordHash "Select: false"
+        string name "Default: Admin"
+        string resetPasswordToken "Select: false"
+        string resetPasswordOtp "Select: false"
+        date resetPasswordExpire "Select: false"
+        date createdAt
+        date updatedAt
+    }
+
+    PROJECT {
+        ObjectId _id PK
+        string title
+        string slug "Unique"
+        string description
+        string image "Optional"
+        ObjectId_array categoryIds "FK to Category._id"
+        ObjectId_array skillIds "FK to Skill._id"
+        object_array github
+        object_array live
+        boolean featured "Default: false"
+        string_array improvements
+        object_array media
+        number order "Default: 0"
+        date createdAt
+        date updatedAt
+    }
+
+    CATEGORY {
+        ObjectId _id PK
+        string name
+        string slug "Unique"
+        number order "Default: 0"
+        date createdAt
+        date updatedAt
+    }
+
+    SKILL {
+        ObjectId _id PK
+        string name
+        string tech "Optional"
+        number level "0-100, Default: 80"
+        string iconName "Optional"
+        number order "Default: 0"
+        date createdAt
+        date updatedAt
+    }
+
+    EXPERIENCE {
+        ObjectId _id PK
+        string title
+        string org
+        date startDate
+        date endDate "Nullable - null means current"
+        string_array details
+        number order "Default: 0"
+        string url "Optional"
+        string_array previousTitles
+        object_array links
+        ObjectId_array skillIds "FK to Skill._id"
+        date createdAt
+        date updatedAt
+    }
+
+    DEMO {
+        ObjectId _id PK
+        string title
+        string description
+        string url
+        ObjectId_array skillIds "FK to Skill._id"
+        object_array media
+        number order "Default: 0"
+        date createdAt
+        date updatedAt
+    }
+
+    BLOG {
+        ObjectId _id PK
+        string title
+        string description
+        string link
+        date date
+        string_array tags "Optional - free-form, not FK"
+        string image "Optional"
+        number order "Default: 0"
+        date createdAt
+        date updatedAt
+    }
+
+    CERTIFICATION {
+        ObjectId _id PK
+        string title
+        string issuer
+        date issuedAt
+        date expiresAt "Optional"
+        string link "Optional"
+        string image "Optional"
+        string_array details
+        number order "Default: 0"
+        date createdAt
+        date updatedAt
+    }
+
+    EDUCATION {
+        ObjectId _id PK
+        string degree
+        string institution
+        string location "Optional"
+        string logo "Optional"
+        date startDate
+        date endDate "Nullable - null means current"
+        string gpa "Optional - string allows 3.8/4.0 format"
+        string_array details
+        string link "Optional"
+        number order "Default: 0"
+        date createdAt
+        date updatedAt
+    }
+
+    HERO {
+        ObjectId _id PK "Singleton - fixed _id"
+        string name
+        string lastName
+        string profileImage
+        string resumeUrl
+        string bio "Default: empty"
+        object_array typeSequences
+        date createdAt
+        date updatedAt
+    }
+
+    ABOUT {
+        ObjectId _id PK "Singleton - fixed _id"
+        string title "Default: About me"
+        string aboutBio
+        string_array highlights
+        date createdAt
+        date updatedAt
+    }
+
+    SETTING {
+        ObjectId _id PK "Singleton - fixed _id"
+        string siteName "Default: Portfolio"
+        string siteDescription
+        string_array keywords
+        string contactEmail "Optional"
+        string contactPhone "Optional"
+        string contactLocation "Optional"
+        string ogImage "Optional"
+        boolean isHireable "Default: true"
+        boolean maintenanceMode "Default: false"
+        string accentColor "Default: emerald"
+        date createdAt
+        date updatedAt
+    }
+
+    MESSAGE {
+        ObjectId _id PK
+        string name
+        string email
+        string message
+        string status "unread or read, Default: unread"
+        ObjectId readBy "FK to User._id, Optional"
+        date createdAt
+        date updatedAt
+    }
+
+    VISITOR {
+        ObjectId _id PK
+        date date "Unique"
+        number count "Default: 0"
+        date createdAt
+        date updatedAt
+    }
+
+    SERVICE {
+        ObjectId _id PK
+        string title
+        string description
+        string icon
+        string_array features
+        number order "Default: 0"
+        date createdAt
+        date updatedAt
+    }
+
+    TESTIMONIAL {
+        ObjectId _id PK
+        string name
+        string role
+        string content
+        string avatar "Optional"
+        string company "Optional"
+        number order "Default: 0"
+        date createdAt
+        date updatedAt
+    }
+
+    WORKFLOW {
+        ObjectId _id PK
+        string title
+        string description
+        string icon
+        number order "Default: 0"
+        date createdAt
+        date updatedAt
+    }
+
+    STAT {
+        ObjectId _id PK
+        string number "String: allows 10+ or ~50"
+        string label
+        number order "Default: 0"
+        date createdAt
+        date updatedAt
+    }
+
+    SOCIAL_LINK {
+        ObjectId _id PK
+        string platform
+        string href
+        string label "Default: platform name"
+        number order "Default: 0"
+        date createdAt
+        date updatedAt
+    }
+
+    PROJECT }o--o{ CATEGORY : "categoryIds"
+    PROJECT }o--o{ SKILL : "skillIds"
+    EXPERIENCE }o--o{ SKILL : "skillIds"
+    DEMO }o--o{ SKILL : "skillIds"
+    MESSAGE }o--o| USER : "readBy"
+`;
+
+const { svg } = await mermaid.render('erd-svg', diagram);
+document.getElementById('erd').innerHTML = svg;
+
+document.querySelectorAll('#erd svg.erDiagram .node').forEach(node => {
+  const firstPath = node.querySelector('path[d]');
+  if (!firstPath) return;
+  const d = firstPath.getAttribute('d');
+  const nums = d.match(/-?[\d.]+/g)?.map(Number);
+  if (!nums || nums.length < 8) return;
+  const xs = [nums[0], nums[2], nums[4], nums[6]];
+  const ys = [nums[1], nums[3], nums[5], nums[7]];
+  const x = Math.min(...xs), y = Math.min(...ys);
+  const w = Math.max(...xs) - x, h = Math.max(...ys) - y;
+  const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  rect.setAttribute('x', x); rect.setAttribute('y', y);
+  rect.setAttribute('width', w); rect.setAttribute('height', h);
+  rect.setAttribute('rx', '8');
+  for (const a of ['fill', 'stroke', 'stroke-width', 'class', 'style']) {
+    if (firstPath.hasAttribute(a)) rect.setAttribute(a, firstPath.getAttribute(a));
+  }
+  firstPath.replaceWith(rect);
+});
+
+document.querySelectorAll('#erd svg.erDiagram .row-rect-odd path, #erd svg.erDiagram .row-rect-even path').forEach(p => {
+  p.setAttribute('stroke', 'none');
+});
+</script>

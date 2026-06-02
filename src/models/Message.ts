@@ -5,6 +5,7 @@ export interface IMessage extends Document {
   email: string;
   message: string;
   status: "unread" | "read";
+  readBy?: mongoose.Types.ObjectId; // Administrator who reviewed this message
   createdAt: Date;
   updatedAt: Date;
 }
@@ -27,6 +28,10 @@ const MessageSchema = new Schema<IMessage>(
       type: String,
       enum: ["unread", "read"],
       default: "unread",
+    },
+    readBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
   },
   { timestamps: true },

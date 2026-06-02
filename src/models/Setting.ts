@@ -16,6 +16,10 @@ export interface ISetting extends Document {
 
 const SettingSchema = new Schema<ISetting>(
   {
+    _id: {
+      type: Schema.Types.ObjectId,
+      default: () => new mongoose.Types.ObjectId("000000000000000000000003"),
+    },
     siteName: { type: String, default: "Portfolio" },
     siteDescription: { type: String, default: "A professional portfolio" },
     keywords: [{ type: String }],
@@ -29,6 +33,11 @@ const SettingSchema = new Schema<ISetting>(
   },
   { timestamps: true },
 );
+
+// Enforce singleton behavior by forcing a fixed _id
+SettingSchema.pre("save", function (this: any) {
+  this._id = new mongoose.Types.ObjectId("000000000000000000000003");
+});
 
 // Force delete the model from mongoose.models in development to pick up schema changes
 if (process.env.NODE_ENV === "development") {

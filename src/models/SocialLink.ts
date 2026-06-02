@@ -13,7 +13,12 @@ const SocialLinkSchema = new Schema<ISocialLink>(
   {
     platform: { type: String, required: true },
     href: { type: String, required: true },
-    label: { type: String },
+    label: {
+      type: String,
+      default: function (this: any) {
+        return this.platform || "";
+      },
+    },
     order: { type: Number, default: 0 },
   },
   { timestamps: true },

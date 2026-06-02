@@ -18,6 +18,10 @@ export interface IHero extends Document {
 
 const HeroSchema = new Schema<IHero>(
   {
+    _id: {
+      type: Schema.Types.ObjectId,
+      default: () => new mongoose.Types.ObjectId("000000000000000000000002"),
+    },
     name: { type: String, required: true },
     lastName: { type: String, required: true },
     profileImage: { type: String },
@@ -32,6 +36,11 @@ const HeroSchema = new Schema<IHero>(
   },
   { timestamps: true },
 );
+
+// Enforce singleton behavior by forcing a fixed _id
+HeroSchema.pre("save", function (this: any) {
+  this._id = new mongoose.Types.ObjectId("000000000000000000000002");
+});
 
 // Force delete the model from mongoose.models in development to pick up schema changes
 if (process.env.NODE_ENV === "development") {
