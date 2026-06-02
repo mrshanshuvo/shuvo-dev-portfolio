@@ -28,26 +28,39 @@ export default function ProjectsArchiveClient({ projects }: Props) {
         );
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 pt-32 pb-24">
+    <div className="min-h-screen bg-white dark:bg-slate-950 pt-32 pb-24 relative overflow-hidden">
+      {/* Cinematic Background */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-500/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-teal-500/10 rounded-full blur-[120px]" />
+      </div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-8"
-        >
-          <div className="text-left">
-            <motion.h2
-              initial={{ opacity: 0, scale: 0.5 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              className="flex items-center gap-3 text-emerald-500 font-black uppercase tracking-[0.2em] text-sm md:text-lg mx-6"
-            >
-              <FaArchive />{" "}
-              {projects.length > 0 ? "All Projects" : "No Projects"}
-            </motion.h2>
-          </div>
-        </motion.div>
+        {/* Header */}
+        <div className="text-center mb-16">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="flex items-center justify-center gap-3 text-emerald-500 font-black uppercase tracking-[0.3em] text-sm mb-6"
+          >
+            <FaArchive /> The Complete Archive
+          </motion.div>
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-5xl md:text-7xl font-black text-slate-900 dark:text-white mb-6 tracking-tight"
+          >
+            Technical <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-teal-500">Showcases</span>
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium"
+          >
+            A curated collection of production applications, custom packages, and open-source contributions.
+          </motion.p>
+        </div>
 
         {/* Filters */}
         <motion.div
