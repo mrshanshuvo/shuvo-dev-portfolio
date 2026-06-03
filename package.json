@@ -1,6 +1,6 @@
 {
-  "name": "my-portfolio-1",
-  "version": "0.1.0",
+  "name": "dev-shuvo-portfolio",
+  "version": "0.2.0",
   "packageManager": "pnpm@11.3.0",
   "private": true,
   "scripts": {
