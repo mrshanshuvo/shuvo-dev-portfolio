@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Certification } from "../../../types";
 import { FaAward } from "react-icons/fa";
 import { ArrowUpRight } from "lucide-react";
+import Image from "next/image";
 
 interface CertificationsViewProps {
   certifications: Certification[];
@@ -36,7 +37,7 @@ export default function CertificationsView({
           </div>
         </motion.div>
 
-        <div className="flex flex-col gap-12 lg:gap-8 group/list">
+        <div className="flex px-12 flex-col gap-12 lg:gap-8 group/list">
           {certifications.map((cert, idx) => (
             <motion.div
               key={cert._id || idx}
@@ -60,23 +61,45 @@ export default function CertificationsView({
               {/* Content Column */}
               <div className="z-10 sm:col-span-6">
                 <h3 className="font-medium leading-snug text-slate-900 dark:text-slate-200">
-                  {cert.link ? (
+                  {cert.certificateFile ? (
                     <a
-                      href={cert.link}
+                      href={cert.certificateFile}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-baseline font-bold leading-tight text-slate-900 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 text-lg md:text-xl transition-colors group/link"
+                      className="inline-flex items-center gap-2 font-bold leading-tight text-slate-900 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 text-lg md:text-xl transition-colors group/link"
                     >
-                      <span>
-                        {cert.title} ·{" "}
+                      {cert.badgeLogo && (
+                        <div className="relative w-5 h-5 md:w-6 md:h-6 shrink-0 rounded-sm overflow-hidden bg-white/5 flex items-center justify-center">
+                          <Image
+                            src={cert.badgeLogo}
+                            alt={cert.issuer}
+                            fill
+                            className="object-contain"
+                          />
+                        </div>
+                      )}
+                      <span className="inline-flex items-baseline flex-wrap">
+                        {cert.title}{" "}
+                        <span className="mx-1.5 opacity-50">·</span>{" "}
                         <span className="inline-block">{cert.issuer}</span>
                       </span>
                       <ArrowUpRight className="inline-block ml-1 h-4 w-4 shrink-0 transition-transform group-hover/link:-translate-y-1 group-hover/link:translate-x-1" />
                     </a>
                   ) : (
-                    <div className="inline-flex items-baseline font-bold leading-tight text-slate-900 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 text-lg md:text-xl transition-colors">
-                      <span>
-                        {cert.title} ·{" "}
+                    <div className="inline-flex items-center gap-2 font-bold leading-tight text-slate-900 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 text-lg md:text-xl transition-colors">
+                      {cert.badgeLogo && (
+                        <div className="relative w-5 h-5 md:w-6 md:h-6 shrink-0 rounded-sm overflow-hidden bg-white/5 flex items-center justify-center">
+                          <Image
+                            src={cert.badgeLogo}
+                            alt={cert.issuer}
+                            fill
+                            className="object-contain"
+                          />
+                        </div>
+                      )}
+                      <span className="inline-flex items-baseline flex-wrap">
+                        {cert.title}{" "}
+                        <span className="mx-1.5 opacity-50">·</span>{" "}
                         <span className="inline-block">{cert.issuer}</span>
                       </span>
                     </div>

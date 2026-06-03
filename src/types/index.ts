@@ -154,8 +154,8 @@ export interface Certification {
   date: string;
   issuedAt?: string; // ISO date string
   expiresAt?: string; // ISO date string
-  link?: string;
-  image?: string;
+  certificateFile?: string;
+  badgeLogo?: string;
   details: string[];
   order: number;
 }

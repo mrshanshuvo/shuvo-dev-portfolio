@@ -28,7 +28,6 @@ import {
   FaEdit,
   FaTrash,
   FaCalendarAlt,
-  FaLink,
   FaInfoCircle,
   FaCertificate,
   FaUniversity,
@@ -47,8 +46,8 @@ interface Certification {
   title: string;
   issuer: string;
   date: string;
-  link?: string;
-  image?: string;
+  certificateFile?: string;
+  badgeLogo?: string;
   details: string[];
   order: number;
 }
@@ -98,10 +97,10 @@ function SortableCertRow({
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3">
-          {item.image ? (
+          {item.badgeLogo ? (
             <div className="relative w-8 h-8 rounded-lg overflow-hidden bg-white/5 shrink-0">
               <Image
-                src={item.image}
+                src={item.badgeLogo}
                 alt={item.title}
                 fill
                 className="object-contain p-1"
@@ -165,10 +164,10 @@ function CertOverlay({ item }: { item: Certification }) {
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3">
-          {item.image ? (
+          {item.badgeLogo ? (
             <div className="relative w-8 h-8 rounded-lg overflow-hidden bg-white/5 shrink-0">
               <Image
-                src={item.image}
+                src={item.badgeLogo}
                 alt={item.title}
                 fill
                 className="object-contain p-1"
@@ -310,9 +309,9 @@ export default function AdminCertificationsPage() {
       title: "",
       issuer: "",
       date: "",
-      link: "",
+      certificateFile: "",
       details: [],
-      image: "",
+      badgeLogo: "",
       order: data.length,
     });
     setIsDialogOpen(true);
@@ -473,76 +472,71 @@ export default function AdminCertificationsPage() {
           {currentCert && (
             <div className="px-1">
               <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-10">
-                {/* Left Column: Image/Badge */}
-                <div className="space-y-6">
-                  <AdminField label="Certificate Badge">
-                    <ImageUpload
-                      value={currentCert.image || ""}
-                      onChange={(url) =>
-                        setCurrentCert({ ...currentCert, image: url })
-                      }
-                    />
-                  </AdminField>
-                </div>
+                {/* Left Column: Certificate Files */}
+                <AdminField label="Certificate File (PDF/Image)">
+                  <ImageUpload
+                    value={currentCert.certificateFile || ""}
+                    onChange={(url) =>
+                      setCurrentCert({ ...currentCert, certificateFile: url })
+                    }
+                  />
+                </AdminField>
 
                 {/* Right Column: Information Fields */}
                 <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <AdminField label="Certification Title">
-                      <AdminInput
-                        icon={FaCertificate}
-                        value={currentCert.title}
-                        onChange={(e) =>
-                          setCurrentCert({
-                            ...currentCert,
-                            title: e.target.value,
-                          })
-                        }
-                        placeholder="e.g. AWS Solutions Architect"
-                      />
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <AdminField label="Badge Logo">
+                      <div className="w-26 h-26">
+                        <ImageUpload
+                          value={currentCert.badgeLogo || ""}
+                          onChange={(url) =>
+                            setCurrentCert({ ...currentCert, badgeLogo: url })
+                          }
+                        />
+                      </div>
                     </AdminField>
-                    <AdminField label="Issuing Authority">
-                      <AdminInput
-                        icon={FaUniversity}
-                        value={currentCert.issuer}
-                        onChange={(e) =>
-                          setCurrentCert({
-                            ...currentCert,
-                            issuer: e.target.value,
-                          })
-                        }
-                        placeholder="e.g. Amazon Web Services"
-                      />
-                    </AdminField>
-                  </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <AdminField label="Date Issued">
-                      <AdminInput
-                        icon={FaCalendarAlt}
-                        value={currentCert.date}
-                        onChange={(e) =>
-                          setCurrentCert({
-                            ...currentCert,
-                            date: e.target.value,
-                          })
-                        }
-                        placeholder="e.g. June 2023"
-                      />
-                    </AdminField>
-                    <AdminField label="Credential URL">
-                      <AdminInput
-                        icon={FaLink}
-                        value={currentCert.link}
-                        onChange={(e) =>
-                          setCurrentCert({
-                            ...currentCert,
-                            link: e.target.value,
-                          })
-                        }
-                        placeholder="https://verify.certification.com"
-                      />
-                    </AdminField>
+                    <div className="col-span-2">
+                      <AdminField label="Certification Title">
+                        <AdminInput
+                          icon={FaCertificate}
+                          value={currentCert.title}
+                          onChange={(e) =>
+                            setCurrentCert({
+                              ...currentCert,
+                              title: e.target.value,
+                            })
+                          }
+                          placeholder="e.g. AWS Solutions Architect"
+                        />
+                      </AdminField>
+                      <AdminField label="Issuing Authority">
+                        <AdminInput
+                          icon={FaUniversity}
+                          value={currentCert.issuer}
+                          onChange={(e) =>
+                            setCurrentCert({
+                              ...currentCert,
+                              issuer: e.target.value,
+                            })
+                          }
+                          placeholder="e.g. Amazon Web Services"
+                        />
+                      </AdminField>
+                      <AdminField label="Date Issued">
+                        <AdminInput
+                          icon={FaCalendarAlt}
+                          value={currentCert.date}
+                          onChange={(e) =>
+                            setCurrentCert({
+                              ...currentCert,
+                              date: e.target.value,
+                            })
+                          }
+                          placeholder="e.g. June 2023"
+                        />
+                      </AdminField>
+                    </div>
                   </div>
 
                   <AdminField label="Key Skills & Competencies">

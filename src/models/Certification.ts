@@ -6,8 +6,8 @@ export interface ICertification extends Document {
   date: string;
   issuedAt?: Date;
   expiresAt?: Date;
-  link?: string;
-  image?: string;
+  certificateFile?: string;
+  badgeLogo?: string;
   details: string[];
   order: number;
   createdAt: Date;
@@ -21,8 +21,8 @@ const CertificationSchema = new Schema<ICertification>(
     date: { type: String, required: true },
     issuedAt: { type: Date },
     expiresAt: { type: Date },
-    link: { type: String },
-    image: { type: String },
+    certificateFile: { type: String },
+    badgeLogo: { type: String },
     details: { type: [String], default: [] },
     order: { type: Number, default: 0 },
   },
@@ -35,6 +35,7 @@ if (process.env.NODE_ENV === "development") {
 }
 
 const Certification: Model<ICertification> =
-  mongoose.models.Certification || mongoose.model<ICertification>("Certification", CertificationSchema);
+  mongoose.models.Certification ||
+  mongoose.model<ICertification>("Certification", CertificationSchema);
 
 export default Certification;
