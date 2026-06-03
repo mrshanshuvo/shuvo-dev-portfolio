@@ -155,11 +155,19 @@ export default function Navbar({ resumeUrl }: Props) {
               >
                 <div className="relative">
                   <Image
-                    src="/favicons/android-chrome-512x512.png"
+                    src="/favicons/light-mode-1.svg"
                     alt="Logo"
                     width={40}
                     height={40}
-                    className="rounded-lg"
+                    className="rounded-lg dark:hidden"
+                    priority
+                  />
+                  <Image
+                    src="/favicons/dark-mode-1.svg"
+                    alt="Logo"
+                    width={40}
+                    height={40}
+                    className="rounded-lg hidden dark:block"
                     priority
                   />
                 </div>

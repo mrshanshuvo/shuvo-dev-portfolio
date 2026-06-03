@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import {
@@ -161,10 +162,23 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
           <div className="flex items-center gap-4">
             <div className="relative group">
               <div className="absolute -inset-1.5 bg-linear-to-tr from-emerald-600 to-blue-600 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-              <div className="relative w-11 h-11 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl flex items-center justify-center">
-                <span className="text-slate-900 dark:text-white font-black text-lg tracking-tighter">
-                  A
-                </span>
+              <div className="relative w-11 h-11 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl flex items-center justify-center overflow-hidden">
+                <Image
+                  src="/favicons/light-mode-1.svg"
+                  alt="Logo"
+                  width={24}
+                  height={24}
+                  className="w-7 h-7 dark:hidden"
+                  priority
+                />
+                <Image
+                  src="/favicons/dark-mode-1.svg"
+                  alt="Logo"
+                  width={24}
+                  height={24}
+                  className="w-7 h-7 hidden dark:block"
+                  priority
+                />
               </div>
             </div>
             <div>
