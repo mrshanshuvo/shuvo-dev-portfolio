@@ -46,7 +46,7 @@ import {
   AdminTextarea,
 } from "../components/AdminFields";
 import TechCombobox from "../components/TechCombobox";
-import type { Skill } from "@/types";
+import type { Technology } from "@/types";
 
 interface Demo {
   _id?: string;
@@ -154,7 +154,7 @@ function SortableDemoRow({
         </div>
       </div>
 
-      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="flex items-center gap-2 transition-opacity">
         <Button
           variant="ghost"
           size="icon"
@@ -181,6 +181,63 @@ function SortableDemoRow({
   );
 }
 
+function DemoOverlay({ demo }: { demo: Demo }) {
+  return (
+    <div className="flex items-center gap-4 bg-white dark:bg-slate-800 border border-indigo-500/30 rounded-2xl p-4 shadow-2xl scale-105 min-w-[320px]">
+      <div className="cursor-grabbing text-indigo-500 shrink-0">
+        <FaGripVertical size={14} />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-indigo-500/10 text-indigo-400 rounded-lg shrink-0">
+            <FaFlask size={14} />
+          </div>
+          <div className="min-w-0">
+            <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm flex items-center gap-1.5">
+              {demo.featured && (
+                <FaStar className="text-amber-400 shrink-0" size={11} />
+              )}
+              {demo.title}
+            </h3>
+            <div className="flex gap-1 mt-0.5">
+              {demo.tech.slice(0, 3).map((t, i) => (
+                <span
+                  key={i}
+                  className="text-[10px] text-slate-500 font-medium px-1.5 py-0.5 bg-slate-100 dark:bg-white/5 rounded border border-slate-200 dark:border-white/5"
+                >
+                  {t}
+                </span>
+              ))}
+              {demo.tech.length > 3 && (
+                <span className="text-[10px] text-slate-600">
+                  +{demo.tech.length - 3}
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-3 text-[10px] text-slate-500 mt-1">
+              {(demo.media?.length ?? 0) > 0 && (
+                <span className="flex items-center gap-1">
+                  <FaImage size={9} /> {demo.media.length}
+                </span>
+              )}
+              {demo.github && (
+                <span className="flex items-center gap-1">
+                  <FaGithub size={9} /> Source
+                </span>
+              )}
+              {demo.url && (
+                <span className="flex items-center gap-1">
+                  <FaLink size={9} /> Live
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminDemosPage() {
   const queryClient = useQueryClient();
   const [data, setData] = useState<Demo[]>([]);
@@ -189,7 +246,7 @@ export default function AdminDemosPage() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentDemo, setCurrentDemo] = useState<Demo | null>(null);
-  const [technologies, setTechnologies] = useState<Skill[]>([]);
+  const [technologies, setTechnologies] = useState<Technology[]>([]);
   const [toast, setToast] = useState<{
     msg: string;
     type: "success" | "error";
@@ -223,13 +280,12 @@ export default function AdminDemosPage() {
     }
   }
 
-  // Fetch technologies from the central Skill registry
+  // Fetch technologies from the API
   useEffect(() => {
-    fetch("/api/admin/skills")
+    fetch("/api/admin/technologies")
       .then((r) => r.json())
       .then((data) => {
-        const allSkills: Skill[] = Array.isArray(data?.skills) ? data.skills : [];
-        setTechnologies(allSkills.filter((s) => s.isTechnology));
+        setTechnologies(Array.isArray(data) ? data : []);
       })
       .catch(console.error);
   }, []);
@@ -329,93 +385,93 @@ export default function AdminDemosPage() {
   }
 
   return (
-    <div className="p-4 md:p-8 space-y-6">
-      <AnimatePresence>
-        {toast && (
-          <motion.div
-            initial={{ opacity: 0, y: -20, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: -20, x: "-50%" }}
-            className={cn(
-              "fixed top-8 left-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-2xl border backdrop-blur-xl shadow-2xl",
-              toast.type === "success"
-                ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
-                : "bg-red-500/20 border-red-500/50 text-red-400",
-            )}
-          >
-            <div
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragStart={(e) => setActiveId(e.active.id as string)}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="p-4 md:p-8 space-y-6">
+        <AnimatePresence>
+          {toast && (
+            <motion.div
+              initial={{ opacity: 0, y: -20, x: "-50%" }}
+              animate={{ opacity: 1, y: 0, x: "-50%" }}
+              exit={{ opacity: 0, y: -20, x: "-50%" }}
               className={cn(
-                "p-1.5 rounded-full",
+                "fixed top-8 left-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-2xl border backdrop-blur-xl shadow-2xl",
                 toast.type === "success"
-                  ? "bg-emerald-500/20"
-                  : "bg-red-500/20",
+                  ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
+                  : "bg-red-500/20 border-red-500/50 text-red-400",
               )}
             >
-              {toast.type === "success" ? (
-                <FaCheck size={10} />
-              ) : (
-                <FaTimes size={10} />
-              )}
-            </div>
-            <span className="font-bold text-sm tracking-tight">
-              {toast.msg}
-            </span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex items-center justify-between bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-2xl p-4 shadow-sm dark:shadow-none">
-          <div className="flex items-center gap-3">
-            <Badge
-              variant="outline"
-              className="bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[10px]"
-            >
-              {data.length} Playground Projects
-            </Badge>
-          </div>
-          <Button
-            onClick={openNew}
-            className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold px-6 h-10 shadow-lg shadow-indigo-600/20 active:scale-95 transition-all group text-xs"
-          >
-            <FaPlus className="mr-2 group-hover:rotate-90 transition-transform duration-300" />
-            Add Demo
-          </Button>
-        </div>
-
-        <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
-          <CardHeader className="p-4 pb-1">
-            <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
-              Experimental Playground
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-2">
-            {loading ? (
-              <div className="space-y-3">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="h-16 bg-slate-100 dark:bg-slate-800/20 rounded-2xl animate-pulse"
-                  />
-                ))}
-              </div>
-            ) : data.length === 0 ? (
-              <div className="text-center py-16 bg-white dark:bg-slate-950/20 rounded-3xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
-                <FaFlask
-                  className="mx-auto text-slate-200 dark:text-slate-800 mb-4"
-                  size={40}
-                />
-                <p className="text-slate-400 dark:text-slate-500 font-medium">
-                  No demos yet. Share your experiments above.
-                </p>
-              </div>
-            ) : (
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragStart={(e) => setActiveId(e.active.id as string)}
-                onDragEnd={handleDragEnd}
+              <div
+                className={cn(
+                  "p-1.5 rounded-full",
+                  toast.type === "success"
+                    ? "bg-emerald-500/20"
+                    : "bg-red-500/20",
+                )}
               >
+                {toast.type === "success" ? (
+                  <FaCheck size={10} />
+                ) : (
+                  <FaTimes size={10} />
+                )}
+              </div>
+              <span className="font-bold text-sm tracking-tight">
+                {toast.msg}
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="max-w-4xl mx-auto space-y-6">
+          <div className="flex items-center justify-between bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-2xl p-4 shadow-sm dark:shadow-none">
+            <div className="flex items-center gap-3">
+              <Badge
+                variant="outline"
+                className="bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[10px]"
+              >
+                {data.length} Playground Projects
+              </Badge>
+            </div>
+            <Button
+              onClick={openNew}
+              className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold px-6 h-10 shadow-lg shadow-indigo-600/20 active:scale-95 transition-all group text-xs"
+            >
+              <FaPlus className="mr-2 group-hover:rotate-90 transition-transform duration-300" />
+              Add Demo
+            </Button>
+          </div>
+
+          <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
+            <CardHeader className="p-4 pb-1">
+              <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
+                Experimental Playground
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-2">
+              {loading ? (
+                <div className="space-y-3">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="h-16 bg-slate-100 dark:bg-slate-800/20 rounded-2xl animate-pulse"
+                    />
+                  ))}
+                </div>
+              ) : data.length === 0 ? (
+                <div className="text-center py-16 bg-white dark:bg-slate-950/20 rounded-3xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
+                  <FaFlask
+                    className="mx-auto text-slate-200 dark:text-slate-800 mb-4"
+                    size={40}
+                  />
+                  <p className="text-slate-400 dark:text-slate-500 font-medium">
+                    No demos yet. Share your experiments above.
+                  </p>
+                </div>
+              ) : (
                 <SortableContext
                   items={data.map((s) => s._id!)}
                   strategy={verticalListSortingStrategy}
@@ -434,198 +490,197 @@ export default function AdminDemosPage() {
                     </AnimatePresence>
                   </div>
                 </SortableContext>
+              )}
 
-                <DragOverlay dropAnimation={null}>
-                  {activeId ? (
-                    <div className="flex items-center gap-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-indigo-500/30 rounded-2xl p-4 shadow-2xl opacity-90 scale-105">
-                      <FaGripVertical className="text-indigo-500" size={14} />
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
-                          {data.find((s) => s._id === activeId)?.title}
-                        </h3>
+              {!loading && data.length > 0 && (
+                <p className="text-center text-[10px] text-slate-400 dark:text-slate-700 mt-8 font-bold uppercase tracking-widest">
+                  Drag rows to reorder • Changes save automatically
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        <AdminDialogShell
+          open={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+          title={currentDemo?._id ? "Refine Experiment" : "New Playground Demo"}
+          subtitle="Curate and showcase your interactive experiments"
+          icon={FaFlask}
+          iconColor="text-indigo-400"
+          accentColor="from-indigo-500/5 to-purple-500/5"
+          onSave={handleAddOrUpdate}
+          saving={saveMutation.isPending}
+          saveLabel={currentDemo?._id ? "Update Demo" : "Publish Demo"}
+          savingLabel="Processing..."
+          maxWidth="5xl"
+        >
+          {currentDemo && (
+            <div className="px-1">
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-10">
+                {/* Left Column: Visuals */}
+                <div className="space-y-6">
+                  <AdminField label="Media Gallery">
+                    <div className="p-6 bg-indigo-500/5 border border-indigo-500/10 dark:border-indigo-500/20 rounded-3xl flex items-start gap-4 mb-4 shadow-sm dark:shadow-none">
+                      <FaInfoCircle
+                        className="text-indigo-600 dark:text-indigo-400 shrink-0 mt-1"
+                        size={16}
+                      />
+                      <div className="space-y-1">
+                        <p className="text-[10px] font-black uppercase tracking-wider text-indigo-600 dark:text-indigo-400/90">
+                          Visual Engagement
+                        </p>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
+                          Showcase your work visually. You can add multiple
+                          images or videos to document your experiment.
+                        </p>
                       </div>
                     </div>
-                  ) : null}
-                </DragOverlay>
-              </DndContext>
-            )}
-
-            {!loading && data.length > 0 && (
-              <p className="text-center text-[10px] text-slate-400 dark:text-slate-700 mt-8 font-bold uppercase tracking-widest">
-                Drag rows to reorder • Changes save automatically
-              </p>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      <AdminDialogShell
-        open={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        title={currentDemo?._id ? "Refine Experiment" : "New Playground Demo"}
-        subtitle="Curate and showcase your interactive experiments"
-        icon={FaFlask}
-        iconColor="text-indigo-400"
-        accentColor="from-indigo-500/5 to-purple-500/5"
-        onSave={handleAddOrUpdate}
-        saving={saveMutation.isPending}
-        saveLabel={currentDemo?._id ? "Update Demo" : "Publish Demo"}
-        savingLabel="Processing..."
-        maxWidth="5xl"
-      >
-        {currentDemo && (
-          <div className="px-1">
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-10">
-              {/* Left Column: Visuals */}
-              <div className="space-y-6">
-                <AdminField label="Media Gallery">
-                  <div className="p-6 bg-indigo-500/5 border border-indigo-500/10 dark:border-indigo-500/20 rounded-3xl flex items-start gap-4 mb-4 shadow-sm dark:shadow-none">
-                    <FaInfoCircle
-                      className="text-indigo-600 dark:text-indigo-400 shrink-0 mt-1"
-                      size={16}
-                    />
-                    <div className="space-y-1">
-                      <p className="text-[10px] font-black uppercase tracking-wider text-indigo-600 dark:text-indigo-400/90">
-                        Visual Engagement
-                      </p>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
-                        Showcase your work visually. You can add multiple images
-                        or videos to document your experiment.
-                      </p>
-                    </div>
-                  </div>
-                  <MediaGalleryManager
-                    media={currentDemo.media}
-                    onChange={(newMedia) =>
-                      setCurrentDemo({ ...currentDemo, media: newMedia })
-                    }
-                  />
-                </AdminField>
-
-                <AdminField label="Thumbnail / Cover">
-                  <ImageUpload
-                    value={currentDemo.image || ""}
-                    onChange={(url) => setCurrentDemo({ ...currentDemo, image: url })}
-                  />
-                </AdminField>
-              </div>
-
-              {/* Right Column: Information */}
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <AdminField label="Demo Title">
-                    <AdminInput
-                      icon={FaFlask}
-                      value={currentDemo.title}
-                      onChange={(e) => {
-                        const title = e.target.value;
-                        const slug = title
-                          .toLowerCase()
-                          .replace(/[^a-z0-9]+/g, "-")
-                          .replace(/(^-|-$)+/g, "");
-                        setCurrentDemo({
-                          ...currentDemo,
-                          title,
-                          slug: currentDemo._id ? currentDemo.slug : slug,
-                        });
-                      }}
-                      placeholder="e.g. AI-Powered Chatbot"
+                    <MediaGalleryManager
+                      media={currentDemo.media}
+                      onChange={(newMedia) =>
+                        setCurrentDemo({ ...currentDemo, media: newMedia })
+                      }
                     />
                   </AdminField>
-                  <AdminField label="Slug">
-                    <AdminInput
-                      icon={FaLink}
-                      value={currentDemo.slug || ""}
-                      onChange={(e) =>
-                        setCurrentDemo({
-                          ...currentDemo,
-                          slug: e.target.value
+
+                  <AdminField label="Thumbnail / Cover">
+                    <ImageUpload
+                      value={currentDemo.image || ""}
+                      onChange={(url) =>
+                        setCurrentDemo({ ...currentDemo, image: url })
+                      }
+                    />
+                  </AdminField>
+                </div>
+
+                {/* Right Column: Information */}
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <AdminField label="Demo Title">
+                      <AdminInput
+                        icon={FaFlask}
+                        value={currentDemo.title}
+                        onChange={(e) => {
+                          const title = e.target.value;
+                          const slug = title
                             .toLowerCase()
-                            .replace(/[^a-z0-9]+/g, "-"),
-                        })
-                      }
-                      placeholder="ai-powered-chatbot"
-                    />
-                  </AdminField>
-                </div>
+                            .replace(/[^a-z0-9]+/g, "-")
+                            .replace(/(^-|-$)+/g, "");
+                          setCurrentDemo({
+                            ...currentDemo,
+                            title,
+                            slug: currentDemo._id ? currentDemo.slug : slug,
+                          });
+                        }}
+                        placeholder="e.g. AI-Powered Chatbot"
+                      />
+                    </AdminField>
+                    <AdminField label="Slug">
+                      <AdminInput
+                        icon={FaLink}
+                        value={currentDemo.slug || ""}
+                        onChange={(e) =>
+                          setCurrentDemo({
+                            ...currentDemo,
+                            slug: e.target.value
+                              .toLowerCase()
+                              .replace(/[^a-z0-9]+/g, "-"),
+                          })
+                        }
+                        placeholder="ai-powered-chatbot"
+                      />
+                    </AdminField>
+                  </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <AdminField label="Live URL">
-                    <AdminInput
-                      icon={FaLink}
-                      value={currentDemo.url}
-                      onChange={(e) =>
-                        setCurrentDemo({ ...currentDemo, url: e.target.value })
-                      }
-                      placeholder="https://playground..."
-                    />
-                  </AdminField>
-                  <AdminField label="GitHub Repository URL">
-                    <AdminInput
-                      icon={FaGithub}
-                      value={currentDemo.github || ""}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <AdminField label="Live URL">
+                      <AdminInput
+                        icon={FaLink}
+                        value={currentDemo.url}
+                        onChange={(e) =>
+                          setCurrentDemo({
+                            ...currentDemo,
+                            url: e.target.value,
+                          })
+                        }
+                        placeholder="https://playground..."
+                      />
+                    </AdminField>
+                    <AdminField label="GitHub Repository URL">
+                      <AdminInput
+                        icon={FaGithub}
+                        value={currentDemo.github || ""}
+                        onChange={(e) =>
+                          setCurrentDemo({
+                            ...currentDemo,
+                            github: e.target.value,
+                          })
+                        }
+                        placeholder="https://github.com/..."
+                      />
+                    </AdminField>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <AdminField label="Featured Flag">
+                      <div className="flex items-center h-12 px-4 bg-slate-900/20 dark:bg-slate-950/40 border border-slate-200 dark:border-white/5 rounded-xl">
+                        <label className="flex items-center gap-3 cursor-pointer w-full select-none">
+                          <input
+                            type="checkbox"
+                            checked={!!currentDemo.featured}
+                            onChange={(e) =>
+                              setCurrentDemo({
+                                ...currentDemo,
+                                featured: e.target.checked,
+                              })
+                            }
+                            className="size-4 accent-indigo-500 rounded border-slate-300 dark:border-white/10 dark:bg-slate-950 focus:ring-indigo-500 cursor-pointer"
+                          />
+                          <span className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                            <FaStar className="text-amber-400" size={11} />{" "}
+                            Featured Lab Experiment
+                          </span>
+                        </label>
+                      </div>
+                    </AdminField>
+                  </div>
+
+                  <AdminField label="Description">
+                    <AdminTextarea
+                      value={currentDemo.description}
                       onChange={(e) =>
                         setCurrentDemo({
                           ...currentDemo,
-                          github: e.target.value,
+                          description: e.target.value,
                         })
                       }
-                      placeholder="https://github.com/..."
+                      placeholder="What is this experiment about?..."
+                      className="min-h-30"
+                    />
+                  </AdminField>
+
+                  <AdminField label="Technologies Used">
+                    <TechCombobox
+                      value={currentDemo.tech}
+                      onChange={(val) =>
+                        setCurrentDemo({ ...currentDemo, tech: val })
+                      }
+                      technologies={technologies}
                     />
                   </AdminField>
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <AdminField label="Featured Flag">
-                    <div className="flex items-center h-12 px-4 bg-slate-900/20 dark:bg-slate-950/40 border border-slate-200 dark:border-white/5 rounded-xl">
-                      <label className="flex items-center gap-3 cursor-pointer w-full select-none">
-                        <input
-                          type="checkbox"
-                          checked={!!currentDemo.featured}
-                          onChange={(e) =>
-                            setCurrentDemo({
-                              ...currentDemo,
-                              featured: e.target.checked,
-                            })
-                          }
-                          className="size-4 accent-indigo-500 rounded border-slate-300 dark:border-white/10 dark:bg-slate-950 focus:ring-indigo-500 cursor-pointer"
-                        />
-                        <span className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                          <FaStar className="text-amber-400" size={11} /> Featured Lab Experiment
-                        </span>
-                      </label>
-                    </div>
-                  </AdminField>
-                </div>
-
-                <AdminField label="Description">
-                  <AdminTextarea
-                    value={currentDemo.description}
-                    onChange={(e) =>
-                      setCurrentDemo({
-                        ...currentDemo,
-                        description: e.target.value,
-                      })
-                    }
-                    placeholder="What is this experiment about?..."
-                    className="min-h-30"
-                  />
-                </AdminField>
-
-                <AdminField label="Technologies Used">
-                  <TechCombobox
-                    value={currentDemo.tech}
-                    onChange={(val) =>
-                      setCurrentDemo({ ...currentDemo, tech: val })
-                    }
-                    technologies={technologies}
-                  />
-                </AdminField>
               </div>
             </div>
-          </div>
-        )}
-      </AdminDialogShell>
-    </div>
+          )}
+        </AdminDialogShell>
+
+        <DragOverlay dropAnimation={null}>
+          {activeId ? (
+            <DemoOverlay demo={data.find((s) => s._id === activeId)!} />
+          ) : null}
+        </DragOverlay>
+      </div>
+    </DndContext>
   );
 }

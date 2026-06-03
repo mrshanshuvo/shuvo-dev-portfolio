@@ -96,7 +96,7 @@ const platformIcons: Record<string, React.ReactNode> = {
 function SocialOverlay({ item }: { item: SocialLink }) {
   const Icon = platformIconMap[item.platform] || FaLink;
   return (
-    <div className="flex items-center gap-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-cyan-500/30 rounded-2xl p-4 shadow-2xl opacity-90 scale-105 ring-1 ring-cyan-400/20 min-w-[320px]">
+    <div className="flex items-center gap-4 bg-white dark:bg-slate-800 border border-cyan-500/30 rounded-2xl p-4 shadow-2xl scale-105 ring-1 ring-cyan-400/20 min-w-[320px]">
       <FaGripVertical className="text-cyan-500" size={14} />
       <div className="p-2 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 rounded-lg">
         <Icon size={14} />

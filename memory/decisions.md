@@ -47,3 +47,9 @@ _This file tracks significant design and architectural decisions made during dev
 - **Context:** The `Skill` model was overloaded, serving both as high-level professional "Expertise Areas" (e.g., Full Stack Development) and granular "Technologies/Brands" (e.g., React, Node.js). This made the admin UI confusing and the public UI filtering logic complex.
 - **Decision:** Split the `Skill` model into two distinct Mongoose models: `Skill` (representing Expertise) and `Technology` (representing individual tech stack items with icons). Updated the admin dashboard to have separate `/admin/expertise` and `/admin/technologies` routes, and implemented an inline "Quick Add" UX for adding technologies directly from the Expertise form.
 - **Consequences:** Cleaner separation of concerns, simpler public UI filtering logic, and a vastly improved admin authoring experience with type-safe associations.
+
+### [2026-06-03] - Standardized Admin Drag & Drop Architecture
+
+- **Context:** Drag-and-drop interactions across admin list pages were behaving inconsistently, specifically due to clipping overlays within scrollable containers and conflicts with Framer Motion layout animations.
+- **Decision:** Extract `DndContext` to the root `<div>` level for all sortable list pages to ensure `DragOverlay` elements render above all context layers. Remove `layout` prop from `framer-motion` implementations on actively sorting elements to avoid transform tracking conflicts with `dnd-kit`. Create rich, decoupled `<DragOverlay>` components representing metadata (icons, dates, issuers) to ensure high-fidelity drag feedback.
+- **Consequences:** Visual drag feedback is perfectly stable, consistent across all 7 CMS list pages, and doesn't get clipped. Required refactoring 7 distinct admin UI pages.

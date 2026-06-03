@@ -189,4 +189,22 @@ _Chronological log of agent interactions, tasks completed, and context switches.
   - Enhanced contrast accessibility for purely black icons (e.g. Next.js, GitHub) by ensuring the logo container consistently renders a solid white background regardless of the user's color scheme mode (light/dark mode).
   - Fine-tuned the public `SkillsClient` UI by adjusting card layouts and maximizing logo size to fit the premium aesthetic.
   - Committed all changes to version control.
+
+## [2026-06-03] Admin UI Enhancements: Drag & Drop and Usability
+
+- **Task:** Standardize drag-and-drop interactions and refine action button usability across all list-based Admin UI pages.
+- **Actions:**
+  - Standardized `DndContext` architecture by moving it to the page root to prevent clipping constraints.
+  - Extracted high-fidelity `<DragOverlay>` components (e.g., `CertOverlay`, `ProjectOverlay`) out of standard tables so dragging items display rich metadata (images, icons, details) instead of just the title.
+  - Rectified Framer Motion conflict where layout animations broke `dnd-kit`'s positional tracking.
+  - Removed hover-only constraints on all Edit and Delete buttons across 7 admin pages, making them permanently visible for better accessibility and UX.
+  - Resolved lingering TypeScript errors in `admin/demos/page.tsx` related to the newly decoupled `Technology` model.
+- **Next Steps:** Await next task from the user.
+
+## [2026-06-03] Version Control Snapshot
+
+- **Task:** Commit recent Admin UI enhancements and Drag & Drop standardizations.
+- **Actions:**
+  - Staged all changes across `/admin` route pages and memory documentation.
+  - Committed with message: `feat(admin): standardize drag-and-drop architecture and improve button accessibility`
 - **Next Steps:** Await next task from the user.

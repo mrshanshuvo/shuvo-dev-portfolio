@@ -85,13 +85,9 @@ function SortableProjectCard({
   const vidCount = project.media?.filter((m) => m.type === "video").length ?? 0;
 
   return (
-    <motion.div
+    <div
       ref={setNodeRef}
       style={style}
-      layout
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.97 }}
       className="group relative flex items-center gap-4 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10 rounded-[1.5rem] p-2 transition-all duration-300 shadow-sm dark:shadow-none"
     >
       {/* Drag handle */}
@@ -189,7 +185,7 @@ function SortableProjectCard({
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+      <div className="flex items-center gap-2 transition-opacity shrink-0">
         <Button
           onClick={onEdit}
           size="icon"
@@ -208,7 +204,7 @@ function SortableProjectCard({
           <FaTrash size={12} />
         </Button>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -221,7 +217,7 @@ function DragOverlayCard({ project }: { project: Project }) {
   const vidCount = project.media?.filter((m) => m.type === "video").length ?? 0;
 
   return (
-    <div className="flex items-center gap-4 bg-slate-800/90 backdrop-blur-xl border border-emerald-500/30 rounded-[1.5rem] p-4 shadow-[0_20px_60px_rgba(0,0,0,0.6)] ring-1 ring-emerald-500/20 rotate-1 scale-105">
+    <div className="flex items-center gap-4 bg-white dark:bg-slate-800 border border-emerald-500/30 rounded-[1.5rem] p-4 shadow-2xl ring-1 ring-emerald-500/20 scale-105">
       <div className="cursor-grabbing text-emerald-400 shrink-0">
         <FaGripVertical size={14} />
       </div>
@@ -431,183 +427,182 @@ export default function AdminProjectsListPage() {
   const isFiltered = searchQuery || filterCategory !== "All";
 
   return (
-    <div className="p-4 md:p-8 space-y-6">
-      {/* Toast */}
-      <AnimatePresence>
-        {toast && (
-          <motion.div
-            initial={{ opacity: 0, y: -20, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: -20, x: "-50%" }}
-            className={cn(
-              "fixed top-8 left-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-2xl border backdrop-blur-xl shadow-2xl",
-              toast.type === "success"
-                ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
-                : "bg-red-500/20 border-red-500/50 text-red-400",
-            )}
-          >
-            <div
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="p-4 md:p-8 space-y-6">
+        {/* Toast */}
+        <AnimatePresence>
+          {toast && (
+            <motion.div
+              initial={{ opacity: 0, y: -20, x: "-50%" }}
+              animate={{ opacity: 1, y: 0, x: "-50%" }}
+              exit={{ opacity: 0, y: -20, x: "-50%" }}
               className={cn(
-                "p-1.5 rounded-full",
+                "fixed top-8 left-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-2xl border backdrop-blur-xl shadow-2xl",
                 toast.type === "success"
-                  ? "bg-emerald-500/20"
-                  : "bg-red-500/20",
+                  ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
+                  : "bg-red-500/20 border-red-500/50 text-red-400",
               )}
             >
-              {toast.type === "success" ? (
-                <FaCheck size={10} />
-              ) : (
-                <FaTimes size={10} />
-              )}
-            </div>
-            <span className="font-bold text-sm tracking-tight">
-              {toast.msg}
-            </span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-2xl p-4 shadow-sm dark:shadow-none">
-        <div className="flex items-center gap-4 flex-wrap flex-1">
-          <Badge
-            variant="outline"
-            className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[10px]"
-          >
-            {data.length} {data.length === 1 ? "Project" : "Projects"}
-          </Badge>
-
-          <div className="relative flex-1 min-w-45 max-w-xs">
-            <FaSearch
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600"
-              size={12}
-            />
-            <Input
-              className="bg-white dark:bg-slate-950 border-slate-200 dark:border-white/5 rounded-xl pl-9 h-10 text-xs focus-visible:ring-emerald-500/30 text-slate-900 dark:text-white shadow-sm dark:shadow-none"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search projects..."
-            />
-          </div>
-
-          <Select
-            value={filterCategory}
-            onValueChange={(v) => setFilterCategory(v || "All")}
-          >
-            <SelectTrigger className="bg-white dark:bg-slate-950 border-slate-200 dark:border-white/5 rounded-xl h-10 w-37.5 text-xs text-slate-900 dark:text-white shadow-sm dark:shadow-none">
-              <FaFilter className="mr-2 text-slate-600" size={10} />
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-white dark:bg-slate-900 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl shadow-2xl">
-              <SelectItem value="All">All Categories</SelectItem>
-              {categories.map((c) => (
-                <SelectItem key={c.name} value={c.name}>
-                  {c.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <CategoryManagerDialog onUpdate={refreshCategories} />
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Button
-            onClick={openNew}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl h-10 px-6 font-black shadow-lg shadow-emerald-600/20 text-xs"
-          >
-            <FaPlus className="mr-2" size={12} /> Add Project
-          </Button>
-        </div>
-      </div>
-
-      <div className="w-full">
-        {/* List Content */}
-        {loading ? (
-          <div className="space-y-3">
-            {Array.from({ length: 4 }).map((_, i) => (
               <div
-                key={i}
-                className="h-24 bg-slate-900/30 rounded-[1.5rem] animate-pulse border border-white/5"
+                className={cn(
+                  "p-1.5 rounded-full",
+                  toast.type === "success"
+                    ? "bg-emerald-500/20"
+                    : "bg-red-500/20",
+                )}
+              >
+                {toast.type === "success" ? (
+                  <FaCheck size={10} />
+                ) : (
+                  <FaTimes size={10} />
+                )}
+              </div>
+              <span className="font-bold text-sm tracking-tight">
+                {toast.msg}
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-2xl p-4 shadow-sm dark:shadow-none">
+          <div className="flex items-center gap-4 flex-wrap flex-1">
+            <Badge
+              variant="outline"
+              className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[10px]"
+            >
+              {data.length} {data.length === 1 ? "Project" : "Projects"}
+            </Badge>
+
+            <div className="relative flex-1 min-w-45 max-w-xs">
+              <FaSearch
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600"
+                size={12}
               />
-            ))}
+              <Input
+                className="bg-white dark:bg-slate-950 border-slate-200 dark:border-white/5 rounded-xl pl-9 h-10 text-xs focus-visible:ring-emerald-500/30 text-slate-900 dark:text-white shadow-sm dark:shadow-none"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search projects..."
+              />
+            </div>
+
+            <Select
+              value={filterCategory}
+              onValueChange={(v) => setFilterCategory(v || "All")}
+            >
+              <SelectTrigger className="bg-white dark:bg-slate-950 border-slate-200 dark:border-white/5 rounded-xl h-10 w-37.5 text-xs text-slate-900 dark:text-white shadow-sm dark:shadow-none">
+                <FaFilter className="mr-2 text-slate-600" size={10} />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-white dark:bg-slate-900 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl shadow-2xl">
+                <SelectItem value="All">All Categories</SelectItem>
+                {categories.map((c) => (
+                  <SelectItem key={c.name} value={c.name}>
+                    {c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <CategoryManagerDialog onUpdate={refreshCategories} />
           </div>
-        ) : data.length === 0 ? (
-          <div className="py-32 text-center border-2 border-dashed border-white/5 rounded-[3rem]">
-            <FaCode size={48} className="mx-auto text-slate-800 mb-4" />
-            <h3 className="text-xl font-bold text-slate-400 mb-2">
-              No projects yet
-            </h3>
-            <p className="text-slate-600 text-sm mb-8">
-              Start building your portfolio by adding your first project.
-            </p>
+
+          <div className="flex items-center gap-3">
             <Button
               onClick={openNew}
-              className="bg-emerald-600/10 text-emerald-400 hover:bg-emerald-600/20 border border-emerald-500/20 px-8 h-12 rounded-xl font-bold"
+              className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl h-10 px-6 font-black shadow-lg shadow-emerald-600/20 text-xs"
             >
-              <FaPlus className="mr-2" /> Add First Project
+              <FaPlus className="mr-2" size={12} /> Add Project
             </Button>
           </div>
-        ) : (
-          <>
-            {isFiltered ? (
-              // Non-DnD view when filtering (can't reorder filtered subset)
-              <div className="space-y-3">
-                <AnimatePresence mode="popLayout">
-                  {filtered.map((project) => (
-                    <SortableProjectCard
-                      key={project._id}
-                      project={project}
-                      onEdit={() => openEdit(project)}
-                      onDelete={() => handleDelete(project._id!)}
-                      deleting={deletingId === project._id}
-                    />
-                  ))}
-                </AnimatePresence>
-              </div>
-            ) : (
-              // DnD-enabled full list
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragStart={handleDragStart}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext
-                  items={data.map((p) => p._id!)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <div className="space-y-3">
-                    <AnimatePresence mode="popLayout">
-                      {data.map((project) => (
-                        <SortableProjectCard
-                          key={project._id}
-                          project={project}
-                          onEdit={() => openEdit(project)}
-                          onDelete={() => handleDelete(project._id!)}
-                          deleting={deletingId === project._id}
-                        />
-                      ))}
-                    </AnimatePresence>
-                  </div>
-                </SortableContext>
-                <DragOverlay dropAnimation={null}>
-                  {activeId ? (
-                    <DragOverlayCard
-                      project={data.find((p) => p._id === activeId)!}
-                    />
-                  ) : null}
-                </DragOverlay>
-              </DndContext>
-            )}
+        </div>
 
-            <p className="text-center text-[10px] text-slate-700 mt-8 font-bold uppercase tracking-widest">
-              {isFiltered
-                ? `Showing ${filtered.length} of ${data.length} projects`
-                : "Drag rows to reorder • Changes save automatically"}
-            </p>
-          </>
-        )}
+        <div className="w-full">
+          {/* List Content */}
+          {loading ? (
+            <div className="space-y-3">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-24 bg-slate-900/30 rounded-[1.5rem] animate-pulse border border-white/5"
+                />
+              ))}
+            </div>
+          ) : data.length === 0 ? (
+            <div className="py-32 text-center border-2 border-dashed border-white/5 rounded-[3rem]">
+              <FaCode size={48} className="mx-auto text-slate-800 mb-4" />
+              <h3 className="text-xl font-bold text-slate-400 mb-2">
+                No projects yet
+              </h3>
+              <p className="text-slate-600 text-sm mb-8">
+                Start building your portfolio by adding your first project.
+              </p>
+              <Button
+                onClick={openNew}
+                className="bg-emerald-600/10 text-emerald-400 hover:bg-emerald-600/20 border border-emerald-500/20 px-8 h-12 rounded-xl font-bold"
+              >
+                <FaPlus className="mr-2" /> Add First Project
+              </Button>
+            </div>
+          ) : (
+            <>
+              {isFiltered ? (
+                // Non-DnD view when filtering (can't reorder filtered subset)
+                <div className="space-y-3">
+                  <AnimatePresence mode="popLayout">
+                    {filtered.map((project) => (
+                      <SortableProjectCard
+                        key={project._id}
+                        project={project}
+                        onEdit={() => openEdit(project)}
+                        onDelete={() => handleDelete(project._id!)}
+                        deleting={deletingId === project._id}
+                      />
+                    ))}
+                  </AnimatePresence>
+                </div>
+              ) : (
+                <>
+                  <SortableContext
+                    items={data.map((p) => p._id!)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <div className="space-y-3">
+                      <AnimatePresence mode="popLayout">
+                        {data.map((project) => (
+                          <SortableProjectCard
+                            key={project._id}
+                            project={project}
+                            onEdit={() => openEdit(project)}
+                            onDelete={() => handleDelete(project._id!)}
+                            deleting={deletingId === project._id}
+                          />
+                        ))}
+                      </AnimatePresence>
+                    </div>
+                  </SortableContext>
+                </>
+              )}
+
+              <p className="text-center text-[10px] text-slate-700 mt-8 font-bold uppercase tracking-widest">
+                {isFiltered
+                  ? `Showing ${filtered.length} of ${data.length} projects`
+                  : "Drag rows to reorder • Changes save automatically"}
+              </p>
+            </>
+          )}
+        </div>
+        <DragOverlay dropAnimation={null}>
+          {activeId ? (
+            <DragOverlayCard project={data.find((p) => p._id === activeId)!} />
+          ) : null}
+        </DragOverlay>
       </div>
-    </div>
+    </DndContext>
   );
 }

@@ -146,7 +146,7 @@ function SortableBlogRow({
         </div>
       </div>
 
-      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="flex items-center gap-2 transition-opacity">
         <Button
           variant="ghost"
           size="icon"
@@ -168,6 +168,60 @@ function SortableBlogRow({
             <FaTrash size={12} />
           )}
         </Button>
+      </div>
+    </div>
+  );
+}
+
+function BlogOverlay({ item }: { item: Blog }) {
+  return (
+    <div className="flex items-center gap-4 bg-white dark:bg-slate-800 border border-orange-500/30 rounded-2xl p-4 shadow-2xl scale-105 min-w-[320px]">
+      <div className="cursor-grabbing text-orange-500 shrink-0">
+        <FaGripVertical size={14} />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-3">
+          {item.image ? (
+            <div className="relative w-12 h-8 rounded-lg overflow-hidden border border-white/10 shrink-0">
+              <Image
+                src={item.image}
+                alt={item.title}
+                fill
+                className="object-cover"
+              />
+            </div>
+          ) : (
+            <div className="p-2 bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-lg shrink-0">
+              <FaNewspaper size={14} />
+            </div>
+          )}
+          <div className="min-w-0">
+            <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
+              {item.title}
+            </h3>
+            <div className="flex items-center gap-3 mt-0.5">
+              <span className="text-[10px] text-slate-500 font-medium flex items-center gap-1">
+                <FaCalendarAlt size={8} /> {item.date}
+              </span>
+              <div className="flex gap-1">
+                {item.tags.slice(0, 2).map((tag, i) => (
+                  <Badge
+                    key={i}
+                    variant="secondary"
+                    className="bg-slate-100 dark:bg-white/5 text-[10px] text-slate-500 dark:text-slate-400 h-4 px-1.5 border-slate-200 dark:border-white/5 uppercase tracking-tighter"
+                  >
+                    {tag}
+                  </Badge>
+                ))}
+                {item.tags.length > 2 && (
+                  <span className="text-[10px] text-slate-600">
+                    +{item.tags.length - 2}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -311,93 +365,93 @@ export default function AdminBlogsPage() {
   }
 
   return (
-    <div className="p-4 md:p-8 space-y-6 font-sans">
-      <AnimatePresence>
-        {toast && (
-          <motion.div
-            initial={{ opacity: 0, y: -20, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: -20, x: "-50%" }}
-            className={cn(
-              "fixed top-8 left-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-2xl border backdrop-blur-xl shadow-2xl",
-              toast.type === "success"
-                ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
-                : "bg-red-500/20 border-red-500/50 text-red-400",
-            )}
-          >
-            <div
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragStart={(e) => setActiveId(e.active.id as string)}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="p-4 md:p-8 space-y-6 font-sans">
+        <AnimatePresence>
+          {toast && (
+            <motion.div
+              initial={{ opacity: 0, y: -20, x: "-50%" }}
+              animate={{ opacity: 1, y: 0, x: "-50%" }}
+              exit={{ opacity: 0, y: -20, x: "-50%" }}
               className={cn(
-                "p-1.5 rounded-full",
+                "fixed top-8 left-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-2xl border backdrop-blur-xl shadow-2xl",
                 toast.type === "success"
-                  ? "bg-emerald-500/20"
-                  : "bg-red-500/20",
+                  ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
+                  : "bg-red-500/20 border-red-500/50 text-red-400",
               )}
             >
-              {toast.type === "success" ? (
-                <FaCheck size={10} />
-              ) : (
-                <FaTimes size={10} />
-              )}
-            </div>
-            <span className="font-bold text-sm tracking-tight">
-              {toast.msg}
-            </span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex items-center justify-between bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-2xl p-4 shadow-sm dark:shadow-none">
-          <div className="flex items-center gap-3">
-            <Badge
-              variant="outline"
-              className="bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[10px]"
-            >
-              {data.length} Blog Posts
-            </Badge>
-          </div>
-          <Button
-            onClick={openNew}
-            className="bg-orange-600 hover:bg-orange-500 text-white rounded-xl font-bold px-6 h-10 shadow-lg shadow-orange-600/20 active:scale-95 transition-all group text-xs"
-          >
-            <FaPlus className="mr-2 group-hover:rotate-90 transition-transform duration-300" />
-            New Post
-          </Button>
-        </div>
-
-        <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
-          <CardHeader className="p-4 pb-1">
-            <CardTitle className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
-              Article Management
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-2">
-            {loading ? (
-              <div className="space-y-3">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="h-16 bg-slate-100 dark:bg-slate-800/20 rounded-2xl animate-pulse"
-                  />
-                ))}
-              </div>
-            ) : data.length === 0 ? (
-              <div className="text-center py-16 bg-white dark:bg-slate-950/20 rounded-3xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
-                <FaNewspaper
-                  className="mx-auto text-slate-200 dark:text-slate-800 mb-4"
-                  size={40}
-                />
-                <p className="text-slate-400 dark:text-slate-500 font-medium">
-                  No blog posts found. Share your first story above.
-                </p>
-              </div>
-            ) : (
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragStart={(e) => setActiveId(e.active.id as string)}
-                onDragEnd={handleDragEnd}
+              <div
+                className={cn(
+                  "p-1.5 rounded-full",
+                  toast.type === "success"
+                    ? "bg-emerald-500/20"
+                    : "bg-red-500/20",
+                )}
               >
+                {toast.type === "success" ? (
+                  <FaCheck size={10} />
+                ) : (
+                  <FaTimes size={10} />
+                )}
+              </div>
+              <span className="font-bold text-sm tracking-tight">
+                {toast.msg}
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="max-w-4xl mx-auto space-y-6">
+          <div className="flex items-center justify-between bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-2xl p-4 shadow-sm dark:shadow-none">
+            <div className="flex items-center gap-3">
+              <Badge
+                variant="outline"
+                className="bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[10px]"
+              >
+                {data.length} Blog Posts
+              </Badge>
+            </div>
+            <Button
+              onClick={openNew}
+              className="bg-orange-600 hover:bg-orange-500 text-white rounded-xl font-bold px-6 h-10 shadow-lg shadow-orange-600/20 active:scale-95 transition-all group text-xs"
+            >
+              <FaPlus className="mr-2 group-hover:rotate-90 transition-transform duration-300" />
+              New Post
+            </Button>
+          </div>
+
+          <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
+            <CardHeader className="p-4 pb-1">
+              <CardTitle className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
+                Article Management
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-2">
+              {loading ? (
+                <div className="space-y-3">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="h-16 bg-slate-100 dark:bg-slate-800/20 rounded-2xl animate-pulse"
+                    />
+                  ))}
+                </div>
+              ) : data.length === 0 ? (
+                <div className="text-center py-16 bg-white dark:bg-slate-950/20 rounded-3xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
+                  <FaNewspaper
+                    className="mx-auto text-slate-200 dark:text-slate-800 mb-4"
+                    size={40}
+                  />
+                  <p className="text-slate-400 dark:text-slate-500 font-medium">
+                    No blog posts found. Share your first story above.
+                  </p>
+                </div>
+              ) : (
                 <SortableContext
                   items={data.map((s) => s._id!)}
                   strategy={verticalListSortingStrategy}
@@ -416,140 +470,144 @@ export default function AdminBlogsPage() {
                     </AnimatePresence>
                   </div>
                 </SortableContext>
+              )}
 
-                <DragOverlay dropAnimation={null}>
-                  {activeId ? (
-                    <div className="flex items-center gap-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-orange-500/30 rounded-2xl p-4 shadow-2xl opacity-90 scale-105">
-                      <FaGripVertical className="text-orange-500" size={14} />
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
-                          {data.find((s) => s._id === activeId)?.title}
-                        </h3>
-                      </div>
+              {!loading && data.length > 0 && (
+                <p className="text-center text-[10px] text-slate-400 dark:text-slate-700 mt-8 font-bold uppercase tracking-widest">
+                  Drag rows to reorder • Changes save automatically
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        <AdminDialogShell
+          open={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+          title={currentBlog?._id ? "Refine Article" : "Draft New Insight"}
+          subtitle="Share your knowledge and technical insights"
+          icon={FaBookOpen}
+          iconColor="text-orange-400"
+          accentColor="from-orange-500/5 to-red-500/5"
+          onSave={handleAddOrUpdate}
+          saving={saveMutation.isPending}
+          saveLabel={currentBlog?._id ? "Update Article" : "Publish Insight"}
+          savingLabel="Publishing..."
+          maxWidth="5xl"
+        >
+          {currentBlog && (
+            <div className="px-1">
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-10">
+                {/* Left Column: Visuals & Branding */}
+                <div className="space-y-6">
+                  <AdminField label="Cover Narrative Image">
+                    <ImageUpload
+                      value={currentBlog.image}
+                      onChange={(url) =>
+                        setCurrentBlog({ ...currentBlog, image: url })
+                      }
+                    />
+                  </AdminField>
+
+                  <div className="p-6 bg-orange-500/5 border border-orange-500/10 rounded-3xl flex items-start gap-4">
+                    <FaInfoCircle
+                      className="text-orange-400 shrink-0 mt-1"
+                      size={16}
+                    />
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-black uppercase tracking-wider text-orange-400/90">
+                        Visual Engagement
+                      </p>
+                      <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
+                        A high-quality cover image significantly increases
+                        click-through rates. Choose an image that visually
+                        summarizes your article&apos;s core topic.
+                      </p>
                     </div>
-                  ) : null}
-                </DragOverlay>
-              </DndContext>
-            )}
-
-            {!loading && data.length > 0 && (
-              <p className="text-center text-[10px] text-slate-400 dark:text-slate-700 mt-8 font-bold uppercase tracking-widest">
-                Drag rows to reorder • Changes save automatically
-              </p>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      <AdminDialogShell
-        open={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        title={currentBlog?._id ? "Refine Article" : "Draft New Insight"}
-        subtitle="Share your knowledge and technical insights"
-        icon={FaBookOpen}
-        iconColor="text-orange-400"
-        accentColor="from-orange-500/5 to-red-500/5"
-        onSave={handleAddOrUpdate}
-        saving={saveMutation.isPending}
-        saveLabel={currentBlog?._id ? "Update Article" : "Publish Insight"}
-        savingLabel="Publishing..."
-        maxWidth="5xl"
-      >
-        {currentBlog && (
-          <div className="px-1">
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-10">
-              {/* Left Column: Visuals & Branding */}
-              <div className="space-y-6">
-                <AdminField label="Cover Narrative Image">
-                  <ImageUpload
-                    value={currentBlog.image}
-                    onChange={(url) =>
-                      setCurrentBlog({ ...currentBlog, image: url })
-                    }
-                  />
-                </AdminField>
-
-                <div className="p-6 bg-orange-500/5 border border-orange-500/10 rounded-3xl flex items-start gap-4">
-                  <FaInfoCircle
-                    className="text-orange-400 shrink-0 mt-1"
-                    size={16}
-                  />
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-black uppercase tracking-wider text-orange-400/90">
-                      Visual Engagement
-                    </p>
-                    <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
-                      A high-quality cover image significantly increases
-                      click-through rates. Choose an image that visually
-                      summarizes your article&apos;s core topic.
-                    </p>
                   </div>
                 </div>
-              </div>
 
-              {/* Right Column: Article Details */}
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <AdminField label="Article Title">
+                {/* Right Column: Article Details */}
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <AdminField label="Article Title">
+                      <AdminInput
+                        icon={FaBookOpen}
+                        value={currentBlog.title}
+                        onChange={(e) =>
+                          setCurrentBlog({
+                            ...currentBlog,
+                            title: e.target.value,
+                          })
+                        }
+                        placeholder="e.g. Master Next.js 14 Server Actions"
+                      />
+                    </AdminField>
+                    <AdminField label="Publish Date">
+                      <AdminInput
+                        icon={FaCalendarAlt}
+                        value={currentBlog.date}
+                        onChange={(e) =>
+                          setCurrentBlog({
+                            ...currentBlog,
+                            date: e.target.value,
+                          })
+                        }
+                        placeholder="e.g. May 15, 2024"
+                      />
+                    </AdminField>
+                  </div>
+
+                  <AdminField label="Article Source URL">
                     <AdminInput
-                      icon={FaBookOpen}
-                      value={currentBlog.title}
+                      icon={FaLink}
+                      value={currentBlog.link}
+                      onChange={(e) =>
+                        setCurrentBlog({ ...currentBlog, link: e.target.value })
+                      }
+                      placeholder="https://medium.com/your-article"
+                    />
+                  </AdminField>
+
+                  <AdminField label="Synopsis">
+                    <AdminTextarea
+                      value={currentBlog.description}
                       onChange={(e) =>
                         setCurrentBlog({
                           ...currentBlog,
-                          title: e.target.value,
+                          description: e.target.value,
                         })
                       }
-                      placeholder="e.g. Master Next.js 14 Server Actions"
+                      placeholder="A compelling summary of the article..."
+                      className="min-h-30"
                     />
                   </AdminField>
-                  <AdminField label="Publish Date">
-                    <AdminInput
-                      icon={FaCalendarAlt}
-                      value={currentBlog.date}
-                      onChange={(e) =>
-                        setCurrentBlog({ ...currentBlog, date: e.target.value })
-                      }
-                      placeholder="e.g. May 15, 2024"
-                    />
-                  </AdminField>
-                </div>
 
-                <AdminField label="Article Source URL">
-                  <AdminInput
-                    icon={FaLink}
-                    value={currentBlog.link}
-                    onChange={(e) =>
-                      setCurrentBlog({ ...currentBlog, link: e.target.value })
-                    }
-                    placeholder="https://medium.com/your-article"
-                  />
-                </AdminField>
-
-                <AdminField label="Synopsis">
-                  <AdminTextarea
-                    value={currentBlog.description}
-                    onChange={(e) =>
-                      setCurrentBlog({
-                        ...currentBlog,
-                        description: e.target.value,
-                      })
-                    }
-                    placeholder="A compelling summary of the article..."
-                    className="min-h-30"
-                  />
-                </AdminField>
-
-                <AdminField label="Taxonomy / Tags">
-                  <div className="space-y-4">
-                    <div className="flex gap-3">
-                      <AdminInput
-                        icon={FaTag}
-                        value={tagInput}
-                        onChange={(e) => setTagInput(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
+                  <AdminField label="Taxonomy / Tags">
+                    <div className="space-y-4">
+                      <div className="flex gap-3">
+                        <AdminInput
+                          icon={FaTag}
+                          value={tagInput}
+                          onChange={(e) => setTagInput(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              if (tagInput.trim()) {
+                                setCurrentBlog({
+                                  ...currentBlog,
+                                  tags: [...currentBlog.tags, tagInput.trim()],
+                                });
+                                setTagInput("");
+                              }
+                            }
+                          }}
+                          placeholder="e.g. Next.js"
+                          className="h-12 text-sm"
+                        />
+                        <Button
+                          type="button"
+                          onClick={() => {
                             if (tagInput.trim()) {
                               setCurrentBlog({
                                 ...currentBlog,
@@ -557,66 +615,58 @@ export default function AdminBlogsPage() {
                               });
                               setTagInput("");
                             }
-                          }
-                        }}
-                        placeholder="e.g. Next.js"
-                        className="h-12 text-sm"
-                      />
-                      <Button
-                        type="button"
-                        onClick={() => {
-                          if (tagInput.trim()) {
-                            setCurrentBlog({
-                              ...currentBlog,
-                              tags: [...currentBlog.tags, tagInput.trim()],
-                            });
-                            setTagInput("");
-                          }
-                        }}
-                        className="h-12 px-6 bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white rounded-xl font-bold border border-slate-200 dark:border-white/5 shadow-inner shadow-black/5 dark:shadow-black/20"
-                      >
-                        <FaPlus size={14} />
-                      </Button>
-                    </div>
-                    <div className="flex flex-wrap gap-2 pt-2">
-                      <AnimatePresence>
-                        {currentBlog.tags.map((tag, i) => (
-                          <motion.div
-                            key={i}
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.8 }}
-                          >
-                            <Badge
-                              variant="secondary"
-                              className="bg-slate-50 dark:bg-slate-950/40 text-orange-600 dark:text-orange-400 border-slate-200 dark:border-white/5 shadow-inner shadow-black/5 dark:shadow-black/10 px-3 py-2 gap-2 rounded-xl group transition-all"
+                          }}
+                          className="h-12 px-6 bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white rounded-xl font-bold border border-slate-200 dark:border-white/5 shadow-inner shadow-black/5 dark:shadow-black/20"
+                        >
+                          <FaPlus size={14} />
+                        </Button>
+                      </div>
+                      <div className="flex flex-wrap gap-2 pt-2">
+                        <AnimatePresence>
+                          {currentBlog.tags.map((tag, i) => (
+                            <motion.div
+                              key={i}
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0, scale: 0.8 }}
                             >
-                              <span className="text-xs font-bold">{tag}</span>
-                              <button
-                                onClick={() =>
-                                  setCurrentBlog({
-                                    ...currentBlog,
-                                    tags: currentBlog.tags.filter(
-                                      (_, idx) => idx !== i,
-                                    ),
-                                  })
-                                }
-                                className="text-slate-500 hover:text-red-400 transition-colors p-1"
+                              <Badge
+                                variant="secondary"
+                                className="bg-slate-50 dark:bg-slate-950/40 text-orange-600 dark:text-orange-400 border-slate-200 dark:border-white/5 shadow-inner shadow-black/5 dark:shadow-black/10 px-3 py-2 gap-2 rounded-xl group transition-all"
                               >
-                                <FaTimes size={10} />
-                              </button>
-                            </Badge>
-                          </motion.div>
-                        ))}
-                      </AnimatePresence>
+                                <span className="text-xs font-bold">{tag}</span>
+                                <button
+                                  onClick={() =>
+                                    setCurrentBlog({
+                                      ...currentBlog,
+                                      tags: currentBlog.tags.filter(
+                                        (_, idx) => idx !== i,
+                                      ),
+                                    })
+                                  }
+                                  className="text-slate-500 hover:text-red-400 transition-colors p-1"
+                                >
+                                  <FaTimes size={10} />
+                                </button>
+                              </Badge>
+                            </motion.div>
+                          ))}
+                        </AnimatePresence>
+                      </div>
                     </div>
-                  </div>
-                </AdminField>
+                  </AdminField>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-      </AdminDialogShell>
-    </div>
+          )}
+        </AdminDialogShell>
+
+        <DragOverlay dropAnimation={null}>
+          {activeId ? (
+            <BlogOverlay item={data.find((s) => s._id === activeId)!} />
+          ) : null}
+        </DragOverlay>
+      </div>
+    </DndContext>
   );
 }

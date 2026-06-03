@@ -129,7 +129,7 @@ function SortableCertRow({
           <span className="text-[10px] font-medium">{item.date}</span>
         </div>
 
-        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center gap-2 transition-opacity">
           <Button
             variant="ghost"
             size="icon"
@@ -151,6 +151,48 @@ function SortableCertRow({
               <FaTrash size={12} />
             )}
           </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CertOverlay({ item }: { item: Certification }) {
+  return (
+    <div className="flex items-center gap-4 bg-white dark:bg-slate-800 border border-amber-500/30 rounded-2xl p-4 shadow-2xl scale-105 min-w-[320px]">
+      <div className="cursor-grabbing text-amber-500 shrink-0">
+        <FaGripVertical size={14} />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-3">
+          {item.image ? (
+            <div className="relative w-8 h-8 rounded-lg overflow-hidden bg-white/5 shrink-0">
+              <Image
+                src={item.image}
+                alt={item.title}
+                fill
+                className="object-contain p-1"
+              />
+            </div>
+          ) : (
+            <div className="p-2 bg-yellow-500/10 text-yellow-400 rounded-lg shrink-0">
+              <FaAward size={14} />
+            </div>
+          )}
+          <div className="min-w-0">
+            <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
+              {item.title}
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+              {item.issuer}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center gap-6 pr-2">
+        <div className="hidden md:flex items-center gap-2 text-slate-500">
+          <FaCalendarAlt size={10} />
+          <span className="text-[10px] font-medium">{item.date}</span>
         </div>
       </div>
     </div>
@@ -296,93 +338,93 @@ export default function AdminCertificationsPage() {
   }
 
   return (
-    <div className="p-4 md:p-8 space-y-6 font-sans">
-      <AnimatePresence>
-        {toast && (
-          <motion.div
-            initial={{ opacity: 0, y: -20, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: -20, x: "-50%" }}
-            className={cn(
-              "fixed top-8 left-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-2xl border backdrop-blur-xl shadow-2xl",
-              toast.type === "success"
-                ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
-                : "bg-red-500/20 border-red-500/50 text-red-400",
-            )}
-          >
-            <div
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragStart={(e) => setActiveId(e.active.id as string)}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="p-4 md:p-8 space-y-6 font-sans">
+        <AnimatePresence>
+          {toast && (
+            <motion.div
+              initial={{ opacity: 0, y: -20, x: "-50%" }}
+              animate={{ opacity: 1, y: 0, x: "-50%" }}
+              exit={{ opacity: 0, y: -20, x: "-50%" }}
               className={cn(
-                "p-1.5 rounded-full",
+                "fixed top-8 left-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-2xl border backdrop-blur-xl shadow-2xl",
                 toast.type === "success"
-                  ? "bg-emerald-500/20"
-                  : "bg-red-500/20",
+                  ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
+                  : "bg-red-500/20 border-red-500/50 text-red-400",
               )}
             >
-              {toast.type === "success" ? (
-                <FaCheck size={10} />
-              ) : (
-                <FaTimes size={10} />
-              )}
-            </div>
-            <span className="font-bold text-sm tracking-tight">
-              {toast.msg}
-            </span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex items-center justify-between bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-2xl p-4 shadow-sm dark:shadow-none">
-          <div className="flex items-center gap-3">
-            <Badge
-              variant="outline"
-              className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[10px]"
-            >
-              {data.length} Certifications
-            </Badge>
-          </div>
-          <Button
-            onClick={openNew}
-            className="bg-yellow-600 hover:bg-yellow-500 text-white rounded-xl font-bold px-6 h-10 shadow-lg shadow-yellow-600/20 active:scale-95 transition-all group text-xs"
-          >
-            <FaPlus className="mr-2 group-hover:rotate-90 transition-transform duration-300" />
-            Add Certification
-          </Button>
-        </div>
-
-        <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
-          <CardHeader className="p-4 pb-1">
-            <CardTitle className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
-              Professional Credentials
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-2">
-            {loading ? (
-              <div className="space-y-3">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="h-16 bg-slate-100 dark:bg-slate-800/20 rounded-2xl animate-pulse"
-                  />
-                ))}
-              </div>
-            ) : data.length === 0 ? (
-              <div className="text-center py-16 bg-white dark:bg-slate-950/20 rounded-3xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
-                <FaAward
-                  className="mx-auto text-slate-200 dark:text-slate-800 mb-4"
-                  size={40}
-                />
-                <p className="text-slate-400 dark:text-slate-500 font-medium">
-                  No certifications found. Add your achievements above.
-                </p>
-              </div>
-            ) : (
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragStart={(e) => setActiveId(e.active.id as string)}
-                onDragEnd={handleDragEnd}
+              <div
+                className={cn(
+                  "p-1.5 rounded-full",
+                  toast.type === "success"
+                    ? "bg-emerald-500/20"
+                    : "bg-red-500/20",
+                )}
               >
+                {toast.type === "success" ? (
+                  <FaCheck size={10} />
+                ) : (
+                  <FaTimes size={10} />
+                )}
+              </div>
+              <span className="font-bold text-sm tracking-tight">
+                {toast.msg}
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="max-w-4xl mx-auto space-y-6">
+          <div className="flex items-center justify-between bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-2xl p-4 shadow-sm dark:shadow-none">
+            <div className="flex items-center gap-3">
+              <Badge
+                variant="outline"
+                className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[10px]"
+              >
+                {data.length} Certifications
+              </Badge>
+            </div>
+            <Button
+              onClick={openNew}
+              className="bg-yellow-600 hover:bg-yellow-500 text-white rounded-xl font-bold px-6 h-10 shadow-lg shadow-yellow-600/20 active:scale-95 transition-all group text-xs"
+            >
+              <FaPlus className="mr-2 group-hover:rotate-90 transition-transform duration-300" />
+              Add Certification
+            </Button>
+          </div>
+
+          <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
+            <CardHeader className="p-4 pb-1">
+              <CardTitle className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
+                Professional Credentials
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-2">
+              {loading ? (
+                <div className="space-y-3">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="h-16 bg-slate-100 dark:bg-slate-800/20 rounded-2xl animate-pulse"
+                    />
+                  ))}
+                </div>
+              ) : data.length === 0 ? (
+                <div className="text-center py-16 bg-white dark:bg-slate-950/20 rounded-3xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
+                  <FaAward
+                    className="mx-auto text-slate-200 dark:text-slate-800 mb-4"
+                    size={40}
+                  />
+                  <p className="text-slate-400 dark:text-slate-500 font-medium">
+                    No certifications found. Add your achievements above.
+                  </p>
+                </div>
+              ) : (
                 <SortableContext
                   items={data.map((s) => s._id!)}
                   strategy={verticalListSortingStrategy}
@@ -401,126 +443,136 @@ export default function AdminCertificationsPage() {
                     </AnimatePresence>
                   </div>
                 </SortableContext>
+              )}
 
-                <DragOverlay dropAnimation={null}>
-                  {activeId ? (
-                    <div className="flex items-center gap-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-amber-500/30 rounded-2xl p-4 shadow-2xl opacity-90 scale-105">
-                      <FaGripVertical className="text-amber-500" size={14} />
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
-                          {data.find((s) => s._id === activeId)?.title}
-                        </h3>
-                      </div>
-                    </div>
-                  ) : null}
-                </DragOverlay>
-              </DndContext>
-            )}
+              {!loading && data.length > 0 && (
+                <p className="text-center text-[10px] text-slate-400 dark:text-slate-700 mt-8 font-bold uppercase tracking-widest">
+                  Drag rows to reorder • Changes save automatically
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
-            {!loading && data.length > 0 && (
-              <p className="text-center text-[10px] text-slate-400 dark:text-slate-700 mt-8 font-bold uppercase tracking-widest">
-                Drag rows to reorder • Changes save automatically
-              </p>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      <AdminDialogShell
-        open={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        title={
-          currentCert?._id ? "Refine Credential" : "New Professional Honor"
-        }
-        subtitle="Validate your expertise with verified certifications"
-        icon={FaAward}
-        iconColor="text-yellow-400"
-        accentColor="from-yellow-500/5 to-amber-500/5"
-        onSave={handleAddOrUpdate}
-        saving={saveMutation.isPending}
-        saveLabel={currentCert?._id ? "Update Credential" : "Establish Honor"}
-        savingLabel="Processing..."
-        maxWidth="5xl"
-      >
-        {currentCert && (
-          <div className="px-1">
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-10">
-              {/* Left Column: Image/Badge */}
-              <div className="space-y-6">
-                <AdminField label="Certificate Badge">
-                  <ImageUpload
-                    value={currentCert.image || ""}
-                    onChange={(url) =>
-                      setCurrentCert({ ...currentCert, image: url })
-                    }
-                  />
-                </AdminField>
-              </div>
-
-              {/* Right Column: Information Fields */}
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <AdminField label="Certification Title">
-                    <AdminInput
-                      icon={FaCertificate}
-                      value={currentCert.title}
-                      onChange={(e) =>
-                        setCurrentCert({
-                          ...currentCert,
-                          title: e.target.value,
-                        })
+        <AdminDialogShell
+          open={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+          title={
+            currentCert?._id ? "Refine Credential" : "New Professional Honor"
+          }
+          subtitle="Validate your expertise with verified certifications"
+          icon={FaAward}
+          iconColor="text-yellow-400"
+          accentColor="from-yellow-500/5 to-amber-500/5"
+          onSave={handleAddOrUpdate}
+          saving={saveMutation.isPending}
+          saveLabel={currentCert?._id ? "Update Credential" : "Establish Honor"}
+          savingLabel="Processing..."
+          maxWidth="5xl"
+        >
+          {currentCert && (
+            <div className="px-1">
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-10">
+                {/* Left Column: Image/Badge */}
+                <div className="space-y-6">
+                  <AdminField label="Certificate Badge">
+                    <ImageUpload
+                      value={currentCert.image || ""}
+                      onChange={(url) =>
+                        setCurrentCert({ ...currentCert, image: url })
                       }
-                      placeholder="e.g. AWS Solutions Architect"
-                    />
-                  </AdminField>
-                  <AdminField label="Issuing Authority">
-                    <AdminInput
-                      icon={FaUniversity}
-                      value={currentCert.issuer}
-                      onChange={(e) =>
-                        setCurrentCert({
-                          ...currentCert,
-                          issuer: e.target.value,
-                        })
-                      }
-                      placeholder="e.g. Amazon Web Services"
                     />
                   </AdminField>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <AdminField label="Date Issued">
-                    <AdminInput
-                      icon={FaCalendarAlt}
-                      value={currentCert.date}
-                      onChange={(e) =>
-                        setCurrentCert({ ...currentCert, date: e.target.value })
-                      }
-                      placeholder="e.g. June 2023"
-                    />
-                  </AdminField>
-                  <AdminField label="Credential URL">
-                    <AdminInput
-                      icon={FaLink}
-                      value={currentCert.link}
-                      onChange={(e) =>
-                        setCurrentCert({ ...currentCert, link: e.target.value })
-                      }
-                      placeholder="https://verify.certification.com"
-                    />
-                  </AdminField>
-                </div>
-
-                <AdminField label="Key Skills & Competencies">
-                  <div className="space-y-3">
-                    <div className="flex gap-2">
+                {/* Right Column: Information Fields */}
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <AdminField label="Certification Title">
                       <AdminInput
-                        icon={FaInfoCircle}
-                        value={skillInput}
-                        onChange={(e) => setSkillInput(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
+                        icon={FaCertificate}
+                        value={currentCert.title}
+                        onChange={(e) =>
+                          setCurrentCert({
+                            ...currentCert,
+                            title: e.target.value,
+                          })
+                        }
+                        placeholder="e.g. AWS Solutions Architect"
+                      />
+                    </AdminField>
+                    <AdminField label="Issuing Authority">
+                      <AdminInput
+                        icon={FaUniversity}
+                        value={currentCert.issuer}
+                        onChange={(e) =>
+                          setCurrentCert({
+                            ...currentCert,
+                            issuer: e.target.value,
+                          })
+                        }
+                        placeholder="e.g. Amazon Web Services"
+                      />
+                    </AdminField>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <AdminField label="Date Issued">
+                      <AdminInput
+                        icon={FaCalendarAlt}
+                        value={currentCert.date}
+                        onChange={(e) =>
+                          setCurrentCert({
+                            ...currentCert,
+                            date: e.target.value,
+                          })
+                        }
+                        placeholder="e.g. June 2023"
+                      />
+                    </AdminField>
+                    <AdminField label="Credential URL">
+                      <AdminInput
+                        icon={FaLink}
+                        value={currentCert.link}
+                        onChange={(e) =>
+                          setCurrentCert({
+                            ...currentCert,
+                            link: e.target.value,
+                          })
+                        }
+                        placeholder="https://verify.certification.com"
+                      />
+                    </AdminField>
+                  </div>
+
+                  <AdminField label="Key Skills & Competencies">
+                    <div className="space-y-3">
+                      <div className="flex gap-2">
+                        <AdminInput
+                          icon={FaInfoCircle}
+                          value={skillInput}
+                          onChange={(e) => setSkillInput(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              if (skillInput.trim()) {
+                                setCurrentCert({
+                                  ...currentCert,
+                                  details: [
+                                    ...currentCert.details,
+                                    skillInput.trim(),
+                                  ],
+                                });
+                                setSkillInput("");
+                              }
+                            }
+                          }}
+                          placeholder="e.g. Cloud Computing..."
+                          className="h-11 text-sm"
+                        />
+                        <Button
+                          type="button"
+                          onClick={() => {
                             if (skillInput.trim()) {
                               setCurrentCert({
                                 ...currentCert,
@@ -531,61 +583,50 @@ export default function AdminCertificationsPage() {
                               });
                               setSkillInput("");
                             }
-                          }
-                        }}
-                        placeholder="e.g. Cloud Computing..."
-                        className="h-11 text-sm"
-                      />
-                      <Button
-                        type="button"
-                        onClick={() => {
-                          if (skillInput.trim()) {
-                            setCurrentCert({
-                              ...currentCert,
-                              details: [
-                                ...currentCert.details,
-                                skillInput.trim(),
-                              ],
-                            });
-                            setSkillInput("");
-                          }
-                        }}
-                        className="h-12 px-4 bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white rounded-xl font-bold border border-slate-200 dark:border-white/5 shadow-inner shadow-black/5 dark:shadow-black/20"
-                      >
-                        <FaPlus size={12} />
-                      </Button>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {(currentCert.details || []).map((detail, i) => (
-                        <Badge
-                          key={i}
-                          variant="secondary"
-                          className="bg-yellow-50 dark:bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-200 dark:border-yellow-500/20 px-3 py-1.5 gap-2 rounded-xl group transition-all shadow-sm dark:shadow-none"
+                          }}
+                          className="h-12 px-4 bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white rounded-xl font-bold border border-slate-200 dark:border-white/5 shadow-inner shadow-black/5 dark:shadow-black/20"
                         >
-                          <span className="text-xs">{detail}</span>
-                          <button
-                            onClick={() =>
-                              setCurrentCert({
-                                ...currentCert,
-                                details: currentCert.details.filter(
-                                  (_, idx) => idx !== i,
-                                ),
-                              })
-                            }
-                            className="hover:text-red-400 transition-colors"
+                          <FaPlus size={12} />
+                        </Button>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {(currentCert.details || []).map((detail, i) => (
+                          <Badge
+                            key={i}
+                            variant="secondary"
+                            className="bg-yellow-50 dark:bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-200 dark:border-yellow-500/20 px-3 py-1.5 gap-2 rounded-xl group transition-all shadow-sm dark:shadow-none"
                           >
-                            <FaTimes size={10} />
-                          </button>
-                        </Badge>
-                      ))}
+                            <span className="text-xs">{detail}</span>
+                            <button
+                              onClick={() =>
+                                setCurrentCert({
+                                  ...currentCert,
+                                  details: currentCert.details.filter(
+                                    (_, idx) => idx !== i,
+                                  ),
+                                })
+                              }
+                              className="hover:text-red-400 transition-colors"
+                            >
+                              <FaTimes size={10} />
+                            </button>
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </AdminField>
+                  </AdminField>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-      </AdminDialogShell>
-    </div>
+          )}
+        </AdminDialogShell>
+
+        <DragOverlay dropAnimation={null}>
+          {activeId ? (
+            <CertOverlay item={data.find((s) => s._id === activeId)!} />
+          ) : null}
+        </DragOverlay>
+      </div>
+    </DndContext>
   );
 }

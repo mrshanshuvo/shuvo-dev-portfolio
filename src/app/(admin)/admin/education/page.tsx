@@ -133,7 +133,7 @@ function SortableEduRow({
           <span className="text-[10px] font-medium">{edu.period}</span>
         </div>
 
-        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center gap-2 transition-opacity">
           <Button
             variant="ghost"
             size="icon"
@@ -155,6 +155,48 @@ function SortableEduRow({
               <FaTrash size={12} />
             )}
           </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EduOverlay({ edu }: { edu: Education }) {
+  return (
+    <div className="flex items-center gap-4 bg-white dark:bg-slate-800 border border-emerald-500/30 rounded-2xl p-4 shadow-2xl scale-105 min-w-[320px]">
+      <div className="cursor-grabbing text-emerald-500 shrink-0">
+        <FaGripVertical size={14} />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-3">
+          {edu.logo ? (
+            <div className="relative w-8 h-8 rounded-lg overflow-hidden bg-white/5 shrink-0">
+              <Image
+                src={edu.logo}
+                alt={edu.institution}
+                fill
+                className="object-contain p-1"
+              />
+            </div>
+          ) : (
+            <div className="p-2 bg-blue-500/10 text-blue-400 rounded-lg shrink-0">
+              <FaGraduationCap size={14} />
+            </div>
+          )}
+          <div className="min-w-0">
+            <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
+              {edu.degree}
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+              {edu.institution}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center gap-6 pr-2">
+        <div className="hidden md:flex items-center gap-2 text-slate-500">
+          <FaCalendarAlt size={10} />
+          <span className="text-[10px] font-medium">{edu.period}</span>
         </div>
       </div>
     </div>
@@ -298,8 +340,14 @@ export default function AdminEducationPage() {
   }
 
   return (
-    <div className="p-4 md:p-8 space-y-6">
-      <AnimatePresence>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragStart={(e) => setActiveId(e.active.id as string)}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="p-4 md:p-8 space-y-6">
+        <AnimatePresence>
         {toast && (
           <motion.div
             initial={{ opacity: 0, y: -20, x: "-50%" }}
@@ -378,44 +426,24 @@ export default function AdminEducationPage() {
                 </p>
               </div>
             ) : (
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragStart={(e) => setActiveId(e.active.id as string)}
-                onDragEnd={handleDragEnd}
+              <SortableContext
+                items={data.map((s) => s._id!)}
+                strategy={verticalListSortingStrategy}
               >
-                <SortableContext
-                  items={data.map((s) => s._id!)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <div className="space-y-3">
-                    <AnimatePresence mode="popLayout">
-                      {data.map((edu) => (
-                        <SortableEduRow
-                          key={edu._id}
-                          edu={edu}
-                          onEdit={() => openEdit(edu)}
-                          onDelete={() => handleDelete(edu._id!)}
-                          isDeleting={deletingId === edu._id}
-                        />
-                      ))}
-                    </AnimatePresence>
-                  </div>
-                </SortableContext>
-
-                <DragOverlay dropAnimation={null}>
-                  {activeId ? (
-                    <div className="flex items-center gap-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-emerald-500/30 rounded-2xl p-4 shadow-2xl opacity-90 scale-105">
-                      <FaGripVertical className="text-emerald-500" size={14} />
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
-                          {data.find((s) => s._id === activeId)?.degree}
-                        </h3>
-                      </div>
-                    </div>
-                  ) : null}
-                </DragOverlay>
-              </DndContext>
+                <div className="space-y-3">
+                  <AnimatePresence mode="popLayout">
+                    {data.map((edu) => (
+                      <SortableEduRow
+                        key={edu._id}
+                        edu={edu}
+                        onEdit={() => openEdit(edu)}
+                        onDelete={() => handleDelete(edu._id!)}
+                        isDeleting={deletingId === edu._id}
+                      />
+                    ))}
+                  </AnimatePresence>
+                </div>
+              </SortableContext>
             )}
 
             {!loading && data.length > 0 && (
@@ -630,6 +658,13 @@ export default function AdminEducationPage() {
           </div>
         )}
       </AdminDialogShell>
+
+      <DragOverlay dropAnimation={null}>
+        {activeId ? (
+          <EduOverlay edu={data.find((s) => s._id === activeId)!} />
+        ) : null}
+      </DragOverlay>
     </div>
+    </DndContext>
   );
 }
