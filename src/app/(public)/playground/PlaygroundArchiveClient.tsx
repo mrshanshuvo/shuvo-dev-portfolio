@@ -15,9 +15,10 @@ export default function PlaygroundArchiveClient({ demos }: Props) {
 
   const allTech = ["All", ...Array.from(new Set(demos.flatMap((d) => d.tech)))];
 
-  const filteredDemos = activeTech === "All"
-    ? demos
-    : demos.filter((demo) => demo.tech.includes(activeTech));
+  const filteredDemos =
+    activeTech === "All"
+      ? demos
+      : demos.filter((demo) => demo.tech.includes(activeTech));
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 pt-32 pb-24 relative overflow-hidden">
@@ -42,7 +43,10 @@ export default function PlaygroundArchiveClient({ demos }: Props) {
             animate={{ opacity: 1, y: 0 }}
             className="text-5xl md:text-7xl font-black text-slate-900 dark:text-white mb-6 tracking-tight"
           >
-            Interactive <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-500">Playground</span>
+            Interactive{" "}
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-purple-400 to-pink-500">
+              Playground
+            </span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}
@@ -50,7 +54,8 @@ export default function PlaygroundArchiveClient({ demos }: Props) {
             transition={{ delay: 0.2 }}
             className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium"
           >
-            Where ideas take shape. A collection of experiments, prototypes, and technical explorations.
+            Where ideas take shape. A collection of experiments, prototypes, and
+            technical explorations.
           </motion.p>
         </div>
 
@@ -78,10 +83,7 @@ export default function PlaygroundArchiveClient({ demos }: Props) {
         </motion.div>
 
         {/* Grid */}
-        <motion.div
-          layout
-          className="grid md:grid-cols-2 lg:grid-cols-2 gap-8"
-        >
+        <motion.div layout className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
           <AnimatePresence mode="popLayout">
             {filteredDemos.map((demo, i) => (
               <motion.div
@@ -104,7 +106,9 @@ export default function PlaygroundArchiveClient({ demos }: Props) {
             animate={{ opacity: 1 }}
             className="text-center py-20"
           >
-            <p className="text-slate-500 text-xl font-medium">No experiments found with this technology.</p>
+            <p className="text-slate-500 text-xl font-medium">
+              No experiments found with this technology.
+            </p>
           </motion.div>
         )}
       </div>

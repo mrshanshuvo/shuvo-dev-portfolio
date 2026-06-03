@@ -37,9 +37,10 @@ export default function Error({
         <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">
           System <span className="text-red-500">Anomaly</span>
         </h1>
-        
+
         <p className="text-slate-600 dark:text-slate-400 text-lg font-medium mb-8 leading-relaxed">
-          The application encountered an unexpected runtime exception. Our systems have been alerted, but you can try to recover the session.
+          The application encountered an unexpected runtime exception. Our
+          systems have been alerted, but you can try to recover the session.
         </p>
 
         {error.digest && (
@@ -58,7 +59,7 @@ export default function Error({
             <FaRedo className="text-sm" />
             Retry System
           </button>
-          
+
           <Link
             href="/"
             className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-2xl font-bold transition-all border border-slate-200 dark:border-white/10"

@@ -151,7 +151,7 @@ export interface Certification {
   _id?: string;
   title: string;
   issuer: string;
-  date?: string; // backward compatibility
+  date: string;
   issuedAt?: string; // ISO date string
   expiresAt?: string; // ISO date string
   link?: string;

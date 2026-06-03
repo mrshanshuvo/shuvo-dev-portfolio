@@ -3,7 +3,8 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 export interface ICertification extends Document {
   title: string;
   issuer: string;
-  issuedAt: Date;
+  date: string;
+  issuedAt?: Date;
   expiresAt?: Date;
   link?: string;
   image?: string;
@@ -17,7 +18,8 @@ const CertificationSchema = new Schema<ICertification>(
   {
     title: { type: String, required: true },
     issuer: { type: String, required: true },
-    issuedAt: { type: Date, required: true },
+    date: { type: String, required: true },
+    issuedAt: { type: Date },
     expiresAt: { type: Date },
     link: { type: String },
     image: { type: String },
