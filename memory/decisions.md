@@ -41,3 +41,9 @@ _This file tracks significant design and architectural decisions made during dev
 - **Context:** The codebase used `useEffect` extensively to synchronize local component state with fetched data, triggering a custom ESLint warning (`react-hooks/set-state-in-effect`) about cascading renders, which had been previously suppressed using `eslint-disable`.
 - **Decision:** Remove all `eslint-disable` suppressions. Adopt render-phase state synchronization by explicitly tracking previous state references during the render cycle instead of inside `useEffect`. For hydration bypassing, leverage `requestAnimationFrame` to delay the state update asynchronously without triggering synchronous `setState` in effect warnings.
 - **Consequences:** Cleaner, strictly compliant React architecture with zero suppressed linter errors. Resolves cascading render performance hits, though requires slightly more verbose boilerplate for render-phase checking.
+
+### [2026-06-03] - Split Skill Model into Expertise and Technologies
+
+- **Context:** The `Skill` model was overloaded, serving both as high-level professional "Expertise Areas" (e.g., Full Stack Development) and granular "Technologies/Brands" (e.g., React, Node.js). This made the admin UI confusing and the public UI filtering logic complex.
+- **Decision:** Split the `Skill` model into two distinct Mongoose models: `Skill` (representing Expertise) and `Technology` (representing individual tech stack items with icons). Updated the admin dashboard to have separate `/admin/expertise` and `/admin/technologies` routes, and implemented an inline "Quick Add" UX for adding technologies directly from the Expertise form.
+- **Consequences:** Cleaner separation of concerns, simpler public UI filtering logic, and a vastly improved admin authoring experience with type-safe associations.

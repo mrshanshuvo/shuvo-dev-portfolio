@@ -53,6 +53,7 @@ export interface Technology {
   _id?: string;
   name: string;
   iconUrl: string;
+  brandColor?: string;
   order?: number;
 }
 

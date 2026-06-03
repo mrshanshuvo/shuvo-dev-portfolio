@@ -173,3 +173,20 @@ _Chronological log of agent interactions, tasks completed, and context switches.
   - Stripped redundant `isMounted` states from client portal components (e.g., `ImageUpload.tsx`).
   - Committed: `refactor: resolve react-hooks/set-state-in-effect issues and upgrade icon system`.
 - **Next Steps:** Await next task from the user.
+
+## [2026-06-03] Skill Architecture Split and Admin UI UX Refinement
+
+- **Task:** Separate the overloaded `Skill` model into distinct `Skill` (Expertise) and `Technology` models, and refine the Admin UX.
+- **Actions:**
+  - Created a new Mongoose model `Technology` and migrated existing tech brands from the `skills` collection.
+  - Refactored `api/admin/skills` to `api/admin/expertise` and created `api/admin/technologies`.
+  - Updated the Admin Dashboard to separate `/admin/expertise` and `/admin/technologies`.
+  - Built an interactive, inline "Quick Add Technology" form within the Expertise editor, featuring a micro-animated `+` button that toggles a streamlined, fixed-layout `ImageUpload` component.
+  - Updated the public `SkillsClient` to consume and render the split data accurately.
+  - Formatted badges to use optimized `next/image` components for tech logos.
+  - Redesigned the Admin Technologies page, converting standard badges into a responsive, premium Glassmorphic Bento Grid with hover scaling, animated dark overlays for action buttons, and dynamic neon glow based on `brandColor`.
+  - Added `brandColor` property to the `Technology` Mongoose model and TypeScript interfaces for type-safety.
+  - Enhanced contrast accessibility for purely black icons (e.g. Next.js, GitHub) by ensuring the logo container consistently renders a solid white background regardless of the user's color scheme mode (light/dark mode).
+  - Fine-tuned the public `SkillsClient` UI by adjusting card layouts and maximizing logo size to fit the premium aesthetic.
+  - Committed all changes to version control.
+- **Next Steps:** Await next task from the user.

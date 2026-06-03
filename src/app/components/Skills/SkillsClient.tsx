@@ -69,20 +69,20 @@ export default function SkillsClient({
           >
             <motion.div
               variants={itemVariants}
-              className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl rounded-[1rem] p-10 border border-slate-200/50 dark:border-white/10 shadow-xl"
+              className="backdrop-blur-xl rounded-[1rem] p-10 border border-slate-200/50 dark:border-white/10 shadow-xl"
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-8">
                 {expertises.map((skill) => {
                   return (
                     <motion.div key={skill.name} variants={itemVariants}>
                       <div className="flex items-start gap-5">
-                        <div className="w-16 h-16 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-md group-hover:scale-110 transition-transform">
+                        <div className="rounded-2xl flex items-center justify-center transition-transform">
                           {skill.iconUrl ? (
                             <Image
                               src={skill.iconUrl}
                               alt={skill.name}
-                              width={32}
-                              height={32}
+                              width={50}
+                              height={50}
                               className="object-contain"
                             />
                           ) : (

@@ -25,9 +25,9 @@ This project is a modern, dynamic developer portfolio built for showcasing proje
 - `src/app/api`: Next.js API routes (REST/RPC).
 - `src/components`: Reusable UI components.
 
-## Active Collections (15)
+## Active Collections (16)
 
-User, Project, Category, Skill, Experience, Education, Certification, Demo, Blog, Hero (singleton), About (singleton), Setting (singleton), Message, Visitor, SocialLink.
+User, Project, Category, Skill, Technology, Experience, Education, Certification, Demo, Blog, Hero (singleton), About (singleton), Setting (singleton), Message, Visitor, SocialLink.
 
 **Removed:** Testimonial, Service, Workflow, Stat (trimmed for minimal Brittany Chiang aesthetic).
 

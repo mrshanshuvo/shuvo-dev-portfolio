@@ -10,9 +10,9 @@ import {
   FaTrash,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
@@ -192,35 +192,68 @@ export default function AdminTechnologiesPage() {
                 <div className="h-10 w-24 bg-slate-100 dark:bg-slate-800/20 rounded-xl animate-pulse" />
               </div>
             ) : (
-              <div className="flex flex-wrap gap-2.5 min-h-20 p-4 bg-slate-50 dark:bg-slate-950/20 rounded-2xl border border-slate-200 dark:border-white/5">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 min-h-20 p-2">
                 {technologies.map((t) => (
-                  <Badge
+                  <div
                     key={t._id}
-                    variant="outline"
-                    className="pl-3 pr-2 py-2 gap-2 bg-white dark:bg-slate-950 border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 rounded-xl group shadow-sm dark:shadow-none hover:scale-102 transition-transform cursor-default"
-                    style={{ borderLeft: `3px solid #10B981` }}
+                    className="relative group bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-white/5 rounded-2xl p-4 flex flex-col items-center justify-center gap-3 overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:hover:shadow-2xl cursor-default"
                   >
-                    <span className="text-xs font-black">{t.name}</span>
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {/* Dynamic Brand Glow */}
+                    <div
+                      className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500"
+                      style={{ backgroundColor: t.brandColor || "#3b82f6" }}
+                    />
+
+                    {/* Top border accent */}
+                    <div
+                      className="absolute top-0 left-0 right-0 h-1 opacity-50 group-hover:opacity-100 transition-opacity duration-300"
+                      style={{ backgroundColor: t.brandColor || "#3b82f6" }}
+                    />
+
+                    {/* Icon */}
+                    <div className="relative w-12 h-12 flex items-center justify-center bg-white rounded-xl border border-slate-200 shadow-sm group-hover:scale-110 transition-transform duration-500 overflow-hidden">
+                      {t.iconUrl ? (
+                        <Image
+                          src={t.iconUrl}
+                          alt={t.name}
+                          width={24}
+                          height={24}
+                          className="object-contain"
+                        />
+                      ) : (
+                        <FaCode className="text-slate-400" size={20} />
+                      )}
+                    </div>
+
+                    {/* Name */}
+                    <span className="text-xs font-bold text-slate-700 dark:text-slate-200 text-center truncate w-full z-10">
+                      {t.name}
+                    </span>
+
+                    {/* Action Buttons Overlay */}
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-3 z-20">
                       <button
                         onClick={() => openEdit(t)}
-                        className="h-5 w-5 rounded-full hover:bg-blue-500/10 dark:hover:bg-blue-500/20 hover:text-blue-500 flex items-center justify-center transition-colors cursor-pointer"
+                        className="h-8 w-8 rounded-full bg-blue-500/20 text-blue-400 hover:bg-blue-500 hover:text-white flex items-center justify-center transition-all hover:scale-110 cursor-pointer shadow-[0_0_15px_rgba(59,130,246,0.5)]"
                       >
-                        <FaEdit size={10} />
+                        <FaEdit size={12} />
                       </button>
                       <button
                         onClick={() => handleDelete(t._id!)}
-                        className="h-5 w-5 rounded-full hover:bg-red-500/10 dark:hover:bg-red-500/20 hover:text-red-500 flex items-center justify-center transition-colors cursor-pointer"
+                        className="h-8 w-8 rounded-full bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white flex items-center justify-center transition-all hover:scale-110 cursor-pointer shadow-[0_0_15px_rgba(239,68,68,0.5)]"
                       >
-                        <FaTrash size={9} />
+                        <FaTrash size={12} />
                       </button>
                     </div>
-                  </Badge>
+                  </div>
                 ))}
                 {technologies.length === 0 && (
-                  <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold m-auto py-6">
-                    No brand technologies registered
-                  </p>
+                  <div className="col-span-full py-12 flex flex-col items-center justify-center text-slate-400">
+                    <FaCode size={32} className="mb-4 opacity-20" />
+                    <p className="text-xs uppercase tracking-widest font-bold">
+                      No technologies registered
+                    </p>
+                  </div>
                 )}
               </div>
             )}
@@ -232,7 +265,7 @@ export default function AdminTechnologiesPage() {
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
         title={currentTech?._id ? "Edit Technology" : "Add Technology"}
-        subtitle="Upload a tech brand logo"
+        subtitle=""
         icon={FaCode}
         iconColor="text-blue-400"
         accentColor="from-blue-500/5 to-cyan-500/5"
@@ -240,10 +273,20 @@ export default function AdminTechnologiesPage() {
         saving={saveMutation.isPending}
         saveLabel={currentTech?._id ? "Update Tech" : "Save Tech"}
         savingLabel="Processing..."
-        maxWidth="3xl"
+        maxWidth="xl"
       >
         {currentTech && (
-          <div className="px-1 space-y-6">
+          <div className="flex gap-2 justify-between">
+            <AdminField label="Logo (SVG/PNG)">
+              <ImageUpload
+                value={currentTech.iconUrl || ""}
+                onChange={(val) =>
+                  setCurrentTech((prev) =>
+                    prev ? { ...prev, iconUrl: val } : null,
+                  )
+                }
+              />
+            </AdminField>
             <AdminField label="Technology Name">
               <AdminInput
                 icon={FaCode}
@@ -254,16 +297,6 @@ export default function AdminTechnologiesPage() {
                   )
                 }
                 placeholder="e.g. React"
-              />
-            </AdminField>
-            <AdminField label="Logo (SVG/PNG)">
-              <ImageUpload
-                value={currentTech.iconUrl || ""}
-                onChange={(val) =>
-                  setCurrentTech((prev) =>
-                    prev ? { ...prev, iconUrl: val } : null,
-                  )
-                }
               />
             </AdminField>
           </div>
