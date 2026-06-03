@@ -166,7 +166,7 @@ export default function PlaygroundCard({ demo, index, iconRegistry }: Playground
                     title={name}
                   >
                     {iconUrl && (
-                      <Image src={iconUrl} alt={name} width={14} height={14} className="object-contain" />
+                      <Image src={iconUrl} alt={name} width={14} height={14} className="object-contain w-auto h-auto" />
                     )}
                     {name}
                   </Badge>

@@ -53,3 +53,14 @@ _This file tracks significant design and architectural decisions made during dev
 - **Context:** Drag-and-drop interactions across admin list pages were behaving inconsistently, specifically due to clipping overlays within scrollable containers and conflicts with Framer Motion layout animations.
 - **Decision:** Extract `DndContext` to the root `<div>` level for all sortable list pages to ensure `DragOverlay` elements render above all context layers. Remove `layout` prop from `framer-motion` implementations on actively sorting elements to avoid transform tracking conflicts with `dnd-kit`. Create rich, decoupled `<DragOverlay>` components representing metadata (icons, dates, issuers) to ensure high-fidelity drag feedback.
 - **Consequences:** Visual drag feedback is perfectly stable, consistent across all 7 CMS list pages, and doesn't get clipped. Required refactoring 7 distinct admin UI pages.
+
+### [2026-06-03] - Decouple Social Links from Hero State Management
+
+- **Context:** The Admin Hero Page saved the state of Social Links by deleting all of them and inserting the state back into the DB on every save. Since we created a dedicated Admin Socials page with independent drag-and-drop and custom icon capabilities, this behavior was a destructive anti-pattern.
+- **Decision:** Remove `SocialLink` mutation logic from the Hero API entirely. Allow the Socials page to be the absolute source of truth and sole manager of social links.
+- **Consequences:** Prevents data loss (custom icons, brand colors) when updating the hero profile. Better separation of concerns.
+### [2026-06-03] - 100% Dynamic CMS-Driven Social Links
+
+- **Context:** Social links previously relied on a hardcoded "Network" enum string (e.g. "LinkedIn") that explicitly mapped to a static \eact-icons\ library import and hardcoded hover colors. This was rigid and required code changes to add a new social platform. Additionally, users uploading pure black logos found them invisible in dark mode.
+- **Decision:** Remove all static \eact-icons\ mappings from the public UI. The system now strictly relies on the Cloudinary \iconUrl\ and user-input \randColor\. Furthermore, to solve the dark mode visibility issue, added an \invertDark\ boolean field that dynamically applies CSS inversion (\dark:invert\) to specific icons without sacrificing the dark mode aesthetic with bright button backgrounds.
+- **Consequences:** The system is completely decoupled from static icons. Admin users have 100% autonomy over links, icons, and hover colors. Solves contrast issues elegantly at the CSS level.

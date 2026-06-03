@@ -238,7 +238,7 @@ export default function ProjectDetailClient({ project, iconRegistry }: Props) {
                 </h3>
               </div>
               <div className="grid grid-cols-2 gap-3.5">
-                {project.techNames.map((name) => {
+                {(project.techNames || []).map((name) => {
                   const iconUrl = iconRegistry?.[name];
                   return (
                     <div

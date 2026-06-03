@@ -38,18 +38,5 @@ export async function PUT(request: Request) {
     runValidators: true,
   });
 
-  // 2. Update SocialLinks (Bulk replace for this UI)
-  if (Array.isArray(socialLinks)) {
-    await SocialLink.deleteMany({});
-    if (socialLinks.length > 0) {
-      await SocialLink.insertMany(socialLinks.map((s: any) => ({
-        platform: s.platform,
-        href: s.href,
-        label: s.label,
-        order: s.order || 0
-      })));
-    }
-  }
-
   return NextResponse.json({ ...hero.toObject(), socialLinks });
 }

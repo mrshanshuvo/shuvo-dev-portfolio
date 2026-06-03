@@ -29,7 +29,7 @@ import type {
   MediaItem,
   Category as ICategory,
   LinkItem,
-  Skill,
+  Technology,
 } from "@/types";
 
 const EMPTY_PROJECT: Omit<Project, "_id"> = {
@@ -55,7 +55,7 @@ export default function ProjectEditPage() {
 
   const [form, setForm] = useState<Omit<Project, "_id">>(EMPTY_PROJECT);
   const [categories, setCategories] = useState<ICategory[]>([]);
-  const [technologies, setTechnologies] = useState<Skill[]>([]);
+  const [technologies, setTechnologies] = useState<Technology[]>([]);
   const [impInput, setImpInput] = useState("");
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
@@ -86,17 +86,14 @@ export default function ProjectEditPage() {
   useEffect(() => {
     const fetches: Promise<any>[] = [
       fetch("/api/admin/categories").then((r) => r.json()),
-      fetch("/api/admin/skills").then((r) => r.json()),
+      fetch("/api/admin/technologies").then((r) => r.json()),
     ];
     if (!isNew) {
       fetches.push(fetch(`/api/admin/projects/${id}`).then((r) => r.json()));
     }
-    Promise.all(fetches).then(([cats, skillsData, project]) => {
+    Promise.all(fetches).then(([cats, technologiesData, project]) => {
       setCategories(Array.isArray(cats) ? cats : []);
-      const allSkills: Skill[] = Array.isArray(skillsData?.skills)
-        ? skillsData.skills
-        : [];
-      setTechnologies(allSkills.filter((s) => s.isTechnology));
+      setTechnologies(Array.isArray(technologiesData) ? technologiesData : []);
       if (project) {
         // Coerce nullable fields to safe defaults
         setForm({

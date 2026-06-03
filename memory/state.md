@@ -41,3 +41,4 @@ Hero → About → Experience → Projects → Playground → Skills → Educati
 - The admin dashboard features sections for managing hero identity, socials, about, experiences, projects, skills, demos, blogs, certifications, education, messages, and settings.
 - Built-in ESLint and TypeScript checking is configured and active.
 - Targeting a clean, minimal developer portfolio aesthetic inspired by brittanychiang.com.
+- Advanced CMS capabilities implemented (e.g., dynamic SVGs for skills/tech, smart Dark Mode inversion for Social Links).

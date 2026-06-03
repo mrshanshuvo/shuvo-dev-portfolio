@@ -1,9 +1,11 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
 export interface ISocialLink extends Document {
-  platform: string;
   href: string;
   label: string;
+  iconUrl?: string;
+  brandColor?: string;
+  invertDark?: boolean;
   order: number;
   createdAt: Date;
   updatedAt: Date;
@@ -11,14 +13,11 @@ export interface ISocialLink extends Document {
 
 const SocialLinkSchema = new Schema<ISocialLink>(
   {
-    platform: { type: String, required: true },
     href: { type: String, required: true },
-    label: {
-      type: String,
-      default: function (this: any) {
-        return this.platform || "";
-      },
-    },
+    label: { type: String, required: true },
+    iconUrl: { type: String },
+    brandColor: { type: String },
+    invertDark: { type: Boolean, default: false },
     order: { type: Number, default: 0 },
   },
   { timestamps: true },
@@ -30,6 +29,7 @@ if (process.env.NODE_ENV === "development") {
 }
 
 const SocialLink: Model<ISocialLink> =
-  mongoose.models.SocialLink || mongoose.model<ISocialLink>("SocialLink", SocialLinkSchema);
+  mongoose.models.SocialLink ||
+  mongoose.model<ISocialLink>("SocialLink", SocialLinkSchema);
 
 export default SocialLink;

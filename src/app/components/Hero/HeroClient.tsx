@@ -1,32 +1,15 @@
 "use client";
 import { motion } from "framer-motion";
 import { TypeAnimation } from "react-type-animation";
-import {
-  FaGithub,
-  FaLinkedin,
-  FaEnvelope,
-  FaTwitter,
-  FaInstagram,
-} from "react-icons/fa";
-import { SiLeetcode } from "react-icons/si";
+import { FaLink } from "react-icons/fa";
 import Image from "next/image";
 import type { Hero } from "@/types";
-import type { IconType } from "react-icons";
 import MagneticButton from "../MagneticButton";
 import { Button } from "@/components/ui/button";
 
 interface Props {
   hero: Hero;
 }
-
-const platformIconMap: Record<string, IconType> = {
-  GitHub: FaGithub,
-  LinkedIn: FaLinkedin,
-  LeetCode: SiLeetcode,
-  Email: FaEnvelope,
-  Twitter: FaTwitter,
-  Instagram: FaInstagram,
-};
 
 export default function HeroClient({ hero }: Props) {
   const scrollToProjects = (): void => {
@@ -192,19 +175,16 @@ export default function HeroClient({ hero }: Props) {
               className="flex justify-center lg:justify-start gap-4"
             >
               {hero.socialLinks.map((social, index) => {
-                const Icon = platformIconMap[social.platform] ?? FaEnvelope;
+                const isEmail = social.label?.toLowerCase() === "email";
                 const href =
-                  social.platform === "Email" &&
-                  !social.href.startsWith("mailto:")
+                  isEmail && !social.href.startsWith("mailto:")
                     ? `mailto:${social.href}`
                     : social.href;
                 return (
                   <MagneticButton key={social.label} strength={25}>
                     <motion.a
                       href={href}
-                      target={
-                        social.platform === "Email" ? undefined : "_blank"
-                      }
+                      target={isEmail ? undefined : "_blank"}
                       rel="noopener noreferrer"
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
@@ -213,16 +193,26 @@ export default function HeroClient({ hero }: Props) {
                         type: "spring",
                         stiffness: 200,
                       }}
-                      className="relative flex p-3 text-slate-600 dark:text-slate-400 hover:text-white transition-colors duration-300 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-900 dark:hover:bg-slate-800 hover:border-slate-900 dark:hover:border-slate-700 shadow-sm hover:shadow-md group"
+                      className={`relative flex items-center justify-center w-10 h-10 text-slate-600 dark:text-slate-400 hover:text-white transition-colors duration-300 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-900 dark:hover:bg-slate-800 hover:border-slate-900 dark:hover:border-slate-700 shadow-sm hover:shadow-md group ${social.brandColor || ""}`}
                       aria-label={social.label}
                     >
-                      <Icon
-                        size={18}
-                        className="group-hover:scale-110 transition-transform duration-300"
-                      />
-                      <span className="absolute -top-12 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 px-3 py-1.5 bg-slate-900 dark:bg-slate-800 text-white text-xs font-medium rounded-md pointer-events-none whitespace-nowrap shadow-xl z-50 translate-y-2 group-hover:translate-y-0">
+                      {social.iconUrl ? (
+                        <Image
+                          src={social.iconUrl || ""}
+                          alt={social.label}
+                          width={24}
+                          height={24}
+                          className={`object-contain w-6 h-6 group-hover:scale-110 transition-transform duration-300 ${social.invertDark ? "dark:invert" : ""}`}
+                        />
+                      ) : (
+                        <FaLink
+                          size={24}
+                          className="group-hover:scale-110 transition-transform duration-300"
+                        />
+                      )}
+                      <span className="absolute -bottom-12 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 px-3 py-1.5 bg-slate-900 dark:bg-slate-800 text-white text-xs font-medium rounded-md pointer-events-none whitespace-nowrap shadow-xl z-50 -translate-y-2 group-hover:translate-y-0">
                         {social.label}
-                        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-slate-900 dark:bg-slate-800 rotate-45" />
+                        <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-slate-900 dark:bg-slate-800 rotate-45" />
                       </span>
                     </motion.a>
                   </MagneticButton>

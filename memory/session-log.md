@@ -206,5 +206,43 @@ _Chronological log of agent interactions, tasks completed, and context switches.
 - **Task:** Commit recent Admin UI enhancements and Drag & Drop standardizations.
 - **Actions:**
   - Staged all changes across `/admin` route pages and memory documentation.
-  - Committed with message: `feat(admin): standardize drag-and-drop architecture and improve button accessibility`
 - **Next Steps:** Await next task from the user.
+
+## [2026-06-03] Bug Fix: Project Form Technology Fetching
+
+- **Task:** Fix TypeScript error in project edit page caused by deprecated `Skill` model reference.
+- **Actions:**
+  - Replaced legacy `Skill` type with `Technology` interface in `src/app/(admin)/admin/projects/[id]/page.tsx`.
+  - Updated API fetch logic to hit `/api/admin/technologies` instead of `/api/admin/skills`.
+  - Resolved `Property 'isTechnology' does not exist on type 'Skill'` build error.
+- **Next Steps:** Await next task from the user.
+
+## [2026-06-03] Bug Fix: Project Card techNames Undefined Error
+
+- **Task:** Fix 500 error in `ProjectCard` and `ProjectDetailClient` caused by missing `techNames` array on newly migrated or incomplete project documents.
+- **Actions:**
+  - Added a fallback empty array (`(project.techNames || [])`) before `.slice()` and `.map()` calls in `src/app/components/Projects/ProjectCard.tsx` and `src/app/(public)/projects/[slug]/ProjectDetailClient.tsx`.
+  - Verified fix with a successful `pnpm build`, ensuring all static pages compile perfectly.
+- **Next Steps:** Await next task from the user.
+
+## [2026-06-03] Social Links Custom Icon Migration & Fix
+
+- **Task:** Allow dynamic custom image uploads for Social Links and decouple them from the Hero API.
+- **Actions:**
+  - Added `iconUrl` and `brandColor` to `SocialLink` model and types.
+  - Refactored `api/admin/hero/route.ts` to remove the destructive `deleteMany` bulk replace logic for social links.
+  - Upgraded `/admin/socials/page.tsx` to include `ImageUpload` and brand color inputs, rendering native `next/image` in drag overlays and tables.
+  - Updated `HeroClient.tsx` and `Contact.tsx` public components to natively render custom images with fallback to standard React Icons.
+- **Next Steps:** Await next task from the user.
+
+## [2026-06-03] Social Links Modernization & Smart Dark Mode
+
+- **Task:** Strip legacy hardcoded React Icons logic from Social Links and introduce Smart Dark Mode inversion for uploaded black logos.
+- **Actions:**
+  - Removed platform enum entirely from SocialLink.ts schema and interfaces.
+  - Refactored HeroClient.tsx and Contact.tsx to handle links intelligently based on label string matching (e.g. mailto: for "email") instead of checking the deprecated platform field.
+  - Added invertDark boolean to SocialLink DB schema and admin panel to allow users to dynamically apply dark:invert CSS filters to pure black logos (e.g., GitHub, Medium) when users switch to dark mode.
+  - Fixed Next.js Image aspect ratio warnings and UI blowup issues by enforcing explicit w-[24px] h-[24px] boundaries.
+  - Tweaked Hero UI tooltip positioning so tooltips open cleanly below the icon with correct caret placement.
+- **Next Steps:** Await next task from the user.
+

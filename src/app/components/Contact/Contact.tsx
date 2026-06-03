@@ -6,15 +6,12 @@ import {
   FaEnvelope,
   FaPhone,
   FaMapMarkerAlt,
-  FaLinkedin,
-  FaGithub,
-  FaTwitter,
   FaCheckCircle,
   FaExclamationTriangle,
-  FaInstagram,
+  FaLink,
 } from "react-icons/fa";
-import { SiLeetcode } from "react-icons/si";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import Image from "next/image";
 import type { ContactInfo, Status } from "@/types";
 import type { IconType } from "react-icons";
 import type { FormEvent } from "react";
@@ -27,16 +24,9 @@ interface ContactSocialLink {
   label: string;
   href: string;
   color: string;
+  iconUrl?: string;
+  invertDark?: boolean;
 }
-
-const platformIconMap: Record<string, IconType> = {
-  GitHub: FaGithub,
-  LinkedIn: FaLinkedin,
-  LeetCode: SiLeetcode,
-  Email: FaEnvelope,
-  Twitter: FaTwitter,
-  Instagram: FaInstagram,
-};
 
 interface Props {
   socialLinks: import("@/types").SocialLink[];
@@ -82,21 +72,12 @@ export default function Contact({
   ];
 
   const socialLinks: ContactSocialLink[] = rawSocialLinks.map((s) => ({
-    icon: platformIconMap[s.platform] || FaEnvelope,
-    label: s.platform,
+    icon: FaLink,
+    label: s.label,
     href: s.href,
-    color:
-      s.platform === "GitHub"
-        ? "hover:text-slate-900 dark:hover:text-white"
-        : s.platform === "LinkedIn"
-          ? "hover:text-blue-600 dark:hover:text-blue-400"
-          : s.platform === "LeetCode"
-            ? "hover:text-amber-500"
-            : s.platform === "Twitter"
-              ? "hover:text-sky-500"
-              : s.platform === "Instagram"
-                ? "hover:text-pink-500"
-                : "hover:text-emerald-500",
+    iconUrl: s.iconUrl,
+    color: s.brandColor || "hover:text-emerald-500",
+    invertDark: s.invertDark,
   }));
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
@@ -245,10 +226,17 @@ export default function Contact({
                       className={`w-11 h-11 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-400 transition-all duration-300 hover:border-emerald-500 dark:hover:border-emerald-400 ${social.color} hover:scale-110 hover:shadow-lg`}
                       aria-label={social.label}
                     >
-                      {(() => {
-                        const Icon = social.icon;
-                        return <Icon className="text-lg" />;
-                      })()}
+                      {social.iconUrl ? (
+                        <Image
+                          src={social.iconUrl}
+                          alt={social.label}
+                          width={18}
+                          height={18}
+                          className={`object-contain w-4.5 h-4.5 ${social.invertDark ? "dark:invert" : ""}`}
+                        />
+                      ) : (
+                        <social.icon className="text-lg" />
+                      )}
                     </a>
                     <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 scale-75 opacity-0 pointer-events-none transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/tooltip:scale-100 group-hover/tooltip:opacity-100 bg-slate-900 dark:bg-slate-800 text-white text-xs font-bold px-2.5 py-1.5 rounded-lg shadow-md whitespace-nowrap border border-slate-700/50 dark:border-slate-600/50 z-20">
                       {social.label}

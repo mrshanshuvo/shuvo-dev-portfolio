@@ -66,10 +66,14 @@ export interface Skill {
 }
 
 export interface SocialLink {
-  platform: string;
+  _id?: string;
   href: string;
   label: string;
-  icon?: IconType; // frontend-only
+  iconUrl?: string;
+  brandColor?: string;
+  invertDark?: boolean;
+  order?: number;
+  icon?: any; // frontend-only
 }
 
 export interface TypeSequenceItem {

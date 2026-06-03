@@ -120,7 +120,7 @@ export default function ProjectCard({
           <div className="flex items-end justify-between mt-auto gap-4">
             {/* Tech stack */}
             <div className="flex flex-wrap gap-2">
-              {project.techNames.slice(0, 5).map((name) => {
+              {(project.techNames || []).slice(0, 5).map((name) => {
                 const iconUrl = iconRegistry?.[name];
                 return (
                   <Badge
@@ -130,7 +130,13 @@ export default function ProjectCard({
                     title={name}
                   >
                     {iconUrl && (
-                      <Image src={iconUrl} alt={name} width={14} height={14} className="object-contain" />
+                      <Image
+                        src={iconUrl}
+                        alt={name}
+                        width={14}
+                        height={14}
+                        className="object-contain w-auto h-auto"
+                      />
                     )}
                     {name}
                   </Badge>

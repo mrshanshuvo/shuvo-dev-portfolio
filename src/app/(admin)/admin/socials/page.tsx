@@ -24,82 +24,50 @@ import {
   FaPlus,
   FaTimes,
   FaCheck,
-  FaGithub,
-  FaLinkedin,
-  FaEnvelope,
-  FaTwitter,
-  FaInstagram,
   FaGripVertical,
   FaEdit,
   FaTrash,
   FaLink,
 } from "react-icons/fa";
-import { SiLeetcode } from "react-icons/si";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { cn } from "@/lib/utils";
 
 import { AdminDialogShell } from "../components/AdminDialogShell";
 import { AdminField, AdminInput } from "../components/AdminFields";
+import ImageUpload from "../components/ImageUpload";
+import Image from "next/image";
 
 interface SocialLink {
   _id?: string;
-  platform: string;
   href: string;
   label: string;
+  iconUrl?: string;
+  brandColor?: string;
+  invertDark?: boolean;
   order: number;
 }
 
-const PLATFORM_OPTIONS = [
-  "GitHub",
-  "LinkedIn",
-  "LeetCode",
-  "Email",
-  "Twitter",
-  "Instagram",
-  "Portfolio",
-  "Other",
-];
-
-const platformIconMap: Record<string, any> = {
-  GitHub: FaGithub,
-  LinkedIn: FaLinkedin,
-  LeetCode: SiLeetcode,
-  Email: FaEnvelope,
-  Twitter: FaTwitter,
-  Instagram: FaInstagram,
-  Portfolio: FaLink,
-  Other: FaLink,
-};
-
-const platformIcons: Record<string, React.ReactNode> = {
-  GitHub: <FaGithub size={16} />,
-  LinkedIn: <FaLinkedin size={16} />,
-  LeetCode: <SiLeetcode size={16} />,
-  Email: <FaEnvelope size={16} />,
-  Twitter: <FaTwitter size={16} />,
-  Instagram: <FaInstagram size={16} />,
-  Portfolio: <FaLink size={16} />,
-  Other: <FaLink size={16} />,
-};
-
 // ─── Drag Overlay ghost card ──────────────────────────────────────────────────
 function SocialOverlay({ item }: { item: SocialLink }) {
-  const Icon = platformIconMap[item.platform] || FaLink;
   return (
     <div className="flex items-center gap-4 bg-white dark:bg-slate-800 border border-cyan-500/30 rounded-2xl p-4 shadow-2xl scale-105 ring-1 ring-cyan-400/20 min-w-[320px]">
       <FaGripVertical className="text-cyan-500" size={14} />
       <div className="p-2 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 rounded-lg">
-        <Icon size={14} />
+        {item.iconUrl ? (
+          <Image
+            src={item.iconUrl}
+            alt={item.label}
+            width={14}
+            height={14}
+            className="object-contain"
+          />
+        ) : (
+          <FaLink size={14} />
+        )}
       </div>
       <div className="flex-1 min-w-0">
         <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
@@ -139,8 +107,6 @@ function SortableSocialRow({
     opacity: isDragging ? 0.35 : 1,
   };
 
-  const Icon = platformIconMap[item.platform] || FaLink;
-
   return (
     <div
       ref={setNodeRef}
@@ -161,7 +127,17 @@ function SortableSocialRow({
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 rounded-lg">
-            <Icon size={14} />
+            {item.iconUrl ? (
+              <Image
+                src={item.iconUrl}
+                alt={item.label}
+                width={14}
+                height={14}
+                className="object-contain"
+              />
+            ) : (
+              <FaLink size={14} />
+            )}
           </div>
           <div className="min-w-0">
             <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
@@ -325,9 +301,9 @@ export default function AdminSocialsPage() {
       setCurrentSocial({ ...item });
     } else {
       setCurrentSocial({
-        platform: "GitHub",
         href: "",
         label: "",
+        invertDark: false,
         order: data.length,
       });
     }
@@ -472,46 +448,7 @@ export default function AdminSocialsPage() {
         >
           {currentSocial && (
             <div className="space-y-8">
-              <div className="grid grid-cols-2 gap-6">
-                <AdminField label="Network">
-                  <Select
-                    value={currentSocial.platform}
-                    onValueChange={(val) => {
-                      if (val) {
-                        setCurrentSocial((prev) =>
-                          prev
-                            ? {
-                                ...prev,
-                                platform: val,
-                                label: prev.label || val,
-                              }
-                            : null,
-                        );
-                      }
-                    }}
-                  >
-                    <SelectTrigger className="bg-white dark:bg-slate-950/40 border-slate-200 dark:border-white/5 rounded-2xl h-14 font-bold text-base text-slate-900 dark:text-slate-200 shadow-inner dark:shadow-black/20 focus:ring-4 focus:ring-cyan-500/5 transition-all">
-                      <SelectValue placeholder="Select platform" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white dark:bg-slate-900 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-2xl shadow-2xl backdrop-blur-xl">
-                      {PLATFORM_OPTIONS.map((p) => (
-                        <SelectItem
-                          key={p}
-                          value={p}
-                          className="rounded-xl py-3 focus:bg-cyan-500/10 focus:text-cyan-400"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center">
-                              {platformIcons[p] || <FaLink size={12} />}
-                            </div>
-                            {p}
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </AdminField>
-
+              <div className="grid grid-cols-1 gap-6">
                 <AdminField label="Display Label">
                   <AdminInput
                     value={currentSocial.label}
@@ -538,6 +475,56 @@ export default function AdminSocialsPage() {
                   placeholder="https://social.network/profile"
                 />
               </AdminField>
+
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <ImageUpload
+                    label="Custom Icon"
+                    value={currentSocial.iconUrl || ""}
+                    onChange={(url) =>
+                      setCurrentSocial((prev) =>
+                        prev ? { ...prev, iconUrl: url } : null,
+                      )
+                    }
+                  />
+                </div>
+                <div className="space-y-4">
+                  <AdminField label="Brand Color">
+                    <AdminInput
+                      value={currentSocial.brandColor || ""}
+                      onChange={(e) =>
+                        setCurrentSocial((prev) =>
+                          prev ? { ...prev, brandColor: e.target.value } : null,
+                        )
+                      }
+                      placeholder="e.g. hover:text-emerald-500"
+                    />
+                  </AdminField>
+
+                  <div className="pt-2">
+                    <label className="flex items-center gap-3 p-3 border border-slate-200 dark:border-slate-800 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                      <input
+                        type="checkbox"
+                        className="w-4 h-4 text-cyan-600 rounded border-slate-300 focus:ring-cyan-500"
+                        checked={currentSocial.invertDark || false}
+                        onChange={(e) =>
+                          setCurrentSocial((prev) =>
+                            prev ? { ...prev, invertDark: e.target.checked } : null,
+                          )
+                        }
+                      />
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                          Invert in Dark Mode
+                        </span>
+                        <span className="text-xs text-slate-500 dark:text-slate-400">
+                          Turns black logos white in dark mode.
+                        </span>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </AdminDialogShell>
