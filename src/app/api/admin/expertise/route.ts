@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
-import Skill from "@/models/Skill";
-import Tech from "@/models/Tech";
+import Skill from "@/models/Skill"; // Mongoose model is named Skill for backward compatibility
 
 export async function GET(req: Request) {
   try {
@@ -21,15 +20,8 @@ export async function GET(req: Request) {
       return NextResponse.json(item);
     }
 
-    const [skills, techDoc] = await Promise.all([
-      Skill.find().sort({ order: 1 }).lean(),
-      Tech.findOne().lean(),
-    ]);
-
-    return NextResponse.json({
-      skills: skills || [],
-      techList: techDoc?.techList || [],
-    });
+    const expertises = await Skill.find().sort({ order: 1 }).lean();
+    return NextResponse.json(expertises || []);
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch" }, { status: 500 });
   }
@@ -63,22 +55,14 @@ export async function PATCH(req: Request) {
     await connectDB();
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
-    const type = searchParams.get("type");
     const body = await req.json();
 
     if (id) {
-      const updated = await Skill.findByIdAndUpdate(id, body, { returnDocument: "after" });
+      const updated = await Skill.findByIdAndUpdate(id, body, {
+        returnDocument: "after",
+      });
       if (!updated)
         return NextResponse.json({ error: "Not found" }, { status: 404 });
-      return NextResponse.json(updated);
-    }
-
-    if (type === "banner") {
-      const updated = await Tech.findOneAndUpdate(
-        {},
-        { techList: body.techList || [] },
-        { upsert: true, returnDocument: "after" },
-      );
       return NextResponse.json(updated);
     }
 
@@ -90,10 +74,7 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ message: "Order updated" });
     }
 
-    return NextResponse.json(
-      { error: "Missing ID, type, or array" },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "Missing ID or array" }, { status: 400 });
   } catch (error) {
     return NextResponse.json({ error: "Failed to update" }, { status: 500 });
   }
@@ -119,36 +100,5 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ message: "Deleted" });
   } catch (error) {
     return NextResponse.json({ error: "Failed to delete" }, { status: 500 });
-  }
-}
-
-// Keep PUT for compatibility (refactored to avoid deleteMany)
-export async function PUT(req: Request) {
-  try {
-    const session = await auth();
-    if (!session)
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    await connectDB();
-    const { skills, techList } = await req.json();
-
-    if (skills) {
-      const updates = skills.map((s: any, i: number) =>
-        Skill.findByIdAndUpdate(s._id, { ...s, order: i }, { upsert: true }),
-      );
-      await Promise.all(updates);
-    }
-
-    if (techList) {
-      await Tech.findOneAndUpdate(
-        {},
-        { techList: techList || [] },
-        { upsert: true },
-      );
-    }
-
-    return NextResponse.json({ message: "Skills & Tech saved" });
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to save" }, { status: 500 });
   }
 }

@@ -17,6 +17,7 @@ import {
   FaPenNib,
   FaFlask,
   FaCog,
+  FaCode,
 } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion";
@@ -57,10 +58,16 @@ const navItems = [
     label: "Professional",
   },
   {
-    href: "/admin/skills",
-    label: "Skills & Tech",
+    href: "/admin/expertise",
+    label: "Expertise Areas",
     icon: FaRocket,
     color: "text-purple-500",
+  },
+  {
+    href: "/admin/technologies",
+    label: "Technologies",
+    icon: FaCode,
+    color: "text-blue-500",
   },
 
   {

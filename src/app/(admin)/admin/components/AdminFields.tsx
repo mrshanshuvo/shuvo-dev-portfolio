@@ -117,7 +117,10 @@ export function AdminSelect({
 }: AdminSelectProps) {
   return (
     <div className={cn("relative group/input w-full", className)}>
-      <Select value={value} onValueChange={(val) => onValueChange(val as string)}>
+      <Select
+        value={value}
+        onValueChange={(val) => onValueChange(val as string)}
+      >
         <SelectTrigger
           className={cn(
             "bg-white dark:bg-slate-950/40 border-slate-200 dark:border-white/5 rounded-xl h-12 font-bold text-sm text-slate-900 dark:text-slate-200 shadow-inner dark:shadow-black/20 focus:ring-4 focus:ring-emerald-500/5 transition-all w-full px-4",

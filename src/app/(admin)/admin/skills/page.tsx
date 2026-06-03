@@ -27,14 +27,13 @@ import {
   FaEdit,
   FaTrash,
   FaLaptopCode,
-  FaInfoCircle,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
 // Shadcn UI Imports
 import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
+
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -53,7 +52,6 @@ interface Skill {
   _id?: string;
   name: string;
   tech: string;
-  level: number;
   iconUrl?: string;
   isTechnology?: boolean;
 }
@@ -129,18 +127,6 @@ function SortableSkillRow({
       </div>
 
       <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2 min-w-30 justify-end">
-          <span className="text-xs font-bold text-slate-400 dark:text-slate-500">
-            {skill.level}%
-          </span>
-          <div className="w-16 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-purple-500 rounded-full"
-              style={{ width: `${skill.level}%` }}
-            />
-          </div>
-        </div>
-
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <Button
             variant="ghost"
@@ -277,7 +263,7 @@ export default function AdminSkillsPage() {
     setCurrentSkill({
       name: "",
       tech: "",
-      level: 80,
+
       iconUrl: "",
       isTechnology: false,
     });
@@ -463,7 +449,7 @@ export default function AdminSkillsPage() {
                     setCurrentSkill({
                       name: "",
                       tech: "Technology",
-                      level: 80,
+
                       iconUrl: "",
                       isTechnology: true,
                     });
@@ -572,44 +558,6 @@ export default function AdminSkillsPage() {
                     }
                   />
                 </AdminField>
-
-                {!currentSkill.isTechnology && (
-                  <AdminField
-                    label={`Expertise Mastery: ${currentSkill.level}%`}
-                  >
-                    <div className="pt-4 px-2">
-                      <Slider
-                        value={[currentSkill.level]}
-                        max={100}
-                        step={1}
-                        onValueChange={(val: number | readonly number[]) => {
-                          const level = Array.isArray(val) ? val[0] : val;
-                          setCurrentSkill((prev) =>
-                            prev ? { ...prev, level } : null,
-                          );
-                        }}
-                        className="cursor-pointer"
-                      />
-                    </div>
-                  </AdminField>
-                )}
-
-                <div className="p-6 bg-purple-500/5 border border-purple-500/10 dark:border-purple-500/20 rounded-3xl flex items-start gap-4 shadow-sm dark:shadow-none">
-                  <FaInfoCircle
-                    className="text-purple-600 dark:text-purple-400 shrink-0 mt-1"
-                    size={16}
-                  />
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-black uppercase tracking-wider text-purple-600 dark:text-purple-400/90">
-                      Technical Branding
-                    </p>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
-                      {currentSkill.isTechnology
-                        ? "Define the SimpleIcons slug and brand color. Your icon will display in the scrolling tech marquee and as selectable tags."
-                        : "Select an icon that best represents this technology. Mastery levels help visitors understand your depth of knowledge."}
-                    </p>
-                  </div>
-                </div>
               </div>
 
               {/* Right Column: Skill Identity */}
@@ -652,29 +600,6 @@ export default function AdminSkillsPage() {
                     />
                   </AdminField>
                 )}
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-4">
-                  <div className="p-4 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-white/5 rounded-2xl flex flex-col gap-1 shadow-sm dark:shadow-none">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
-                      Mastery Status
-                    </span>
-                    <span className="text-sm font-bold text-slate-900 dark:text-white">
-                      {currentSkill.level >= 80
-                        ? "Specialist"
-                        : currentSkill.level >= 50
-                          ? "Advanced"
-                          : "Proficient"}
-                    </span>
-                  </div>
-                  <div className="p-4 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-white/5 rounded-2xl flex flex-col gap-1 shadow-sm dark:shadow-none">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
-                      Last Calibrated
-                    </span>
-                    <span className="text-sm font-bold text-slate-900 dark:text-white">
-                      Today
-                    </span>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

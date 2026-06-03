@@ -4,21 +4,23 @@ import { useRef } from "react";
 import { FaLayerGroup, FaCode } from "react-icons/fa";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
-import type { Skill } from "@/types";
+import type { Skill, Technology } from "@/types";
 
 interface Props {
-  skills: Skill[];
+  expertises: Skill[];
+  brandTechs: Technology[];
   techList: string[];
 }
 
-export default function SkillsClient({ skills, techList }: Props) {
+export default function SkillsClient({
+  expertises,
+  brandTechs,
+  techList,
+}: Props) {
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
-  // Separate expertise (progress bars) from brand technologies (marquee)
-  const expertises = skills.filter((s) => !s.isTechnology);
-  const brandTechs = skills.filter((s) => !!s.isTechnology);
-  // Fall back to legacy techList strings if no isTechnology skills exist yet
+  // Fall back to legacy techList strings if no brandTechs exist yet
   const marqueeItems =
     brandTechs.length > 0
       ? brandTechs.map((t) => ({ name: t.name, iconUrl: t.iconUrl }))
@@ -70,13 +72,19 @@ export default function SkillsClient({ skills, techList }: Props) {
               className="bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl rounded-[1rem] p-10 border border-slate-200/50 dark:border-white/10 shadow-xl"
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-8">
-                {expertises.map((skill, index) => {
+                {expertises.map((skill) => {
                   return (
                     <motion.div key={skill.name} variants={itemVariants}>
                       <div className="flex items-start gap-5">
                         <div className="w-16 h-16 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-md group-hover:scale-110 transition-transform">
                           {skill.iconUrl ? (
-                            <Image src={skill.iconUrl} alt={skill.name} width={32} height={32} className="object-contain" />
+                            <Image
+                              src={skill.iconUrl}
+                              alt={skill.name}
+                              width={32}
+                              height={32}
+                              className="object-contain"
+                            />
                           ) : (
                             <FaCode className="text-emerald-500 text-3xl" />
                           )}
@@ -86,31 +94,9 @@ export default function SkillsClient({ skills, techList }: Props) {
                             <span className="font-bold text-lg text-slate-900 dark:text-white">
                               {skill.name}
                             </span>
-                            <span className="font-mono text-sm font-bold text-emerald-500">
-                              {skill.level}%
-                            </span>
                           </div>
                           <div className="text-sm text-slate-500 dark:text-slate-400 mb-3 font-medium">
                             {skill.tech}
-                          </div>
-                          <div
-                            className="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2 overflow-hidden"
-                            role="progressbar"
-                          >
-                            <motion.div
-                              initial={{ width: 0 }}
-                              animate={
-                                isInView
-                                  ? { width: `${skill.level}%` }
-                                  : { width: 0 }
-                              }
-                              transition={{
-                                duration: 1.5,
-                                delay: index * 0.15,
-                                ease: [0.16, 1, 0.3, 1],
-                              }}
-                              className="bg-emerald-500 h-full rounded-full shadow-[0_0_10px_rgba(16,185,129,0.8)]"
-                            />
                           </div>
                         </div>
                       </div>
@@ -160,7 +146,13 @@ export default function SkillsClient({ skills, techList }: Props) {
                           className="flex items-center gap-3 px-5 py-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium whitespace-nowrap shadow-sm hover:border-emerald-500/30 dark:hover:border-emerald-400/30 hover:text-emerald-500 dark:hover:text-emerald-400 hover:scale-102 transition-all cursor-default"
                         >
                           {tech.iconUrl ? (
-                            <Image src={tech.iconUrl} alt={tech.name} width={20} height={20} className="object-contain" />
+                            <Image
+                              src={tech.iconUrl}
+                              alt={tech.name}
+                              width={20}
+                              height={20}
+                              className="object-contain"
+                            />
                           ) : (
                             <FaCode className="text-xl text-slate-400" />
                           )}

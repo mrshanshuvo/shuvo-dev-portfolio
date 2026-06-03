@@ -49,13 +49,19 @@ export interface Experience {
   skillIds?: string[]; // relational database field
 }
 
+export interface Technology {
+  _id?: string;
+  name: string;
+  iconUrl: string;
+  order?: number;
+}
+
 export interface Skill {
   _id?: string;
   name: string;
   tech: string;
-  level: number;
   iconUrl?: string;
-  isTechnology?: boolean;
+  order?: number;
 }
 
 export interface SocialLink {
