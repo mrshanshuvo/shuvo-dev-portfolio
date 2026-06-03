@@ -172,7 +172,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                 Admin <span className="text-emerald-400">Panel</span>
               </p>
               <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">
-                Portfolio v2.0
+                Portfolio v0.2.0
               </p>
             </div>
           </div>
