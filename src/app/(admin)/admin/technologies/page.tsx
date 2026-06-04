@@ -231,7 +231,7 @@ export default function AdminTechnologiesPage() {
                     </span>
 
                     {/* Action Buttons Overlay */}
-                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-3 z-20">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 group-hover:opacity-80 transition-all duration-300 flex items-center justify-center gap-3 z-20">
                       <button
                         onClick={() => openEdit(t)}
                         className="h-8 w-8 rounded-full bg-blue-500/20 text-blue-400 hover:bg-blue-500 hover:text-white flex items-center justify-center transition-all hover:scale-110 cursor-pointer shadow-[0_0_15px_rgba(59,130,246,0.5)]"

@@ -3,6 +3,8 @@ import { IconType } from "react-icons";
 // ─── Portfolio types ────────────────────────────────────────────────
 
 export interface MediaItem {
+  _id?: string;
+  id?: string;
   type: "image" | "video" | "embed";
   url: string;
   caption?: string;

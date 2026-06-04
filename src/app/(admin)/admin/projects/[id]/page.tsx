@@ -203,48 +203,11 @@ export default function ProjectEditPage() {
         )}
       </AnimatePresence>
 
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/5 px-6 md:px-12 py-4">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div>
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">
-                {isNew ? "Configuration" : "Editing"}
-              </span>
-              {!isNew && (
-                <p className="text-sm font-bold text-slate-900 dark:text-white truncate max-w-xs">
-                  {form.title || "Untitled"}
-                </p>
-              )}
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <Button
-              onClick={handleSave}
-              disabled={saving}
-              className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl h-10 px-6 font-black shadow-lg shadow-emerald-600/20 text-sm"
-            >
-              {saving ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full border-2 border-white/50 border-t-white animate-spin" />
-                  Saving...
-                </div>
-              ) : (
-                <>
-                  <FaSave className="mr-2" size={12} />{" "}
-                  {isNew ? "Create Project" : "Save Changes"}
-                </>
-              )}
-            </Button>
-          </div>
-        </div>
-      </header>
-
       {/* Form */}
-      <main className="p-6 md:p-12 max-w-400 mx-auto pb-32">
-        <div className="grid grid-cols-1 xl:grid-cols-[1fr_2fr] gap-12 items-start">
+      <main className="px-6 md:px-12 max-w-400 mx-auto">
+        <div className="grid grid-cols-1 xl:grid-cols-[1fr_1.5fr] gap-12 items-start">
           {/* Left Column: Assets & Links */}
-          <div className="space-y-10 xl:sticky xl:top-32">
+          <div className="space-y-6 xl:sticky xl:top-32">
             <MediaGalleryManager
               media={(form.media as MediaItem[]) || []}
               onChange={(m) => update("media", m as any)}
@@ -260,7 +223,7 @@ export default function ProjectEditPage() {
           </div>
 
           {/* Right Column: Content & Metadata */}
-          <div className="space-y-10">
+          <div className="space-y-6">
             <div className="flex gap-4 items-end">
               <AdminField label="Project Title" className="flex-1">
                 <AdminInput
@@ -324,7 +287,7 @@ export default function ProjectEditPage() {
             </AdminField>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="p-6 bg-white dark:bg-slate-950/40 rounded-[1rem] border border-slate-200 dark:border-white/5 space-y-6">
+              <div className="p-4 bg-white dark:bg-slate-950/40 rounded-lg border border-slate-200 dark:border-white/5 space-y-2">
                 <MultiLinkManager
                   label="Github Repositories"
                   iconType="github"
@@ -332,7 +295,7 @@ export default function ProjectEditPage() {
                   onChange={(l) => update("github", l as any)}
                 />
               </div>
-              <div className="p-6 bg-white dark:bg-slate-950/40 rounded-[1rem] border border-slate-200 dark:border-white/5 space-y-6">
+              <div className="p-4 bg-white dark:bg-slate-950/40 rounded-lg border border-slate-200 dark:border-white/5 space-y-2">
                 <MultiLinkManager
                   label="Live Deployments"
                   iconType="live"
@@ -357,7 +320,7 @@ export default function ProjectEditPage() {
                   />
                   <Button
                     onClick={addImprovement}
-                    className="bg-slate-800 hover:bg-slate-700 text-white rounded-2xl h-14 w-14 shrink-0 border border-white/5"
+                    className="bg-slate-800 hover:bg-slate-700 text-white rounded-xl h-12 w-12 shrink-0 border border-white/5 flex items-center justify-center animate-in fade-in duration-300"
                   >
                     <FaPlus size={14} />
                   </Button>
@@ -370,7 +333,7 @@ export default function ProjectEditPage() {
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: 10 }}
-                        className="flex items-center gap-4 bg-white dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 rounded-2xl px-5 py-4 group/imp shadow-sm dark:shadow-none"
+                        className="flex items-center gap-4 bg-white dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 rounded-2xl px-5 py-2 group/imp shadow-sm dark:shadow-none"
                       >
                         <div className="w-2 h-2 rounded-full bg-emerald-500/40 shrink-0" />
                         <span className="text-sm text-slate-600 dark:text-slate-300 flex-1 font-medium leading-relaxed">
@@ -398,6 +361,24 @@ export default function ProjectEditPage() {
           </div>
         </div>
       </main>
+
+      {/* Floating Save Button */}
+      <div className="fixed bottom-10 right-10 z-50">
+        <Button
+          onClick={handleSave}
+          disabled={saving}
+          className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl p-6 font-black shadow-[0_20px_50px_rgba(16,185,129,0.3)] text-base active:scale-95 transition-all group"
+        >
+          <FaSave
+            className={cn(
+              "mr-1 transition-transform duration-500",
+              saving ? "animate-spin" : "group-hover:rotate-12",
+            )}
+            size={20}
+          />
+          {saving ? "Saving..." : isNew ? "Create Project" : "Save Changes"}
+        </Button>
+      </div>
     </div>
   );
 }

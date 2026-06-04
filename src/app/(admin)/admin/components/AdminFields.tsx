@@ -46,7 +46,7 @@ export function AdminInput({
   return (
     <div className="relative group/input w-full">
       {Icon && (
-        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-500 group-focus-within/input:text-slate-900 dark:group-focus-within/input:text-white transition-colors z-10 pointer-events-none">
+        <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center justify-center text-slate-600 dark:text-slate-500 group-focus-within/input:text-slate-900 dark:group-focus-within/input:text-white transition-colors z-10 pointer-events-none">
           <Icon size={16} />
         </div>
       )}

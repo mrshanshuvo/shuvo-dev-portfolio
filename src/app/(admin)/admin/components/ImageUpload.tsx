@@ -16,6 +16,7 @@ interface ImageUploadProps {
   onChange: (url: string) => void;
   label?: string;
   accept?: string;
+  aspect?: "square" | "video";
 }
 
 export default function ImageUpload({
@@ -23,6 +24,7 @@ export default function ImageUpload({
   onChange,
   label,
   accept = "image/*,video/*,application/pdf",
+  aspect = "square",
 }: ImageUploadProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -156,7 +158,9 @@ export default function ImageUpload({
           </button>
         </div>
       ) : loading ? (
-        <div className="p-3 rounded-2xl border border-slate-200 dark:border-white/5 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md shadow-xl dark:shadow-2xl relative overflow-hidden group aspect-square flex flex-col justify-center">
+        <div
+          className={`p-3 rounded-2xl border border-slate-200 dark:border-white/5 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md shadow-xl dark:shadow-2xl relative overflow-hidden group flex flex-col justify-center ${aspect === "video" ? "aspect-video" : "aspect-square"}`}
+        >
           {/* Subtle animated background glow */}
           <div className="absolute inset-0 bg-linear-to-r from-indigo-500/5 dark:from-indigo-500/10 via-purple-500/5 dark:via-purple-500/10 to-pink-500/5 dark:to-pink-500/10 animate-pulse" />
 
@@ -196,7 +200,9 @@ export default function ImageUpload({
           </div>
         </div>
       ) : value ? (
-        <div className="relative group/image rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 aspect-square bg-white dark:bg-slate-950 flex flex-col items-center justify-center shadow-2xl transition-all duration-500 hover:shadow-[0_10px_40px_rgba(99,102,241,0.15)] hover:border-indigo-500/30">
+        <div
+          className={`relative group/image rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-950 flex flex-col items-center justify-center shadow-2xl transition-all duration-500 hover:shadow-[0_10px_40px_rgba(99,102,241,0.15)] hover:border-indigo-500/30 ${aspect === "video" ? "aspect-video" : "aspect-square"}`}
+        >
           {value &&
           (value.includes("/video/upload/") ||
             value.toLowerCase().endsWith(".mp4") ||
@@ -240,7 +246,7 @@ export default function ImageUpload({
                 setIsPreviewOpen(true);
               }}
               title="Expand Preview"
-              className="p-2 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 backdrop-blur-md hover:bg-indigo-500/40 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(99,102,241,0.2)] transition-all duration-300"
+              className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30 backdrop-blur-md hover:bg-indigo-100 dark:hover:bg-indigo-500/40 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(99,102,241,0.15)] dark:hover:shadow-[0_10px_20px_rgba(99,102,241,0.2)] transition-all duration-300"
             >
               <FaEye size={16} />
             </button>
@@ -249,7 +255,7 @@ export default function ImageUpload({
               target="_blank"
               rel="noopener noreferrer"
               title="Open Original"
-              className="p-2 rounded-xl bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/30 backdrop-blur-md hover:bg-fuchsia-500/40 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(217,70,239,0.2)] transition-all duration-300"
+              className="p-2 rounded-xl bg-fuchsia-50 dark:bg-fuchsia-500/20 text-fuchsia-600 dark:text-fuchsia-300 border border-fuchsia-200 dark:border-fuchsia-500/30 backdrop-blur-md hover:bg-fuchsia-100 dark:hover:bg-fuchsia-500/40 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(217,70,239,0.15)] dark:hover:shadow-[0_10px_20px_rgba(217,70,239,0.2)] transition-all duration-300"
             >
               <FaExternalLinkAlt size={14} />
             </a>
@@ -261,7 +267,7 @@ export default function ImageUpload({
                 fileInputRef.current?.click();
               }}
               title="Change File"
-              className="p-2 rounded-xl bg-white/10 text-white border border-white/20 backdrop-blur-md hover:bg-white/20 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(255,255,255,0.1)] transition-all duration-300"
+              className="p-2 rounded-xl bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-white border border-slate-200 dark:border-white/20 backdrop-blur-md hover:bg-slate-200 dark:hover:bg-white/20 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_10px_20px_rgba(255,255,255,0.1)] transition-all duration-300"
             >
               <FiRefreshCw size={16} />
             </button>
@@ -273,7 +279,7 @@ export default function ImageUpload({
                 onChange("");
               }}
               title="Delete File"
-              className="p-2 rounded-xl bg-rose-500/20 text-rose-300 border border-rose-500/30 backdrop-blur-md hover:bg-rose-500/40 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(244,63,94,0.2)] transition-all duration-300"
+              className="p-2 rounded-xl bg-rose-50 dark:bg-rose-500/20 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-500/30 backdrop-blur-md hover:bg-rose-100 dark:hover:bg-rose-500/40 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(244,63,94,0.15)] dark:hover:shadow-[0_10px_20px_rgba(244,63,94,0.2)] transition-all duration-300"
             >
               <FaTrash size={14} />
             </button>
@@ -289,8 +295,9 @@ export default function ImageUpload({
           onDrop={onDrop}
           onClick={() => fileInputRef.current?.click()}
           className={`
-            relative aspect-square rounded-2xl border-2 transition-all duration-500 cursor-pointer overflow-hidden
+            relative rounded-2xl border-2 transition-all duration-500 cursor-pointer overflow-hidden
             flex flex-col items-center justify-center p-2 group/image
+            ${aspect === "video" ? "aspect-video" : "aspect-square"}
             ${
               isDragging
                 ? "border-indigo-400 border-solid bg-indigo-500/10 shadow-[0_0_40px_rgba(99,102,241,0.2)]"

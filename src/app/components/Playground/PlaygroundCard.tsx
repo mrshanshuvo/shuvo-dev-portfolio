@@ -135,7 +135,7 @@ export default function PlaygroundCard({
                       alt={name}
                       width={14}
                       height={14}
-                      className="object-contain w-auto h-auto"
+                      className="object-contain shrink-0 w-3.5 h-3.5"
                     />
                   )}
                   {name}

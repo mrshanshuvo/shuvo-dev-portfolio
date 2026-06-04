@@ -103,7 +103,7 @@ export default function CategoryManagerDialog({
           </Button>
         }
       />
-      <DialogContent className="max-w-2xl bg-white dark:bg-slate-950 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-[2.5rem] p-8 max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+      <DialogContent className="max-w-2xl bg-white dark:bg-slate-950 border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-2xl p-8 max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
         <DialogHeader className="mb-6">
           <div className="flex items-center gap-3 text-emerald-400 mb-2">
             <FaLayerGroup size={16} />
@@ -191,7 +191,7 @@ export default function CategoryManagerDialog({
           <Button
             onClick={handleSave}
             disabled={saving}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl h-11 px-8 font-black shadow-lg shadow-emerald-600/20"
+            className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl h-11 px-6 font-black shadow-lg shadow-emerald-600/20"
           >
             {saving ? "Syncing..." : "Apply Changes"}
           </Button>

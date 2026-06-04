@@ -134,7 +134,7 @@ export default function ProjectCard({
                 <Badge
                   key={name}
                   variant="outline"
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 dark:bg-emerald-950/40 border border-emerald-500/20 text-emerald-300 rounded-xl text-[10px] font-bold shadow-sm backdrop-blur-md transition-all duration-300 group-hover:border-emerald-400/40 group-hover:bg-emerald-500/20 group-hover:text-emerald-200"
+                  className="flex items-center gap-1.5 px-2 py-1.5 bg-emerald-500/10 dark:bg-emerald-950/40 border border-emerald-500/20 text-emerald-300 rounded-xl text-[10px] font-bold shadow-sm backdrop-blur-md transition-all duration-300 group-hover:border-emerald-400/40 group-hover:bg-emerald-500/20 group-hover:text-emerald-200"
                   title={name}
                 >
                   {iconUrl && (
@@ -143,7 +143,7 @@ export default function ProjectCard({
                       alt={name}
                       width={14}
                       height={14}
-                      className="object-contain w-auto h-auto"
+                      className="object-contain shrink-0 w-3.5 h-3.5"
                     />
                   )}
                   {name}

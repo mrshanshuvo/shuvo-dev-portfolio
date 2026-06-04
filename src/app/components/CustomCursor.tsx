@@ -1,9 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 
 export default function CustomCursor() {
+  const pathname = usePathname();
+  const isAdmin = pathname?.startsWith("/admin");
+
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -11,6 +15,7 @@ export default function CustomCursor() {
 
   // Detect touch device after mount to prevent SSR/hydration mismatch
   useEffect(() => {
+    if (isAdmin) return;
     const raf = requestAnimationFrame(() => {
       const hasTouch =
         window.matchMedia("(pointer: coarse)").matches ||
@@ -18,11 +23,11 @@ export default function CustomCursor() {
       setIsTouchDevice(hasTouch);
     });
     return () => cancelAnimationFrame(raf);
-  }, []);
+  }, [isAdmin]);
 
   // Mouse tracking & hover detection
   useEffect(() => {
-    if (isTouchDevice) return;
+    if (isTouchDevice || isAdmin) return;
 
     const updateMousePosition = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
@@ -57,10 +62,10 @@ export default function CustomCursor() {
         el.removeEventListener("mouseleave", handleLinkHoverLeave);
       });
     };
-  }, [isTouchDevice, isVisible]);
+  }, [isTouchDevice, isVisible, isAdmin]);
 
-  // Don't render on touch devices
-  if (isTouchDevice) return null;
+  // Don't render on touch devices or in the admin panel
+  if (isTouchDevice || isAdmin) return null;
 
   return (
     <>

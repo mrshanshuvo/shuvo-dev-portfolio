@@ -267,5 +267,15 @@ _Chronological log of agent interactions, tasks completed, and context switches.
   - **Registry Fixed:** Modified `iconRegistry.ts` to query the `Technology` collection directly.
   - **Database Migration Executed:** Created and executed a database migration script `src/scripts/migrate-to-technology-ids.ts` that dynamically registered missing technology documents (e.g. Firebase, Leaflet, TensorFlow.js, Three.js, R3F, GLSL, Webcam API) in MongoDB and mapped existing project and demo entries to their correct technology ObjectIds.
   - **Documentation Updated:** Updated `docs/database_er_diagram.md` to document the revised project and demo schemas and the new `Technology` collection. Updated the architecture decision record in `decisions.md`.
+  - **Tech Badge Icon Stretch Bug Fix:** Resolved a visual bug where technology logo SVGs and images within project and playground cards were stretched into horizontal capsules due to `w-auto h-auto` flex items override. Replaced with `shrink-0 w-3.5 h-3.5` constraints.
+  - **Media Gallery Manager UI Cleanup:** Conditionally hid the redundant "URL / Source" text input field for `"image"` and `"video"` type assets in [MediaGalleryManager.tsx](file:///c:/Users/Shovu/Desktop/portfolio/shuvo-portfolio/src/app/(admin)/admin/components/MediaGalleryManager.tsx). It remains visible only for `"embed"` types (where direct URL input is necessary).
+  - **Media Gallery Manager Layout Alignment:** Improved layout structure by using a `flex flex-col justify-between py-1` wrapper on the right-hand column and nesting input fields inside a grouped wrapper. This aligns the header information row and the caption input field perfectly with the top and bottom bounds of the left-hand image/video thumbnail uploader.
+  - **Uploader Aspect Ratio Optimization:** Refactored [ImageUpload.tsx](file:///c:/Users/Shovu/Desktop/portfolio/shuvo-portfolio/src/app/(admin)/admin/components/ImageUpload.tsx) to accept a configurable `aspect` prop (`"square"` or `"video"`), defaulting to `"square"`. Configured [MediaGalleryManager.tsx](file:///c:/Users/Shovu/Desktop/portfolio/shuvo-portfolio/src/app/(admin)/admin/components/MediaGalleryManager.tsx) to pass `aspect="video"`. This renders project showcase screenshot uploaders in 16:9 landscape aspect ratio instead of 1:1 square, significantly reducing vertical height, eliminating letterbox/cropping issues for mockups, and balancing the layout of the entire card row.
+  - **Project Edit Page Save Button Refactoring:** Removed the sticky top header from [page.tsx](file:///c:/Users/Shovu/Desktop/portfolio/shuvo-portfolio/src/app/(admin)/admin/projects/[id]/page.tsx). Replaced it with a clean, static, non-sticky page header block inside the main layout, and moved the "Save Changes" / "Create Project" action button to float at the bottom right corner of the screen matching the UX pattern established in the Hero section.
 - **Next Steps:** Await next task from the user.
+
+
+
+
+
 

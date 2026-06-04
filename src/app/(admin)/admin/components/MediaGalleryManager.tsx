@@ -8,7 +8,24 @@ import {
   FaTrash,
   FaInfoCircle,
 } from "react-icons/fa";
-import { motion, Reorder, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  DndContext,
+  closestCenter,
+  useSensor,
+  useSensors,
+  PointerSensor,
+  KeyboardSensor,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import ImageUpload from "./ImageUpload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,12 +39,177 @@ interface MediaGalleryManagerProps {
   label?: string;
 }
 
+interface SortableMediaItemProps {
+  item: MediaItem;
+  index: number;
+  updateItem: (i: number, field: keyof MediaItem, val: any) => void;
+  removeItem: (i: number) => void;
+}
+
+function SortableMediaItem({
+  item,
+  index,
+  updateItem,
+  removeItem,
+}: SortableMediaItemProps) {
+  const stableId =
+    item.id || item._id || `legacy-${index}-${item.type}-${item.url}`;
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: stableId });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition: isDragging ? "none" : transition,
+    opacity: isDragging ? 0.35 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        "group relative bg-white dark:bg-slate-950/60 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-[1rem] p-6 flex flex-col md:flex-row gap-8 hover:border-slate-300 dark:hover:border-white/10 hover:bg-slate-50 dark:hover:bg-slate-900/80 transition-[background-color,border-color,box-shadow,opacity] duration-500 shadow-lg dark:shadow-2xl",
+        isDragging &&
+          "z-50 border-emerald-500/50 shadow-2xl shadow-emerald-500/10",
+      )}
+    >
+      {/* Drag Handle - Always visible, inline on mobile/tablet, absolute on xl screens */}
+      <div
+        {...attributes}
+        {...listeners}
+        className="flex xl:absolute xl:-left-10 xl:top-1/2 xl:-translate-y-1/2 flex-col items-center justify-center p-2 text-slate-400 dark:text-slate-600 hover:text-slate-650 dark:hover:text-slate-350 transition-colors cursor-grab active:cursor-grabbing shrink-0 self-center xl:self-auto"
+      >
+        <svg width="12" height="20" viewBox="0 0 12 20" fill="currentColor">
+          <circle cx="2" cy="2" r="2" />
+          <circle cx="2" cy="10" r="2" />
+          <circle cx="2" cy="18" r="2" />
+          <circle cx="10" cy="2" r="2" />
+          <circle cx="10" cy="10" r="2" />
+          <circle cx="10" cy="18" r="2" />
+        </svg>
+      </div>
+
+      <div className="w-full md:w-56 shrink-0">
+        {item.type === "embed" ? (
+          <div className="aspect-video bg-slate-50 dark:bg-slate-900 rounded-2xl flex flex-col items-center justify-center border border-slate-200 dark:border-white/5 gap-2">
+            <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400">
+              <FaLink size={18} />
+            </div>
+            <Badge
+              variant="outline"
+              className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20 text-[9px] font-black tracking-widest"
+            >
+              EMBED
+            </Badge>
+          </div>
+        ) : (
+          <ImageUpload
+            value={item.url}
+            onChange={(url) => updateItem(index, "url", url)}
+            accept={item.type === "video" ? "video/*" : "image/*"}
+            aspect="video"
+          />
+        )}
+      </div>
+
+      <div className="flex-1 flex flex-col justify-between py-1">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div
+              className={cn(
+                "w-2.5 h-2.5 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.2)]",
+                item.type === "image"
+                  ? "bg-emerald-500 shadow-emerald-500/20"
+                  : item.type === "video"
+                    ? "bg-purple-500 shadow-purple-500/20"
+                    : "bg-blue-500 shadow-blue-500/20",
+              )}
+            />
+            <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors">
+              #{index + 1}{" "}
+              <span className="mx-2 text-slate-300 dark:text-slate-700">/</span>{" "}
+              <span
+                className={cn(
+                  "px-2 py-0.5 rounded-md text-[10px] font-black",
+                  item.type === "image"
+                    ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                    : item.type === "video"
+                      ? "bg-purple-500/10 text-purple-600 dark:text-purple-400"
+                      : "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+                )}
+              >
+                {item.type}
+              </span>
+            </span>
+          </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => removeItem(index)}
+            className="h-8 w-8 text-slate-400 dark:text-slate-600 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all"
+          >
+            <FaTrash size={12} />
+          </Button>
+        </div>
+
+        <div className="space-y-4">
+          {item.type === "embed" && (
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 ml-1">
+                URL / Source
+              </label>
+              <div className="relative group/input">
+                <FaLink className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 group-focus-within/input:text-emerald-600 dark:group-focus-within/input:text-emerald-400 transition-colors" />
+                <Input
+                  className="bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-white/5 rounded-xl pl-12 h-11 focus-visible:ring-emerald-500/10 text-slate-900 dark:text-white shadow-inner dark:shadow-none"
+                  value={item.url}
+                  onChange={(e) => updateItem(index, "url", e.target.value)}
+                  placeholder="Source URL..."
+                />
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 ml-1">
+              Caption (Optional)
+            </label>
+            <div className="relative group/input">
+              <FaInfoCircle className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 group-focus-within/input:text-emerald-600 dark:group-focus-within/input:text-emerald-400 transition-colors" />
+              <Input
+                className="bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-white/5 rounded-xl pl-12 h-11 focus-visible:ring-emerald-500/10 text-slate-900 dark:text-white shadow-inner dark:shadow-none"
+                value={item.caption || ""}
+                onChange={(e) => updateItem(index, "caption", e.target.value)}
+                placeholder="Describe this media..."
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function MediaGalleryManager({
   media = [],
   onChange,
   label,
 }: MediaGalleryManagerProps) {
   const [embedInput, setEmbedInput] = useState<string | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
 
   const updateItem = (i: number, field: keyof MediaItem, val: any) => {
     const next = [...media];
@@ -36,7 +218,8 @@ export default function MediaGalleryManager({
   };
 
   const addItem = (type: MediaItem["type"]) => {
-    onChange([...media, { type, url: "", caption: "" }]);
+    const newId = `temp-${Math.random().toString(36).substring(2, 9)}`;
+    onChange([...media, { id: newId, type, url: "", caption: "" }]);
   };
 
   const removeItem = (i: number) => {
@@ -45,8 +228,33 @@ export default function MediaGalleryManager({
 
   const addEmbed = () => {
     if (!embedInput) return;
-    onChange([...media, { type: "embed", url: embedInput, caption: "" }]);
+    const newId = `temp-${Math.random().toString(36).substring(2, 9)}`;
+    onChange([
+      ...media,
+      { id: newId, type: "embed", url: embedInput, caption: "" },
+    ]);
     setEmbedInput(null);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = media.findIndex((item, index) => {
+      const stableId =
+        item.id || item._id || `legacy-${index}-${item.type}-${item.url}`;
+      return stableId === active.id;
+    });
+
+    const newIndex = media.findIndex((item, index) => {
+      const stableId =
+        item.id || item._id || `legacy-${index}-${item.type}-${item.url}`;
+      return stableId === over.id;
+    });
+
+    if (oldIndex !== -1 && newIndex !== -1) {
+      onChange(arrayMove(media, oldIndex, newIndex));
+    }
   };
 
   return (
@@ -127,134 +335,35 @@ export default function MediaGalleryManager({
         )}
       </AnimatePresence>
 
-      <Reorder.Group
-        axis="y"
-        values={media}
-        onReorder={onChange}
-        className="space-y-4"
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
       >
-        {media.map((item, i) => (
-          <Reorder.Item
-            key={item.url || i}
-            value={item}
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 10 }}
-            className="group relative bg-slate-950/60 backdrop-blur-xl border border-white/5 rounded-[2.5rem] p-6 flex flex-col md:flex-row gap-8 hover:border-white/10 hover:bg-slate-900/80 transition-all duration-500 shadow-2xl"
-          >
-            <div className="w-full md:w-56 shrink-0">
-              {item.type === "embed" ? (
-                <div className="aspect-square bg-slate-900 rounded-3xl flex flex-col items-center justify-center border border-white/5 gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-400">
-                    <FaLink size={24} />
-                  </div>
-                  <Badge
-                    variant="outline"
-                    className="bg-blue-500/10 text-blue-400 border-blue-500/20 text-[10px]"
-                  >
-                    EMBED
-                  </Badge>
-                </div>
-              ) : (
-                <ImageUpload
-                  value={item.url}
-                  onChange={(url) => updateItem(i, "url", url)}
-                  accept={item.type === "video" ? "video/*" : "image/*"}
-                />
-              )}
-            </div>
-
-            <div className="flex-1 space-y-4 pt-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div
-                    className={cn(
-                      "w-2.5 h-2.5 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.2)]",
-                      item.type === "image"
-                        ? "bg-emerald-500 shadow-emerald-500/20"
-                        : item.type === "video"
-                          ? "bg-purple-500 shadow-purple-500/20"
-                          : "bg-blue-500 shadow-blue-500/20",
-                    )}
-                  />
-                  <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-slate-300 transition-colors">
-                    Asset #{i + 1}{" "}
-                    <span className="mx-2 text-slate-800">/</span>{" "}
-                    <span
-                      className={cn(
-                        "px-2 py-0.5 rounded-md text-[10px]",
-                        item.type === "image"
-                          ? "bg-emerald-500/10 text-emerald-400"
-                          : item.type === "video"
-                            ? "bg-purple-500/10 text-purple-400"
-                            : "bg-blue-500/10 text-blue-400",
-                      )}
-                    >
-                      {item.type}
-                    </span>
-                  </span>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => removeItem(i)}
-                  className="h-8 w-8 text-slate-600 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all"
-                >
-                  <FaTrash size={12} />
-                </Button>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">
-                  URL / Source
-                </label>
-                <div className="relative group/input">
-                  <FaLink className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within/input:text-slate-400 transition-colors" />
-                  <Input
-                    className="bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-white/5 rounded-xl pl-12 h-11 focus-visible:ring-emerald-500/10 text-slate-900 dark:text-white shadow-inner dark:shadow-none"
-                    value={item.url}
-                    onChange={(e) => updateItem(i, "url", e.target.value)}
-                    placeholder="Source URL..."
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">
-                  Caption (Optional)
-                </label>
-                <div className="relative group/input">
-                  <FaInfoCircle className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-700 group-focus-within/input:text-slate-400 transition-colors" />
-                  <Input
-                    className="bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-white/5 rounded-xl pl-12 h-11 focus-visible:ring-emerald-500/10 text-slate-900 dark:text-white shadow-inner dark:shadow-none"
-                    value={item.caption || ""}
-                    onChange={(e) => updateItem(i, "caption", e.target.value)}
-                    placeholder="Describe this media..."
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="absolute -left-10 top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              <div className="cursor-grab active:cursor-grabbing p-2 text-slate-600 hover:text-white transition-colors">
-                <svg
-                  width="12"
-                  height="20"
-                  viewBox="0 0 12 20"
-                  fill="currentColor"
-                >
-                  <circle cx="2" cy="2" r="2" />
-                  <circle cx="2" cy="10" r="2" />
-                  <circle cx="2" cy="18" r="2" />
-                  <circle cx="10" cy="2" r="2" />
-                  <circle cx="10" cy="10" r="2" />
-                  <circle cx="10" cy="18" r="2" />
-                </svg>
-              </div>
-            </div>
-          </Reorder.Item>
-        ))}
-      </Reorder.Group>
+        <SortableContext
+          items={media.map(
+            (item, index) =>
+              item.id || item._id || `legacy-${index}-${item.type}-${item.url}`,
+          )}
+          strategy={verticalListSortingStrategy}
+        >
+          <div className="space-y-4">
+            {media.map((item, index) => (
+              <SortableMediaItem
+                key={
+                  item.id ||
+                  item._id ||
+                  `legacy-${index}-${item.type}-${item.url}`
+                }
+                item={item}
+                index={index}
+                updateItem={updateItem}
+                removeItem={removeItem}
+              />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
 
       {media.length === 0 && (
         <div className="group/empty relative py-16 border-2 border-dashed border-slate-200 dark:border-white/5 rounded-[2.5rem] bg-white dark:bg-slate-950/20 flex flex-col items-center justify-center gap-6 overflow-hidden transition-all hover:border-emerald-500/20 hover:bg-emerald-500/5 shadow-sm dark:shadow-none">

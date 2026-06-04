@@ -88,7 +88,7 @@ function SortableProjectCard({
     <div
       ref={setNodeRef}
       style={style}
-      className="group relative flex items-center gap-4 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10 rounded-[1.5rem] p-2 transition-all duration-300 shadow-sm dark:shadow-none"
+      className="group relative flex items-center gap-4 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10 rounded-xl p-2 transition-all duration-300 shadow-sm dark:shadow-none"
     >
       {/* Drag handle */}
       <div
@@ -138,25 +138,25 @@ function SortableProjectCard({
                 </Badge>
               ))
             : project.category && (
-                <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px] font-black rounded-lg px-2 py-0.5">
+                <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-[10px] font-black rounded-lg px-2 py-0.5 shadow-sm dark:shadow-none">
                   {project.category}
                 </Badge>
               )}
           {(project.techNames ?? []).slice(0, 3).map((t) => (
             <span
               key={t}
-              className="text-[10px] text-slate-500 bg-slate-800/50 px-1.5 py-0.5 rounded-md font-medium"
+              className="text-[10px] text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/50 border border-slate-200/60 dark:border-white/5 px-1.5 py-0.5 rounded-md font-medium"
             >
               {t}
             </span>
           ))}
           {(project.techNames?.length ?? 0) > 3 && (
-            <span className="text-[10px] text-slate-600">
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
               +{(project.techNames?.length ?? 0) - 3}
             </span>
           )}
         </div>
-        <div className="flex items-center gap-3 text-[10px] text-slate-600">
+        <div className="flex items-center gap-3 text-[10px] text-slate-600 dark:text-slate-400">
           {mediaCount > 0 && (
             <span className="flex items-center gap-1">
               {imgCount > 0 && (
@@ -190,7 +190,7 @@ function SortableProjectCard({
           onClick={onEdit}
           size="icon"
           variant="ghost"
-          className="h-9 w-9 rounded-xl bg-slate-800 border border-white/5 text-slate-400 hover:text-white hover:bg-slate-700"
+          className="h-9 w-9 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-white/5 text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-500/10 dark:hover:bg-emerald-500/15 transition-all"
         >
           <FaEdit size={12} />
         </Button>
@@ -199,7 +199,7 @@ function SortableProjectCard({
           disabled={deleting}
           size="icon"
           variant="ghost"
-          className="h-9 w-9 rounded-xl bg-slate-800 border border-white/5 text-slate-500 hover:text-red-400 hover:bg-red-400/10 disabled:opacity-40"
+          className="h-9 w-9 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-white/5 text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-500/10 dark:hover:bg-red-500/15 disabled:opacity-40 transition-all"
         >
           <FaTrash size={12} />
         </Button>
@@ -221,7 +221,7 @@ function DragOverlayCard({ project }: { project: Project }) {
       <div className="cursor-grabbing text-emerald-400 shrink-0">
         <FaGripVertical size={14} />
       </div>
-      <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-700 shrink-0 border border-white/10">
+      <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0 border border-slate-200 dark:border-white/10">
         {thumb ? (
           <div className="relative w-full h-full">
             <Image
@@ -232,7 +232,7 @@ function DragOverlayCard({ project }: { project: Project }) {
             />
           </div>
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-slate-600">
+          <div className="w-full h-full flex items-center justify-center text-slate-700">
             <FaImage size={20} />
           </div>
         )}
@@ -242,7 +242,7 @@ function DragOverlayCard({ project }: { project: Project }) {
           {project.featured && (
             <FaStar className="text-amber-400 shrink-0" size={11} />
           )}
-          <h3 className="font-bold text-white text-sm truncate">
+          <h3 className="font-bold text-slate-900 dark:text-white text-sm truncate">
             {project.title}
           </h3>
         </div>
@@ -251,18 +251,18 @@ function DragOverlayCard({ project }: { project: Project }) {
             ? project.category.map((cat) => (
                 <Badge
                   key={cat}
-                  className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px] font-black rounded-lg px-2 py-0.5"
+                  className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-[10px] font-black rounded-lg px-2 py-0.5 shadow-sm dark:shadow-none"
                 >
                   {cat}
                 </Badge>
               ))
             : project.category && (
-                <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px] font-black rounded-lg px-2 py-0.5">
+                <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-[10px] font-black rounded-lg px-2 py-0.5 shadow-sm dark:shadow-none">
                   {project.category}
                 </Badge>
               )}
         </div>
-        <div className="flex items-center gap-3 text-[10px] text-slate-500">
+        <div className="flex items-center gap-3 text-[10px] text-slate-600 dark:text-slate-400">
           {mediaCount > 0 && (
             <span className="flex items-center gap-1">
               {imgCount > 0 && (
