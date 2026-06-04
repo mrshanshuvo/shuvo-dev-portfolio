@@ -245,4 +245,14 @@ _Chronological log of agent interactions, tasks completed, and context switches.
   - Fixed Next.js Image aspect ratio warnings and UI blowup issues by enforcing explicit w-[24px] h-[24px] boundaries.
   - Tweaked Hero UI tooltip positioning so tooltips open cleanly below the icon with correct caret placement.
 - **Next Steps:** Await next task from the user.
+## [2026-06-04] Project and Playground Card Redesign & Alignment
 
+- **Task:** Update the visual design, hover effects, and typography hierarchy for project and playground cards, aligning them with the minimal premium aesthetic.
+- **Actions:**
+  - **Project Card Redesign:** Rebuilt `ProjectCard.tsx` with a full-cover background image and a dark gradient overlay. Removed the legacy 3D tilt interactions in favor of high-fidelity, performance-optimized CSS hover transitions (subtle emerald shadow glow, border highlights, image scale, and text brightening).
+  - **Color Separation:** Applied distinct colors to the card elements: title in `text-emerald-400` default (to `text-emerald-300` on hover), description in `text-slate-300` (to `text-slate-100` on hover), and tech badges in soft `text-emerald-300` with tinted border washes.
+  - **Arrow Micro-animations:** Integrated a standard external link arrow icon (`↗`) next to the title that smoothly fades in and translates up/right on card hover.
+  - **Playground Card Alignment:** Completely refactored `PlaygroundCard.tsx` to match the exact full-cover layout, fixed heights (`h-100 sm:h-112.5`), and visual structure of `ProjectCard.tsx`. Replaced the legacy 3D tilt effects with identical hover transitions tailored to a custom purple brand theme (`text-purple-400` title, `text-slate-300` description, and `text-purple-300` tech badges).
+  - **Removed GitHub Link:** Removed the GitHub link button/icon from `PlaygroundCard.tsx` as requested by the user, leaving the direct live lab button.
+  - **Archive View Badges Fix:** Resolved missing technology badges in the complete projects archive view (`/projects`) by fetching the `iconRegistry` in `projects/page.tsx` and passing it down to `ProjectsArchiveClient` and each nested `ProjectCard`.
+- **Next Steps:** Await next task from the user.
