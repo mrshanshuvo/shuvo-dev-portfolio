@@ -22,7 +22,15 @@ export default function EducationClient({ education }: Props) {
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const [expandedIndices, setExpandedIndices] = useState<number[]>([]);
+
+  const isExpanded = (index: number) => expandedIndices.includes(index);
+
+  const toggleExpand = (index: number) => {
+    setExpandedIndices((prev) =>
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
+    );
+  };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -57,16 +65,16 @@ export default function EducationClient({ education }: Props) {
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
           {education.map((edu, index) => (
             <motion.div
               key={index}
               variants={itemVariants}
               initial="hidden"
               animate={isInView ? "visible" : "hidden"}
-              className="h-full"
+              className=""
             >
-              <Card className="group h-full relative bg-white/50 dark:bg-slate-900/40 backdrop-blur-2xl rounded-2xl p-1 border border-slate-200/50 dark:border-white/5 shadow-2xl hover:shadow-[0_20px_50px_rgba(59,130,246,0.15)] transition-all duration-700 overflow-hidden flex flex-col">
+              <Card className="group relative bg-white/50 dark:bg-slate-900/40 backdrop-blur-2xl rounded-2xl p-1 border border-slate-200/50 dark:border-white/5 shadow-2xl hover:shadow-[0_20px_50px_rgba(59,130,246,0.15)] transition-all duration-700 overflow-hidden flex flex-col">
                 {/* Decorative Accent */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-blue-500/10 to-transparent blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
@@ -75,12 +83,29 @@ export default function EducationClient({ education }: Props) {
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 space-y-2">
                         {/* Institution Badge */}
-                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-500/5 dark:bg-blue-500/10 border border-blue-500/10 rounded-full">
-                          <div className="w-1 h-1 bg-blue-500 rounded-full animate-pulse" />
-                          <span className="text-[10px] font-black uppercase tracking-[0.15em] text-blue-600 dark:text-blue-400">
-                            {edu.institution}
-                          </span>
-                        </div>
+                        {edu.link ? (
+                          <a
+                            href={edu.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group/inst inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-500/5 dark:bg-blue-500/10 hover:bg-blue-500/10 dark:hover:bg-blue-500/20 border border-blue-500/10 hover:border-blue-500/30 rounded-full transition-all duration-300 cursor-pointer"
+                          >
+                            <span className="text-[10px] font-black uppercase tracking-[0.15em] text-blue-600 dark:text-blue-400 group-hover/inst:text-blue-500 dark:group-hover/inst:text-blue-300 flex items-center gap-1 transition-colors duration-300">
+                              {edu.institution}
+                              <FaExternalLinkAlt
+                                size={8}
+                                className="group-hover/inst:translate-x-0.5 group-hover/inst:-translate-y-0.5 transition-transform"
+                              />
+                            </span>
+                          </a>
+                        ) : (
+                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-500/5 dark:bg-blue-500/10 border border-blue-500/10 rounded-full">
+                            <div className="w-1 h-1 bg-blue-500 rounded-full animate-pulse" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.15em] text-blue-600 dark:text-blue-400">
+                              {edu.institution}
+                            </span>
+                          </div>
+                        )}
 
                         <h3 className="font-display text-lg md:text-xl font-semibold text-slate-900 dark:text-white leading-[1.2] tracking-tight group-hover:text-blue-500 transition-colors duration-300">
                           {edu.degree}
@@ -122,7 +147,7 @@ export default function EducationClient({ education }: Props) {
                       )}
                       {edu.gpa && (
                         <Badge className="bg-blue-500 text-white border-none font-black px-1.5 py-0.5 text-[10px] rounded shadow-md shadow-blue-500/10">
-                          GPA {edu.gpa}
+                          CGPA {edu.gpa}
                         </Badge>
                       )}
                     </div>
@@ -135,18 +160,14 @@ export default function EducationClient({ education }: Props) {
                           Academic Details
                         </span>
                         <button
-                          onClick={() =>
-                            setExpandedIndex(
-                              expandedIndex === index ? null : index,
-                            )
-                          }
+                          onClick={() => toggleExpand(index)}
                           className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-500 shadow-md ${
-                            expandedIndex === index
+                            isExpanded(index)
                               ? "bg-blue-500 text-white shadow-blue-500/30"
                               : "bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-blue-500 hover:text-white hover:shadow-blue-500/10"
                           }`}
                         >
-                          {expandedIndex === index ? (
+                          {isExpanded(index) ? (
                             <FaMinus size={12} />
                           ) : (
                             <FaPlus size={12} />
@@ -155,7 +176,7 @@ export default function EducationClient({ education }: Props) {
                       </div>
 
                       <AnimatePresence initial={false}>
-                        {expandedIndex === index && (
+                        {isExpanded(index) && (
                           <motion.div
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: "auto", opacity: 1 }}
@@ -190,23 +211,6 @@ export default function EducationClient({ education }: Props) {
                         )}
                       </AnimatePresence>
                     </div>
-
-                    {edu.link && (
-                      <motion.a
-                        href={edu.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="mt-4 inline-flex items-center justify-center gap-2 w-full py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-950 hover:bg-blue-600 dark:hover:bg-blue-50 transition-all rounded-xl text-[11px] font-black uppercase tracking-[0.15em] shadow-lg group/btn"
-                      >
-                        <FaExternalLinkAlt
-                          size={11}
-                          className="group-hover/btn:rotate-12 transition-transform"
-                        />
-                        Verify Credentials
-                      </motion.a>
-                    )}
                   </CardContent>
                 </div>
               </Card>

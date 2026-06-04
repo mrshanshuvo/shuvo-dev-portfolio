@@ -266,7 +266,6 @@ export default function AdminEducationPage() {
   });
 
   async function handleDelete(id: string) {
-
     setDeletingId(id);
     deleteMutation.mutate(id);
   }
@@ -345,209 +344,153 @@ export default function AdminEducationPage() {
       onDragStart={(e) => setActiveId(e.active.id as string)}
       onDragEnd={handleDragEnd}
     >
-      <div className="p-4 md:p-8 space-y-6">
+      <div className="p-4 md:p-8 space-y-4">
         <AnimatePresence>
-        {toast && (
-          <motion.div
-            initial={{ opacity: 0, y: -20, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: -20, x: "-50%" }}
-            className={cn(
-              "fixed top-8 left-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-2xl border backdrop-blur-xl shadow-2xl",
-              toast.type === "success"
-                ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
-                : "bg-red-500/20 border-red-500/50 text-red-400",
-            )}
-          >
-            <div
+          {toast && (
+            <motion.div
+              initial={{ opacity: 0, y: -20, x: "-50%" }}
+              animate={{ opacity: 1, y: 0, x: "-50%" }}
+              exit={{ opacity: 0, y: -20, x: "-50%" }}
               className={cn(
-                "p-1.5 rounded-full",
+                "fixed top-8 left-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-2xl border backdrop-blur-xl shadow-2xl",
                 toast.type === "success"
-                  ? "bg-emerald-500/20"
-                  : "bg-red-500/20",
+                  ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
+                  : "bg-red-500/20 border-red-500/50 text-red-400",
               )}
             >
-              {toast.type === "success" ? (
-                <FaCheck size={10} />
-              ) : (
-                <FaTimes size={10} />
-              )}
-            </div>
-            <span className="font-bold text-sm tracking-tight">
-              {toast.msg}
-            </span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex items-center justify-between bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-2xl p-4 shadow-sm dark:shadow-none">
-          <div className="flex items-center gap-3">
-            <Badge
-              variant="outline"
-              className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[10px]"
-            >
-              {data.length} Records
-            </Badge>
-          </div>
-          <Button
-            onClick={openNew}
-            className="bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold px-6 h-10 shadow-lg shadow-blue-600/20 active:scale-95 transition-all group text-xs"
-          >
-            <FaPlus className="mr-2 group-hover:rotate-90 transition-transform duration-300" />
-            Add Education
-          </Button>
-        </div>
-
-        <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
-          <CardHeader className="p-4 pb-1">
-            <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
-              Academic Journey
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-2">
-            {loading ? (
-              <div className="space-y-3">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="h-20 bg-slate-100 dark:bg-slate-800/20 rounded-2xl animate-pulse"
-                  />
-                ))}
-              </div>
-            ) : data.length === 0 ? (
-              <div className="text-center py-16 bg-white dark:bg-slate-950/20 rounded-3xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
-                <FaGraduationCap
-                  className="mx-auto text-slate-200 dark:text-slate-800 mb-4"
-                  size={40}
-                />
-                <p className="text-slate-400 dark:text-slate-500 font-medium">
-                  No education history found. Add your first record above.
-                </p>
-              </div>
-            ) : (
-              <SortableContext
-                items={data.map((s) => s._id!)}
-                strategy={verticalListSortingStrategy}
+              <div
+                className={cn(
+                  "p-1.5 rounded-full",
+                  toast.type === "success"
+                    ? "bg-emerald-500/20"
+                    : "bg-red-500/20",
+                )}
               >
-                <div className="space-y-3">
-                  <AnimatePresence mode="popLayout">
-                    {data.map((edu) => (
-                      <SortableEduRow
-                        key={edu._id}
-                        edu={edu}
-                        onEdit={() => openEdit(edu)}
-                        onDelete={() => handleDelete(edu._id!)}
-                        isDeleting={deletingId === edu._id}
-                      />
-                    ))}
-                  </AnimatePresence>
-                </div>
-              </SortableContext>
-            )}
-
-            {!loading && data.length > 0 && (
-              <p className="text-center text-[10px] text-slate-700 mt-8 font-bold uppercase tracking-widest">
-                Drag rows to reorder • Changes save automatically
-              </p>
-            )}
-          </CardContent>
-        </Card>
-      </div>{" "}
-      <AdminDialogShell
-        open={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        title={currentEdu?._id ? "Edit Academic Record" : "Add New Education"}
-        subtitle="Chronicle your academic journey and achievements"
-        icon={FaGraduationCap}
-        iconColor="text-blue-400"
-        accentColor="from-blue-500/5 to-indigo-500/5"
-        onSave={handleAddOrUpdate}
-        saving={saveMutation.isPending}
-        saveLabel={
-          currentEdu?._id ? "Update Academic File" : "Finalize Admission"
-        }
-        savingLabel="Recording..."
-        maxWidth="5xl"
-      >
-        {currentEdu && (
-          <div className="px-1">
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-10">
-              {/* Left Column: Branding */}
-              <div className="space-y-6">
-                <AdminField label="Institution Logo">
-                  <ImageUpload
-                    value={currentEdu.logo}
-                    onChange={(url) =>
-                      setCurrentEdu({ ...currentEdu, logo: url })
-                    }
-                  />
-                </AdminField>
-
-                <div className="p-6 bg-blue-500/5 border border-blue-500/10 dark:border-blue-500/20 rounded-3xl flex items-start gap-4 shadow-sm dark:shadow-none">
-                  <FaInfoCircle
-                    className="text-blue-600 dark:text-blue-400 shrink-0 mt-1"
-                    size={16}
-                  />
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-black uppercase tracking-wider text-blue-600 dark:text-blue-400/90">
-                      Academic Credibility
-                    </p>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
-                      Connecting your academic background with official
-                      institutions adds credibility to your profile.
-                    </p>
-                  </div>
-                </div>
+                {toast.type === "success" ? (
+                  <FaCheck size={10} />
+                ) : (
+                  <FaTimes size={10} />
+                )}
               </div>
+              <span className="font-bold text-sm tracking-tight">
+                {toast.msg}
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <div className="max-w-4xl mx-auto space-y-4">
+          <div className="flex items-center justify-between bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-2xl p-4 shadow-sm dark:shadow-none">
+            <div className="flex items-center gap-3">
+              <Badge
+                variant="outline"
+                className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[10px]"
+              >
+                {data.length} Records
+              </Badge>
+            </div>
+            <Button
+              onClick={openNew}
+              className="bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold px-6 h-10 shadow-lg shadow-blue-600/20 active:scale-95 transition-all group text-xs"
+            >
+              <FaPlus className="mr-2 group-hover:rotate-90 transition-transform duration-300" />
+              Add Education
+            </Button>
+          </div>
 
-              {/* Right Column: Academic Details */}
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <AdminField label="Degree / Course">
-                    <AdminInput
-                      icon={FaGraduationCap}
-                      value={currentEdu.degree}
-                      onChange={(e) =>
-                        setCurrentEdu({ ...currentEdu, degree: e.target.value })
-                      }
-                      placeholder="e.g. B.Sc in Computer Science"
+          <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
+            <CardHeader className="p-4 pb-1">
+              <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
+                Academic Journey
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-2">
+              {loading ? (
+                <div className="space-y-3">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="h-20 bg-slate-100 dark:bg-slate-800/20 rounded-2xl animate-pulse"
                     />
-                  </AdminField>
-                  <AdminField label="Institution">
-                    <AdminInput
-                      icon={FaUniversity}
-                      value={currentEdu.institution}
-                      onChange={(e) =>
-                        setCurrentEdu({
-                          ...currentEdu,
-                          institution: e.target.value,
-                        })
-                      }
-                      placeholder="e.g. Stanford University"
-                    />
-                  </AdminField>
+                  ))}
                 </div>
+              ) : data.length === 0 ? (
+                <div className="text-center py-16 bg-white dark:bg-slate-950/20 rounded-3xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
+                  <FaGraduationCap
+                    className="mx-auto text-slate-200 dark:text-slate-800 mb-4"
+                    size={40}
+                  />
+                  <p className="text-slate-400 dark:text-slate-500 font-medium">
+                    No education history found. Add your first record above.
+                  </p>
+                </div>
+              ) : (
+                <SortableContext
+                  items={data.map((s) => s._id!)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="space-y-3">
+                    <AnimatePresence mode="popLayout">
+                      {data.map((edu) => (
+                        <SortableEduRow
+                          key={edu._id}
+                          edu={edu}
+                          onEdit={() => openEdit(edu)}
+                          onDelete={() => handleDelete(edu._id!)}
+                          isDeleting={deletingId === edu._id}
+                        />
+                      ))}
+                    </AnimatePresence>
+                  </div>
+                </SortableContext>
+              )}
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                  <AdminField label="Location">
-                    <AdminInput
-                      icon={FaMapMarkerAlt}
-                      value={currentEdu.location}
-                      onChange={(e) =>
-                        setCurrentEdu({
-                          ...currentEdu,
-                          location: e.target.value,
-                        })
+              {!loading && data.length > 0 && (
+                <p className="text-center text-[10px] text-slate-700 mt-8 font-bold uppercase tracking-widest">
+                  Drag rows to reorder • Changes save automatically
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </div>{" "}
+        <AdminDialogShell
+          open={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+          title={currentEdu?._id ? "Edit Academic Record" : "Add New Education"}
+          subtitle="Chronicle your academic journey and achievements"
+          icon={FaGraduationCap}
+          iconColor="text-blue-400"
+          accentColor="from-blue-500/5 to-indigo-500/5"
+          onSave={handleAddOrUpdate}
+          saving={saveMutation.isPending}
+          saveLabel={
+            currentEdu?._id ? "Update Academic File" : "Finalize Admission"
+          }
+          savingLabel="Recording..."
+          maxWidth="5xl"
+        >
+          {currentEdu && (
+            <div className="px-1">
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr_3fr] gap-10">
+                {/* Left Column: Branding */}
+                <div className="space-y-4">
+                  <AdminField label="Institution Logo">
+                    <ImageUpload
+                      value={currentEdu.logo}
+                      onChange={(url) =>
+                        setCurrentEdu({ ...currentEdu, logo: url })
                       }
-                      placeholder="e.g. California, USA"
                     />
                   </AdminField>
+
                   <AdminField label="Period">
                     <AdminInput
                       icon={FaCalendarAlt}
                       value={currentEdu.period}
                       onChange={(e) =>
-                        setCurrentEdu({ ...currentEdu, period: e.target.value })
+                        setCurrentEdu({
+                          ...currentEdu,
+                          period: e.target.value,
+                        })
                       }
                       placeholder="e.g. 2020 - 2024"
                     />
@@ -564,27 +507,89 @@ export default function AdminEducationPage() {
                   </AdminField>
                 </div>
 
-                <AdminField label="Official Website">
-                  <AdminInput
-                    icon={FaLink}
-                    value={currentEdu.link}
-                    onChange={(e) =>
-                      setCurrentEdu({ ...currentEdu, link: e.target.value })
-                    }
-                    placeholder="https://university.edu"
-                  />
-                </AdminField>
-
-                <AdminField label="Academic Highlights">
-                  <div className="space-y-6">
-                    <div className="flex gap-3">
+                {/* Right Column: Academic Details */}
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <AdminField label="Degree / Course">
                       <AdminInput
-                        icon={FaInfoCircle}
-                        value={detailInput}
-                        onChange={(e) => setDetailInput(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
+                        icon={FaGraduationCap}
+                        value={currentEdu.degree}
+                        onChange={(e) =>
+                          setCurrentEdu({
+                            ...currentEdu,
+                            degree: e.target.value,
+                          })
+                        }
+                        placeholder="e.g. B.Sc in Computer Science"
+                      />
+                    </AdminField>
+                    <AdminField label="Institution">
+                      <AdminInput
+                        icon={FaUniversity}
+                        value={currentEdu.institution}
+                        onChange={(e) =>
+                          setCurrentEdu({
+                            ...currentEdu,
+                            institution: e.target.value,
+                          })
+                        }
+                        placeholder="e.g. Stanford University"
+                      />
+                    </AdminField>
+                  </div>
+
+                  <AdminField label="Location">
+                    <AdminInput
+                      icon={FaMapMarkerAlt}
+                      value={currentEdu.location}
+                      onChange={(e) =>
+                        setCurrentEdu({
+                          ...currentEdu,
+                          location: e.target.value,
+                        })
+                      }
+                      placeholder="e.g. California, USA"
+                    />
+                  </AdminField>
+
+                  <AdminField label="Official Website">
+                    <AdminInput
+                      icon={FaLink}
+                      value={currentEdu.link}
+                      onChange={(e) =>
+                        setCurrentEdu({ ...currentEdu, link: e.target.value })
+                      }
+                      placeholder="https://university.edu"
+                    />
+                  </AdminField>
+
+                  <AdminField label="Academic Highlights">
+                    <div className="space-y-4">
+                      <div className="flex gap-3">
+                        <AdminInput
+                          icon={FaInfoCircle}
+                          value={detailInput}
+                          onChange={(e) => setDetailInput(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              if (detailInput.trim()) {
+                                setCurrentEdu({
+                                  ...currentEdu,
+                                  details: [
+                                    ...currentEdu.details,
+                                    detailInput.trim(),
+                                  ],
+                                });
+                                setDetailInput("");
+                              }
+                            }
+                          }}
+                          placeholder="e.g. Dean's List, Research in AI, etc."
+                          className="h-12"
+                        />
+                        <Button
+                          onClick={() => {
                             if (detailInput.trim()) {
                               setCurrentEdu({
                                 ...currentEdu,
@@ -595,75 +600,56 @@ export default function AdminEducationPage() {
                               });
                               setDetailInput("");
                             }
-                          }
-                        }}
-                        placeholder="e.g. Dean's List, Research in AI, etc."
-                        className="h-12"
-                      />
-                      <Button
-                        onClick={() => {
-                          if (detailInput.trim()) {
-                            setCurrentEdu({
-                              ...currentEdu,
-                              details: [
-                                ...currentEdu.details,
-                                detailInput.trim(),
-                              ],
-                            });
-                            setDetailInput("");
-                          }
-                        }}
-                        className="bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white rounded-xl h-12 px-6 border border-slate-200 dark:border-white/5 font-bold shadow-inner shadow-black/5 dark:shadow-black/20"
-                      >
-                        Add
-                      </Button>
-                    </div>
-                    <div className="grid grid-cols-1 gap-3">
-                      <AnimatePresence mode="popLayout">
-                        {currentEdu.details.map((detail, i) => (
-                          <motion.div
-                            key={i}
-                            layout
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.9 }}
-                            className="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-white/5 rounded-2xl group/item shadow-inner shadow-black/5 dark:shadow-black/10"
-                          >
-                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0 group-hover/item:scale-150 transition-transform" />
-                            <span className="text-sm text-slate-700 dark:text-slate-300 flex-1 font-medium">
-                              {detail}
-                            </span>
-                            <button
-                              onClick={() =>
-                                setCurrentEdu({
-                                  ...currentEdu,
-                                  details: currentEdu.details.filter(
-                                    (_, idx) => idx !== i,
-                                  ),
-                                })
-                              }
-                              className="text-slate-600 hover:text-red-400 transition-colors p-2 hover:bg-red-400/10 rounded-lg"
+                          }}
+                          className="bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white rounded-xl h-12 px-6 border border-slate-200 dark:border-white/5 font-bold shadow-inner shadow-black/5 dark:shadow-black/20"
+                        >
+                          Add
+                        </Button>
+                      </div>
+                      <div className="grid grid-cols-1 gap-3">
+                        <AnimatePresence mode="popLayout">
+                          {currentEdu.details.map((detail, i) => (
+                            <motion.div
+                              key={i}
+                              layout
+                              initial={{ opacity: 0, scale: 0.9 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0, scale: 0.9 }}
+                              className="flex items-center gap-4 px-4 py-2 bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-white/5 rounded-xl group/item shadow-inner shadow-black/5 dark:shadow-black/10"
                             >
-                              <FaTimes size={14} />
-                            </button>
-                          </motion.div>
-                        ))}
-                      </AnimatePresence>
+                              <span className="text-sm text-slate-700 dark:text-slate-300 flex-1 font-medium">
+                                {detail}
+                              </span>
+                              <button
+                                onClick={() =>
+                                  setCurrentEdu({
+                                    ...currentEdu,
+                                    details: currentEdu.details.filter(
+                                      (_, idx) => idx !== i,
+                                    ),
+                                  })
+                                }
+                                className="text-slate-600 hover:text-red-400 transition-colors p-2 hover:bg-red-400/10 rounded-lg"
+                              >
+                                <FaTimes size={14} />
+                              </button>
+                            </motion.div>
+                          ))}
+                        </AnimatePresence>
+                      </div>
                     </div>
-                  </div>
-                </AdminField>
+                  </AdminField>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-      </AdminDialogShell>
-
-      <DragOverlay dropAnimation={null}>
-        {activeId ? (
-          <EduOverlay edu={data.find((s) => s._id === activeId)!} />
-        ) : null}
-      </DragOverlay>
-    </div>
+          )}
+        </AdminDialogShell>
+        <DragOverlay dropAnimation={null}>
+          {activeId ? (
+            <EduOverlay edu={data.find((s) => s._id === activeId)!} />
+          ) : null}
+        </DragOverlay>
+      </div>
     </DndContext>
   );
 }

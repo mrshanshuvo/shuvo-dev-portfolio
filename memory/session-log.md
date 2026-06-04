@@ -293,3 +293,14 @@ _Chronological log of agent interactions, tasks completed, and context switches.
   - **Schema & Interface Adjustments:** Restored `period` and `duration` as required fields inside their respective schemas and interfaces, and completely removed the unused `startDate` and `endDate` parameters from both the Mongoose schemas and frontend/backend TypeScript interfaces.
   - **Verification:** Ran a successful Next.js production build (`pnpm build`) to verify type safety and layout stability.
 - **Next Steps:** Await next task from the user.
+
+## [2026-06-04] UI Refinement: Education Card External Link Refactoring
+
+- **Task:** Refactor the educational external link display to simplify the card layout and improve aesthetic quality.
+- **Actions:**
+  - **Link Integration:** Modified [EducationClient.tsx](file:///c:/Users/Shovu/Desktop/portfolio/shuvo-portfolio/src/app/components/Education/EducationClient.tsx) to remove the full-width `"Visit Institution"` button at the bottom of the card.
+  - **Badge Linking:** Wrapped the existing institution badge at the top of each education card in a link (`a` tag) when `edu.link` is present, adding a hover effect and inline external link icon (`FaExternalLinkAlt`).
+  - **Height Stretching Fix:** Added `items-start` to the CSS Grid layout container in `EducationClient.tsx` and removed `h-full` constraints from card and wrapper components. This prevents collapsed cards in the same grid row from stretching and displaying empty blank spaces when a card is expanded.
+  - **Independent Card Toggle:** Refactored the expansion state from a single `expandedIndex` (which only allowed one card to be open at a time) to an array of `expandedIndices`. Users can now expand or collapse multiple cards independently.
+  - **Verification:** Ran a successful Next.js production build (`pnpm build`) to verify type safety and layout stability.
+- **Next Steps:** Await next task from the user.
