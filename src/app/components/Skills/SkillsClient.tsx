@@ -48,7 +48,7 @@ export default function SkillsClient({
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20"
+          className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-10"
         >
           <div className="text-left">
             <motion.h2

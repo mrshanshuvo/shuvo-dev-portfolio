@@ -5,6 +5,7 @@ import { FaArrowRight, FaCalendarAlt } from "react-icons/fa";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import Image from "next/image";
+import { formatRelativeTime } from "@/lib/utils";
 
 interface BlogCardProps {
   blog: Blog;
@@ -39,7 +40,7 @@ export default function BlogCard({ blog, index }: BlogCardProps) {
             </div>
             <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-xs font-bold">
               <FaCalendarAlt size={12} />
-              {blog.date}
+              {formatRelativeTime(blog.date)}
             </div>
           </div>
 

@@ -150,7 +150,7 @@ export default function Navbar({ resumeUrl }: Props) {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleNavClick("home")}
-                className="flex items-center gap-3 group relative z-10"
+                className="flex items-center gap-3 group relative z-10 cursor-pointer"
                 aria-label="Scroll to home"
               >
                 <div className="relative">

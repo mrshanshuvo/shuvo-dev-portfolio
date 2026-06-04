@@ -20,7 +20,7 @@ export default function ExperienceClient({ experiences }: Props) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16"
+          className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12"
         >
           <div className="text-left">
             <motion.h2

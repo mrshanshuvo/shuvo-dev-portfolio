@@ -32,13 +32,15 @@ import {
   FaTag,
   FaBookOpen,
   FaInfoCircle,
+  FaSearch,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { cn, formatRelativeTime } from "@/lib/utils";
 import ImageUpload from "../components/ImageUpload";
+import DateTimePicker from "../components/DateTimePicker";
 import { AdminDialogShell } from "../components/AdminDialogShell";
 import {
   AdminField,
@@ -80,78 +82,83 @@ function SortableBlogRow({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
+    opacity: isDragging ? 0.4 : 1,
   };
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className={cn(
-        "group flex items-center gap-4 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10 rounded-2xl p-2 transition-all duration-300 shadow-sm dark:shadow-none",
-        isDragging &&
-          "z-50 border-orange-500/50 shadow-2xl shadow-orange-500/10",
-      )}
+      className="group relative flex items-center gap-4 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10 rounded-[1.5rem] p-2 transition-all duration-300 shadow-sm dark:shadow-none"
     >
+      {/* Drag handle */}
       <div
         {...attributes}
         {...listeners}
-        className="cursor-grab active:cursor-grabbing text-slate-300 dark:text-slate-600 hover:text-orange-500 transition-colors"
+        className="cursor-grab active:cursor-grabbing text-slate-700 hover:text-slate-400 transition-colors shrink-0 touch-none"
       >
         <FaGripVertical size={14} />
       </div>
 
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-3">
-          {item.image ? (
-            <div className="relative w-12 h-8 rounded-lg overflow-hidden border border-white/10 shrink-0">
-              <Image
-                src={item.image}
-                alt={item.title}
-                fill
-                className="object-cover"
-              />
-            </div>
-          ) : (
-            <div className="p-2 bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-lg">
-              <FaNewspaper size={14} />
-            </div>
-          )}
-          <div className="min-w-0">
-            <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
-              {item.title}
-            </h3>
-            <div className="flex items-center gap-3 mt-0.5">
-              <span className="text-[10px] text-slate-500 font-medium flex items-center gap-1">
-                <FaCalendarAlt size={8} /> {item.date}
-              </span>
-              <div className="flex gap-1">
-                {item.tags.slice(0, 2).map((tag, i) => (
-                  <Badge
-                    key={i}
-                    variant="secondary"
-                    className="bg-white/5 text-[10px] text-slate-400 h-4 px-1.5 border-white/5 uppercase tracking-tighter"
-                  >
-                    {tag}
-                  </Badge>
-                ))}
-                {item.tags.length > 2 && (
-                  <span className="text-[10px] text-slate-600">
-                    +{item.tags.length - 2}
-                  </span>
-                )}
-              </div>
-            </div>
+      {/* Thumbnail */}
+      <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0 border border-slate-200 dark:border-white/5">
+        {item.image ? (
+          <div className="relative w-full h-full">
+            <Image
+              src={item.image}
+              alt={item.title}
+              fill
+              className="object-cover"
+            />
           </div>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-slate-700 dark:text-slate-400">
+            <FaNewspaper size={20} />
+          </div>
+        )}
+      </div>
+
+      {/* Info */}
+      <div className="flex-1 min-w-0 space-y-1.5">
+        <div className="flex items-center gap-2">
+          <h3 className="font-bold text-slate-900 dark:text-white text-sm truncate">
+            {item.title}
+          </h3>
+        </div>
+        <div className="flex items-center gap-2 flex-wrap">
+          {item.tags.slice(0, 3).map((t, i) => (
+            <span
+              key={i}
+              className="text-[10px] text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/50 border border-slate-200/60 dark:border-white/5 px-1.5 py-0.5 rounded-md font-medium"
+            >
+              {t}
+            </span>
+          ))}
+          {item.tags.length > 3 && (
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+              +{item.tags.length - 3}
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-3 text-[10px] text-slate-600 dark:text-slate-400">
+          <span className="flex items-center gap-1">
+            <FaCalendarAlt size={9} /> {formatRelativeTime(item.date)}
+          </span>
+          {item.link && (
+            <span className="flex items-center gap-1">
+              <FaLink size={9} /> Link
+            </span>
+          )}
         </div>
       </div>
 
-      <div className="flex items-center gap-2 transition-opacity">
+      {/* Actions */}
+      <div className="flex items-center gap-2 transition-opacity shrink-0">
         <Button
           variant="ghost"
           size="icon"
           onClick={onEdit}
-          className="h-8 w-8 rounded-lg text-slate-400 hover:text-orange-400 hover:bg-orange-400/10"
+          className="h-9 w-9 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-white/5 text-slate-600 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-orange-500/10 dark:hover:bg-orange-500/15 transition-all"
         >
           <FaEdit size={12} />
         </Button>
@@ -160,7 +167,7 @@ function SortableBlogRow({
           size="icon"
           onClick={onDelete}
           disabled={isDeleting}
-          className="h-8 w-8 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-400/10"
+          className="h-9 w-9 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-white/5 text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-500/10 dark:hover:bg-red-500/15 disabled:opacity-40 transition-all"
         >
           {isDeleting ? (
             <div className="h-3 w-3 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
@@ -181,44 +188,50 @@ function BlogOverlay({ item }: { item: Blog }) {
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-3">
-          {item.image ? (
-            <div className="relative w-12 h-8 rounded-lg overflow-hidden border border-white/10 shrink-0">
-              <Image
-                src={item.image}
-                alt={item.title}
-                fill
-                className="object-cover"
-              />
-            </div>
-          ) : (
-            <div className="p-2 bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-lg shrink-0">
-              <FaNewspaper size={14} />
-            </div>
-          )}
+          <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0 border border-slate-200 dark:border-white/5">
+            {item.image ? (
+              <div className="relative w-full h-full">
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-slate-700 dark:text-slate-400">
+                <FaNewspaper size={20} />
+              </div>
+            )}
+          </div>
           <div className="min-w-0">
             <h3 className="font-bold text-slate-900 dark:text-white truncate text-sm">
               {item.title}
             </h3>
-            <div className="flex items-center gap-3 mt-0.5">
-              <span className="text-[10px] text-slate-500 font-medium flex items-center gap-1">
-                <FaCalendarAlt size={8} /> {item.date}
+            <div className="flex gap-1 mt-0.5 flex-wrap">
+              {item.tags.slice(0, 3).map((t, i) => (
+                <span
+                  key={i}
+                  className="text-[10px] text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/50 border border-slate-200/60 dark:border-white/5 px-1.5 py-0.5 rounded-md font-medium"
+                >
+                  {t}
+                </span>
+              ))}
+              {item.tags.length > 3 && (
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                  +{item.tags.length - 3}
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-3 text-[10px] text-slate-600 dark:text-slate-400 mt-1">
+              <span className="flex items-center gap-1">
+                <FaCalendarAlt size={9} /> {formatRelativeTime(item.date)}
               </span>
-              <div className="flex gap-1">
-                {item.tags.slice(0, 2).map((tag, i) => (
-                  <Badge
-                    key={i}
-                    variant="secondary"
-                    className="bg-slate-100 dark:bg-white/5 text-[10px] text-slate-500 dark:text-slate-400 h-4 px-1.5 border-slate-200 dark:border-white/5 uppercase tracking-tighter"
-                  >
-                    {tag}
-                  </Badge>
-                ))}
-                {item.tags.length > 2 && (
-                  <span className="text-[10px] text-slate-600">
-                    +{item.tags.length - 2}
-                  </span>
-                )}
-              </div>
+              {item.link && (
+                <span className="flex items-center gap-1">
+                  <FaLink size={9} /> Link
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -236,6 +249,7 @@ export default function AdminBlogsPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentBlog, setCurrentBlog] = useState<Blog | null>(null);
   const [tagInput, setTagInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [toast, setToast] = useState<{
     msg: string;
     type: "success" | "error";
@@ -335,11 +349,7 @@ export default function AdminBlogsPage() {
       title: "",
       description: "",
       link: "",
-      date: new Date().toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      }),
+      date: new Date().toISOString(),
       tags: [],
       image: "",
       order: data.length,
@@ -363,6 +373,18 @@ export default function AdminBlogsPage() {
     }
     setActiveId(null);
   }
+
+  const filtered = data.filter((d) => {
+    const mSearch =
+      d.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      d.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (d.tags ?? []).some((t) =>
+        t.toLowerCase().includes(searchQuery.toLowerCase()),
+      );
+    return mSearch;
+  });
+
+  const isFiltered = !!searchQuery;
 
   return (
     <DndContext
@@ -406,50 +428,83 @@ export default function AdminBlogsPage() {
           )}
         </AnimatePresence>
 
-        <div className="max-w-4xl mx-auto space-y-6">
-          <div className="flex items-center justify-between bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-2xl p-4 shadow-sm dark:shadow-none">
-            <div className="flex items-center gap-3">
-              <Badge
-                variant="outline"
-                className="bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[10px]"
-              >
-                {data.length} Blog Posts
-              </Badge>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-2xl p-4 shadow-sm dark:shadow-none">
+          <div className="flex items-center gap-4 flex-wrap flex-1">
+            <div className="relative flex-1 min-w-45 max-w-xs">
+              <FaSearch
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600"
+                size={12}
+              />
+              <Input
+                className="bg-white dark:bg-slate-950 border-slate-200 dark:border-white/5 rounded-xl pl-9 h-10 text-xs focus-visible:ring-orange-500/30 text-slate-900 dark:text-white shadow-sm dark:shadow-none"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search blog posts..."
+              />
             </div>
-            <Button
-              onClick={openNew}
-              className="bg-orange-600 hover:bg-orange-500 text-white rounded-xl font-bold px-6 h-10 shadow-lg shadow-orange-600/20 active:scale-95 transition-all group text-xs"
+
+            <Badge
+              variant="outline"
+              className="bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[10px]"
             >
-              <FaPlus className="mr-2 group-hover:rotate-90 transition-transform duration-300" />
-              New Post
-            </Button>
+              {data.length} {data.length === 1 ? "Blog Post" : "Blog Posts"}
+            </Badge>
           </div>
 
-          <Card className="rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/40 backdrop-blur-xl overflow-hidden shadow-sm dark:shadow-none">
-            <CardHeader className="p-4 pb-1">
-              <CardTitle className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
-                Article Management
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-2">
-              {loading ? (
+          <div className="flex items-center gap-3">
+            <Button
+              onClick={openNew}
+              className="bg-orange-600 hover:bg-orange-500 text-white rounded-xl h-10 px-6 font-black shadow-lg shadow-orange-600/20 text-xs active:scale-95 transition-all"
+            >
+              <FaPlus className="mr-2" size={12} /> Add Post
+            </Button>
+          </div>
+        </div>
+
+        <div className="w-full">
+          {loading ? (
+            <div className="space-y-3">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-24 bg-slate-900/30 rounded-[1.5rem] animate-pulse border border-white/5"
+                />
+              ))}
+            </div>
+          ) : data.length === 0 ? (
+            <div className="py-32 text-center border-2 border-dashed border-slate-200 dark:border-white/5 rounded-[3rem]">
+              <FaNewspaper
+                size={48}
+                className="mx-auto text-slate-800 mb-4 animate-pulse"
+              />
+              <h3 className="text-xl font-bold text-slate-400 mb-2">
+                No blog posts yet
+              </h3>
+              <p className="text-slate-600 text-sm mb-8">
+                Share your knowledge and technical insights with the world.
+              </p>
+              <Button
+                onClick={openNew}
+                className="bg-orange-600/10 text-orange-400 hover:bg-orange-600/20 border border-orange-500/20 px-8 h-12 rounded-xl font-bold"
+              >
+                <FaPlus className="mr-2" /> Add First Post
+              </Button>
+            </div>
+          ) : (
+            <>
+              {isFiltered ? (
                 <div className="space-y-3">
-                  {Array.from({ length: 3 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className="h-16 bg-slate-100 dark:bg-slate-800/20 rounded-2xl animate-pulse"
-                    />
-                  ))}
-                </div>
-              ) : data.length === 0 ? (
-                <div className="text-center py-16 bg-white dark:bg-slate-950/20 rounded-3xl border border-dashed border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
-                  <FaNewspaper
-                    className="mx-auto text-slate-200 dark:text-slate-800 mb-4"
-                    size={40}
-                  />
-                  <p className="text-slate-400 dark:text-slate-500 font-medium">
-                    No blog posts found. Share your first story above.
-                  </p>
+                  <AnimatePresence mode="popLayout">
+                    {filtered.map((item) => (
+                      <SortableBlogRow
+                        key={item._id}
+                        item={item}
+                        onEdit={() => openEdit(item)}
+                        onDelete={() => handleDelete(item._id!)}
+                        isDeleting={deletingId === item._id}
+                      />
+                    ))}
+                  </AnimatePresence>
                 </div>
               ) : (
                 <SortableContext
@@ -472,13 +527,13 @@ export default function AdminBlogsPage() {
                 </SortableContext>
               )}
 
-              {!loading && data.length > 0 && (
-                <p className="text-center text-[10px] text-slate-400 dark:text-slate-700 mt-8 font-bold uppercase tracking-widest">
-                  Drag rows to reorder • Changes save automatically
-                </p>
-              )}
-            </CardContent>
-          </Card>
+              <p className="text-center text-[10px] text-slate-700 mt-8 font-bold uppercase tracking-widest">
+                {isFiltered
+                  ? `Showing ${filtered.length} of ${data.length} blog posts`
+                  : "Drag rows to reorder • Changes save automatically"}
+              </p>
+            </>
+          )}
         </div>
 
         <AdminDialogShell
@@ -528,35 +583,32 @@ export default function AdminBlogsPage() {
                 </div>
 
                 {/* Right Column: Article Details */}
-                <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <AdminField label="Article Title">
-                      <AdminInput
-                        icon={FaBookOpen}
-                        value={currentBlog.title}
-                        onChange={(e) =>
-                          setCurrentBlog({
-                            ...currentBlog,
-                            title: e.target.value,
-                          })
-                        }
-                        placeholder="e.g. Master Next.js 14 Server Actions"
-                      />
-                    </AdminField>
-                    <AdminField label="Publish Date">
-                      <AdminInput
-                        icon={FaCalendarAlt}
-                        value={currentBlog.date}
-                        onChange={(e) =>
-                          setCurrentBlog({
-                            ...currentBlog,
-                            date: e.target.value,
-                          })
-                        }
-                        placeholder="e.g. May 15, 2024"
-                      />
-                    </AdminField>
-                  </div>
+                <div className="space-y-4">
+                  <AdminField label="Article Title">
+                    <AdminInput
+                      icon={FaBookOpen}
+                      value={currentBlog.title}
+                      onChange={(e) =>
+                        setCurrentBlog({
+                          ...currentBlog,
+                          title: e.target.value,
+                        })
+                      }
+                      placeholder="e.g. Master Next.js 14 Server Actions"
+                    />
+                  </AdminField>
+
+                  <AdminField label="Publish Date">
+                    <DateTimePicker
+                      value={currentBlog.date}
+                      onChange={(val) =>
+                        setCurrentBlog({
+                          ...currentBlog,
+                          date: val,
+                        })
+                      }
+                    />
+                  </AdminField>
 
                   <AdminField label="Article Source URL">
                     <AdminInput
