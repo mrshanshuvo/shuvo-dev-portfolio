@@ -10,7 +10,10 @@ interface Props {
 
 export default function ExperienceClient({ experiences }: Props) {
   return (
-    <section id="experience" className="scroll-mt-28 py-24 bg-slate-50 dark:bg-slate-900">
+    <section
+      id="experience"
+      className="scroll-mt-28 py-24 bg-slate-50 dark:bg-slate-900"
+    >
       <div className="max-w-350 mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -34,7 +37,7 @@ export default function ExperienceClient({ experiences }: Props) {
         {experiences.length === 0 ? (
           <p className="text-center text-slate-400">No entries yet.</p>
         ) : (
-          <div className="flex flex-col gap-12 lg:gap-8 group/list">
+          <div className="flex px-12 flex-col gap-12 lg:gap-8 group/list">
             {experiences.map((exp, i) => (
               <motion.div
                 key={exp._id ?? i}
