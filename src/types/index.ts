@@ -40,8 +40,6 @@ export interface Experience {
   title: string;
   org: string;
   duration?: string; // backward compatibility
-  startDate?: string; // ISO date string
-  endDate?: string; // ISO date string, undefined/null means current
   details: string[];
   order?: number;
   url?: string;
@@ -103,8 +101,6 @@ export interface Education {
   location: string;
   logo: string;
   period?: string;
-  startDate?: string;
-  endDate?: string;
   gpa: string;
   details: string[];
   link: string;

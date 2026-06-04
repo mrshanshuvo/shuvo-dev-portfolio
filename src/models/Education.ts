@@ -6,8 +6,6 @@ export interface IEducation extends Document {
   location?: string; // Optional
   logo?: string; // Optional
   period: string;
-  startDate?: Date; // Optional
-  endDate?: Date; // Nullable/optional where null means current study
   gpa?: string; // Optional (allows custom GPA formats like 3.8/4.0)
   details: string[];
   link?: string; // Optional
@@ -23,8 +21,6 @@ const EducationSchema = new Schema<IEducation>(
     location: { type: String, default: "" }, // Optional
     logo: { type: String, default: "" }, // Optional
     period: { type: String, required: true },
-    startDate: { type: Date }, // Optional
-    endDate: { type: Date },
     gpa: { type: String, default: "" }, // Optional
     details: { type: [String], default: [] },
     link: { type: String, default: "" }, // Optional
