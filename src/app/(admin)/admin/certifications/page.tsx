@@ -261,7 +261,6 @@ export default function AdminCertificationsPage() {
   });
 
   async function handleDelete(id: string) {
-
     setDeletingId(id);
     deleteMutation.mutate(id);
   }
@@ -486,7 +485,7 @@ export default function AdminCertificationsPage() {
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                     <AdminField label="Badge Logo">
-                      <div className="w-26 h-26">
+                      <div className="w-24 h-24">
                         <ImageUpload
                           value={currentCert.badgeLogo || ""}
                           onChange={(url) =>

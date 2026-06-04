@@ -232,7 +232,7 @@ export default function Contact({
                           alt={social.label}
                           width={18}
                           height={18}
-                          className={`object-contain w-4.5 h-4.5 ${social.invertDark ? "dark:invert" : ""}`}
+                          className={`object-contain ${social.invertDark ? "dark:invert" : ""}`}
                         />
                       ) : (
                         <social.icon className="text-lg" />

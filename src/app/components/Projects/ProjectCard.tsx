@@ -143,7 +143,7 @@ export default function ProjectCard({
                       alt={name}
                       width={14}
                       height={14}
-                      className="object-contain shrink-0 w-3.5 h-3.5"
+                      className="object-contain shrink-0"
                     />
                   )}
                   {name}

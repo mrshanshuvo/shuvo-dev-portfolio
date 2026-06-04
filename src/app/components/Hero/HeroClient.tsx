@@ -202,7 +202,7 @@ export default function HeroClient({ hero }: Props) {
                           alt={social.label}
                           width={24}
                           height={24}
-                          className={`object-contain w-6 h-6 group-hover:scale-110 transition-transform duration-300 ${social.invertDark ? "dark:invert" : ""}`}
+                          className={`object-contain group-hover:scale-110 transition-transform duration-300 ${social.invertDark ? "dark:invert" : ""}`}
                         />
                       ) : (
                         <FaLink

@@ -166,17 +166,17 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                 <Image
                   src="/favicons/light-mode-1.svg"
                   alt="Logo"
-                  width={24}
-                  height={24}
-                  className="w-7 h-7 dark:hidden"
+                  width={28}
+                  height={28}
+                  className="dark:hidden"
                   priority
                 />
                 <Image
                   src="/favicons/dark-mode-1.svg"
                   alt="Logo"
-                  width={24}
-                  height={24}
-                  className="w-7 h-7 hidden dark:block"
+                  width={28}
+                  height={28}
+                  className="hidden dark:block"
                   priority
                 />
               </div>
