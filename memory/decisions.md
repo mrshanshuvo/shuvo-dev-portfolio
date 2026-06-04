@@ -81,3 +81,16 @@ _This file tracks significant design and architectural decisions made during dev
   4. Created a database migration script that registers missing technologies (e.g. TensorFlow.js, Leaflet, Firebase, GLSL) and maps the existing projects and playground demos to their correct `technologyIds`.
 - **Consequences:** Restores full visual rendering of all technology badges on all public cards (homepage grids, archive views, and details pages) while keeping the database strictly normalized.
 
+### [2026-06-04] - Removal of Blocking Browser Confirm Dialogs
+
+- **Context:** Admin list rows feature a custom progress loader spinner that lights up upon clicking the delete icon. Under this visual feedback mechanism, prompt-based validation dialogue blocks (`confirm()`) are redundant, slowing down content authoring workflows.
+- **Decision:** Stripped blocking `confirm()` dialogues from delete handlers across all 8 CRUD collections.
+- **Consequences:** Deletion is now immediate. The loading state on the individual row's trash button serves as the real-time interaction feedback.
+
+### [2026-06-04] - Strict next/image Sizing Constraints & Class Cleanup
+
+- **Context:** Styling `<Image>` tags with conflicting layout properties (like setting explicit `width` and `height` attributes alongside responsive `w-... h-...` class names) triggers console aspect-ratio and Cumulative Layout Shift warnings.
+- **Decision:** Keep styling and properties aligned:
+  - If sizing via next/image `width`/`height` props, avoid size classes (`w-` and `h-`) completely to prevent CSS overriding attributes unevenly.
+  - If sizing using Tailwind or parent elements, use next/image `fill` or `style={{ width: "auto" }}` / `style={{ height: "auto" }}` to retain native scale compliance.
+- **Consequences:** Completely silences Next.js image warnings across compile and browser runs, improving Cumulative Layout Shift parameters.

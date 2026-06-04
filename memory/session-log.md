@@ -245,7 +245,8 @@ _Chronological log of agent interactions, tasks completed, and context switches.
   - Fixed Next.js Image aspect ratio warnings and UI blowup issues by enforcing explicit w-[24px] h-[24px] boundaries.
   - Tweaked Hero UI tooltip positioning so tooltips open cleanly below the icon with correct caret placement.
 - **Next Steps:** Await next task from the user.
-## [2026-06-04] Project and Playground Card Redesign & Alignment
+
+## [2026-06-04] Project and Playground Card Redesign & Alignment
 
 - **Task:** Update the visual design, hover effects, and typography hierarchy for project and playground cards, aligning them with the minimal premium aesthetic.
 - **Actions:**
@@ -268,14 +269,18 @@ _Chronological log of agent interactions, tasks completed, and context switches.
   - **Database Migration Executed:** Created and executed a database migration script `src/scripts/migrate-to-technology-ids.ts` that dynamically registered missing technology documents (e.g. Firebase, Leaflet, TensorFlow.js, Three.js, R3F, GLSL, Webcam API) in MongoDB and mapped existing project and demo entries to their correct technology ObjectIds.
   - **Documentation Updated:** Updated `docs/database_er_diagram.md` to document the revised project and demo schemas and the new `Technology` collection. Updated the architecture decision record in `decisions.md`.
   - **Tech Badge Icon Stretch Bug Fix:** Resolved a visual bug where technology logo SVGs and images within project and playground cards were stretched into horizontal capsules due to `w-auto h-auto` flex items override. Replaced with `shrink-0 w-3.5 h-3.5` constraints.
-  - **Media Gallery Manager UI Cleanup:** Conditionally hid the redundant "URL / Source" text input field for `"image"` and `"video"` type assets in [MediaGalleryManager.tsx](file:///c:/Users/Shovu/Desktop/portfolio/shuvo-portfolio/src/app/(admin)/admin/components/MediaGalleryManager.tsx). It remains visible only for `"embed"` types (where direct URL input is necessary).
+  - **Media Gallery Manager UI Cleanup:** Conditionally hid the redundant "URL / Source" text input field for `"image"` and `"video"` type assets in [MediaGalleryManager.tsx](<file:///c:/Users/Shovu/Desktop/portfolio/shuvo-portfolio/src/app/(admin)/admin/components/MediaGalleryManager.tsx>). It remains visible only for `"embed"` types (where direct URL input is necessary).
   - **Media Gallery Manager Layout Alignment:** Improved layout structure by using a `flex flex-col justify-between py-1` wrapper on the right-hand column and nesting input fields inside a grouped wrapper. This aligns the header information row and the caption input field perfectly with the top and bottom bounds of the left-hand image/video thumbnail uploader.
-  - **Uploader Aspect Ratio Optimization:** Refactored [ImageUpload.tsx](file:///c:/Users/Shovu/Desktop/portfolio/shuvo-portfolio/src/app/(admin)/admin/components/ImageUpload.tsx) to accept a configurable `aspect` prop (`"square"` or `"video"`), defaulting to `"square"`. Configured [MediaGalleryManager.tsx](file:///c:/Users/Shovu/Desktop/portfolio/shuvo-portfolio/src/app/(admin)/admin/components/MediaGalleryManager.tsx) to pass `aspect="video"`. This renders project showcase screenshot uploaders in 16:9 landscape aspect ratio instead of 1:1 square, significantly reducing vertical height, eliminating letterbox/cropping issues for mockups, and balancing the layout of the entire card row.
-  - **Project Edit Page Save Button Refactoring:** Removed the sticky top header from [page.tsx](file:///c:/Users/Shovu/Desktop/portfolio/shuvo-portfolio/src/app/(admin)/admin/projects/[id]/page.tsx). Replaced it with a clean, static, non-sticky page header block inside the main layout, and moved the "Save Changes" / "Create Project" action button to float at the bottom right corner of the screen matching the UX pattern established in the Hero section.
+  - **Uploader Aspect Ratio Optimization:** Refactored [ImageUpload.tsx](<file:///c:/Users/Shovu/Desktop/portfolio/shuvo-portfolio/src/app/(admin)/admin/components/ImageUpload.tsx>) to accept a configurable `aspect` prop (`"square"` or `"video"`), defaulting to `"square"`. Configured [MediaGalleryManager.tsx](<file:///c:/Users/Shovu/Desktop/portfolio/shuvo-portfolio/src/app/(admin)/admin/components/MediaGalleryManager.tsx>) to pass `aspect="video"`. This renders project showcase screenshot uploaders in 16:9 landscape aspect ratio instead of 1:1 square, significantly reducing vertical height, eliminating letterbox/cropping issues for mockups, and balancing the layout of the entire card row.
+  - **Project Edit Page Save Button Refactoring:** Removed the sticky top header from [page.tsx](<file:///c:/Users/Shovu/Desktop/portfolio/shuvo-portfolio/src/app/(admin)/admin/projects/[id]/page.tsx>). Replaced it with a clean, static, non-sticky page header block inside the main layout, and moved the "Save Changes" / "Create Project" action button to float at the bottom right corner of the screen matching the UX pattern established in the Hero section.
 - **Next Steps:** Await next task from the user.
 
+## [2026-06-04] Next.js Image Optimization & Admin Deletion UX Refinements
 
-
-
-
-
+- **Task:** Resolve dev console aspect-ratio warnings on `<Image>` elements, fix spacing layouts, and improve admin delete interaction feedback.
+- **Actions:**
+  - **Next.js Image Warnings Fixed:** Standardized image widths and heights and removed conflicting CSS sizing overrides (`w-... h-...`) from `<Image>` elements with explicit height/width props (in `AdminSidebar.tsx`, `ProjectCard.tsx`, `PlaygroundCard.tsx`, `HeroClient.tsx`, and `Contact.tsx`). Sets admin sidebar logo dimensions to `width={28} height={28}` inline.
+  - **Spacing Layout Adjustments:** Changed the invalid Tailwind spacing class `w-26 h-26` to a standard `w-24 h-24` in `admin/certifications/page.tsx` inside the dialog.
+  - **Immediate Delete Handlers:** Stripped blocking browser `confirm()` confirmation prompts from delete routines across all 8 admin dashboards to provide immediate user feedback with existing loader spinners.
+  - **Compilation Check:** Verified clean Turbopack and TypeScript build via `pnpm build`.
+- **Next Steps:** Await next task from the user.
