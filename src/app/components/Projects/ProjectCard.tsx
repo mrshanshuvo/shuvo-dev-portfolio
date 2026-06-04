@@ -1,5 +1,5 @@
 "use client";
-import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { FaExternalLinkAlt, FaStar } from "react-icons/fa";
@@ -17,32 +17,6 @@ export default function ProjectCard({
   index: number;
   iconRegistry?: Record<string, string>;
 }) {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-  const mouseXSpring = useSpring(x, { stiffness: 150, damping: 15 });
-  const mouseYSpring = useSpring(y, { stiffness: 150, damping: 15 });
-
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["5deg", "-5deg"]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-5deg", "5deg"]);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-    const xPct = mouseX / width - 0.5;
-    const yPct = mouseY / height - 0.5;
-    x.set(xPct);
-    y.set(yPct);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
@@ -53,124 +27,140 @@ export default function ProjectCard({
         delay: index * 0.1,
         ease: [0.16, 1, 0.3, 1],
       }}
-      style={{ perspective: 1000 }}
-      className="group relative"
+      className="relative h-100 sm:h-112.5 w-full"
     >
-      <motion.div
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-        className="relative bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl rounded-[1rem] border border-slate-200/50 dark:border-white/10 transition-colors duration-300 overflow-hidden flex flex-col h-full shadow-xl hover:shadow-2xl hover:border-emerald-500/50 dark:hover:border-emerald-500/50 group/card"
-      >
+      <div className="group relative bg-slate-900 rounded-xl border border-white/10 overflow-hidden flex flex-col h-full w-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 hover:border-emerald-500/30 hover:shadow-[0_20px_50px_rgba(16,185,129,0.15)]">
         <Link
           href={`/projects/${project.slug}`}
-          className="absolute inset-0 z-10"
+          className="absolute inset-0 z-20"
         >
           <span className="sr-only">View Project Details</span>
         </Link>
-        {/* Image */}
-        <div
-          className="relative h-56 overflow-hidden bg-slate-100 dark:bg-slate-800"
-          style={{ transform: "translateZ(30px)" }}
-        >
+
+        {/* Full Card Image */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
           <Image
             src={project.image || "/images/placeholder.png"}
             alt={project.title}
             fill
             priority={index < 4}
-            className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
-          <div className="absolute inset-0 bg-linear-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          {project.featured && (
-            <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/90 text-white text-xs font-bold tracking-widest uppercase rounded-full backdrop-blur-sm shadow-lg">
-              <FaStar className="text-xs" /> Featured
-            </div>
-          )}
-          <div className="absolute top-4 left-4 flex flex-wrap gap-2 max-w-[calc(100%-100px)]">
+          {/* Gradients for text readability */}
+          <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-900/60 to-slate-900/10 opacity-90 transition-opacity duration-500 group-hover:opacity-85" />
+        </div>
+
+        {/* Top Section: Badges & Live Button */}
+        <div className="absolute top-5 left-5 right-5 flex justify-between items-start z-30 pointer-events-none">
+          {/* Left: Featured Icon & Categories */}
+          <div className="flex flex-wrap gap-2 max-w-[calc(100%-60px)] pointer-events-auto">
+            {project.featured && (
+              <div
+                className="flex items-center justify-center px-3 py-1.5 bg-linear-to-r from-amber-500 to-orange-500 text-white text-xs font-bold tracking-widest uppercase rounded-full shadow-lg shrink-0"
+                title="Featured Project"
+              >
+                <FaStar className="text-xs" />
+              </div>
+            )}
             {Array.isArray(project.category)
               ? project.category.map((cat) => (
                   <div
                     key={cat}
-                    className="px-3 py-1.5 bg-slate-900/80 text-white font-bold text-[10px] rounded-full backdrop-blur-sm tracking-widest uppercase border border-white/10 shadow-lg whitespace-nowrap"
+                    className="px-3 py-1.5 bg-white/10 dark:bg-black/40 text-white font-bold text-[10px] rounded-full backdrop-blur-md tracking-widest uppercase border border-white/20 shadow-lg whitespace-nowrap"
                   >
                     {cat}
                   </div>
                 ))
               : project.category && (
-                  <div className="px-3 py-1.5 bg-slate-900/80 text-white font-bold text-[10px] rounded-full backdrop-blur-sm tracking-widest uppercase border border-white/10 shadow-lg whitespace-nowrap">
+                  <div className="px-3 py-1.5 bg-white/10 dark:bg-black/40 text-white font-bold text-[10px] rounded-full backdrop-blur-md tracking-widest uppercase border border-white/20 shadow-lg whitespace-nowrap">
                     {project.category}
                   </div>
                 )}
           </div>
-        </div>
 
-        {/* Content */}
-        <div
-          className="p-6 flex flex-col flex-1"
-          style={{ transform: "translateZ(40px)" }}
-        >
-          <h3 className="font-display text-2xl font-bold text-slate-900 dark:text-white mb-3 line-clamp-1 group-hover:text-emerald-500 transition-colors">
-            {project.title}
-          </h3>
-          <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6 line-clamp-2 flex-1 font-medium">
-            {project.description}
-          </p>
-
-          <div className="flex items-end justify-between mt-auto gap-4">
-            {/* Tech stack */}
-            <div className="flex flex-wrap gap-2">
-              {(project.techNames || []).slice(0, 5).map((name) => {
-                const iconUrl = iconRegistry?.[name];
-                return (
-                  <Badge
-                    key={name}
-                    variant="outline"
-                    className="flex items-center gap-1.5 px-2.5 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-[10px] font-bold shadow-sm"
-                    title={name}
-                  >
-                    {iconUrl && (
-                      <Image
-                        src={iconUrl}
-                        alt={name}
-                        width={14}
-                        height={14}
-                        className="object-contain w-auto h-auto"
-                      />
-                    )}
-                    {name}
-                  </Badge>
-                );
-              })}
-            </div>
-
-            {/* Actions */}
+          <div className="shrink-0 pointer-events-auto">
             {project.live && project.live.length > 0 && (
-              <div
-                className="flex items-center justify-end relative z-20 shrink-0"
-                style={{ transform: "translateZ(50px)" }}
+              <Button
+                variant="outline"
+                size="icon"
+                nativeButton={false}
+                render={
+                  <a
+                    href={project.live[0].url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
+                }
+                className="rounded-full p-7 text-white bg-white/10 border border-white/20 backdrop-blur-md hover:text-emerald-400 hover:bg-white/10 hover:border-emerald-400/50 transition-colors shadow-lg"
+                title="Live Demo"
               >
-                <Button
-                  variant="outline"
-                  size="icon"
-                  nativeButton={false}
-                  render={
-                    <a
-                      href={project.live[0].url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    />
-                  }
-                  className="size-12 text-emerald-600 dark:text-emerald-400 hover:text-white bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-600 border border-emerald-200 dark:border-emerald-800/50 rounded-xl transition-all duration-300 hover:-translate-y-1 shadow-sm hover:shadow-md"
-                  title="Live Demo"
-                >
-                  <FaExternalLinkAlt size={16} />
-                </Button>
-              </div>
+                <FaExternalLinkAlt className="size-6 drop-shadow-sm" />
+              </Button>
             )}
           </div>
         </div>
-      </motion.div>
+
+        {/* Floating Content at Bottom */}
+        <div className="absolute bottom-0 left-0 right-0 p-6 flex flex-col z-30 pointer-events-none">
+          <div className="mb-3">
+            <h3 className="font-display text-2xl font-bold text-slate-100 group-hover:text-emerald-400 transition-colors duration-300 line-clamp-1 drop-shadow-md flex items-center gap-1.5">
+              <span>{project.title}</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className="inline-block h-5 w-5 shrink-0 transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 motion-reduce:transition-none opacity-60 group-hover:opacity-100"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M5.22 14.78a.75.75 0 001.06 0l7.22-7.22v5.69a.75.75 0 001.5 0v-7.5a.75.75 0 00-.75-.75h-7.5a.75.75 0 000 1.5h5.69l-7.22 7.22a.75.75 0 000 1.06z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </h3>
+          </div>
+
+          <p className="text-slate-300 group-hover:text-white transition-colors duration-300 text-sm leading-relaxed mb-6 line-clamp-2 font-medium drop-shadow-sm">
+            {project.description}
+          </p>
+
+          {/* Tech stack */}
+          <div className="flex flex-wrap gap-2 pointer-events-auto">
+            {(project.techNames || []).slice(0, 4).map((name) => {
+              const iconUrl = iconRegistry?.[name];
+              return (
+                <Badge
+                  key={name}
+                  variant="outline"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 dark:bg-black/40 border border-white/20 group-hover:border-emerald-500/30 group-hover:bg-white/15 text-white rounded-xl text-[10px] font-bold shadow-sm backdrop-blur-md transition-all duration-300"
+                  title={name}
+                >
+                  {iconUrl && (
+                    <Image
+                      src={iconUrl}
+                      alt={name}
+                      width={14}
+                      height={14}
+                      className="object-contain w-auto h-auto"
+                    />
+                  )}
+                  {name}
+                </Badge>
+              );
+            })}
+            {(project.techNames || []).length > 4 && (
+              <Badge
+                variant="outline"
+                className="flex items-center justify-center px-2 py-1.5 bg-white/10 dark:bg-black/40 border border-white/20 text-white rounded-xl text-[10px] font-bold shadow-sm backdrop-blur-md"
+              >
+                +{(project.techNames?.length || 0) - 4}
+              </Badge>
+            )}
+          </div>
+        </div>
+      </div>
     </motion.div>
   );
 }
