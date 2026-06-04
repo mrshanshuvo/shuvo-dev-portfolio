@@ -256,3 +256,16 @@ _Chronological log of agent interactions, tasks completed, and context switches.
   - **Removed GitHub Link:** Removed the GitHub link button/icon from `PlaygroundCard.tsx` as requested by the user, leaving the direct live lab button.
   - **Archive View Badges Fix:** Resolved missing technology badges in the complete projects archive view (`/projects`) by fetching the `iconRegistry` in `projects/page.tsx` and passing it down to `ProjectsArchiveClient` and each nested `ProjectCard`.
 - **Next Steps:** Await next task from the user.
+
+## [2026-06-04] Database Relational Refactoring & Data Migration (Option B)
+
+- **Task:** Refactor data relations for projects and playground demos to reference the split `Technology` model instead of the overloaded `Skill` model, perform a database migration, and restore all tech badges in the public UI.
+- **Actions:**
+  - **Models & Types Refactored:** Modified `Project.ts` and `Demo.ts` models to rename `skillIds` to `technologyIds` and set references to the `"Technology"` model. Updated `types/index.ts` frontend interfaces.
+  - **API Routes Updated:** Refactored admin (`api/admin/projects` & `api/admin/demos`) and public API routes (`api/projects`) to query and populate `technologyIds`, mapping them back to strings (`techNames` and `tech`) for full backwards-compatibility.
+  - **Server Components & Page Fetches:** Added `.populate("technologyIds")` to Next.js page files and layout components for projects and playground pages, ensuring technology badges populate correctly when rendering server-side.
+  - **Registry Fixed:** Modified `iconRegistry.ts` to query the `Technology` collection directly.
+  - **Database Migration Executed:** Created and executed a database migration script `src/scripts/migrate-to-technology-ids.ts` that dynamically registered missing technology documents (e.g. Firebase, Leaflet, TensorFlow.js, Three.js, R3F, GLSL, Webcam API) in MongoDB and mapped existing project and demo entries to their correct technology ObjectIds.
+  - **Documentation Updated:** Updated `docs/database_er_diagram.md` to document the revised project and demo schemas and the new `Technology` collection. Updated the architecture decision record in `decisions.md`.
+- **Next Steps:** Await next task from the user.
+

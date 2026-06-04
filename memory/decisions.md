@@ -70,3 +70,14 @@ _This file tracks significant design and architectural decisions made during dev
 - **Context:** The project and playground cards had inconsistent visual styles (e.g., image-top split vs mixed content) and leveraged legacy 3D tilt hover hooks that were heavy, custom-scripted, and didn't fit a modern flat-card layout. In addition, the title and description lacked distinct color contrast.
 - **Decision:** Unify all public listing cards (projects & playground) to use a clean, modern, full-cover layout with dark readability gradients and matching fixed heights. Implement high-fidelity CSS transitions using standard Tailwind classes (including group-hover image scaling, fading/translating arrow icons, and glow shadow colors mapped to the card's specific theme, such as emerald for projects and purple for playground). Set titles to distinct theme colors (`text-emerald-400`/`text-purple-400`) and descriptions to a neutral (`text-slate-300`) to maximize contrast.
 - **Consequences:** Creates a cohesive, premium visual language throughout the portfolio. Visual hierarchy is significantly improved with distinct colors, and performance is optimized by utilizing standard CSS transitions rather than custom Framer Motion drag hooks.
+
+### [2026-06-04] - Database Relational Refactoring (Option B) for Project & Demo Models
+
+- **Context:** The split of `Skill` into `Skill` and `Technology` broke tech badges on project detail views, the homepage projects grid, and playground cards. The previous developer updated the collections in MongoDB but neglected to update project/playground query populated references, admin API endpoints, and the public listing components.
+- **Decision:** Implemented Option B:
+  1. Renamed `skillIds` to `technologyIds` (referencing `"Technology"`) in the `Project` and `Demo` Mongoose models and type definitions.
+  2. Refactored admin edit endpoints to resolve raw tech names to `technologyIds` and map them on GET.
+  3. Added `.populate("technologyIds")` and mapping code in public server components and API routes.
+  4. Created a database migration script that registers missing technologies (e.g. TensorFlow.js, Leaflet, Firebase, GLSL) and maps the existing projects and playground demos to their correct `technologyIds`.
+- **Consequences:** Restores full visual rendering of all technology badges on all public cards (homepage grids, archive views, and details pages) while keeping the database strictly normalized.
+

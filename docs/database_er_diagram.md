@@ -34,7 +34,7 @@ erDiagram
         string description
         string image "Optional"
         ObjectId_array categoryIds "FK to Category._id"
-        ObjectId_array skillIds "FK to Skill._id"
+        ObjectId_array technologyIds "FK to Technology._id"
         object_array github
         object_array live
         boolean featured "Default: false"
@@ -68,6 +68,16 @@ erDiagram
         date updatedAt
     }
 
+    TECHNOLOGY {
+        ObjectId _id PK
+        string name
+        string iconUrl
+        string brandColor "Optional"
+        number order "Default: 0"
+        date createdAt
+        date updatedAt
+    }
+
     EXPERIENCE {
         ObjectId _id PK
         string title
@@ -91,7 +101,7 @@ erDiagram
         string description
         string url
         string image "Optional"
-        ObjectId_array skillIds "FK to Skill._id"
+        ObjectId_array technologyIds "FK to Technology._id"
         object_array media
         number order "Default: 0"
         date createdAt
@@ -211,9 +221,9 @@ erDiagram
 
     %% Conceptual and Physical Relationships
     PROJECT }o--o{ CATEGORY : "references via categoryIds"
-    PROJECT }o--o{ SKILL : "references via skillIds"
+    PROJECT }o--o{ TECHNOLOGY : "references via technologyIds"
     EXPERIENCE }o--o{ SKILL : "references via skillIds"
-    DEMO }o--o{ SKILL : "references via skillIds"
+    DEMO }o--o{ TECHNOLOGY : "references via technologyIds"
     MESSAGE }o--o| USER : "read/processed by readBy"
 ```
 
@@ -234,7 +244,7 @@ Detailed metadata representing custom software projects.
   - `description` (String, required): Long text detailing the project.
   - `image` (String, optional): Main teaser/preview image.
   - `categoryIds` (Array of ObjectIds): Physical FK pointing to `Category._id`.
-  - `skillIds` (Array of ObjectIds): Physical FK pointing to `Skill._id` (replaces loose `techNames`).
+  - `technologyIds` (Array of ObjectIds): Physical FK pointing to `Technology._id` (replaces `skillIds`).
   - `github` (Array of Objects): Source control repository configurations.
     - `label` (String, default: `"Repository"`): Display tag.
     - `url` (String, required): Git URL link.
@@ -333,7 +343,7 @@ Playground or iframe-based live tools featured on the portfolio.
   - `title` (String, required): Name of demo.
   - `description` (String, required): Capabilities brief.
   - `url` (String, required): Live target path.
-  - `skillIds` (Array of ObjectIds): Physical FK pointing to `Skill._id`.
+  - `technologyIds` (Array of ObjectIds): Physical FK pointing to `Technology._id` (replaces `skillIds`).
   - `media` (Array of Objects): Captioned image/video previews.
   - `order` (Number, default: `0`): Interactive listing sequence.
 
@@ -351,11 +361,23 @@ Self-hosted blog posts or external post links.
   - `image` (String, optional): Teaser cover graphic.
   - `order` (Number, default: `0`): Listing rank index.
 
+#### 9. Technology (`technologies`)
+
+Individual technology brand stacks, logo badges, and visual configurations.
+
+- **Fields:**
+  - `_id` (ObjectId, PK): Unique identifier.
+  - `name` (String, required): Name of the technology brand (e.g. "React").
+  - `iconUrl` (String, required): SVG/image URL representing the technology logo.
+  - `brandColor` (String, optional): Custom theme color (hex format) for neon hover states and badge glow effects.
+  - `order` (Number, default: `0`): UI rendering order hierarchy.
+  - `createdAt` / `updatedAt` (Date, auto): Audit trails.
+
 ---
 
 ### 2.2 Configurations & Administration
 
-#### 9. User (`users`)
+#### 10. User (`users`)
 
 CMS panel administrator identity details.
 
@@ -368,7 +390,7 @@ CMS panel administrator identity details.
   - `resetPasswordOtp` (String, select: `false`): Recovery OTP.
   - `resetPasswordExpire` (Date, select: `false`): Recovery expiration.
 
-#### 10. Setting (`settings`)
+#### 11. Setting (`settings`)
 
 Global layout toggles and metadata configurations.
 
@@ -385,7 +407,7 @@ Global layout toggles and metadata configurations.
   - `maintenanceMode` (Boolean, default: `false`): Standard lock-out shield toggle.
   - `accentColor` (String, default: `"emerald"`): Theme color palette configuration.
 
-#### 11. Hero (`heroes`)
+#### 12. Hero (`heroes`)
 
 Home page landing screen content values.
 
@@ -397,7 +419,7 @@ Home page landing screen content values.
   - `bio` (String, default: `""`): Splash narrative subtitle.
   - `typeSequences` (Array of Objects): Text loops with timing offsets.
 
-#### 12. About (`abouts`)
+#### 13. About (`abouts`)
 
 Homepage detailed bio information.
 
@@ -411,7 +433,7 @@ Homepage detailed bio information.
 
 ### 2.3 Site Utilities & Communications
 
-#### 13. Visitor (`visitors`)
+#### 14. Visitor (`visitors`)
 
 Unique daily hit counts tracking records.
 
@@ -420,7 +442,7 @@ Unique daily hit counts tracking records.
   - `date` (Date, required, unique): Day representation containing a unique physical index.
   - `count` (Number, default: `0`): Aggregated unique counters.
 
-#### 14. Message (`messages`)
+#### 15. Message (`messages`)
 
 Submissions generated via public contact forms.
 
@@ -432,7 +454,7 @@ Submissions generated via public contact forms.
   - `status` (String, default: `"unread"`, enum: `['unread', 'read']`): Status flag for CMS control.
   - `readBy` (ObjectId, optional): FK pointing to `User._id` indicating the administrator who reviewed/addressed the inquiry.
 
-#### 15. SocialLink (`sociallinks`)
+#### 16. SocialLink (`sociallinks`)
 
 External platform link configurations.
 
