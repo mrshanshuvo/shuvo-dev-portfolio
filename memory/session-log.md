@@ -304,3 +304,13 @@ _Chronological log of agent interactions, tasks completed, and context switches.
   - **Independent Card Toggle:** Refactored the expansion state from a single `expandedIndex` (which only allowed one card to be open at a time) to an array of `expandedIndices`. Users can now expand or collapse multiple cards independently.
   - **Verification:** Ran a successful Next.js production build (`pnpm build`) to verify type safety and layout stability.
 - **Next Steps:** Await next task from the user.
+
+## [2026-06-04] UI Refinement: Conditional Navbar Link Rendering
+
+- **Task:** Dynamic navbar items rendering based on backend database content presence.
+- **Actions:**
+  - **API Creation:** Created public endpoint `/api/navigation-presence` in [route.ts](file:///c:/Users/Shovu/Desktop/portfolio/shuvo-portfolio/src/app/api/navigation-presence/route.ts) that checks and returns whether relevant collections (Experience, Project, Education, Certification, Blog) have at least 1 document.
+  - **Navbar Component Updated:** Refactored [Navbar.tsx](file:///c:/Users/Shovu/Desktop/portfolio/shuvo-portfolio/src/app/components/Navbar/Navbar.tsx) to dynamically query `/api/navigation-presence` on mount and filter navigation items (`mainNavItems`, `moreNavItems`) accordingly.
+  - **Dropdown UX Enhancement:** Added logic to completely hide the "More" dropdown if there are no items inside `moreNavItems`.
+  - **Verification:** Ran a successful Next.js production build (`pnpm build`) to verify compile-time safety and layout stability.
+- **Next Steps:** Await next task from the user.

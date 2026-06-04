@@ -19,6 +19,23 @@ export default function Navbar({ resumeUrl }: Props) {
   const [activeSection, setActiveSection] = useState<string>("home");
   const isClickingRef = useRef<boolean>(false);
 
+  const [presence, setPresence] = useState({
+    experience: true,
+    projects: true,
+    education: true,
+    certifications: true,
+    blog: true,
+  });
+
+  useEffect(() => {
+    fetch("/api/navigation-presence")
+      .then((res) => res.json())
+      .then((data) => {
+        setPresence((prev) => ({ ...prev, ...data }));
+      })
+      .catch((err) => console.error("Failed to fetch nav presence:", err));
+  }, []);
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
@@ -116,14 +133,16 @@ export default function Navbar({ resumeUrl }: Props) {
 
   const mainNavItems: NavItem[] = [
     { id: "about", label: "About" },
-    { id: "experience", label: "Experience" },
-    { id: "projects", label: "Projects" },
+    ...(presence.experience ? [{ id: "experience", label: "Experience" }] : []),
+    ...(presence.projects ? [{ id: "projects", label: "Projects" }] : []),
   ];
 
   const moreNavItems: NavItem[] = [
-    { id: "education", label: "Education" },
-    { id: "certifications", label: "Certifications" },
-    { id: "blog", label: "Blog" },
+    ...(presence.education ? [{ id: "education", label: "Education" }] : []),
+    ...(presence.certifications
+      ? [{ id: "certifications", label: "Certifications" }]
+      : []),
+    ...(presence.blog ? [{ id: "blog", label: "Blog" }] : []),
   ];
 
   return (
@@ -217,56 +236,58 @@ export default function Navbar({ resumeUrl }: Props) {
                   ))}
 
                   {/* More Dropdown */}
-                  <div className="relative group">
-                    <button
-                      className="relative px-3 lg:px-4 py-2 group flex items-center gap-1"
-                      aria-current={
-                        mappedActive === "more" ? "page" : undefined
-                      }
-                    >
-                      <span
-                        className={`relative z-10 text-sm font-bold transition-colors cursor-pointer ${
-                          mappedActive === "more"
-                            ? scrolled
-                              ? "text-emerald-600 dark:text-emerald-400"
-                              : "text-slate-900 dark:text-white"
-                            : scrolled
-                              ? "text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-200"
-                              : "text-slate-700/70 dark:text-white/70 group-hover:text-slate-900 dark:group-hover:text-white"
-                        }`}
+                  {moreNavItems.length > 0 && (
+                    <div className="relative group">
+                      <button
+                        className="relative px-3 lg:px-4 py-2 group flex items-center gap-1"
+                        aria-current={
+                          mappedActive === "more" ? "page" : undefined
+                        }
                       >
-                        More ▾
-                      </span>
-                      {mappedActive === "more" && (
-                        <motion.div
-                          layoutId="navIndicator"
-                          className={`absolute bottom-0 left-0 right-0 h-0.5 ${
-                            scrolled
-                              ? "bg-emerald-600 dark:bg-emerald-400"
-                              : "bg-slate-900 dark:bg-white"
+                        <span
+                          className={`relative z-10 text-sm font-bold transition-colors cursor-pointer ${
+                            mappedActive === "more"
+                              ? scrolled
+                                ? "text-emerald-600 dark:text-emerald-400"
+                                : "text-slate-900 dark:text-white"
+                              : scrolled
+                                ? "text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-200"
+                                : "text-slate-700/70 dark:text-white/70 group-hover:text-slate-900 dark:group-hover:text-white"
                           }`}
-                          transition={{
-                            type: "spring",
-                            stiffness: 400,
-                            damping: 30,
-                          }}
-                        />
-                      )}
-                    </button>
-                    <div className="absolute top-full left-0 mt-2 w-48 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0">
-                      <div className="py-2">
-                        {moreNavItems.map((item) => (
-                          <button
-                            key={item.id}
-                            onClick={() => handleNavClick(item.id)}
-                            className="w-full text-left px-4 py-2 text-sm font-medium transition-colors text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 cursor-pointer"
-                          >
-                            {item.label}
-                          </button>
-                        ))}
+                        >
+                          More ▾
+                        </span>
+                        {mappedActive === "more" && (
+                          <motion.div
+                            layoutId="navIndicator"
+                            className={`absolute bottom-0 left-0 right-0 h-0.5 ${
+                              scrolled
+                                ? "bg-emerald-600 dark:bg-emerald-400"
+                                : "bg-slate-900 dark:bg-white"
+                            }`}
+                            transition={{
+                              type: "spring",
+                              stiffness: 400,
+                              damping: 30,
+                            }}
+                          />
+                        )}
+                      </button>
+                      <div className="absolute top-full left-0 mt-2 w-48 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform translate-y-2 group-hover:translate-y-0">
+                        <div className="py-2">
+                          {moreNavItems.map((item) => (
+                            <button
+                              key={item.id}
+                              onClick={() => handleNavClick(item.id)}
+                              className="w-full text-left px-4 py-2 text-sm font-medium transition-colors text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 cursor-pointer"
+                            >
+                              {item.label}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Contact */}
                   <button
