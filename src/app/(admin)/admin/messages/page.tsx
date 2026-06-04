@@ -60,7 +60,7 @@ export default function AdminMessagesPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this message?")) return;
+
     try {
       const res = await fetch(`/api/admin/messages/${id}`, {
         method: "DELETE",

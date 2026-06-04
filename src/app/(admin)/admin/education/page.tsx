@@ -266,8 +266,7 @@ export default function AdminEducationPage() {
   });
 
   async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this education record?"))
-      return;
+
     setDeletingId(id);
     deleteMutation.mutate(id);
   }

@@ -251,8 +251,7 @@ export default function AdminExperiencePage() {
   });
 
   async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this experience record?"))
-      return;
+
     setDeletingId(id);
     deleteMutation.mutate(id);
   }

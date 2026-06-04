@@ -324,7 +324,7 @@ export default function AdminDemosPage() {
   });
 
   async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this demo?")) return;
+
     setDeletingId(id);
     deleteMutation.mutate(id);
   }

@@ -304,7 +304,7 @@ export default function AdminBlogsPage() {
   });
 
   async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this blog post?")) return;
+
     setDeletingId(id);
     deleteMutation.mutate(id);
   }

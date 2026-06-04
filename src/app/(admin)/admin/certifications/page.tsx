@@ -261,7 +261,7 @@ export default function AdminCertificationsPage() {
   });
 
   async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this certification?")) return;
+
     setDeletingId(id);
     deleteMutation.mutate(id);
   }

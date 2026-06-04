@@ -239,7 +239,7 @@ export default function AdminSocialsPage() {
   });
 
   async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this social link?")) return;
+
     setDeletingId(id);
     deleteMutation.mutate(id);
   }

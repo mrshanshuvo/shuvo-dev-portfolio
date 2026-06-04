@@ -409,7 +409,7 @@ export default function AdminProjectsListPage() {
   });
 
   async function handleDelete(id: string) {
-    if (!confirm("Delete this project? This cannot be undone.")) return;
+
     setDeletingId(id);
     deleteMutation.mutate(id);
   }
