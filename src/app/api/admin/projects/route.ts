@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import Project from "@/models/Project";
-import Skill from "@/models/Skill";
+import Technology from "@/models/Technology";
 import Category from "@/models/Category";
 
 export async function GET() {
@@ -12,7 +12,7 @@ export async function GET() {
 
     await connectDB();
     const projects = await Project.find()
-      .populate("skillIds")
+      .populate("technologyIds")
       .populate("categoryIds")
       .sort({ order: 1 })
       .lean();
@@ -20,7 +20,7 @@ export async function GET() {
     // Sanitize for frontend consistency (self-healing on read) and map to legacy fields
     const sanitized = projects.map((p: any) => ({
       ...p,
-      techNames: Array.isArray(p.skillIds) ? p.skillIds.map((s: any) => s.name || s.toString()) : [],
+      techNames: Array.isArray(p.technologyIds) ? p.technologyIds.map((t: any) => t.name || t.toString()) : [],
       category: Array.isArray(p.categoryIds) ? p.categoryIds.map((c: any) => c.name || c.toString()) : [],
       github: Array.isArray(p.github) 
         ? p.github 
@@ -53,8 +53,8 @@ export async function PUT(req: Request) {
       const allTechNames = Array.from(new Set(items.flatMap((it: any) => Array.isArray(it.techNames) ? it.techNames : [])));
       const allCategoryNames = Array.from(new Set(items.flatMap((it: any) => Array.isArray(it.category) ? it.category : it.category ? [it.category] : ["Full Stack"])));
       
-      const [allSkills, allCategories] = await Promise.all([
-        Skill.find({ name: { $in: allTechNames } }),
+      const [allTechs, allCategories] = await Promise.all([
+        Technology.find({ name: { $in: allTechNames } }),
         Category.find({
           $or: [
             { name: { $in: allCategoryNames } },
@@ -63,7 +63,7 @@ export async function PUT(req: Request) {
         }),
       ]);
 
-      const skillsMap = new Map(allSkills.map(s => [s.name, s._id]));
+      const techsMap = new Map(allTechs.map(t => [t.name, t._id]));
       const categoriesMap = new Map(allCategories.map(c => [c.name, c._id]));
       const categoriesSlugMap = new Map(allCategories.map(c => [c.slug, c._id]));
 
@@ -74,7 +74,7 @@ export async function PUT(req: Request) {
         }
 
         const techList = Array.isArray(it.techNames) ? it.techNames : [];
-        const skillIds = techList.map((name: string) => skillsMap.get(name)).filter(Boolean);
+        const technologyIds = techList.map((name: string) => techsMap.get(name)).filter(Boolean);
 
         const categoryList = Array.isArray(it.category) ? it.category : it.category ? [it.category] : ["Full Stack"];
         const categoryIds = categoryList.map((name: string) => {
@@ -86,7 +86,7 @@ export async function PUT(req: Request) {
           slug: it.slug || it.title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, ""),
           description: it.description,
           image: it.image || (media[0]?.type === "image" ? media[0].url : ""),
-          skillIds,
+          technologyIds,
           categoryIds,
           github: Array.isArray(it.github) 
             ? it.github.map((g: any) => ({ label: g.label || "Repository", url: g.url || "" }))

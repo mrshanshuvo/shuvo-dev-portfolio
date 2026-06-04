@@ -5,7 +5,7 @@ export interface IProject extends Document {
   slug: string;
   description: string;
   image: string;
-  skillIds: mongoose.Types.ObjectId[];
+  technologyIds: mongoose.Types.ObjectId[];
   github: { label?: string; url: string }[];
   live: { label?: string; url: string }[];
   featured: boolean;
@@ -20,7 +20,7 @@ export interface IProject extends Document {
   order: number;
   createdAt: Date;
   updatedAt: Date;
-} 
+}
 
 const ProjectSchema = new Schema<IProject>(
   {
@@ -28,7 +28,7 @@ const ProjectSchema = new Schema<IProject>(
     slug: { type: String, required: true, unique: true },
     description: { type: String, required: true },
     image: { type: String }, // Optional for backward compatibility
-    skillIds: [{ type: Schema.Types.ObjectId, ref: "Skill" }],
+    technologyIds: [{ type: Schema.Types.ObjectId, ref: "Technology" }],
     github: [
       {
         label: { type: String, default: "Repository" },
@@ -46,7 +46,11 @@ const ProjectSchema = new Schema<IProject>(
     improvements: [{ type: String }],
     media: [
       {
-        type: { type: String, enum: ["image", "video", "embed"], default: "image" },
+        type: {
+          type: String,
+          enum: ["image", "video", "embed"],
+          default: "image",
+        },
         url: { type: String, required: true },
         caption: { type: String },
         thumbnail: { type: String },

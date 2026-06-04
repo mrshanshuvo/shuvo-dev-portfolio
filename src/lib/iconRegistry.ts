@@ -1,13 +1,13 @@
 import { connectDB } from "./mongodb";
-import SkillModel from "@/models/Skill";
+import TechnologyModel from "@/models/Technology";
 
 export async function getIconRegistry(): Promise<Record<string, string>> {
   await connectDB();
-  const skills = await SkillModel.find({ isTechnology: true, iconUrl: { $ne: "" } }).lean();
+  const techs = await TechnologyModel.find({ iconUrl: { $ne: "" } }).lean();
   const registry: Record<string, string> = {};
-  for (const s of skills as any[]) {
-    if (s.name && s.iconUrl) {
-      registry[s.name] = s.iconUrl;
+  for (const t of techs as any[]) {
+    if (t.name && t.iconUrl) {
+      registry[t.name] = t.iconUrl;
     }
   }
   return registry;

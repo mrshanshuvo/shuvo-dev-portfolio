@@ -9,6 +9,8 @@ import type { Project } from "@/types";
 import type { Metadata } from "next";
 import ProjectDetailClient from "./ProjectDetailClient";
 import { getIconRegistry } from "@/lib/iconRegistry";
+import Technology from "@/models/Technology";
+import Category from "@/models/Category";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -45,14 +47,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ProjectPage({ params }: Props) {
   await connectDB();
   const { slug } = await params;
-  const raw = await ProjectModel.findOne({ slug }).lean();
+
+  const _modelRef = [Technology, Category];
+  if (_modelRef.length > 0) {}
+
+  const raw = await ProjectModel.findOne({ slug })
+    .populate("technologyIds")
+    .populate("categoryIds")
+    .lean();
   if (!raw) notFound();
 
   const heroDoc = await HeroModel.findOne().lean();
   const resumeUrl = heroDoc?.resumeUrl || "/Resume_of_Shahid_Hasan_Shuvo.pdf";
   const iconRegistry = await getIconRegistry();
 
-  const project: Project = JSON.parse(JSON.stringify(raw));
+  const mapped = {
+    ...raw,
+    techNames: Array.isArray(raw.technologyIds) ? raw.technologyIds.map((t: any) => t.name || t.toString()) : [],
+    category: Array.isArray(raw.categoryIds) ? raw.categoryIds.map((c: any) => c.name || c.toString()) : [],
+  };
+
+  const project: Project = JSON.parse(JSON.stringify(mapped));
 
   return (
     <div className="bg-white dark:bg-[#020617] text-slate-900 dark:text-slate-50 min-h-screen font-sans selection:bg-emerald-500/30">

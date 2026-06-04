@@ -8,7 +8,7 @@ export interface IDemo extends Document {
   github?: string;
   featured?: boolean;
   image?: string;
-  skillIds: mongoose.Types.ObjectId[];
+  technologyIds: mongoose.Types.ObjectId[];
   media: {
     type: "image" | "video" | "embed";
     url: string;
@@ -26,7 +26,7 @@ const DemoSchema = new Schema<IDemo>(
     github: { type: String },
     featured: { type: Boolean, default: false },
     image: { type: String },
-    skillIds: [{ type: Schema.Types.ObjectId, ref: "Skill" }],
+    technologyIds: [{ type: Schema.Types.ObjectId, ref: "Technology" }],
     media: [
       {
         type: {

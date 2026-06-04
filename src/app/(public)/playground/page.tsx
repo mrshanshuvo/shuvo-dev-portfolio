@@ -5,6 +5,7 @@ import PlaygroundArchiveClient from "./PlaygroundArchiveClient";
 import Navbar from "@/app/components/Navbar/Navbar";
 import HeroModel from "@/models/Hero";
 import type { Metadata } from "next";
+import Technology from "@/models/Technology";
 
 export const metadata: Metadata = {
   title: "Technical Playground | Shahid Hasan Shuvo",
@@ -14,8 +15,20 @@ export const metadata: Metadata = {
 
 async function getDemos(): Promise<Demo[]> {
   await connectDB();
-  const raw = await DemoModel.find().sort({ order: 1, createdAt: -1 }).lean();
-  return JSON.parse(JSON.stringify(raw));
+  const _modelRef = [Technology];
+  if (_modelRef.length > 0) {}
+
+  const raw = await DemoModel.find()
+    .populate("technologyIds")
+    .sort({ order: 1, createdAt: -1 })
+    .lean();
+
+  const mapped = raw.map((d: any) => ({
+    ...d,
+    tech: Array.isArray(d.technologyIds) ? d.technologyIds.map((t: any) => t.name || t.toString()) : [],
+  }));
+
+  return JSON.parse(JSON.stringify(mapped));
 }
 
 export default async function PlaygroundPage() {

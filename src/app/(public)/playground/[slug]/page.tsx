@@ -9,6 +9,7 @@ import type { Demo } from "@/types";
 import type { Metadata } from "next";
 import PlaygroundDetailClient from "./PlaygroundDetailClient";
 import { getIconRegistry } from "@/lib/iconRegistry";
+import Technology from "@/models/Technology";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -48,13 +49,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function PlaygroundDetailPage({ params }: Props) {
   await connectDB();
   const { slug } = await params;
-  const raw = await DemoModel.findOne({ slug }).lean();
+
+  const _modelRef = [Technology];
+  if (_modelRef.length > 0) {}
+
+  const raw = await DemoModel.findOne({ slug })
+    .populate("technologyIds")
+    .lean();
   if (!raw) notFound();
 
   const heroDoc = await HeroModel.findOne().lean();
   const resumeUrl = heroDoc?.resumeUrl || "/Resume_of_Shahid_Hasan_Shuvo.pdf";
 
-  const demo: Demo = JSON.parse(JSON.stringify(raw));
+  const mapped = {
+    ...raw,
+    tech: Array.isArray(raw.technologyIds) ? raw.technologyIds.map((t: any) => t.name || t.toString()) : [],
+  };
+
+  const demo: Demo = JSON.parse(JSON.stringify(mapped));
 
   const iconRegistry = await getIconRegistry();
 

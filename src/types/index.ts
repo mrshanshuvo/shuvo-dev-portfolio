@@ -22,7 +22,7 @@ export interface Project {
   image: string;
   technologies?: IconType[]; // frontend-only
   techNames: string[]; // backward compatibility
-  skillIds?: string[]; // relational database field
+  technologyIds?: string[]; // relational database field
   github: LinkItem[];
   live: LinkItem[];
   featured: boolean;
@@ -188,7 +188,7 @@ export interface Demo {
   featured?: boolean;
   image?: string;
   tech: string[]; // backward compatibility
-  skillIds?: string[]; // relational database field
+  technologyIds?: string[]; // relational database field
   media?: MediaItem[];
   order: number;
 }

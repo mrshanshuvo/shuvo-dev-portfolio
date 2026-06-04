@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import Project from "@/models/Project";
-import Skill from "@/models/Skill";
+import Technology from "@/models/Technology";
 import Category from "@/models/Category";
 
 type Params = { params: Promise<{ id: string }> };
@@ -13,10 +13,10 @@ async function sanitizeProject(it: any) {
     media = [{ type: "image", url: it.image, caption: "Project Showcase" }];
   }
 
-  // Retrieve skill ObjectIds for matching techNames
+  // Retrieve technology ObjectIds for matching techNames
   const techNames = Array.isArray(it.techNames) ? it.techNames : [];
-  const skills = await Skill.find({ name: { $in: techNames } });
-  const skillIds = skills.map((s) => s._id);
+  const techs = await Technology.find({ name: { $in: techNames } });
+  const technologyIds = techs.map((t) => t._id);
 
   // Retrieve category ObjectIds for matching categories
   const categoryNames = Array.isArray(it.category)
@@ -37,7 +37,7 @@ async function sanitizeProject(it: any) {
     slug: it.slug || it.title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, ""),
     description: it.description,
     image: it.image || (media[0]?.type === "image" ? media[0].url : ""),
-    skillIds,
+    technologyIds,
     categoryIds,
     github: Array.isArray(it.github)
       ? it.github.map((g: any) => ({ label: g.label || "Repository", url: g.url || "" }))
@@ -65,7 +65,7 @@ export async function GET(_req: Request, { params }: Params) {
     const { id } = await params;
     await connectDB();
     const project = await Project.findById(id)
-      .populate("skillIds")
+      .populate("technologyIds")
       .populate("categoryIds")
       .lean();
     if (!project) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -74,7 +74,7 @@ export async function GET(_req: Request, { params }: Params) {
     // Map backend relation ObjectIds back to string arrays for admin frontend compatibility
     return NextResponse.json({
       ...p,
-      techNames: Array.isArray(p.skillIds) ? p.skillIds.map((s: any) => s.name || s.toString()) : [],
+      techNames: Array.isArray(p.technologyIds) ? p.technologyIds.map((t: any) => t.name || t.toString()) : [],
       category: Array.isArray(p.categoryIds) ? p.categoryIds.map((c: any) => c.name || c.toString()) : [],
       github: Array.isArray(p.github) ? p.github : p.github ? [{ label: "Repository", url: p.github }] : [],
       live: Array.isArray(p.live) ? p.live : p.live ? [{ label: "Live Demo", url: p.live }] : [],
@@ -96,7 +96,7 @@ export async function PATCH(req: Request, { params }: Params) {
     const sanitized = await sanitizeProject(body);
 
     const updated = await Project.findByIdAndUpdate(id, sanitized, { returnDocument: "after" })
-      .populate("skillIds")
+      .populate("technologyIds")
       .populate("categoryIds")
       .lean();
     if (!updated) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -104,7 +104,7 @@ export async function PATCH(req: Request, { params }: Params) {
     const u = updated as any;
     return NextResponse.json({
       ...u,
-      techNames: Array.isArray(u.skillIds) ? u.skillIds.map((s: any) => s.name || s.toString()) : [],
+      techNames: Array.isArray(u.technologyIds) ? u.technologyIds.map((t: any) => t.name || t.toString()) : [],
       category: Array.isArray(u.categoryIds) ? u.categoryIds.map((c: any) => c.name || c.toString()) : [],
     });
   } catch (error: any) {
