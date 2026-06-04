@@ -3,7 +3,8 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 export interface IExperience extends Document {
   title: string;
   org: string;
-  startDate: Date;
+  duration: string;
+  startDate?: Date; // Optional
   endDate?: Date; // Nullable/optional where null means current job
   details: string[];
   order: number;
@@ -19,8 +20,9 @@ const ExperienceSchema = new Schema<IExperience>(
   {
     title: { type: String, required: true },
     org: { type: String, required: true },
-    startDate: { type: Date, required: true },
-    endDate: { type: Date },
+    duration: { type: String, required: true },
+    startDate: { type: Date }, // Optional
+    endDate: { type: Date }, // Optional
     details: [{ type: String }],
     order: { type: Number, default: 0 },
     url: { type: String },

@@ -94,3 +94,10 @@ _This file tracks significant design and architectural decisions made during dev
   - If sizing via next/image `width`/`height` props, avoid size classes (`w-` and `h-`) completely to prevent CSS overriding attributes unevenly.
   - If sizing using Tailwind or parent elements, use next/image `fill` or `style={{ width: "auto" }}` / `style={{ height: "auto" }}` to retain native scale compliance.
 - **Consequences:** Completely silences Next.js image warnings across compile and browser runs, improving Cumulative Layout Shift parameters.
+
+### [2026-06-04] - Restoring Schema Period/Duration Fields & Making Dates Optional
+
+- **Context:** A recent optimization update to database schemas introduced strict `startDate: { type: Date, required: true }` and `endDate: { type: Date }` validation rules on the `Education` and `Experience` collections, but did not migrate the frontend forms which continue to save string-based `period` and `duration` fields. This difference resulted in validation errors and HTTP 500 status responses when inserting new documents.
+- **Decision:** Made `startDate` and `endDate` optional properties inside the `Education` and `Experience` schemas and interfaces, and restored `period` / `duration` as required fields inside MongoDB and the backend models.
+- **Consequences:** Restores full CMS management functionality for adding and editing education and experience records immediately, without having to overhaul the frontend forms.
+

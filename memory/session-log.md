@@ -284,3 +284,12 @@ _Chronological log of agent interactions, tasks completed, and context switches.
   - **Immediate Delete Handlers:** Stripped blocking browser `confirm()` confirmation prompts from delete routines across all 8 admin dashboards to provide immediate user feedback with existing loader spinners.
   - **Compilation Check:** Verified clean Turbopack and TypeScript build via `pnpm build`.
 - **Next Steps:** Await next task from the user.
+
+## [2026-06-04] Bug Fix: Admin Education and Experience POST 500 Validation Failure
+
+- **Task:** Resolve 500 Internal Server Error when posting/adding new Education or Experience entries through the Admin dashboard.
+- **Actions:**
+  - **Identified Root Cause:** The `EducationSchema` and `ExperienceSchema` had recently been updated to mark `startDate` as `required: true` (to match the ER diagram), but the frontend forms only collect and submit string-based `period` (for Education) and `duration` (for Experience) parameters. This led to Mongoose schema validation failures on POST requests.
+  - **Schema & Interface Adjustments:** Restored `period` and `duration` as required fields inside their respective schemas and interfaces, and made the uncollected `startDate` and `endDate` parameters optional.
+  - **Verification:** Ran a successful Next.js production build (`pnpm build`) to verify type safety and layout stability.
+- **Next Steps:** Await next task from the user.
