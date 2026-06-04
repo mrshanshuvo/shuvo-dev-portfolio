@@ -5,6 +5,7 @@ import ProjectsArchiveClient from "./ProjectsArchiveClient";
 import Navbar from "@/app/components/Navbar/Navbar";
 import HeroModel from "@/models/Hero";
 import type { Metadata } from "next";
+import { getIconRegistry } from "@/lib/iconRegistry";
 
 export const metadata: Metadata = {
   title: "Projects Archive | Shahid Hasan Shuvo",
@@ -22,6 +23,7 @@ async function getProjects(): Promise<Project[]> {
 
 export default async function ProjectsPage() {
   const projects = await getProjects();
+  const iconRegistry = await getIconRegistry();
 
   // Need this for Navbar consistency
   const heroDoc = await HeroModel.findOne().lean();
@@ -31,7 +33,7 @@ export default async function ProjectsPage() {
   return (
     <>
       <Navbar resumeUrl={resumeUrl} />
-      <ProjectsArchiveClient projects={projects} />
+      <ProjectsArchiveClient projects={projects} iconRegistry={iconRegistry} />
     </>
   );
 }

@@ -8,9 +8,10 @@ import { FaArchive } from "react-icons/fa";
 
 interface Props {
   projects: Project[];
+  iconRegistry?: Record<string, string>;
 }
 
-export default function ProjectsArchiveClient({ projects }: Props) {
+export default function ProjectsArchiveClient({ projects, iconRegistry }: Props) {
   const [activeCategory, setActiveCategory] = useState("All");
 
   const allCats = projects.flatMap((p) =>
@@ -101,7 +102,7 @@ export default function ProjectsArchiveClient({ projects }: Props) {
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.3 }}
               >
-                <ProjectCard project={project} index={i} />
+                <ProjectCard project={project} index={i} iconRegistry={iconRegistry} />
               </motion.div>
             ))}
           </AnimatePresence>

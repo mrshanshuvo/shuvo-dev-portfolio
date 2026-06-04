@@ -104,7 +104,7 @@ export default function ProjectCard({
         {/* Floating Content at Bottom */}
         <div className="absolute bottom-0 left-0 right-0 p-6 flex flex-col z-30 pointer-events-none">
           <div className="mb-3">
-            <h3 className="font-display text-2xl font-bold text-slate-100 group-hover:text-emerald-400 transition-colors duration-300 line-clamp-1 drop-shadow-md flex items-center gap-1.5">
+            <h3 className="font-display text-2xl font-bold text-emerald-400 group-hover:text-emerald-300 transition-colors duration-300 line-clamp-1 drop-shadow-md flex items-center gap-1.5">
               <span>{project.title}</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -122,7 +122,7 @@ export default function ProjectCard({
             </h3>
           </div>
 
-          <p className="text-slate-300 group-hover:text-white transition-colors duration-300 text-sm leading-relaxed mb-6 line-clamp-2 font-medium drop-shadow-sm">
+          <p className="text-slate-300 group-hover:text-slate-100 transition-colors duration-300 text-sm leading-relaxed mb-6 line-clamp-2 font-medium drop-shadow-sm">
             {project.description}
           </p>
 
@@ -134,7 +134,7 @@ export default function ProjectCard({
                 <Badge
                   key={name}
                   variant="outline"
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 dark:bg-black/40 border border-white/20 group-hover:border-emerald-500/30 group-hover:bg-white/15 text-white rounded-xl text-[10px] font-bold shadow-sm backdrop-blur-md transition-all duration-300"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 dark:bg-emerald-950/40 border border-emerald-500/20 text-emerald-300 rounded-xl text-[10px] font-bold shadow-sm backdrop-blur-md transition-all duration-300 group-hover:border-emerald-400/40 group-hover:bg-emerald-500/20 group-hover:text-emerald-200"
                   title={name}
                 >
                   {iconUrl && (
@@ -153,7 +153,7 @@ export default function ProjectCard({
             {(project.techNames || []).length > 4 && (
               <Badge
                 variant="outline"
-                className="flex items-center justify-center px-2 py-1.5 bg-white/10 dark:bg-black/40 border border-white/20 text-white rounded-xl text-[10px] font-bold shadow-sm backdrop-blur-md"
+                className="flex items-center justify-center px-2 py-1.5 bg-emerald-500/10 dark:bg-emerald-950/40 border border-emerald-500/20 text-emerald-300 rounded-xl text-[10px] font-bold shadow-sm backdrop-blur-md transition-all duration-300 group-hover:border-emerald-400/40 group-hover:bg-emerald-500/20 group-hover:text-emerald-200"
               >
                 +{(project.techNames?.length || 0) - 4}
               </Badge>
