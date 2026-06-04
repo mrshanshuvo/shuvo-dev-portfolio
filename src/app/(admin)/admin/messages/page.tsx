@@ -242,7 +242,7 @@ export default function AdminMessagesPage() {
                   exit={{ opacity: 0, y: -10 }}
                   className="space-y-6"
                 >
-                  <Card className="rounded-[2.5rem] border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/60 backdrop-blur-xl overflow-hidden shadow-2xl dark:shadow-none">
+                  <Card className="rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900/60 backdrop-blur-xl overflow-hidden shadow-2xl dark:shadow-none">
                     <CardContent className="p-6 md:p-10 space-y-8">
                       {/* Meta */}
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-100 dark:border-white/5 pb-8">

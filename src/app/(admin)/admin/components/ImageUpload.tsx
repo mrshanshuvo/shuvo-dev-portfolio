@@ -237,7 +237,7 @@ export default function ImageUpload({
           <div className="absolute inset-0 bg-white/5 opacity-0 group-hover/image:opacity-100 backdrop-blur-[px] transition-all duration-500 z-5" />
 
           {/* Glassmorphic Action Overlay */}
-          <div className="absolute inset-0 flex items-center justify-center gap-2 z-10 opacity-0 group-hover/image:opacity-100 transition-all duration-300 scale-95 group-hover/image:scale-100">
+          <div className="absolute inset-0 flex flex-wrap items-center justify-center gap-1.5 p-2 z-10 opacity-0 group-hover/image:opacity-100 transition-all duration-300 scale-95 group-hover/image:scale-100">
             <button
               type="button"
               onClick={(e) => {
@@ -246,18 +246,18 @@ export default function ImageUpload({
                 setIsPreviewOpen(true);
               }}
               title="Expand Preview"
-              className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30 backdrop-blur-md hover:bg-indigo-100 dark:hover:bg-indigo-500/40 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(99,102,241,0.15)] dark:hover:shadow-[0_10px_20px_rgba(99,102,241,0.2)] transition-all duration-300"
+              className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30 backdrop-blur-md hover:bg-indigo-100 dark:hover:bg-indigo-500/40 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(99,102,241,0.15)] dark:hover:shadow-[0_10px_20px_rgba(99,102,241,0.2)] transition-all duration-300"
             >
-              <FaEye size={16} />
+              <FaEye size={14} />
             </button>
             <a
               href={value}
               target="_blank"
               rel="noopener noreferrer"
               title="Open Original"
-              className="p-2 rounded-xl bg-fuchsia-50 dark:bg-fuchsia-500/20 text-fuchsia-600 dark:text-fuchsia-300 border border-fuchsia-200 dark:border-fuchsia-500/30 backdrop-blur-md hover:bg-fuchsia-100 dark:hover:bg-fuchsia-500/40 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(217,70,239,0.15)] dark:hover:shadow-[0_10px_20px_rgba(217,70,239,0.2)] transition-all duration-300"
+              className="p-1.5 rounded-lg bg-fuchsia-50 dark:bg-fuchsia-500/20 text-fuchsia-600 dark:text-fuchsia-300 border border-fuchsia-200 dark:border-fuchsia-500/30 backdrop-blur-md hover:bg-fuchsia-100 dark:hover:bg-fuchsia-500/40 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(217,70,239,0.15)] dark:hover:shadow-[0_10px_20px_rgba(217,70,239,0.2)] transition-all duration-300"
             >
-              <FaExternalLinkAlt size={14} />
+              <FaExternalLinkAlt size={12} />
             </a>
             <button
               type="button"
@@ -267,9 +267,9 @@ export default function ImageUpload({
                 fileInputRef.current?.click();
               }}
               title="Change File"
-              className="p-2 rounded-xl bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-white border border-slate-200 dark:border-white/20 backdrop-blur-md hover:bg-slate-200 dark:hover:bg-white/20 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_10px_20px_rgba(255,255,255,0.1)] transition-all duration-300"
+              className="p-1.5 rounded-lg bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-white border border-slate-200 dark:border-white/20 backdrop-blur-md hover:bg-slate-200 dark:hover:bg-white/20 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_10px_20px_rgba(255,255,255,0.1)] transition-all duration-300"
             >
-              <FiRefreshCw size={16} />
+              <FiRefreshCw size={14} className="animate-hover-spin" />
             </button>
             <button
               type="button"
@@ -279,9 +279,9 @@ export default function ImageUpload({
                 onChange("");
               }}
               title="Delete File"
-              className="p-2 rounded-xl bg-rose-50 dark:bg-rose-500/20 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-500/30 backdrop-blur-md hover:bg-rose-100 dark:hover:bg-rose-500/40 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(244,63,94,0.15)] dark:hover:shadow-[0_10px_20px_rgba(244,63,94,0.2)] transition-all duration-300"
+              className="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-500/20 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-500/30 backdrop-blur-md hover:bg-rose-100 dark:hover:bg-rose-500/40 hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(244,63,94,0.15)] dark:hover:shadow-[0_10px_20px_rgba(244,63,94,0.2)] transition-all duration-300"
             >
-              <FaTrash size={14} />
+              <FaTrash size={12} />
             </button>
           </div>
         </div>

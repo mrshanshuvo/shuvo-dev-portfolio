@@ -28,7 +28,7 @@ export default function Error({
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="max-w-xl w-full bg-white dark:bg-slate-900/50 backdrop-blur-2xl border border-slate-200 dark:border-white/10 rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative z-10 text-center"
+        className="max-w-xl w-full bg-white dark:bg-slate-900/50 backdrop-blur-2xl border border-slate-200 dark:border-white/10 rounded-2xl p-8 md:p-12 shadow-2xl relative z-10 text-center"
       >
         <div className="inline-flex items-center justify-center w-20 h-20 bg-red-500/10 rounded-3xl mb-8">
           <FaExclamationTriangle className="text-red-500 text-3xl" />

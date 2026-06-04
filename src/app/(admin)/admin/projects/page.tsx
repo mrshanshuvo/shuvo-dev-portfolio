@@ -217,7 +217,7 @@ function DragOverlayCard({ project }: { project: Project }) {
   const vidCount = project.media?.filter((m) => m.type === "video").length ?? 0;
 
   return (
-    <div className="flex items-center gap-4 bg-white dark:bg-slate-800 border border-emerald-500/30 rounded-[1.5rem] p-4 shadow-2xl ring-1 ring-emerald-500/20 scale-105">
+    <div className="flex items-center gap-4 bg-white dark:bg-slate-800 border border-emerald-500/30 rounded-2xl p-4 shadow-2xl ring-1 ring-emerald-500/20 scale-105">
       <div className="cursor-grabbing text-emerald-400 shrink-0">
         <FaGripVertical size={14} />
       </div>
@@ -471,13 +471,6 @@ export default function AdminProjectsListPage() {
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-2xl p-4 shadow-sm dark:shadow-none">
           <div className="flex items-center gap-4 flex-wrap flex-1">
-            <Badge
-              variant="outline"
-              className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[10px]"
-            >
-              {data.length} {data.length === 1 ? "Project" : "Projects"}
-            </Badge>
-
             <div className="relative flex-1 min-w-45 max-w-xs">
               <FaSearch
                 className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600"
@@ -495,7 +488,7 @@ export default function AdminProjectsListPage() {
               value={filterCategory}
               onValueChange={(v) => setFilterCategory(v || "All")}
             >
-              <SelectTrigger className="bg-white dark:bg-slate-950 border-slate-200 dark:border-white/5 rounded-xl h-10 w-37.5 text-xs text-slate-900 dark:text-white shadow-sm dark:shadow-none">
+              <SelectTrigger className="bg-white dark:bg-slate-950 border-slate-200 dark:border-white/5 rounded-xl py-5 w-37.5 text-xs text-slate-900 dark:text-white shadow-sm dark:shadow-none">
                 <FaFilter className="mr-2 text-slate-600" size={10} />
                 <SelectValue />
               </SelectTrigger>
@@ -510,6 +503,12 @@ export default function AdminProjectsListPage() {
             </Select>
 
             <CategoryManagerDialog onUpdate={refreshCategories} />
+            <Badge
+              variant="outline"
+              className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 px-3 py-1 rounded-full font-bold uppercase tracking-widest text-[10px]"
+            >
+              {data.length} {data.length === 1 ? "Project" : "Projects"}
+            </Badge>
           </div>
 
           <div className="flex items-center gap-3">
@@ -529,7 +528,7 @@ export default function AdminProjectsListPage() {
               {Array.from({ length: 4 }).map((_, i) => (
                 <div
                   key={i}
-                  className="h-24 bg-slate-900/30 rounded-[1.5rem] animate-pulse border border-white/5"
+                  className="h-24 bg-slate-900/30 rounded-2xl animate-pulse border border-white/5"
                 />
               ))}
             </div>

@@ -366,7 +366,7 @@ export default function MediaGalleryManager({
       </DndContext>
 
       {media.length === 0 && (
-        <div className="group/empty relative py-16 border-2 border-dashed border-slate-200 dark:border-white/5 rounded-[2.5rem] bg-white dark:bg-slate-950/20 flex flex-col items-center justify-center gap-6 overflow-hidden transition-all hover:border-emerald-500/20 hover:bg-emerald-500/5 shadow-sm dark:shadow-none">
+        <div className="group/empty relative py-16 border-2 border-dashed border-slate-200 dark:border-white/5 rounded-2xl bg-white dark:bg-slate-950/20 flex flex-col items-center justify-center gap-6 overflow-hidden transition-all hover:border-emerald-500/20 hover:bg-emerald-500/5 shadow-sm dark:shadow-none">
           <div className="absolute inset-0 bg-linear-to-b from-emerald-500/0 to-emerald-500/5 opacity-0 group-hover/empty:opacity-100 transition-opacity" />
           <div className="w-16 h-16 bg-slate-100 dark:bg-slate-900 rounded-3xl flex items-center justify-center text-slate-400 dark:text-slate-700 group-hover/empty:scale-110 group-hover/empty:text-emerald-600 dark:group-hover/empty:text-emerald-400 transition-all duration-500 shadow-sm dark:shadow-2xl">
             <FaImage size={32} />

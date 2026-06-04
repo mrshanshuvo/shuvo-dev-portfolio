@@ -97,7 +97,7 @@ export default function CategoryManagerDialog({
           <Button
             variant="ghost"
             size="sm"
-            className="h-11 px-4 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 rounded-xl transition-all border border-emerald-500/20 ml-2"
+            className="h-10 px-4 text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-300 hover:bg-emerald-500/10 rounded-xl transition-all border border-emerald-500/20 dark:border-emerald-500/30"
           >
             <FaPlus className="mr-2" /> Manage Categories
           </Button>

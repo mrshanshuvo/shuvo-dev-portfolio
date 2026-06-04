@@ -14,7 +14,7 @@ export default function AdminNotFound() {
         animate={{ opacity: 1, scale: 1 }}
         className="w-full max-w-xl"
       >
-        <Card className="bg-slate-900/40 border-white/5 backdrop-blur-2xl rounded-[2.5rem] overflow-hidden shadow-2xl">
+        <Card className="bg-slate-900/40 border-white/5 backdrop-blur-2xl rounded-2xl overflow-hidden shadow-2xl">
           <CardContent className="p-10 md:p-14 text-center">
             <div className="relative inline-block mb-8">
               <div className="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full scale-150" />
@@ -26,9 +26,10 @@ export default function AdminNotFound() {
             <h2 className="text-3xl font-black text-white mb-4 tracking-tight">
               Route <span className="text-blue-400">Not Found</span>
             </h2>
-            
+
             <p className="text-slate-400 text-lg font-medium mb-10 leading-relaxed">
-              The administrative module you are looking for does not exist or has been relocated within the system.
+              The administrative module you are looking for does not exist or
+              has been relocated within the system.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -38,7 +39,7 @@ export default function AdminNotFound() {
                   Admin Overview
                 </Button>
               </Link>
-              
+
               <Button
                 variant="ghost"
                 onClick={() => window.history.back()}

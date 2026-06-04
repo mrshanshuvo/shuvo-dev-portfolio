@@ -15,7 +15,8 @@ export default function SettingsForm({
   initialSettings: any;
 }) {
   const [settings, setSettings] = useState(initialSettings);
-  const [prevInitialSettings, setPrevInitialSettings] = useState(initialSettings);
+  const [prevInitialSettings, setPrevInitialSettings] =
+    useState(initialSettings);
   const [status, setStatus] = useState<string | null>(null);
   const router = useRouter();
 
@@ -67,7 +68,7 @@ export default function SettingsForm({
       )}
 
       {/* SEO & Brand */}
-      <Card className="bg-white dark:bg-slate-900/40 border-slate-200 dark:border-white/5 backdrop-blur-xl rounded-[2.5rem] overflow-hidden shadow-sm dark:shadow-none">
+      <Card className="bg-white dark:bg-slate-900/40 border-slate-200 dark:border-white/5 backdrop-blur-xl rounded-2xl overflow-hidden shadow-sm dark:shadow-none">
         <CardHeader className="p-8 border-b border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-slate-950/20">
           <div className="flex items-center gap-4">
             <div className="p-3 rounded-2xl bg-blue-500/10 text-blue-400">
@@ -116,7 +117,7 @@ export default function SettingsForm({
       </Card>
 
       {/* Communication */}
-      <Card className="bg-white dark:bg-slate-900/40 border-slate-200 dark:border-white/5 backdrop-blur-xl rounded-[2.5rem] overflow-hidden shadow-sm dark:shadow-none">
+      <Card className="bg-white dark:bg-slate-900/40 border-slate-200 dark:border-white/5 backdrop-blur-xl rounded-2xl overflow-hidden shadow-sm dark:shadow-none">
         <CardHeader className="p-8 border-b border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-slate-950/20">
           <div className="flex items-center gap-4">
             <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-400">
@@ -194,7 +195,7 @@ export default function SettingsForm({
       </Card>
 
       {/* Visuals & DNA */}
-      <Card className="bg-white dark:bg-slate-900/40 border-slate-200 dark:border-white/5 backdrop-blur-xl rounded-[2.5rem] overflow-hidden shadow-sm dark:shadow-none">
+      <Card className="bg-white dark:bg-slate-900/40 border-slate-200 dark:border-white/5 backdrop-blur-xl rounded-2xl overflow-hidden shadow-sm dark:shadow-none">
         <CardHeader className="p-8 border-b border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-slate-950/20">
           <div className="flex items-center gap-4">
             <div className="p-3 rounded-2xl bg-purple-500/10 text-purple-400">
@@ -231,7 +232,7 @@ export default function SettingsForm({
       </Card>
 
       {/* System */}
-      <Card className="bg-white dark:bg-slate-900/40 border-rose-200 dark:border-red-500/10 backdrop-blur-xl rounded-[2.5rem] overflow-hidden shadow-sm dark:shadow-none">
+      <Card className="bg-white dark:bg-slate-900/40 border-rose-200 dark:border-red-500/10 backdrop-blur-xl rounded-2xl overflow-hidden shadow-sm dark:shadow-none">
         <CardHeader className="p-8 border-b border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-slate-950/20">
           <div className="flex items-center gap-4">
             <div className="p-3 rounded-2xl bg-red-500/10 text-red-400">

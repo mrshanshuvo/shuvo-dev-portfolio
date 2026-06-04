@@ -105,7 +105,7 @@ export function AdminDialogShell({
               <Button
                 onClick={onSave}
                 disabled={saving}
-                className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl px-8 h-10 font-black shadow-[0_0_20px_rgba(16,185,129,0.2)] hover:shadow-[0_0_30px_rgba(16,185,129,0.3)] active:scale-[0.98] transition-all disabled:opacity-50 text-[10px] uppercase tracking-[0.15em] border border-emerald-400/20"
+                className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl px-6 h-10 font-black shadow-[0_0_20px_rgba(16,185,129,0.2)] hover:shadow-[0_0_30px_rgba(16,185,129,0.3)] active:scale-[0.98] transition-all disabled:opacity-50 text-[10px] uppercase tracking-[0.15em] border border-emerald-400/20"
               >
                 {saving ? savingLabel : saveLabel}
               </Button>

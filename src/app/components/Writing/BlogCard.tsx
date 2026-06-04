@@ -23,7 +23,7 @@ export default function BlogCard({ blog, index }: BlogCardProps) {
       transition={{ delay: index * 0.1 }}
       className="group block"
     >
-      <Card className="h-full rounded-[2.5rem] bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 hover:border-blue-500/30 transition-all duration-500 overflow-hidden shadow-sm hover:shadow-xl">
+      <Card className="h-full rounded-2xl bg-white dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200 dark:border-white/5 hover:border-blue-500/30 transition-all duration-500 overflow-hidden shadow-sm hover:shadow-xl">
         <CardHeader className="p-8 pb-0">
           <div className="flex items-center justify-between mb-6">
             <div className="flex gap-2">

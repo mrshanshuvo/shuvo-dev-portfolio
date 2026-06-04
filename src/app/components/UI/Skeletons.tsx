@@ -1,8 +1,4 @@
-export function SectionSkeleton({
-  cols = 3,
-}: {
-  cols?: number;
-}) {
+export function SectionSkeleton({ cols = 3 }: { cols?: number }) {
   return (
     <div className="py-24">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
@@ -22,7 +18,7 @@ export function SectionSkeleton({
           {Array.from({ length: cols }).map((_, i) => (
             <div
               key={i}
-              className="rounded-[2.5rem] bg-slate-100 dark:bg-slate-900/40 border border-slate-200 dark:border-white/5 overflow-hidden"
+              className="rounded-2xl bg-slate-100 dark:bg-slate-900/40 border border-slate-200 dark:border-white/5 overflow-hidden"
             >
               <div className="p-8 space-y-4">
                 <div className="w-16 h-16 rounded-2xl bg-slate-200 dark:bg-slate-800 animate-pulse" />

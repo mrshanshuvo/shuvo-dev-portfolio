@@ -276,29 +276,33 @@ export default function AdminTechnologiesPage() {
         maxWidth="xl"
       >
         {currentTech && (
-          <div className="flex gap-2 justify-between">
-            <AdminField label="Logo (SVG/PNG)">
-              <ImageUpload
-                value={currentTech.iconUrl || ""}
-                onChange={(val) =>
-                  setCurrentTech((prev) =>
-                    prev ? { ...prev, iconUrl: val } : null,
-                  )
-                }
-              />
-            </AdminField>
-            <AdminField label="Technology Name">
-              <AdminInput
-                icon={FaCode}
-                value={currentTech.name}
-                onChange={(e) =>
-                  setCurrentTech((prev) =>
-                    prev ? { ...prev, name: e.target.value } : null,
-                  )
-                }
-                placeholder="e.g. React"
-              />
-            </AdminField>
+          <div className="flex flex-col sm:flex-row gap-6 items-start">
+            <div className="w-40 shrink-0">
+              <AdminField label="Logo (SVG/PNG)">
+                <ImageUpload
+                  value={currentTech.iconUrl || ""}
+                  onChange={(val) =>
+                    setCurrentTech((prev) =>
+                      prev ? { ...prev, iconUrl: val } : null,
+                    )
+                  }
+                />
+              </AdminField>
+            </div>
+            <div className="flex-1 w-full">
+              <AdminField label="Technology Name">
+                <AdminInput
+                  icon={FaCode}
+                  value={currentTech.name}
+                  onChange={(e) =>
+                    setCurrentTech((prev) =>
+                      prev ? { ...prev, name: e.target.value } : null,
+                    )
+                  }
+                  placeholder="e.g. React"
+                />
+              </AdminField>
+            </div>
           </div>
         )}
       </AdminDialogShell>

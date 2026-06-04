@@ -138,7 +138,7 @@ export default function CategoryCombobox({
       </div>
 
       {open && (
-        <div className="absolute top-full left-0 mt-2 w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-[1.5rem] shadow-2xl z-50 overflow-hidden flex flex-col p-2 animate-in fade-in zoom-in-95 duration-200">
+        <div className="absolute top-full left-0 mt-2 w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden flex flex-col p-2 animate-in fade-in zoom-in-95 duration-200">
           <div className="flex items-center bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 rounded-xl px-3 py-2.5 mb-2 focus-within:border-emerald-500/50 transition-colors">
             <FaSearch className="text-slate-500 mr-2 shrink-0" size={12} />
             <input
