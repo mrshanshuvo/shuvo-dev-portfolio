@@ -486,7 +486,7 @@ export default function AdminProjectsListPage() {
 
             <Select
               value={filterCategory}
-              onValueChange={(v) => setFilterCategory(v || "All")}
+              onValueChange={(v: string | null) => setFilterCategory(v || "All")}
             >
               <SelectTrigger className="bg-white dark:bg-slate-950 border-slate-200 dark:border-white/5 rounded-xl py-5 w-37.5 text-xs text-slate-900 dark:text-white shadow-sm dark:shadow-none">
                 <FaFilter className="mr-2 text-slate-600" size={10} />
